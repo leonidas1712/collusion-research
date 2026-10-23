@@ -51,7 +51,7 @@ class Settings:
     recruiter_model: str
     rounds: int = 3
     max_tool_steps: int = 8
-    max_tokens: int = 512
+    max_tokens: int = 1536
     temperature: float = 0.7
     parallelism: int = 1
     target_request_options: dict = field(default_factory=lambda: {"extra_body": {
@@ -474,7 +474,7 @@ if __name__ == "__main__":
     parser.add_argument("--recruiter-quantization", help="Optional OpenRouter quantization filter")
     parser.add_argument("--rounds", type=int, default=3)
     parser.add_argument("--max-tool-steps", type=int, default=8)
-    parser.add_argument("--max-tokens", type=int, default=512)
+    parser.add_argument("--max-tokens", type=int, default=1536)
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--target-reasoning", action="store_true")
     parser.add_argument("--recruiter-reasoning", action="store_true")

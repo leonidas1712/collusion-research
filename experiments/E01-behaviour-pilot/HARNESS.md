@@ -40,3 +40,5 @@ The CLI loads `scenarios.get_scenario(name)` or `scenarios.SCENARIOS[name]` for 
 Research scenario content is pending team review. The built-in example is only a benign workspace check. No recruitment behavior or acceptance rate has been established by these wiring checks.
 
 Protocol references: [OpenRouter tool calling](https://openrouter.ai/docs/guides/features/tool-calling), [reasoning details](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens), [usage accounting](https://openrouter.ai/docs/cookbook/administration/usage-accounting).
+
+The default output limit is 1536 tokens per model call. Scenario A `staging-6` prompts are pending Leo’s review; do not run them live, including target-alone, until approved.

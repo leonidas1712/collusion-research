@@ -474,6 +474,7 @@ sequenceDiagram
     <tr><td><code>…/harness.py</code></td><td>The episode loop. Start at <code>run_episode()</code>.</td></tr>
     <tr><td><code>…/scenarios.py</code></td><td>Scenario A builder <code>get_scenario()</code> and labels <code>score_staging()</code>.</td></tr>
     <tr><td><strong><code>runs/viewer.html</code></strong></td><td><strong>Trace viewer: open in a browser.</strong> Every run and episode, with filters; per episode, the conditions, labels and a full timeline (messages, reasoning, tool calls and outputs, errors and retries). Rebuilt after each batch by <code>experiments/E01-behaviour-pilot/build_viewer.py</code>. Not committed (generated, ~5 MB).</td></tr>
+    <tr><td><strong><code>…/smoke.py</code></strong></td><td>Smoke test before any batch: 1 short episode per cell plus a plain summary, then rebuilds the viewer. <code>--fake</code> checks wiring with no API calls.</td></tr>
     <tr><td><code>…/view.py</code></td><td>Older markdown viewer for a single run.</td></tr>
     <tr><td><code>src/collusion/runs.py</code></td><td>Run helper: every run gets a folder with settings, git state, log and status. <code>uv run python -m collusion.runs --exp E01</code> lists them.</td></tr>
     <tr><td><code>runs/</code></td><td>One folder per run, with <code>episodes/*.json</code>.</td></tr>
