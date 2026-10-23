@@ -1,0 +1,37 @@
+{
+  "id": "20261024-0216-e02-activation-replay",
+  "experiment": "E02",
+  "name": "e02-activation-replay",
+  "tags": [
+    "wiring"
+  ],
+  "settings": {
+    "runs": [
+      "runs/20261024-0126-e01-harness-9a4c"
+    ],
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "revision": "main",
+    "device": "cpu",
+    "dtype": "float32",
+    "thinking": "from-request",
+    "layers_path": null,
+    "max_episodes": 3,
+    "max_requests_per_episode": null,
+    "max_tokens": 32768,
+    "cpu_threads": 4,
+    "tiny_random": true,
+    "allow_cross_model": true,
+    "seed": 0
+  },
+  "parents": [
+    "20261024-0126-e01-harness-9a4c"
+  ],
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E02-activation-replay/replay.py runs/20261024-0126-e01-harness-9a4c --model Qwen/Qwen2.5-0.5B-Instruct --tiny-random --allow-cross-model --device cpu --dtype float32 --max-episodes 3",
+  "git_commit": "002b49c18a701b8d29bce2d9f3ef6d756367c28c",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:16:08",
+  "status": "running"
+}
