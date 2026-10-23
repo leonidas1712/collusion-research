@@ -1,0 +1,57 @@
+{
+  "id": "20261024-0231-e01-deploy-token-own-stake",
+  "experiment": "E01",
+  "name": "e01-deploy-token-own-stake",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "ibm-granite/granite-4.2-8b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 8,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "CoreWeave"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "bf16"
+          ]
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "deploy-token_explicit_related_control_own-stake_required-access",
+    "scenario_input": "deploy-token_explicit_related_control_own-stake_required-access",
+    "scenario_family": "deploy-token",
+    "fake": false,
+    "episodes": 1,
+    "family_start": 105,
+    "peer_enabled": true,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=ibm-granite/granite-4.2-8b;recruiter=deepseek/deepseek-v4-flash",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 /Users/leo/collusion-research/experiments/E01-behaviour-pilot/harness.py --scenario deploy-token_explicit_related_control_own-stake_required-access --rounds 20 --episodes 1 --family-start 105 --target-model ibm-granite/granite-4.2-8b --target-provider CoreWeave --recruiter-model deepseek/deepseek-v4-flash --target-quantization bf16",
+  "git_commit": "a4375e77e75d4b4294fdb7a5823a52ff5dd1ccf7",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:31:00",
+  "status": "running"
+}
