@@ -149,7 +149,7 @@ def summarise(path: Path, run_id: str, n: int) -> tuple[dict, dict]:
 def load_run(run_dir: Path, raws: list) -> dict:
     meta = json.loads((run_dir / "meta.json").read_text()) if (run_dir / "meta.json").exists() else {}
     eps, first_raw = [], None
-    for p in sorted((run_dir / "episodes").glob("episode-*.json")):
+    for p in sorted((run_dir / "episodes").glob("*.json")):
         summary, raw = summarise(p, run_dir.name, len(raws))
         raws.append((summary["eid"], raw))
         eps.append(summary)
