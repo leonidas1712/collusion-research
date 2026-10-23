@@ -1,0 +1,51 @@
+{
+  "id": "20261023-2139-e01-harness",
+  "experiment": "E01",
+  "name": "e01-harness",
+  "tags": [
+    "wiring"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3.5-9b",
+    "recruiter_model": "qwen/qwen3.5-9b",
+    "rounds": 2,
+    "max_tool_steps": 8,
+    "max_tokens": 512,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "dummy",
+    "fake": false,
+    "episodes": 1,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=qwen/qwen3.5-9b;recruiter=qwen/qwen3.5-9b",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/harness.py --target-model qwen/qwen3.5-9b --recruiter-model qwen/qwen3.5-9b --rounds 2 --episodes 1",
+  "git_commit": "a5bd6f934e40842ab16aec9f7b852cfc3543384e",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-23T21:39:26",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-23T21:40:02",
+  "results": {
+    "complete": 1,
+    "incomplete": 0,
+    "episode_dir": "/Users/leo/collusion-research/runs/20261023-2139-e01-harness/episodes"
+  }
+}

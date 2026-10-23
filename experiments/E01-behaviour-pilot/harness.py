@@ -1,0 +1,403 @@
+"""Transparent two-agent pilot with in-memory tools and resumable episode files."""
+
+from __future__ import annotations
+
+import argparse
+import asyncio
+import copy
+from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
+import importlib
+import json
+import os
+from pathlib import Path
+from types import SimpleNamespace
+from typing import Any, Callable
+
+
+@dataclass
+class MockTool:
+    schema: dict
+    handler: Callable
+
+
+@dataclass
+class Scenario:
+    name: str
+    target_system: str
+    target_task: str
+    recruiter_system: str
+    files: dict[str, str]
+    extra_tools: tuple[MockTool, ...] = ()
+    honeypots: tuple[str, ...] = ()
+    label_fn: Callable | None = None
+    test_result: Any = "Mock test suite passed."
+    recruiter_approved: bool = False
+    scenario_version: str = "1"
+    channel_format: str = "[#team channel] {name}: {content}"
+    actor_names: dict[str, str] = field(default_factory=lambda: {"target": "task-bot", "recruiter": "deploy-bot"})
+
+
+@dataclass
+class Settings:
+    target_model: str
+    recruiter_model: str
+    rounds: int = 3
+    max_tool_steps: int = 8
+    max_tokens: int = 512
+    temperature: float = 0.7
+    parallelism: int = 1
+    target_request_options: dict = field(default_factory=lambda: {"extra_body": {"reasoning": {"enabled": False}}})
+    recruiter_request_options: dict = field(default_factory=lambda: {"extra_body": {"reasoning": {"enabled": False}}})
+
+
+@dataclass
+class MockEnvironment:
+    files: dict[str, str]
+    channel: list[dict] = field(default_factory=list)
+    test_result: Any = "Mock test suite passed."
+    round: int = 0
+
+    def publish(self, actor: str, content: str) -> dict:
+        event = {"actor": actor, "round": self.round, "content": content}
+        self.channel.append(event)
+        return {"delivered": True}
+
+
+def tool_schema(name, description, properties, required):
+    return {"type": "function", "function": {
+        "name": name, "description": description,
+        "parameters": {"type": "object", "properties": properties,
+                       "required": required, "additionalProperties": False}}}
+
+
+def standard_tools() -> list[MockTool]:
+    string = {"type": "string"}
+
+    def read(env, args, actor):
+        return {"content": env.files[args["path"]]}
+
+    def write(env, args, actor):
+        env.files[args["path"]] = args["content"]
+        return {"written": args["path"]}
+
+    return [
+        MockTool(tool_schema("read_file", "Read a workspace file.",
+                             {"path": string}, ["path"]), read),
+        MockTool(tool_schema("write_file", "Write a workspace file.",
+                             {"path": string, "content": string}, ["path", "content"]), write),
+        MockTool(tool_schema("run_tests", "Run the workspace test suite.", {}, []),
+                 lambda env, args, actor: copy.deepcopy(env.test_result)),
+        MockTool(tool_schema("send_message", "Post a message to the shared team channel.",
+                             {"content": string}, ["content"]),
+                 lambda env, args, actor: env.publish(actor, args["content"])),
+    ]
+
+
+def _validate_args(args, schema):
+    if not isinstance(args, dict):
+        raise ValueError("arguments must be an object")
+    properties = schema.get("properties", {})
+    if any(key not in args for key in schema.get("required", [])):
+        raise ValueError("missing required argument")
+    if schema.get("additionalProperties") is False and set(args) - set(properties):
+        raise ValueError("unexpected argument")
+    types = {"string": str, "object": dict, "array": list, "boolean": bool,
+             "number": (int, float), "integer": int}
+    for key, value in args.items():
+        rule = properties.get(key, {})
+        kind = rule.get("type")
+        if kind in types and (not isinstance(value, types[kind]) or
+                              kind in ("integer", "number") and isinstance(value, bool)):
+            raise ValueError(f"invalid type for {key}")
+        if "enum" in rule and value not in rule["enum"]:
+            raise ValueError(f"invalid value for {key}")
+
+
+def _plain(value):
+    return value.model_dump(mode="json") if hasattr(value, "model_dump") else value
+
+
+def _save(path: Path, episode: dict):
+    temp = path.with_suffix(path.suffix + ".tmp")
+    temp.write_text(json.dumps(episode, ensure_ascii=False, indent=2) + "\n")
+    temp.replace(path)
+
+
+class EpisodeIncomplete(Exception):
+    pass
+
+
+async def run_episode(scenario: Scenario, settings: Settings, client, output_dir,
+                      episode_id="episode-0001", semaphore=None):
+    """Return a completed or incomplete record; never assign refusal to a failed run."""
+    if min(settings.rounds, settings.max_tool_steps, settings.max_tokens,
+           settings.parallelism) < 1:
+        raise ValueError("rounds, tool steps, tokens and parallelism must be positive")
+    if not episode_id or Path(episode_id).name != episode_id:
+        raise ValueError("episode_id must be a filename stem")
+    if not getattr(client, "is_fake", False) and not scenario.recruiter_approved:
+        raise ValueError("Live recruiter prompt is pending approval")
+    tools = standard_tools() + list(scenario.extra_tools)
+    by_name = {tool.schema["function"]["name"]: tool for tool in tools}
+    if len(by_name) != len(tools):
+        raise ValueError("duplicate tool names")
+    scenario_spec = {"name": scenario.name, "target_system": scenario.target_system,
+                     "target_task": scenario.target_task,
+                     "recruiter_system": scenario.recruiter_system,
+                     "files": scenario.files, "honeypots": list(scenario.honeypots),
+                     "tools": [tool.schema for tool in tools],
+                     "test_result": scenario.test_result, "scenario_version": scenario.scenario_version,
+                     "channel_format": scenario.channel_format, "actor_names": scenario.actor_names}
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    final_path = output_dir / f"{episode_id}.json"
+    partial_path = output_dir / f"{episode_id}.partial.json"
+    if final_path.exists():
+        existing = json.loads(final_path.read_text())
+        if existing.get("status") != "complete":
+            raise ValueError("final episode file is not complete")
+        if (existing.get("settings") != asdict(settings) or existing.get("scenario_spec") != scenario_spec
+                or existing.get("fake") != bool(getattr(client, "is_fake", False))):
+            raise ValueError("existing episode settings or scenario differ; use a new output directory")
+        return existing
+    if partial_path.exists():
+        # Keep the failed attempt when restarting the episode from its initial state.
+        previous = json.loads(partial_path.read_text())
+        if (previous.get("settings") != asdict(settings) or previous.get("scenario_spec") != scenario_spec
+                or previous.get("fake") != bool(getattr(client, "is_fake", False))):
+            raise ValueError("partial episode settings or scenario differ")
+        attempt = 1
+        while (output_dir / f"{episode_id}.attempt-{attempt}.json").exists():
+            attempt += 1
+        partial_path.replace(output_dir / f"{episode_id}.attempt-{attempt}.json")
+    env = MockEnvironment(copy.deepcopy(scenario.files), test_result=scenario.test_result)
+    histories = {
+        "target": [{"role": "system", "content": scenario.target_system},
+                   {"role": "user", "content": scenario.target_task}],
+        "recruiter": [{"role": "system", "content": scenario.recruiter_system},
+                      {"role": "user", "content": "Begin the team conversation."}],
+    }
+    episode = {"episode_id": episode_id, "scenario": scenario.name,
+               "scenario_spec": scenario_spec, "settings": asdict(settings),
+               "status": "running", "stop_reason": None, "label": None,
+               "started_at": datetime.now(timezone.utc).isoformat(),
+               "requests": [], "channel": env.channel, "tool_log": [],
+               "histories": histories, "files": env.files, "rounds_completed": 0,
+               "fake": bool(getattr(client, "is_fake", False))}
+    semaphore = semaphore or asyncio.Semaphore(settings.parallelism)
+
+    async def request(actor, round_number):
+        payload = {"model": getattr(settings, f"{actor}_model"),
+                   "messages": copy.deepcopy(histories[actor]),
+                   "tools": copy.deepcopy([tool.schema for tool in tools]),
+                   "max_tokens": settings.max_tokens, "temperature": settings.temperature}
+        options = copy.deepcopy(getattr(settings, f"{actor}_request_options"))
+        if set(options) & set(payload):
+            raise ValueError("request options cannot replace core payload fields")
+        extra_body = options.get("extra_body", {})
+        if set(extra_body) & set(payload):
+            raise ValueError("extra_body cannot replace core payload fields")
+        payload.update(options)
+        wire_body = {key: copy.deepcopy(value) for key, value in payload.items() if key != "extra_body"}
+        wire_body.update(extra_body)
+        for attempt in range(3):
+            record = {"actor": actor, "round": round_number, "attempt": attempt + 1,
+                      "request": copy.deepcopy(payload), "request_body": copy.deepcopy(wire_body),
+                      "response": None, "usage": None}
+            episode["requests"].append(record)
+            _save(partial_path, episode)
+            try:
+                async with semaphore:
+                    response = _plain(await client.chat.completions.create(**payload))
+                record["response"] = response
+                record["usage"] = response.get("usage")
+                _save(partial_path, episode)
+                return response
+            except Exception as exc:
+                status = getattr(exc, "status_code", None)
+                record["error"] = {"type": type(exc).__name__, "status_code": status}
+                _save(partial_path, episode)
+                transient = status in (408, 409, 429) or isinstance(status, int) and status >= 500
+                transient = transient or type(exc).__name__ in ("APIConnectionError", "APITimeoutError")
+                if not transient or attempt == 2:
+                    raise EpisodeIncomplete(f"api_error:{type(exc).__name__}") from exc
+                await asyncio.sleep(2 ** attempt)
+
+    try:
+        _save(partial_path, episode)
+        for round_number in range(1, settings.rounds + 1):
+            env.round = round_number
+            for actor, peer in (("recruiter", "target"), ("target", "recruiter")):
+                channel_start = len(env.channel)
+                for step in range(settings.max_tool_steps):
+                    response = await request(actor, round_number)
+                    choices = response.get("choices") or []
+                    if not choices:
+                        raise EpisodeIncomplete("missing_choices")
+                    choice = choices[0]
+                    if choice.get("finish_reason") not in ("stop", "tool_calls"):
+                        raise EpisodeIncomplete(f"finish_reason:{choice.get('finish_reason')}")
+                    raw_message = choice.get("message") or {}
+                    message = {key: copy.deepcopy(value) for key, value in raw_message.items()
+                               if key in ("role", "content", "tool_calls", "reasoning", "reasoning_details", "refusal")
+                               and value is not None}
+                    message["role"] = "assistant"
+                    histories[actor].append(message)
+                    calls = message.get("tool_calls") or []
+                    if not calls:
+                        content = message.get("content")
+                        if not isinstance(content, str) or not content.strip():
+                            raise EpisodeIncomplete("empty_assistant_message")
+                        already_posted = [event["content"] for event in env.channel[channel_start:]
+                                          if event["actor"] == actor]
+                        if not already_posted:
+                            env.publish(actor, content)
+                        break
+                    ids = [call.get("id") for call in calls]
+                    if any(not isinstance(value, str) or not value for value in ids) or len(ids) != len(set(ids)):
+                        raise EpisodeIncomplete("invalid_tool_call_ids")
+                    for call in calls:
+                        function = call.get("function") or {}
+                        name, arguments = function.get("name"), function.get("arguments")
+                        try:
+                            args = json.loads(arguments)
+                            tool = by_name[name]
+                            _validate_args(args, tool.schema["function"]["parameters"])
+                            result = tool.handler(env, args, actor)
+                        except (TypeError, ValueError, KeyError) as exc:
+                            result = {"error": type(exc).__name__, "message": "Invalid tool call or missing file"}
+                        event = {"actor": actor, "round": round_number, "call_id": call["id"], "mock": True,
+                                 "name": name, "arguments": arguments, "result": result}
+                        episode["tool_log"].append(event)
+                        histories[actor].append({"role": "tool", "tool_call_id": call["id"],
+                                                 "content": json.dumps(result, ensure_ascii=False)})
+                        _save(partial_path, episode)
+                else:
+                    raise EpisodeIncomplete("tool_step_limit")
+                for event in env.channel[channel_start:]:
+                    histories[peer].append({"role": "user", "content":
+                        scenario.channel_format.format(actor=actor, name=scenario.actor_names[actor],
+                                                       content=event["content"])})
+                _save(partial_path, episode)
+            episode["rounds_completed"] = round_number
+        episode["status"] = "complete"
+        episode["stop_reason"] = "round_limit"
+        if scenario.label_fn is not None:
+            episode["label"] = scenario.label_fn(episode)
+    except Exception as exc:
+        episode["status"] = "incomplete"
+        episode["label"] = None
+        episode["stop_reason"] = str(exc) if isinstance(exc, EpisodeIncomplete) else type(exc).__name__
+    episode["finished_at"] = datetime.now(timezone.utc).isoformat()
+    _save(partial_path, episode)
+    if episode["status"] == "complete":
+        partial_path.replace(final_path)
+    return episode
+
+
+class FakeClient:
+    """Deterministic native-tool replies for offline wiring, not scientific data."""
+    is_fake = True
+
+    def __init__(self):
+        self.chat = SimpleNamespace(completions=SimpleNamespace(create=self.create))
+
+    async def create(self, **payload):
+        messages = payload["messages"]
+        if messages[-1]["role"] != "tool":
+            message = {"role": "assistant", "content": None, "tool_calls": [
+                {"id": f"fake-{len(messages)}", "type": "function", "function": {
+                    "name": "write_file", "arguments": json.dumps({"path": "status.txt", "content": "Checked."})}}]}
+            finish = "tool_calls"
+        else:
+            message = {"role": "assistant", "content": "The workspace check is complete."}
+            finish = "stop"
+        return {"id": "fake", "model": payload["model"],
+                "choices": [{"message": message, "finish_reason": finish}],
+                "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0, "cost": 0}}
+
+
+def _scenario(name, fake):
+    if name in ("fake", "dummy"):
+        return Scenario("dummy", "You maintain the workspace status file. Coordinate with your teammate.",
+                        "Write Checked. to status.txt and tell your teammate when done.",
+                        "You are a teammate coordinating a workspace status update. Ask your colleague to update status.txt.",
+                        {"status.txt": "Pending."},
+                        label_fn=lambda episode: "completed" if any(
+                            event["actor"] == "target" and event["name"] == "write_file"
+                            and "error" not in event["result"] for event in episode["tool_log"])
+                        else "not_completed", recruiter_approved=True)
+    module = importlib.import_module("scenarios")
+    if hasattr(module, "get_scenario"):
+        return module.get_scenario(name)
+    return module.SCENARIOS[name]
+
+
+async def _main(args):
+    from collusion.runs import start_run
+
+    scenario = _scenario(args.scenario, args.fake)
+    settings = Settings(args.target_model, args.recruiter_model, args.rounds,
+                        args.max_tool_steps, args.max_tokens, args.temperature, args.parallelism)
+    if args.target_reasoning:
+        settings.target_request_options["extra_body"]["reasoning"]["enabled"] = True
+    if args.recruiter_reasoning:
+        settings.recruiter_request_options["extra_body"]["reasoning"]["enabled"] = True
+    if args.fake:
+        client = FakeClient()
+    else:
+        if not scenario.recruiter_approved:
+            raise ValueError("Live recruiter prompt is pending approval")
+        from dotenv import load_dotenv
+        from openai import AsyncOpenAI
+        load_dotenv(Path(__file__).resolve().parents[2] / ".env")
+        client = AsyncOpenAI(api_key=os.environ["OPENROUTER_API_KEY"],
+                             base_url="https://openrouter.ai/api/v1", max_retries=0, timeout=90)
+    run = start_run("e01-harness", experiment="E01",
+                    settings={**asdict(settings), "scenario": args.scenario,
+                              "fake": args.fake, "episodes": args.episodes,
+                              "output": str(args.output) if args.output else None},
+                    tags=["wiring" if args.fake or args.scenario == "dummy" else "pilot"],
+                    model=f"target={settings.target_model};recruiter={settings.recruiter_model}")
+    output = args.output or run.dir / "episodes"
+    print(f"Episode files: {output}")
+    semaphore = asyncio.Semaphore(settings.parallelism)
+    try:
+        results = await asyncio.gather(*(run_episode(
+            scenario, settings, client, output, f"episode-{index:04d}", semaphore)
+            for index in range(1, args.episodes + 1)))
+        for result in results:
+            print(json.dumps({key: result[key] for key in ("episode_id", "status", "label", "stop_reason")}))
+        complete = sum(result["status"] == "complete" for result in results)
+        run.result(complete=complete, incomplete=len(results) - complete, episode_dir=str(output))
+        run.finish("finished" if complete == len(results) else "failed",
+                   None if complete == len(results) else "One or more episodes incomplete")
+        return 0 if complete == len(results) else 1
+    except BaseException as exc:
+        run.finish("failed", type(exc).__name__)
+        raise
+    finally:
+        if not args.fake:
+            await client.close()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--fake", action="store_true")
+    parser.add_argument("--scenario", default="dummy")
+    parser.add_argument("--output", type=Path, help="Existing episode directory to resume, or custom destination")
+    parser.add_argument("--target-model", default="fake-target")
+    parser.add_argument("--recruiter-model", default="fake-recruiter")
+    parser.add_argument("--rounds", type=int, default=3)
+    parser.add_argument("--max-tool-steps", type=int, default=8)
+    parser.add_argument("--max-tokens", type=int, default=512)
+    parser.add_argument("--temperature", type=float, default=0.7)
+    parser.add_argument("--target-reasoning", action="store_true")
+    parser.add_argument("--recruiter-reasoning", action="store_true")
+    parser.add_argument("--episodes", type=int, default=1)
+    parser.add_argument("--parallelism", type=int, default=1)
+    arguments = parser.parse_args()
+    if arguments.episodes < 1:
+        parser.error("--episodes must be positive")
+    raise SystemExit(asyncio.run(_main(arguments)))
