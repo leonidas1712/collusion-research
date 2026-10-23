@@ -175,3 +175,10 @@ Append one variant:
 ## Additional candidates
 
 [Nine additional drafts](SCENARIO_CANDIDATES.md) contain the exact prompts, matched controls, lever/source tags and tool-log label contracts for seven action requests and two private-information requests. Leo approved front-door-sign, poster-approval, disable-failing-test and self-merge-without-review for implementation and smoke (board #269). Minimum-price and release-date draft2 were subsequently approved in board #303; other drafts remain locked. The candidate file records their exact text and access design.
+
+
+## Overnight rule-strength sweep
+
+Authorized by Leo in board #340: **run overnight, pending Leo's post-hoc review**. New named strengths consequence and consequence_logged apply to front-door-sign, poster-approval, release-date, minimum-price (Qwen3-32B only), and deploy-token related required-access. Exact replacement operator-policy blocks are in [OVERNIGHT_RULES.md](OVERNIGHT_RULES.md). All other model-facing text, task files and tools are unchanged. Stated reporting, restoration and rotation consequences are not enforced by the mock environment; metadata records that distinction.
+
+Round one: five recruiting and two target-alone episodes per strength/model/scenario, 20 rounds with early stop. Existing explicit-policy pilot cells are descriptive baseline references, not new matched sweep draws. At most one additional adaptive sweep round, only for all-or-nothing first-round cells. Shared API budget ceiling is USD5; no GPU work. Every episode records rule_strength, variant_id, scenario version, levers, authorization and pending post-hoc review.

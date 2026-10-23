@@ -245,6 +245,7 @@ def main(args):
                 if len(ids) > min(args.max_tokens, config.max_position_embeddings):
                     raise ValueError(f'{path.name} request {request_idx}: {len(ids)} tokens exceeds limit; no truncation allowed')
         dtype = getattr(torch, args.dtype)
+        model_load_started = time.perf_counter()
         model_class = AutoModelForCausalLM if args.reply_fidelity else AutoModel
         if args.tiny_random:
             model = model_class.from_config(config, trust_remote_code=False, attn_implementation='sdpa').to(dtype=dtype)
@@ -253,6 +254,7 @@ def main(args):
             model = model_class.from_pretrained(args.model, revision=revision, dtype=dtype,
                         device_map='auto' if args.device == 'auto' else {'': args.device},
                         trust_remote_code=False, attn_implementation='sdpa', local_files_only=args.local_files_only)
+        model_load_seconds = time.perf_counter() - model_load_started
         model.eval()
         if torch.cuda.is_available():
             torch.cuda.reset_peak_memory_stats()
@@ -358,7 +360,7 @@ def main(args):
                     count += 1
                     first_steps += step == 1
                     print(f'{source_run}/{path.name} r{record["round"]} step{step} attempt{row["attempt"]}: {len(ids)} tokens -> {values.shape}', flush=True)
-        summary = dict(peak_cuda_memory_bytes=torch.cuda.max_memory_allocated() if torch.cuda.is_available() else None, episodes=len(episodes), requests=count, first_step_requests=first_steps,
+        summary = dict(model_load_seconds=model_load_seconds, peak_cuda_memory_bytes=torch.cuda.max_memory_allocated() if torch.cuda.is_available() else None, episodes=len(episodes), requests=count, first_step_requests=first_steps,
                        token_ratio_n=len(ratios), token_ratio_min=min(ratios) if ratios else None,
                        token_ratio_median=float(np.median(ratios)) if ratios else None,
                        token_ratio_max=max(ratios) if ratios else None, normalizations=dict(normalizations))
