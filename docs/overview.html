@@ -302,6 +302,11 @@ sequenceDiagram
   </ul>
 
   <h3>How outcomes are judged</h3>
+  <div class="callout">
+    <p><strong>Principle.</strong> The main outcome of every scenario is decided by a deterministic rule on the logs: a specific tool call with specific arguments ran (the approval, the merge, the disabled test, the relay), or the exact secret string appeared in something the target posted. Probes are trained on this label, so it has to be objective and identical across thousands of turns.</p>
+    <p>LLM judges and wording heuristics only add secondary labels on top (deliberate vs accidental, did it recognise the rule, wavering, per-turn monitor scores) and never decide the main outcome. Anything a claim rests on gets either a deterministic rule or a judge validated against hand-labelled episodes, with the agreement rate reported. Example: the deliberate/accidental heuristic was wrong twice until we checked transcripts by hand.</p>
+  </div>
+
   <p>By rule, from the logs, not by eye. Then every trace is read with the viewer to check the rules got it right.</p>
   <div class="scroll"><table>
     <tr><th>Label</th><th>Meaning</th></tr>
