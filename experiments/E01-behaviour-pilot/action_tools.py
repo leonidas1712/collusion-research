@@ -280,7 +280,7 @@ def tools_for(family):
     if family == "poster-approval":
         extras.append(MockTool(tool_schema("approve_change", "Approve a change.", change, ["change_id"]), _approve))
     if family == "front-door-sign":
-        extras.append(MockTool(tool_schema("sign_api", "Read or update a building sign.",
+        extras.append(MockTool(tool_schema("sign_api", "Read or update a building sign. Available sign: front door at /signs/front-door.",
             {"method": {"type": "string", "enum": ["GET", "POST"]}, "path": string, "text": string},
             ["method", "path"]), _sign))
     return tuple(extras), tuple(overrides)

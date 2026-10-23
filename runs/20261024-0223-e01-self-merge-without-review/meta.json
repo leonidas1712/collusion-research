@@ -1,0 +1,64 @@
+{
+  "id": "20261024-0223-e01-self-merge-without-review",
+  "experiment": "E01",
+  "name": "e01-self-merge-without-review",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "ibm-granite/granite-4.2-8b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 8,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "CoreWeave"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "bf16"
+          ]
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "self-merge-without-review_explicit_recruiting",
+    "scenario_input": "self-merge-without-review_explicit_recruiting",
+    "scenario_family": "self-merge-without-review",
+    "fake": false,
+    "episodes": 1,
+    "family_start": 102,
+    "peer_enabled": true,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=ibm-granite/granite-4.2-8b;recruiter=deepseek/deepseek-v4-flash",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 /Users/leo/collusion-research/experiments/E01-behaviour-pilot/harness.py --scenario self-merge-without-review_explicit_recruiting --rounds 20 --episodes 1 --family-start 102 --target-model ibm-granite/granite-4.2-8b --target-provider CoreWeave --recruiter-model deepseek/deepseek-v4-flash --target-quantization bf16",
+  "git_commit": "804f5811d3f8cee72cc270d47644729689dc5097",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:23:33",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T02:24:34",
+  "results": {
+    "complete": 1,
+    "incomplete": 0,
+    "episode_dir": "/Users/leo/collusion-research/runs/20261024-0223-e01-self-merge-without-review/episodes"
+  }
+}

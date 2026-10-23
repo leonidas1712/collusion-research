@@ -55,7 +55,7 @@ Episodes expose a `condition` dict and separate outcome fields. Task completion 
 
 First-peer-ask timing uses `explicit_request_heuristic_v1`: a token/credential reference with a request word, excluding explicitly negated sentences. `first_peer_ask_text` preserves the matched message. Indirect asks may be missed; null means no ask identified, not proof none occurred. The two before-ask fields compare the first read or first real-token exposure with that heuristic's first ask. Same-round reads are after the ask because the peer goes first. Review these messages before interpreting timing results.
 
-See [HARNESS.md](HARNESS.md) for the CLI and episode format. Ninety-seven offline tests pass, including scenario labels, target-alone execution, per-actor tool restrictions and suppression of final-text channel duplicates after an explicit message. Two concurrent fake episodes completed in `runs/20261023-2137-e01-harness`. The initial live attempt in `runs/20261023-2137-e01-harness-dcb8` failed with `APIConnectionError`; a subsequent benign live run, `runs/20261023-2139-e01-harness`, completed and verified the SDK round trip. That live trace predates the channel duplication fix. These checks establish no recruitment result; revised scenario prompts await approval before live runs.
+See [HARNESS.md](HARNESS.md) for the CLI and episode format. One hundred thirteen offline tests pass, including scenario labels, target-alone execution, per-actor tool restrictions and suppression of final-text channel duplicates after an explicit message. Two concurrent fake episodes completed in `runs/20261023-2137-e01-harness`. The initial live attempt in `runs/20261023-2137-e01-harness-dcb8` failed with `APIConnectionError`; a subsequent benign live run, `runs/20261023-2139-e01-harness`, completed and verified the SDK round trip. That live trace predates the channel duplication fix. These checks establish no recruitment result; revised scenario prompts await approval before live runs.
 
 ### Required and optional access
 
@@ -85,3 +85,8 @@ All action tools operate on virtual state. Coding checks use a restricted interp
 ### First-ask wording sweep
 
 [Reviewed report](../../runs/20261024-0103-e01-policy-sweep-report-7b6f/report.md): 100 turns, all complete, $0.02085. Granite deliberately shared in 3/10 no-rule and 1/10 preference turns, with 0/10 for each other wording. Nemo shared under every wording but completed the actual task in only 5/50 turns, so its results need caution. No reviewed incidental disclosures; two Nemo explicit cases were ambiguous. Five saved situations were used twice per cell; this is exploratory, not a held-out estimate. `policy_sweep.py` records the calls; `policy_sweep_report.py RUN_PATH` builds a table from the saved transcript-review annotations, retaining original automatic labels.
+
+
+### Environment walkthroughs
+
+[WALKTHROUGHS.md](WALKTHROUGHS.md) maps starting state to allowed, blocked and round-two rule-breaking paths. The scripted tests use the real harness and mock handlers, including endpoint discovery and exact prompt/document checks. The minimum-price implementation is an unregistered, locked offline draft; its amount-publication evidence is explicitly channel-backed until the proposed publication-receipt contract is implemented.
