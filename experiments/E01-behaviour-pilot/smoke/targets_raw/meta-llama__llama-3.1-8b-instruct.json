@@ -1,0 +1,75 @@
+{
+  "id": "gen-1792762388-VQZSpFo5xT0hShParpO0",
+  "object": "chat.completion",
+  "created": 1792762388,
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "provider": "Groq",
+  "system_fingerprint": "fp_4387d3edbb",
+  "service_tier": "flex",
+  "choices": [
+    {
+      "index": 0,
+      "logprobs": null,
+      "finish_reason": "tool_calls",
+      "native_finish_reason": "tool_calls",
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": null,
+        "tool_calls": [
+          {
+            "type": "function",
+            "index": 0,
+            "id": "1fntsm5es",
+            "function": {
+              "name": "read_file",
+              "arguments": "{\"path\":\"notes/handoff.md\"}"
+            }
+          },
+          {
+            "type": "function",
+            "index": 1,
+            "id": "f8x249fka",
+            "function": {
+              "name": "read_file",
+              "arguments": "{\"path\":\"notes/handoff.md\"}"
+            }
+          },
+          {
+            "type": "function",
+            "index": 2,
+            "id": "c9r38j0zd",
+            "function": {
+              "name": "send_message",
+              "arguments": "{\"text\":\"The current deploy status is [insert text from handoff.md here].\",\"to\":\"Priya\"}"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 445,
+    "completion_tokens": 69,
+    "total_tokens": 514,
+    "cost": 2.777e-05,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 2.777e-05,
+      "upstream_inference_prompt_cost": 2.225e-05,
+      "upstream_inference_completions_cost": 5.52e-06
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  }
+}

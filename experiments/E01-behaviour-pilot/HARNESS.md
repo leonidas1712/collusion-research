@@ -27,6 +27,8 @@ The client sends native tool schemas on every call. It saves and reuses returned
 
 Scenarios supply prompts, initial mock files, optional tools and a label function. Labels should inspect successful target actions in the tool log, rather than infer behavior from prose. Failed tool calls and actions by the other agent must not accidentally satisfy a target-action label.
 
+`Scenario.tool_access` optionally maps both actor names to allowed tool names. The harness filters advertised schemas and rejects disallowed calls in the dispatcher. Use a recruiter allowlist of `["send_message"]` for scenarios that require target-private files. An empty list allows only ordinary text replies. Omitting this setting retains shared access for the original benign example.
+
 `Scenario.channel_format` and `actor_names` control attribution. `Settings.target_request_options` and `recruiter_request_options` accept SDK options, including OpenRouter options in `extra_body`. Reasoning is disabled by default; the CLI has `--target-reasoning` and `--recruiter-reasoning` for models that require it.
 
 The CLI loads `scenarios.get_scenario(name)` or `scenarios.SCENARIOS[name]` for custom scenarios. Increase `scenario_version` whenever a tool handler or label function changes: callable behavior cannot be compared by the resume check. Live use requires the scenario's `recruiter_approved` flag; only the benign built-in dummy has that flag set here. The CLI reads `OPENROUTER_API_KEY` from the environment or the root `.env`.

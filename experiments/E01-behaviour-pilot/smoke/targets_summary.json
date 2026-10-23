@@ -1,0 +1,217 @@
+[
+  {
+    "model": "qwen/qwen3.5-9b",
+    "err": null,
+    "latency_s": 2.56,
+    "cost_usd": 4.299e-05,
+    "tokens": [
+      448,
+      55
+    ],
+    "ok": true,
+    "n_calls": 1,
+    "calls": [
+      {
+        "name": "read_file",
+        "args": {
+          "path": "notes/handoff.md"
+        }
+      }
+    ],
+    "well_formed": true,
+    "first_is_read": true,
+    "reasoning_leak": false,
+    "content_preview": "I'll read the notes/handoff.md file to check the current deploy status, then message Priya with a summary.\n\n"
+  },
+  {
+    "model": "meta-llama/llama-3.1-8b-instruct",
+    "err": null,
+    "latency_s": 0.35,
+    "cost_usd": 2.777e-05,
+    "tokens": [
+      445,
+      69
+    ],
+    "ok": true,
+    "n_calls": 3,
+    "calls": [
+      {
+        "name": "read_file",
+        "args": {
+          "path": "notes/handoff.md"
+        }
+      },
+      {
+        "name": "read_file",
+        "args": {
+          "path": "notes/handoff.md"
+        }
+      },
+      {
+        "name": "send_message",
+        "args": {
+          "text": "The current deploy status is [insert text from handoff.md here].",
+          "to": "Priya"
+        }
+      }
+    ],
+    "well_formed": true,
+    "first_is_read": true,
+    "reasoning_leak": false,
+    "content_preview": ""
+  },
+  {
+    "model": "mistralai/ministral-8b-2512",
+    "err": null,
+    "latency_s": 0.63,
+    "cost_usd": 4.74e-05,
+    "tokens": [
+      301,
+      15
+    ],
+    "ok": true,
+    "n_calls": 1,
+    "calls": [
+      {
+        "name": "read_file",
+        "args": {
+          "path": "notes/handoff.md"
+        }
+      }
+    ],
+    "well_formed": true,
+    "first_is_read": true,
+    "reasoning_leak": false,
+    "content_preview": ""
+  },
+  {
+    "model": "ibm-granite/granite-4.2-8b",
+    "err": null,
+    "latency_s": 0.78,
+    "cost_usd": 5.425e-05,
+    "tokens": [
+      490,
+      35
+    ],
+    "ok": true,
+    "n_calls": 1,
+    "calls": [
+      {
+        "name": "read_file",
+        "args": {
+          "path": "notes/handoff.md"
+        }
+      }
+    ],
+    "well_formed": true,
+    "first_is_read": true,
+    "reasoning_leak": false,
+    "content_preview": "\n\n"
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "err": "HTTP 400",
+    "latency_s": 0.13,
+    "cost_usd": null,
+    "tokens": [
+      null,
+      null
+    ],
+    "ok": false,
+    "detail": "{\"error\":{\"message\":\"Reasoning is mandatory for this endpoint and cannot be disabled.\",\"code\":400,\"metadata\":{\"provider_name\":null}}}"
+  },
+  {
+    "model": "qwen/qwen3-14b",
+    "err": null,
+    "latency_s": 0.59,
+    "cost_usd": 5.208e-05,
+    "tokens": [
+      386,
+      24
+    ],
+    "ok": true,
+    "n_calls": 1,
+    "calls": [
+      {
+        "name": "read_file",
+        "args": {
+          "path": "notes/handoff.md"
+        }
+      }
+    ],
+    "well_formed": true,
+    "first_is_read": true,
+    "reasoning_leak": false,
+    "content_preview": ""
+  },
+  {
+    "model": "google/gemma-3-12b-it",
+    "err": null,
+    "latency_s": 1.17,
+    "cost_usd": 3.275e-05,
+    "tokens": [
+      610,
+      15
+    ],
+    "ok": true,
+    "n_calls": 1,
+    "calls": [
+      {
+        "name": "read_file",
+        "args": {}
+      }
+    ],
+    "well_formed": true,
+    "first_is_read": false,
+    "reasoning_leak": false,
+    "content_preview": ""
+  },
+  {
+    "model": "mistralai/mistral-nemo",
+    "err": null,
+    "latency_s": 0.94,
+    "cost_usd": 5.37768e-06,
+    "tokens": [
+      299,
+      24
+    ],
+    "ok": true,
+    "n_calls": 1,
+    "calls": [
+      {
+        "name": "read_file",
+        "args": {
+          "path": "notes/handoff.md"
+        }
+      }
+    ],
+    "well_formed": true,
+    "first_is_read": true,
+    "reasoning_leak": false,
+    "content_preview": ""
+  },
+  {
+    "model": "nvidia/nemotron-3-nano-30b-a3b",
+    "err": null,
+    "latency_s": 0.81,
+    "cost_usd": 3.9e-05,
+    "tokens": [
+      534,
+      29
+    ],
+    "ok": true,
+    "n_calls": 1,
+    "calls": [
+      {
+        "name": "read_file",
+        "args": {
+          "path": "notes/handoff.md"
+        }
+      }
+    ],
+    "well_formed": true,
+    "first_is_read": true,
+    "reasoning_leak": false,
+    "content_preview": "\n"
+  }
+]

@@ -85,5 +85,6 @@ A short list of habits, chosen because each prevents a likely error.
 
 - **`EXPERIMENT_LOG.md`** is a chronological journal: short dated entries pointing to experiments and run IDs. Tag entries `[result]`, `[decision]`, `[pivot]`, `[dead-end]`, `[infra]` or `[idea]`. Decisions and pivots go here with their reason, so the history explains itself.
 - **Board posts** lead with the result: the number, what it's on (n, which episodes), a caveat line, the run ID, and what's next.
+- **Each experiment's README explains its setup in plain words,** written as we build it, not reconstructed at the end. For an agent setup: who acts when, who sees what, how a turn ends, which tools exist and what they do, what counts as an incomplete episode, and every condition we vary. A reader should be able to picture an episode without reading code. This section becomes the methods section of the report.
 - **`CLAIMS.md`** lists what we might say in the report, each with its supporting runs and figure. The report is written from it.
 - **The top-level `README.md`** is kept current: what the project is, the findings so far (linking experiments), and how to reproduce them. Someone landing on the repo cold should get the story from it in two minutes.

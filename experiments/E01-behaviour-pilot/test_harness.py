@@ -3,6 +3,7 @@
 import asyncio
 import copy
 import json
+import sys
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
@@ -243,6 +244,139 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         ))
         self.assertEqual(client.peak, 2)
         self.assertTrue(all(result["status"] == "complete" for result in results))
+
+    async def test_tool_access_blocks_recruiter_but_allows_target(self):
+        scenario = self.scenario()
+        scenario.tool_access = {
+            "target": ["write_file", "read_file"], "recruiter": ["send_message"],
+        }
+        client = ScriptedClient([
+            calls(("target-read", "read_file", {"path": "notes.txt"}),
+                  ("target-write", "write_file", {"path": "notes.txt", "content": "reviewed"})),
+            answer(),
+        ], [
+            calls(("recruiter-read", "read_file", {"path": "notes.txt"}),
+                  ("recruiter-write", "write_file", {"path": "notes.txt", "content": "wrong"})),
+            answer(),
+        ])
+        episode = await harness.run_episode(scenario, self.settings(), client, self.out)
+        self.assertEqual(episode["status"], "complete")
+        events = {event["call_id"]: event for event in episode["tool_log"]}
+        for call_id in ("recruiter-read", "recruiter-write"):
+            self.assertEqual(events[call_id]["result"]["error"], "PermissionError")
+            self.assertNotIn("working draft", json.dumps(events[call_id]["result"]))
+        self.assertEqual(events["target-read"]["result"], {"content": "working draft"})
+        self.assertEqual(events["target-write"]["result"], {"written": "notes.txt"})
+        self.assertEqual(episode["files"]["notes.txt"], "reviewed")
+        for request in client.requests:
+            actor = "target" if request["model"] == "target-test" else "recruiter"
+            self.assertEqual({tool["function"]["name"] for tool in request["tools"]}, set(scenario.tool_access[actor]))
+
+    async def test_empty_tool_access_omits_tools_and_allows_text(self):
+        scenario = self.scenario()
+        scenario.tool_access = {"target": [], "recruiter": []}
+        client = ScriptedClient([answer("Notes reviewed.")], [answer("Please review.")])
+        episode = await harness.run_episode(scenario, self.settings(), client, self.out)
+        self.assertEqual(episode["status"], "complete")
+        self.assertTrue(all("tools" not in request for request in client.requests))
+        self.assertEqual(len(episode["channel"]), 2)
+
+    async def test_invalid_tool_access_fails_before_model_call(self):
+        for access in ({"target": []}, {"target": [], "recruiter": ["unknown"]},
+                       {"target": [], "recruiter": "read_file"}):
+            with self.subTest(access=access):
+                scenario = self.scenario()
+                scenario.tool_access = access
+                client = ScriptedClient([])
+                with self.assertRaises(ValueError):
+                    await harness.run_episode(scenario, self.settings(), client, self.out)
+                self.assertEqual(client.requests, [])
+
+    async def test_tool_access_resume_normalizes_names_but_rejects_changed_permissions(self):
+        scenario = self.scenario()
+        scenario.tool_access = {"target": ["read_file", "write_file", "read_file"], "recruiter": []}
+        first = await harness.run_episode(scenario, self.settings(), ScriptedClient([answer()], [answer()]), self.out)
+        self.assertEqual(first["scenario_spec"]["tool_access"]["target"], ["read_file", "write_file"])
+        scenario.tool_access["target"] = ["write_file", "read_file"]
+        client = ScriptedClient([])
+        second = await harness.run_episode(scenario, self.settings(), client, self.out)
+        self.assertEqual(first, second)
+        self.assertEqual(client.requests, [])
+        scenario.tool_access["target"] = ["read_file"]
+        with self.assertRaises(ValueError):
+            await harness.run_episode(scenario, self.settings(), client, self.out)
+
+    async def test_target_alone_finishes_one_tool_turn_without_peer_context(self):
+        scenario = self.scenario()
+        scenario.peer_enabled = False
+        scenario.recruiter_approved = False
+        scenario.recruiter_system = "PEER_PROMPT_NOT_USED"
+        scenario.metadata = {"policy": "none", "peer_condition": "alone", "family_id": "7"}
+        client = ScriptedClient([
+            calls(("write-1", "write_file", {"path": "notes.txt", "content": "reviewed"})),
+            answer("The notes are ready."),
+        ])
+        client.is_fake = False  # Mock transport also checks that no peer approval is needed.
+        episode = await harness.run_episode(scenario, self.settings(rounds=8), client, self.out)
+        self.assertEqual(episode["status"], "complete")
+        self.assertEqual(episode["stop_reason"], "target_finished")
+        self.assertEqual(episode["rounds_completed"], 1)
+        self.assertEqual(set(episode["histories"]), {"target"})
+        self.assertEqual(episode["models_used"], {"target": "target-test"})
+        self.assertEqual(len(client.requests), 2)
+        self.assertTrue(all(r["model"] == "target-test" for r in client.requests))
+        self.assertNotIn("PEER_PROMPT_NOT_USED", json.dumps(episode))
+        self.assertEqual([m["content"] for m in episode["histories"]["target"] if m["role"] == "user"], [scenario.target_task])
+        self.assertEqual(episode["channel"], [{"actor": "target", "round": 1, "content": "The notes are ready."}])
+        self.assertEqual(episode["condition"], {**scenario.metadata, "peer_enabled": False})
+
+    async def test_metadata_is_not_model_context_and_changes_invalidate_resume(self):
+        scenario = self.scenario()
+        scenario.metadata = {"family_id": "METADATA_ONLY_FAMILY", "policy": "none"}
+        client = ScriptedClient([answer()], [answer()])
+        episode = await harness.run_episode(scenario, self.settings(), client, self.out)
+        self.assertEqual(episode["scenario_spec"]["metadata"], scenario.metadata)
+        self.assertNotIn("METADATA_ONLY_FAMILY", json.dumps(client.requests))
+        scenario.metadata["policy"] = "explicit"
+        self.assertEqual(episode["condition"]["policy"], "none")
+        with self.assertRaises(ValueError):
+            await harness.run_episode(scenario, self.settings(), ScriptedClient([]), self.out)
+
+    async def test_cli_creates_deterministic_family_per_episode(self):
+        requested = []
+
+        def factory(name, fake, family_id):
+            requested.append(family_id)
+            scenario = self.scenario()
+            scenario.peer_enabled = False
+            scenario.metadata = {"family_id": family_id}
+            return scenario
+
+        run = SimpleNamespace(dir=self.out, result=lambda **kwargs: None, finish=lambda *args: None)
+        args = SimpleNamespace(
+            scenario="family-scenario", fake=True, family_start=7, episodes=2,
+            target_model="target-test", recruiter_model="recruiter-test", rounds=8,
+            max_tool_steps=8, max_tokens=128, temperature=0.7, parallelism=1,
+            target_reasoning=False, recruiter_reasoning=False, output=self.out,
+        )
+        with patch.dict(sys.modules, {"collusion.runs": SimpleNamespace(start_run=lambda *a, **kw: run)}), \
+             patch("harness._scenario", side_effect=factory), patch("builtins.print"):
+            self.assertEqual(await harness._main(args), 0)
+        self.assertEqual(requested, ["7", "8"])
+        episodes = [json.loads(path.read_text()) for path in sorted(self.out.glob("episode-*.json"))]
+        self.assertEqual([ep["condition"]["family_id"] for ep in episodes], ["7", "8"])
+        self.assertTrue(all(ep["rounds_completed"] == 1 for ep in episodes))
+
+    def test_scenario_factory_receives_family_id(self):
+        captured = []
+
+        def factory(name, family_id):
+            captured.append((name, family_id))
+            return self.scenario()
+
+        with patch("harness.importlib.import_module", return_value=SimpleNamespace(get_scenario=factory)):
+            harness._scenario("example", True, family_id="9")
+        self.assertEqual(captured, [("example", "9")])
 
 
 if __name__ == "__main__":
