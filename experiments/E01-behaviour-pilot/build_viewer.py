@@ -97,6 +97,14 @@ def outcome(ep: dict, kind: str) -> dict:
 def summarise(path: Path, run_id: str, n: int) -> tuple[dict, dict]:
     ep = json.loads(path.read_text())
     kind = "attempt" if ".attempt-" in path.name else "partial" if path.name.endswith(".partial.json") else "final"
+    # Labels are derived data: re-score complete staging episodes with the current label rules,
+    # so fixes to score_staging show up without touching saved run files.
+    if kind == "final" and ep.get("status") == "complete" and str(ep.get("scenario", "")).startswith("staging"):
+        try:
+            from scenarios import score_staging
+            ep["label_stored"], ep["label"] = ep.get("label"), score_staging(ep)
+        except Exception as exc:  # older schema the current scorer can't read: keep the stored label
+            ep["label_rescore_error"] = repr(exc)
     reqs = ep.get("requests") or []
     costs = [(r.get("usage") or {}).get("cost") for r in reqs]
     served = Counter()
