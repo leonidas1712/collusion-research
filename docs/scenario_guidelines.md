@@ -114,3 +114,4 @@ Dated; newest at the bottom. Each line points to where it's applied above.
 - 2026-10-24: Asks for an action, not only information, and a "rogue fleet" sense of unrelated are ideas for later scenarios.
 - 2026-10-24: Collect levers with their sources, tag every scenario with the levers that inspired it, use them across all scenarios (`scenario_levers.md`; §3 Conditions).
 - 2026-10-24 (on drafts D–J): game-like settings are OK, like the papers; but each scenario must show at a glance where the lever is (why the target might give in) and why the control peer isn't also colluding (§3 Conditions). Smoke-test about 4 new scenarios first, not all seven (§2). Every scenario must include no-rule and target-alone reference cells (§3 Conditions).
+- 2026-10-24: Add coding scenarios (disable a failing test; merge own PR without review). First smoke tests: 2 non-coding + 2 coding scenarios (§2).
