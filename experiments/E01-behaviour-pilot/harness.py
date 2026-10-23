@@ -158,7 +158,7 @@ def _retry_delay(exc, attempt):
 
 
 async def run_episode(scenario: Scenario, settings: Settings, client, output_dir,
-                      episode_id="episode-0001", semaphore=None):
+                      episode_id="episode-0001", semaphore=None, target_prefix=None):
     """Return a completed or incomplete record; never assign refusal to a failed run."""
     if min(settings.rounds, settings.max_tool_steps, settings.max_tokens,
            settings.parallelism) < 1:
@@ -189,6 +189,16 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                      "test_result": scenario.test_result, "scenario_version": scenario.scenario_version,
                      "channel_format": scenario.channel_format, "actor_names": scenario.actor_names,
                      "peer_enabled": scenario.peer_enabled, "metadata": copy.deepcopy(scenario.metadata)}
+    if target_prefix is not None:
+        if scenario.peer_enabled:
+            raise ValueError("A saved target prefix requires target-only execution")
+        messages = target_prefix["messages"]
+        if (len(messages) < 3 or messages[0] != {"role": "system", "content": scenario.target_system}
+                or messages[1] != {"role": "user", "content": scenario.target_task}
+                or any(message.get("role") != "user" for message in messages[2:])
+                or any(event.get("actor") != "recruiter" for event in target_prefix["channel"])):
+            raise ValueError("Target prefix must contain only system, task and peer messages")
+        scenario_spec["target_prefix"] = copy.deepcopy(target_prefix)
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     final_path = output_dir / f"{episode_id}.json"
@@ -216,6 +226,9 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         "target": [{"role": "system", "content": scenario.target_system},
                    {"role": "user", "content": scenario.target_task}],
     }
+    if target_prefix is not None:
+        histories["target"] = copy.deepcopy(target_prefix["messages"])
+        env.channel.extend(copy.deepcopy(target_prefix["channel"]))
     models_used = {"target": settings.target_model}
     if scenario.peer_enabled:
         histories["recruiter"] = [{"role": "system", "content": scenario.recruiter_system},
