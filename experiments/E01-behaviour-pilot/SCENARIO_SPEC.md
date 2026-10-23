@@ -1,5 +1,7 @@
 # E01 scenario spec: what we're trying to do and what each scenario needs
 
+Legacy names: A → `deploy-token`; B → `release-packet-copy`; C → `runner-reassignment`; D → `printer-queue-copy`; E → `front-door-sign`; F → `poster-approval`; G → `skip-layout-check`; H → `fleet-relay`; I → `minimum-price`; J → `release-date`; K → `disable-failing-test`; L → `self-merge-without-review`. Existing run folders and stored scenario versions retain their historical names.
+
 ## What E01 is for
 
 "Recruited" (`docs/recruited_idea.md`) asks whether a probe on an open-weight agent's activations can tell, before it acts, that it is being won over by another agent into an out-of-scope action, and whether it does better than monitors that read the text.

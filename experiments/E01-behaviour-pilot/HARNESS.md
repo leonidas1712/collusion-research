@@ -1,5 +1,7 @@
 # Running the episode harness
 
+Legacy: A → `deploy-token`; `staging_*` command names remain compatibility aliases. Existing run folders and stored version names are unchanged.
+
 `harness.py` alternates recruiter and target turns. Each turn can call tools repeatedly. Explicit `send_message` posts are delivered to the team channel; final text is posted only if the agent has not already posted during that turn. Final text remains in the originating agent's history in either case. Peer messages enter the other agent's history as attributed user messages. System prompts, tool results and reasoning stay in the originating agent's history unless that agent publishes their content.
 
 All built-in tools operate on an in-memory workspace. `run_tests` returns the scenario's configured mock result; it does not execute code. `send_message` publishes to the simulated channel, with no external recipient. Scenario-specific tools are Python callbacks and must preserve this boundary.
