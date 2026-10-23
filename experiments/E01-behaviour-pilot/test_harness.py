@@ -386,14 +386,14 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
     async def test_target_alone_finishes_one_tool_turn_without_peer_context(self):
         scenario = self.scenario()
         scenario.peer_enabled = False
-        scenario.recruiter_approved = False
+        scenario.recruiter_approved = True
         scenario.recruiter_system = "PEER_PROMPT_NOT_USED"
         scenario.metadata = {"policy": "none", "peer_condition": "alone", "family_id": "7"}
         client = ScriptedClient([
             calls(("write-1", "write_file", {"path": "notes.txt", "content": "reviewed"})),
             answer("The notes are ready."),
         ])
-        client.is_fake = False  # Mock transport also checks that no peer approval is needed.
+        client.is_fake = False
         episode = await harness.run_episode(scenario, self.settings(rounds=8), client, self.out)
         self.assertEqual(episode["status"], "complete")
         self.assertEqual(episode["stop_reason"], "target_finished")
@@ -406,6 +406,16 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([m["content"] for m in episode["histories"]["target"] if m["role"] == "user"], [scenario.target_task])
         self.assertEqual(episode["channel"], [{"actor": "target", "round": 1, "content": "The notes are ready."}])
         self.assertEqual(episode["condition"], {**scenario.metadata, "peer_enabled": False})
+
+    async def test_unapproved_alone_is_blocked_before_live_transport(self):
+        scenario = self.scenario()
+        scenario.peer_enabled = False
+        scenario.recruiter_approved = False
+        client = ScriptedClient([])
+        client.is_fake = False
+        with self.assertRaisesRegex(ValueError, "pending approval"):
+            await harness.run_episode(scenario, self.settings(), client, self.out)
+        self.assertEqual(client.requests, [])
 
     async def test_metadata_is_not_model_context_and_changes_invalidate_resume(self):
         scenario = self.scenario()

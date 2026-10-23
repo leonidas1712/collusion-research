@@ -1,0 +1,29 @@
+[run] 20261024-0219-e02-activation-replay-5fc4 -> runs/20261024-0219-e02-activation-replay-5fc4
+W1024 02:19:57.687000 22060 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/replay.py", line 322, in <module>
+    p.add_argument('--seed', type=int, default=0)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/replay.py", line 243, in main
+    rendered, ids, changes, thinking = render(tokenizer, request, args.thinking)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/replay.py", line 109, in render
+    rendered = tokenizer.apply_chat_template(messages, tokenize=False, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/lib/python3.11/site-packages/transformers/tokenization_utils_base.py", line 3145, in apply_chat_template
+    rendered_chat, generation_indices = render_jinja_template(
+                                        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/lib/python3.11/site-packages/transformers/utils/chat_template_utils.py", line 690, in render_jinja_template
+    rendered_chat = compiled_template.render(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/lib/python3.11/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/lib/python3.11/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "<template>", line 18, in top-level template code
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/lib/python3.11/site-packages/jinja2/sandbox.py", line 401, in call
+    return __context.call(__obj, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/lib/python3.11/site-packages/transformers/utils/chat_template_utils.py", line 588, in raise_exception
+    raise jinja2.exceptions.TemplateError(message)
+jinja2.exceptions.TemplateError: After the optional system message, conversation roles must alternate user/assistant/user/assistant/...

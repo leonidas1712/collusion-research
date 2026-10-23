@@ -244,6 +244,11 @@ def main(args):
                     limit = min(args.max_tokens, config.max_position_embeddings)
                     if len(ids) > limit:
                         raise ValueError(f'{path.name} request {request_idx}: {len(ids)} tokens exceeds {limit}; no truncation allowed')
+                    current_template = tokenizer.get_chat_template(tools=request.get('tools'))
+                    template_hash = digest(current_template.encode())
+                    template_file = run.dir / f'template-{template_hash}.jinja'
+                    if not template_file.exists():
+                        template_file.write_text(current_template)
                     values = capture(model, layers, ids, input_device)
                     key = f'call-{count:06d}'
                     relative = f'activations/{key}.npz'
@@ -274,7 +279,7 @@ def main(args):
                                    if label.get('first_action_round') is not None else True if label.get('objective_success') is False else None),
                                first_step=step == 1, condition=episode.get('condition',{}), label=label,
                                artifact=relative, prompt_file=str(prompt_path.relative_to(run.dir)),
-                               prompt_sha256=digest(rendered.encode()), input_ids_sha256=digest(ids),
+                               template_sha256=template_hash, prompt_sha256=digest(rendered.encode()), input_ids_sha256=digest(ids),
                                request_sha256=digest(request), normalization=changes, enable_thinking=thinking,
                                objective_success=label.get('objective_success'), first_action_round=label.get('first_action_round'),
                                disclosure_kind=label.get('disclosure_kind'), eligible_resisted=label.get('eligible_resisted'),

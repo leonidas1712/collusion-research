@@ -1,0 +1,52 @@
+{
+  "id": "20261024-0220-e02-activation-replay",
+  "experiment": "E02",
+  "name": "e02-activation-replay",
+  "tags": [
+    "replay"
+  ],
+  "settings": {
+    "runs": [
+      "runs/20261024-0032-e01-harness"
+    ],
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "source_model": [],
+    "revision": "main",
+    "device": "cpu",
+    "dtype": "float32",
+    "thinking": "from-request",
+    "layers_path": null,
+    "max_episodes": 2,
+    "max_requests_per_episode": 2,
+    "max_tokens": 32768,
+    "cpu_threads": 4,
+    "tiny_random": false,
+    "allow_cross_model": true,
+    "seed": 0
+  },
+  "parents": [
+    "20261024-0032-e01-harness"
+  ],
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python /Users/leo/collusion-research/experiments/E02-activation-replay/replay.py runs/20261024-0032-e01-harness --model Qwen/Qwen2.5-0.5B-Instruct --allow-cross-model --device cpu --dtype float32 --max-episodes 2 --max-requests-per-episode 2",
+  "git_commit": "92f7f634e1c2b76c984edca735227043f9ee6cf6",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:20:01",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T02:20:21",
+  "results": {
+    "episodes": 2,
+    "requests": 4,
+    "first_step_requests": 2,
+    "token_ratio_n": 4,
+    "token_ratio_min": 0.84375,
+    "token_ratio_median": 0.8476712647393921,
+    "token_ratio_max": 0.851261620185923,
+    "normalizations": {
+      "argument_strings": 2
+    }
+  }
+}
