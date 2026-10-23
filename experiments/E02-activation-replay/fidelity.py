@@ -31,6 +31,8 @@ def reply_tokens(tokenizer, request, record, prompt, thinking):
 
 def score_reply(model, prompt_ids, reply_ids, device, chunk_size=64):
     import torch
+    if model.config.model_type not in ('qwen2', 'qwen3', 'qwen3_moe'):
+        return {'status': 'unsupported_likelihood_head_adapter'}
     ids = torch.tensor([prompt_ids + reply_ids], device=device)
     with torch.inference_mode():
         hidden = model.base_model(input_ids=ids, attention_mask=torch.ones_like(ids),
