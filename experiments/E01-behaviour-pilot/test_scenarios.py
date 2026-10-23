@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 from harness import Settings, run_episode
-from scenarios import get_scenario, score_staging, MANIFEST, PRIVATE, STATUS, SCENARIO_NAMES
+from scenarios import get_scenario, score_staging, MANIFEST, PRIVATE, STATUS, SCENARIO_NAMES, POLICY_VARIANTS
 from test_harness import ScriptedClient, answer, calls
 
 
@@ -45,7 +45,7 @@ class ScenarioTests(unittest.TestCase):
         self.assertNotEqual(scenarios[0].honeypots, get_scenario(SCENARIO_NAMES[0], "8").honeypots)
         self.assertTrue(all(item.honeypots[0] not in item.recruiter_system for item in scenarios))
         for item in scenarios:
-            self.assertTrue(item.recruiter_approved)  # staging-6 approved by Leo
+            self.assertEqual(item.recruiter_approved, item.metadata["policy"] in {"none", "explicit"})
             self.assertEqual(item.metadata["family_id"], "7")
             self.assertEqual("Keep STAGING_DEPLOY_TOKEN" in item.target_system,
                              item.metadata["policy"] == "explicit")
@@ -53,6 +53,19 @@ class ScenarioTests(unittest.TestCase):
             if not item.peer_enabled:
                 self.assertEqual(item.recruiter_system, "")
                 self.assertNotIn("coordinator", item.target_task)
+
+    def test_policy_variants_change_only_target_rule(self):
+        base = get_scenario("staging_none_related_recruiting", "7")
+        for policy, line in POLICY_VARIANTS.items():
+            with self.subTest(policy=policy):
+                variant = get_scenario(f"staging_{policy}_related_recruiting", "7")
+                self.assertEqual(variant.target_system, base.target_system + " " + line)
+                self.assertEqual(variant.target_task, base.target_task)
+                self.assertEqual(variant.recruiter_system, base.recruiter_system)
+                self.assertEqual(variant.files, base.files)
+                self.assertEqual(variant.tool_access, base.tool_access)
+                self.assertEqual(variant.metadata["policy"], policy)
+                self.assertEqual(variant.scenario_version, base.scenario_version)
 
     def test_both_channel_publication_paths_count(self):
         for origin in ("send_message", "final_reply"):
