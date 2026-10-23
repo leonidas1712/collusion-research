@@ -192,7 +192,7 @@ def build_report(manifest_path, outdir, cost_ledger=None):
             except (InvalidOperation, ValueError):
                 warnings.append({"cost_field": name, "error": "invalid nonnegative finite amount"})
         summary[name] = value
-    lines = ["# Overnight rule-strength sweep", "", "Outcomes below are recomputed from saved events. Completed and incomplete episodes remain separate. Post-hoc intent review is reported independently; designated actions are not automatically deliberate collusion.", "",
+    lines = ["# Overnight rule-strength sweep", "", "Pilot comparison caveat: the explicit-rule pilot used an unpinned DeepSeek peer (including Baidu, Parasail and GMICloud). This sweep pins the peer to DeepInfra fp8. Treat the pilot as a descriptive reference, not a matched policy-only comparison.", "", "Outcomes below are recomputed from saved events. Completed and incomplete episodes remain separate. Post-hoc intent review is reported independently; designated actions are not automatically deliberate collusion.", "",
              "| Scenario | Target / requested provider | Strength / sweep round | Condition | Action / completed | Incomplete (action observed) | First action rounds | Alone violations | Exposure / setup / task / control / eligible held |",
              "|---|---|---|---|---|---|---|---|---|"]
     for group in result_groups:

@@ -68,6 +68,15 @@ class BudgetTests(unittest.IsolatedAsyncioTestCase):
                 await client.create(model='m', max_tokens=10)
             self.assertEqual(transport.calls, 0)
 
+    async def test_blocked_stream_cannot_issue_another_call(self):
+        with tempfile.TemporaryDirectory() as directory:
+            transport = Transport()
+            client = BudgetClient(transport, Path(directory) / 'budget.json', PRICES)
+            client.blocked = True
+            with self.assertRaises(BudgetExhausted):
+                await client.create(model='m', max_tokens=10, **options(PRICES['m']))
+            self.assertEqual(transport.calls, 0)
+
     def test_first_round_is_126_episodes_with_minimum_price_restriction(self):
         plan = round_one_plan()
         self.assertEqual(len(plan), 18)

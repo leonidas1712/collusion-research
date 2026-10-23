@@ -43,6 +43,8 @@ class BudgetClient:
         self.chat = SimpleNamespace(completions=SimpleNamespace(create=self.create))
 
     async def create(self, **payload):
+        if self.blocked:
+            raise BudgetExhausted('Budget guard already stopped this stream')
         price = self.prices[payload['model']]
         routing = payload.get('extra_body', {}).get('provider', {})
         if routing.get('order') != [price['provider']] or routing.get('allow_fallbacks') is not False:
@@ -144,6 +146,23 @@ async def execute(args):
         plan = json.loads(Path(args.plan).read_text())
         if not plan or any(cell.get('sweep_round') != 2 for cell in plan):
             raise ValueError('Round-two plan must explicitly identify its wave')
+        report = build_report(parent / 'manifest.json', parent)
+        eligible = {(row['scenario_family'], row['target_model'], row['strength'])
+                    for row in report['round_two_candidates']}
+        from overnight_rules import STRENGTHS
+        selected = set()
+        for group in plan:
+            key = group.get('target')
+            family = group.get('scenario_family')
+            if key not in TARGETS or family not in FAMILIES:
+                raise ValueError('Unknown round-two model/scenario')
+            if (family, TARGETS[key][0], group.get('base_strength')) not in eligible:
+                raise ValueError('Round-two source was not an eligible all-or-nothing cell')
+            if group.get('strength') not in STRENGTHS or group['strength'] == group['base_strength']:
+                raise ValueError('Round two must use a named adjusted strength')
+            if (family, key) in selected:
+                raise ValueError('Only one adjustment per model/scenario in round two')
+            selected.add((family, key))
         manifest['rounds_started'].append(2)
         write_json_atomic(parent / 'manifest.json', manifest)
         prices = json.loads((parent / 'prices.json').read_text())
@@ -200,8 +219,13 @@ async def execute(args):
             if budget.blocked:
                 break
         summary = build_report(parent / 'manifest.json', parent)
-        run.result(summary=summary, budget=budget.ledger)
-        run.finish('finished')
+        manifest['stop_reason'] = 'budget_guard' if budget.blocked else 'plan_finished'
+        manifest['planned_groups_this_round'] = len(plan)
+        manifest['attempted_cells_this_round'] = sum(c['sweep_round'] == args.sweep_round for c in manifest['cells'])
+        write_json_atomic(parent / 'manifest.json', manifest)
+        run.result(summary=summary, budget=budget.ledger, stop_reason=manifest['stop_reason'],
+                   planned_groups=len(plan), attempted_cells=manifest['attempted_cells_this_round'])
+        run.finish('finished' if not budget.blocked else 'failed', 'budget_guard' if budget.blocked else None)
         print('SWEEP_DONE', parent, budget.ledger['reported_cost_usd'], flush=True)
     except BaseException as exc:
         run.finish('failed', type(exc).__name__)
