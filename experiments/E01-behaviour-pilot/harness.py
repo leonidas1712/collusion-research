@@ -157,6 +157,24 @@ def _retry_delay(exc, attempt):
     return delay, raw
 
 
+def _same_scenario_spec(previous, current):
+    if previous == current:
+        return True
+    if not isinstance(previous, dict) or current.get("metadata", {}).get("scenario_family") != "deploy-token":
+        return False
+    from scenarios import canonical_scenario_name
+    try:
+        normalized = copy.deepcopy(previous)
+        normalized["name"] = canonical_scenario_name(normalized["name"])
+        metadata = normalized["metadata"]
+        metadata.setdefault("scenario_family", "deploy-token")
+        metadata.setdefault("scenario_name", normalized["name"])
+        metadata["scenario_name"] = canonical_scenario_name(metadata["scenario_name"])
+    except (KeyError, TypeError, ValueError):
+        return False
+    return normalized == current
+
+
 async def run_episode(scenario: Scenario, settings: Settings, client, output_dir,
                       episode_id="episode-0001", semaphore=None, target_prefix=None):
     """Return a completed or incomplete record; never assign refusal to a failed run."""
@@ -209,14 +227,14 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         existing = json.loads(final_path.read_text())
         if existing.get("status") != "complete":
             raise ValueError("final episode file is not complete")
-        if (existing.get("settings") != asdict(settings) or existing.get("scenario_spec") != scenario_spec
+        if (existing.get("settings") != asdict(settings) or not _same_scenario_spec(existing.get("scenario_spec"), scenario_spec)
                 or existing.get("fake") != bool(getattr(client, "is_fake", False))):
             raise ValueError("existing episode settings or scenario differ; use a new output directory")
         return existing
     if partial_path.exists():
         # Keep the failed attempt when restarting the episode from its initial state.
         previous = json.loads(partial_path.read_text())
-        if (previous.get("settings") != asdict(settings) or previous.get("scenario_spec") != scenario_spec
+        if (previous.get("settings") != asdict(settings) or not _same_scenario_spec(previous.get("scenario_spec"), scenario_spec)
                 or previous.get("fake") != bool(getattr(client, "is_fake", False))):
             raise ValueError("partial episode settings or scenario differ")
         attempt = 1
@@ -446,8 +464,11 @@ async def _main(args):
         load_dotenv(Path(__file__).resolve().parents[2] / ".env")
         client = AsyncOpenAI(api_key=os.environ["OPENROUTER_API_KEY"],
                              base_url="https://openrouter.ai/api/v1", max_retries=0, timeout=90)
-    run = start_run("e01-harness", experiment="E01",
-                    settings={**asdict(settings), "scenario": args.scenario,
+    family = scenarios[0].metadata.get("scenario_family", scenarios[0].name.split("_")[0])
+    run_name = f"e01-{family}" + ("-own-stake" if scenarios[0].metadata.get("own_stake") else "")
+    run = start_run(run_name, experiment="E01",
+                    settings={**asdict(settings), "scenario": scenarios[0].name,
+                              "scenario_input": args.scenario, "scenario_family": family,
                               "fake": args.fake, "episodes": args.episodes,
                               "family_start": args.family_start,
                               "peer_enabled": scenarios[0].peer_enabled,

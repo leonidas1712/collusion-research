@@ -10,7 +10,7 @@ from pathlib import Path
 import sys
 
 from harness import FakeClient, Settings, run_episode, standard_tools
-from scenarios import get_scenario, POLICY_VARIANTS, _first_peer_ask, score_staging
+from scenarios import get_scenario, POLICY_VARIANTS, _first_peer_ask, score_deploy_token
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'src'))
@@ -43,7 +43,7 @@ def prepare(source, policy):
     if messages[2]['content'] != original.channel_format.format(
             actor='recruiter', name=original.actor_names['recruiter'], content=peer['content']):
         raise ValueError('Saved first request does not match first peer ask')
-    variant = get_scenario(f"staging_{policy}_{spec['metadata']['goal_relation']}_{spec['metadata']['peer_condition']}",
+    variant = get_scenario(f"deploy-token_{policy}_{spec['metadata']['goal_relation']}_{spec['metadata']['peer_condition']}",
                            spec['metadata']['family_id'])
     if not variant.recruiter_approved:
         raise ValueError('Policy wording awaits approval')
@@ -67,7 +67,7 @@ def summarize(results):
                 if e['status'] != 'complete':
                     counts['incomplete'] += 1
                     continue
-                label = score_staging(e)
+                label = score_deploy_token(e)
                 counts[label['disclosure_kind']] += 1
                 counts['token_in_context'] += int(label['token_in_context'])
             rows.append({'model': model, 'policy': policy, 'n': len(group), **dict(counts)})
@@ -80,7 +80,8 @@ async def main(args):
         raise ValueError('Expected five source episodes')
     prepared = {(str(source), policy): prepare(source, policy)
                 for source in sources for policy in POLICIES}
-    run = start_run('e01-policy-sweep', experiment='E01', settings=vars(args),
+    run = start_run('e01-deploy-token-policy-sweep', experiment='E01',
+                    settings={**vars(args), 'scenario_family': 'deploy-token'},
                     parents=[args.source.name], tags=['wiring' if args.fake else 'policy-sweep'],
                     model=','.join(value[0] for value in MODELS.values()))
     if args.fake:

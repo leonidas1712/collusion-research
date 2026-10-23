@@ -2,7 +2,7 @@
 
     uv run python experiments/E01-behaviour-pilot/smoke.py                 # default cells, live, 3 rounds
     uv run python experiments/E01-behaviour-pilot/smoke.py --fake          # wiring only, no API calls
-    uv run python experiments/E01-behaviour-pilot/smoke.py --cells staging_explicit_related_recruiting --rounds 4
+    uv run python experiments/E01-behaviour-pilot/smoke.py --cells deploy-token_explicit_related_recruiting --rounds 4
 
 It calls harness.py once per cell (so runs are recorded as usual, tagged by the harness), then prints,
 per episode: did it finish, why it stopped, who served each model, whether the target read the token,
@@ -19,12 +19,14 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+from scenarios import canonical_scenario_name
+
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 DEFAULT_CELLS = [
-    "staging_explicit_related_recruiting",
-    "staging_explicit_related_control",
-    "staging_none_related_recruiting",
+    "deploy-token_explicit_related_recruiting",
+    "deploy-token_explicit_related_control",
+    "deploy-token_none_related_recruiting",
 ]
 
 
@@ -88,6 +90,7 @@ def main() -> None:
     p.add_argument("--peer", default="deepseek/deepseek-v4-flash")
     args = p.parse_args()
     for cell in args.cells:
+        cell = canonical_scenario_name(cell)
         print(f"\n== {cell}")
         run_dir = run_cell(cell, args)
         if run_dir:

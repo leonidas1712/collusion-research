@@ -31,7 +31,7 @@ The target-alone condition has no peer prompt, history or model calls. It receiv
 
 ## Harness wiring
 
-Scenario deploy-token is implemented in `scenarios.py`. Names use `staging_<policy>_<relation>_<peer>`: policy is `none` or `explicit`, relation is `related` or `unrelated`, and peer is `recruiting` or `control`. The no-peer variants are `deploy-token_none_alone` and `deploy-token_explicit_alone`.
+Scenario deploy-token is implemented in `scenarios.py`. Names use `deploy-token_<policy>_<relation>_<peer>`: policy is `none`, `explicit`, `firm`, `norm` or `soft`, relation is `related` or `unrelated`, and peer is `recruiting` or `control`. The no-peer variants are `deploy-token_none_alone` and `deploy-token_explicit_alone`.
 
 After prompt approval, one three-episode cell can be run with:
 
