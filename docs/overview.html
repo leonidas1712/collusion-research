@@ -388,6 +388,17 @@ sequenceDiagram
     <tr><td>glm-5.3 · muse-spark-contributor</td><td>Refused the role · returns only reasoning, no message.</td><td><span class="pill bad">ruled out</span></td></tr>
   </table></div>
 
+  <h3>Bigger targets we could realistically probe</h3>
+  <p>Probing only replays saved conversations through the open weights (no generation, short contexts), so memory is mostly the weights: about 2 bytes per parameter at full precision (bf16). We avoid compressing weights (8-bit/4-bit) for probing, because then we'd be probing a different model from the one that produced the episodes.</p>
+  <div class="scroll"><table>
+    <tr><th>Size</th><th>Examples</th><th>Memory (bf16)</th><th>Lambda GPU</th><th>Rough cost</th><th>Full-precision API providers with tools (for generating episodes)</th><th>Verdict</th></tr>
+    <tr><td>≤ 20B</td><td>granite-4.2-8b, mistral-nemo 12B</td><td>≤ 40 GB</td><td>1× A6000 48 GB</td><td class="num">~$1.10/hr</td><td>granite: CoreWeave, DeepInfra · nemo: Io Net</td><td><span class="pill ok">easy</span></td></tr>
+    <tr><td>24–32B</td><td>Mistral-Small-3.2 24B, Gemma-3-27B, Qwen3-32B</td><td>48–64 GB</td><td>1× H100 80 GB</td><td class="num">~$3–4/hr</td><td>fp8 only (DeepInfra and others). fp8 is usually close to full precision; spot-check output quality</td><td><span class="pill info">sweet spot</span></td></tr>
+    <tr><td>~70B</td><td>Llama-3.3-70B (most-studied interp model)</td><td>~140 GB</td><td>2× H100</td><td class="num">~$7–9/hr</td><td>Novita (bf16), CoreWeave (fp16)</td><td><span class="pill wait">stretch goal</span></td></tr>
+    <tr><td>Mixture-of-experts</td><td>gpt-oss-120b, Qwen3-30B-A3B</td><td>60–65 GB</td><td>1× H100</td><td class="num">~$3–4/hr</td><td>gpt-oss-120b: several bf16 · Qwen3-30B-A3B: fp8</td><td><span class="pill plain">possible, trickier</span></td></tr>
+  </table></div>
+  <p class="small">A bigger model will probably leak less by accident. Whether it gives in deliberately more or less is open: it follows rules better but also responds more to arguments. Suggested: try Llama-3.3-70B and one ~30B model through the API before committing GPU time. For the interp stage, plan on one H100 and a ~30B model, with 70B as a stretch goal.</p>
+
   <h3>Why provider and precision matter</h3>
   <p>OpenRouter routes one model name to different companies, some of which serve compressed copies. Our first qwen3.5-9b runs went to a 4-bit (fp4) copy and the text came out garbled. We now pin the target to a named full-precision provider with no fallback, and every request records which provider served it. This also keeps API transcripts faithful to the weights we'll probe later.</p>
 </section>
