@@ -228,7 +228,7 @@ details.box.guide{background:var(--accent-soft);border:0}
 .what{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:grid;gap:12px}
 .kv{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;font-size:14px}.kv>b{color:var(--muted);font-weight:600}
 .kv>div{min-width:0;overflow-wrap:anywhere}
-.via{font:12px var(--mono);color:var(--accent);margin-bottom:6px}.outcome{font:650 26px/1.2 var(--display)}.outcome.leaked{color:var(--bad)}.outcome.refused{color:var(--good)}.outcome.noask{color:var(--accent)}
+.csum{cursor:pointer;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 10px;font:13px var(--mono)}.csum .carg{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60ch}.csum .pills{margin-left:auto}.via{font:12px var(--mono);color:var(--accent);margin-bottom:6px}.outcome{font:650 26px/1.2 var(--display)}.outcome.leaked{color:var(--bad)}.outcome.refused{color:var(--good)}.outcome.noask{color:var(--accent)}
 .outcome.incomplete,.outcome.other{color:var(--warn)}
 table{border-collapse:collapse;width:100%;font-size:13.5px}td,th{text-align:left;vertical-align:top;padding:5px 8px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
 th{color:var(--muted);font-weight:600;width:38%}tr.key td,tr.key th{background:var(--warn-soft)}
@@ -385,7 +385,8 @@ function callBlock(c,leak){const r=c.ran?(()=>{const p=parse(c.res),one=p&&typeo
   return shown.length>280||shown.split('\n').length>8?`<details class="res"><summary><span class="role" style="display:inline">tool</span> ${hl(short(shown,90))}${hasTok(shown)?' <mark class="tok">token</mark>':''}</summary><pre>${hl(shown)}</pre></details>`
   :`<div class="res"><span class="role">tool</span><pre>${hl(shown)}</pre></div>`})():'<div class="res none">not executed: the episode stopped before this call ran</div>';
  const b=[leak?badge('leak','first leak'):'',c.posted?badge('post','posted to #team channel'):'',c.err?badge('err','error'):'',!c.ran?badge('err','not executed'):'',typeof c.args!=='object'?badge('err','invalid JSON arguments'):''].join('');
- return `<div class="call${leak?' leak" id="leak':''}"><div class="sig"><pre><code>${hl(sig(c))}</code></pre>${b?'<span class="pills">'+b+'</span>':''}</div>${r}</div>`}
+ const a=c.args&&typeof c.args==='object'?c.args:{},first=a.path||a.content||Object.values(a).filter(v=>typeof v==='string')[0]||'',tk=hasTok(JSON.stringify(c.args??''))||hasTok(String(c.res??''));
+ return `<details class="call${leak?' leak" id="leak':''}"${leak?' open':''}><summary class="csum"><code>${esc(c.name)}</code> <span class="carg">${hl(short(first,80))}</span>${tk?' <mark class="tok">token</mark>':''}${b?'<span class="pills">'+b+'</span>':''}</summary><div class="sig"><pre><code>${hl(sig(c))}</code></pre></div>${r}</details>`}
 function errRow(q,retried){const e=q.error||{type:'no response recorded'},d=q.retry_delay_seconds;
  return `<details class="row err"><summary>API error · ${esc(e.type)}${e.status_code?' ('+esc(e.status_code)+')':''}${d!=null?` · retried after ${d.toFixed(1)} s`:retried?' · retried':' · not retried'}</summary><pre>${esc(pretty({attempt:q.attempt,error:q.error,retry_delay_seconds:d,retry_after:q.retry_after}))}</pre></details>`}
 function collapsedMsg(role,m,label){const t=txt(m.content);return `<details class="m sys"><summary><span class="role">${role}${label?' · '+label:''}</span><span class="prev">${esc(short(t,110))}</span></summary><pre>${hl(t)}</pre></details>`}
