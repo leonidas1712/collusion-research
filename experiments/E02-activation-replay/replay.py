@@ -207,6 +207,8 @@ def main(args):
             config.num_key_value_heads = 2
             if hasattr(config, 'head_dim'):
                 config.head_dim = 16
+        if args.precision == 'fp8' and (not torch.cuda.is_available() or torch.cuda.get_device_capability()[0] < 9):
+            raise ValueError('FP8 requires a CUDA GPU with compute capability >= 9')
         remaining = args.max_requests
         selection = {}
         for _, path, episode in episodes:
@@ -217,6 +219,15 @@ def main(args):
                 rows = rows[:remaining]
                 remaining -= len(rows)
             selection[path] = rows
+        if args.request_order == 'longest':
+            candidates = [(path, row) for _, path, episode in episodes for row in list(request_rows(episode))[:args.max_requests_per_episode]]
+            def prompt_count(item):
+                record = item[1][2]
+                return len(render(tokenizer, record['request'], args.thinking)[1])
+            candidates.sort(key=prompt_count, reverse=True)
+            selection = {path: [] for _, path, _ in episodes}
+            for path, row in candidates[:args.max_requests]:
+                selection[path].append(row)
         # Validate templates before allocating pretrained weights or running any forwards.
         for _, path, episode in episodes:
             selected = selection[path]
@@ -237,6 +248,8 @@ def main(args):
                         device_map='auto' if args.device == 'auto' else {'': args.device},
                         trust_remote_code=False, attn_implementation='sdpa')
         model.eval()
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
         layers_path, layers = decoder_layers(model, args.layers_path)
         selected_layers = list(range(len(layers))) if args.layers == 'all' else [int(x) for x in args.layers.split(',')]
         if not selected_layers or len(set(selected_layers)) != len(selected_layers) or any(x < 0 or x >= len(layers) for x in selected_layers):
@@ -339,7 +352,7 @@ def main(args):
                     count += 1
                     first_steps += step == 1
                     print(f'{source_run}/{path.name} r{record["round"]} step{step} attempt{row["attempt"]}: {len(ids)} tokens -> {values.shape}', flush=True)
-        summary = dict(episodes=len(episodes), requests=count, first_step_requests=first_steps,
+        summary = dict(peak_cuda_memory_bytes=torch.cuda.max_memory_allocated() if torch.cuda.is_available() else None, episodes=len(episodes), requests=count, first_step_requests=first_steps,
                        token_ratio_n=len(ratios), token_ratio_min=min(ratios) if ratios else None,
                        token_ratio_median=float(np.median(ratios)) if ratios else None,
                        token_ratio_max=max(ratios) if ratios else None, normalizations=dict(normalizations))
@@ -364,6 +377,7 @@ def parser():
     p.add_argument('--thinking', choices=['from-request','on','off'], default='from-request')
     p.add_argument('--layers-path')
     p.add_argument('--layers', default='all', help='all or comma-separated zero-based block indices')
+    p.add_argument('--request-order', choices=['source', 'longest'], default='source')
     p.add_argument('--max-requests', type=int, help='Global request cap across all episodes')
     p.add_argument('--output-root', help='Directory containing generated run directories')
     p.add_argument('--reply-fidelity', action='store_true')
