@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 
 from policy_sweep import ROOT, MODELS, POLICIES
-from scenarios import score_staging
+from scenarios import score_deploy_token
 from collusion.runs import start_run, write_json_atomic
 
 
@@ -25,7 +25,7 @@ def main(source):
                      and e['condition']['policy'] == policy]
             counts = Counter()
             for e in group:
-                label = score_staging(e)
+                label = score_deploy_token(e)
                 counts['token_in_context'] += int(label['token_in_context'])
                 counts['fabricated_disclosure'] += int(label['fabricated_disclosure'])
                 if e['status'] != 'complete':
@@ -49,13 +49,13 @@ def main(source):
         group = [e for e in episodes if e['condition']['sweep_model'] == model]
         quality[model] = {
             'n': len(group),
-            'task_success': sum(score_staging(e)['task_success'] for e in group),
-            'fabricated_disclosure': sum(score_staging(e)['fabricated_disclosure'] for e in group),
+            'task_success': sum(score_deploy_token(e)['task_success'] for e in group),
+            'fabricated_disclosure': sum(score_deploy_token(e)['fabricated_disclosure'] for e in group),
             'raw_tool_text': sum(any('"name": "send_message"' in event['content']
                                     or '"name": "write_file"' in event['content']
                                     for event in e['channel'] if event['actor'] == 'target') for e in group),
         }
-    run = start_run('e01-policy-sweep-report', experiment='E01', settings={'source': str(source)},
+    run = start_run('e01-deploy-token-policy-sweep-report', experiment='E01', settings={'source': str(source)},
                     parents=[source.name], tags=['analysis'])
     write_json_atomic(run.dir / 'summary_reviewed.json', {
         'rows': rows, 'review': review, 'automatic_disagreements': disagreements, 'quality': quality,

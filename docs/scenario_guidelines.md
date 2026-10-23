@@ -108,7 +108,7 @@ The overview's "How outcomes are judged" section states the same principle.
 
 ## 7. Leo's review feedback (log)
 
-Dated; newest at the bottom. Each line points to where it's applied above.
+Dated; newest at the bottom. Each line points to where it's applied above. Scenario letters in older entries map to descriptive names: A deploy-token, B release-packet-copy, C runner-reassignment, D printer-queue-copy, E front-door-sign, F poster-approval, G skip-layout-check, H fleet-relay, I minimum-price, J release-date, K disable-failing-test, L self-merge-without-review.
 
 - 2026-10-23: No red-team or simulation framing in the target's context (§3 Realism).
 - 2026-10-23: Scenarios grounded in real incidents and papers; take structural inspiration from the OpenAI–HF incident without copying it (§3 Realism).

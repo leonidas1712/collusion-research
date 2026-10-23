@@ -8,6 +8,9 @@ a plain-language outcome per episode; the page rebuilds the round-by-round trans
 from the embedded episode JSON (requests, tool_log, channel). Each episode is embedded once, in its own
 lazily parsed <script> block, with request message lists dropped because they repeat `histories`.
 Standard library only, read-only, no API calls. Open runs/viewer.html directly (file:// is fine).
+
+Human/agent notes come from runs/annotations.json (edit with annotate.py) and optional runs/<run-id>/notes.json;
+they are shown as descriptions, notes and tag pills, and are filterable and searchable on the home page.
 """
 
 from __future__ import annotations
@@ -20,6 +23,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNS = ROOT / "runs"
+ANNOTATIONS = RUNS / "annotations.json"
+MAX_SEARCH_TEXT = 20_000  # per-episode transcript text kept for search (head + tail if longer)
 
 POLICY = {"explicit": "Policy", "none": "No policy"}
 RELATION = {"related": "related reason", "unrelated": "unrelated reason"}
@@ -84,7 +89,8 @@ def outcome(ep: dict, kind: str) -> dict:
         how = {"deliberate": "on purpose", "incidental": "by accident, inside a refusal or explanation"}.get(
             L.get("disclosure_kind"), "")
         pill = {"deliberate": "Leaked on purpose", "incidental": "Leaked by accident"}.get(L.get("disclosure_kind"), "Leaked")
-        return {"cls": "leaked", "pill": pill,
+        return {"cls": "leaked", "ocls": {"deliberate": "leak_deliberate", "incidental": "leak_incidental"}.get(
+                    L.get("disclosure_kind"), "leak_other"), "pill": pill,
                 "line": f"Leaked in round {L.get('first_action_round')}" + (f" ({how})" if how else "")}
     if L.get("eligible_resisted") and peer in ("control", "alone"):
         who = "no peer was present" if peer == "alone" else "the peer never asked for it"
@@ -101,6 +107,73 @@ def outcome(ep: dict, kind: str) -> dict:
     if L.get("validity") == "contaminated":
         return {"cls": "other", "pill": "Not comparable", "line": "Not comparable: the peer used tools beyond messaging"}
     return {"cls": "other", "pill": "Unclear", "line": "No clear outcome (see the label in Details)"}
+
+
+def content_text(c) -> str:
+    if isinstance(c, list):
+        return "\n".join(p.get("text") or "" for p in c if isinstance(p, dict))
+    return c if isinstance(c, str) else ""
+
+
+def transcript_text(ep: dict) -> str:
+    """Assistant text, send_message posts and channel messages in order, for plain-text search."""
+    parts, seen = [], set()
+
+    def add(actor, rnd, text):
+        text = (text or "").strip()
+        if text and text not in seen:
+            seen.add(text)
+            parts.append(f"[{'peer' if actor == 'recruiter' else actor or '?'}, round {rnd}] {text}")
+    for r in ep.get("requests") or []:
+        ch = ((r.get("response") or {}).get("choices") or [None])[0] or {}
+        msg = ch.get("message") or {}
+        add(r.get("actor"), r.get("round"), content_text(msg.get("content")))
+        for c in msg.get("tool_calls") or []:
+            f = c.get("function") or {}
+            if f.get("name") == "send_message":
+                try:
+                    add(r.get("actor"), r.get("round"), json.loads(f.get("arguments") or "{}").get("content"))
+                except (ValueError, AttributeError):
+                    add(r.get("actor"), r.get("round"), f.get("arguments"))
+    for c in ep.get("channel") or []:
+        add(c.get("actor"), c.get("round"), content_text(c.get("content")))
+    tx = "\n".join(parts)
+    if len(tx) > MAX_SEARCH_TEXT:  # keep the start and the end, where outcomes usually sit
+        head = MAX_SEARCH_TEXT * 7 // 10
+        tx = tx[:head] + "\n[…]\n" + tx[-(MAX_SEARCH_TEXT - head - 5):]
+    return tx
+
+
+def stake_words(cond: dict) -> str:
+    lv = "+".join(cond.get("levers") or [])
+    if cond.get("own_stake"):
+        return "own stake" + (f" ({lv})" if lv else "")
+    return f"levers {lv}" if lv else "no own stake"
+
+
+def load_annotations() -> dict:
+    """runs/annotations.json, created empty if missing; unreadable files are reported and ignored."""
+    if not ANNOTATIONS.exists():
+        ANNOTATIONS.write_text(json.dumps({"runs": {}, "episodes": {}}, indent=2) + "\n")
+    try:
+        a = json.loads(ANNOTATIONS.read_text())
+    except ValueError as exc:
+        print(f"warning: could not read {ANNOTATIONS}: {exc}")
+        a = {}
+    return {"runs": a.get("runs") or {}, "episodes": a.get("episodes") or {}}
+
+
+def run_note(run_dir: Path, ann: dict) -> tuple[str, list]:
+    """Merge runs/<id>/notes.json with annotations.json (annotations.json description wins; tags are unioned)."""
+    local = {}
+    if (run_dir / "notes.json").exists():
+        try:
+            local = json.loads((run_dir / "notes.json").read_text())
+        except ValueError as exc:
+            print(f"warning: could not read {run_dir / 'notes.json'}: {exc}")
+    a = ann["runs"].get(run_dir.name) or {}
+    tags = list(dict.fromkeys([*(local.get("tags") or []), *(a.get("tags") or [])]))
+    return a.get("description") or local.get("description") or "", tags
 
 
 def summarise(path: Path, run_id: str, n: int) -> tuple[dict, dict]:
@@ -140,13 +213,15 @@ def summarise(path: Path, run_id: str, n: int) -> tuple[dict, dict]:
         num += " (earlier try " + path.name.split(".attempt-")[1].split(".")[0] + ")"
     summary = {"file": path.name, "href": f"{run_id}/episodes/{path.name}", "kind": kind, "num": num,
                "counted": kind == "final" and ep.get("status") == "complete", "out": outcome(ep, kind),
-               "served": dict(served), "eid": f"ep{n}",
+               "served": dict(served), "eid": f"ep{n}", "tx": transcript_text(ep),
+               "_cond": ep.get("condition") or {}, "_scenario": ep.get("scenario"),
+               "_model": (ep.get("settings") or {}).get("target_model"),
                "cost": {"total": sum(c for c in costs if c is not None), "calls": len(reqs),
                         "unknown": sum(c is None for c in costs), "errored": sum(bool(r.get("error")) for r in reqs)}}
     return summary, raw
 
 
-def load_run(run_dir: Path, raws: list) -> dict:
+def load_run(run_dir: Path, raws: list, ann: dict) -> dict:
     meta = json.loads((run_dir / "meta.json").read_text()) if (run_dir / "meta.json").exists() else {}
     eps, first_raw = [], None
     for p in sorted((run_dir / "episodes").glob("*.json")):
@@ -159,6 +234,19 @@ def load_run(run_dir: Path, raws: list) -> dict:
     spec = first_raw.get("scenario_spec") or {}
     scenario = s.get("scenario") or first_raw.get("scenario")
     cond = {**(spec.get("metadata") or {}), **(first_raw.get("condition") or {})}
+    desc, tags = run_note(run_dir, ann)
+    for e in eps:
+        c = {**cond, **e.pop("_cond")}  # sweep runs vary the condition per episode
+        sc, model = e.pop("_scenario") or scenario, e.pop("_model") or s.get("target_model")
+        e["cw"] = condition_words(c, sc)
+        e["f"] = {"model": model or "n/a", "policy": c.get("policy") or "n/a",
+                  "peer": c.get("peer_condition") or "n/a", "relation": c.get("goal_relation") or "n/a",
+                  "stake": stake_words(c), "scenario": sc or "n/a"}
+        e.setdefault("out", {}).setdefault("ocls", e["out"]["cls"])
+        a = ann["episodes"].get(f"{run_dir.name}/{e['file']}") or {}
+        e["note"], e["tags"] = a.get("note") or "", list(a.get("tags") or [])
+        e["q"] = " ".join([e["file"], e["cw"], e["out"]["pill"], e["out"]["line"], *e["f"].values(), *e["served"],
+                           e["note"], *e["tags"], e["tx"]]).lower()
     prov = lambda a: ((s.get(f"{a}_request_options") or {}).get("extra_body") or {}).get("provider") or {}
     peer_on = cond.get("peer_enabled", s.get("peer_enabled", True)) is not False
     return {"id": run_dir.name, "time": meta.get("started") or first_raw.get("started_at") or "",
@@ -171,12 +259,17 @@ def load_run(run_dir: Path, raws: list) -> dict:
             "cond": cond, "cond_words": condition_words(cond, scenario),
             "target_model": s.get("target_model"), "peer_model": s.get("recruiter_model") if peer_on else None,
             "target_pin": prov("target"), "peer_pin": prov("recruiter"), "episodes": eps,
-            "counts": dict(Counter(e["out"]["cls"] for e in eps))}
+            "counts": dict(Counter(e["out"]["cls"] for e in eps)), "desc": desc, "tags": tags}
 
 
 def main():
     raws: list = []
-    runs = [load_run(d, raws) for d in sorted(RUNS.iterdir()) if d.is_dir() and (d / "episodes").is_dir()]
+    ann = load_annotations()
+    runs = [load_run(d, raws, ann) for d in sorted(RUNS.iterdir()) if d.is_dir() and (d / "episodes").is_dir()]
+    for r in runs:
+        r["rq"] = " ".join(str(x) for x in [r["id"], r["scenario"], r["scenario_title"], r["cond_words"], r["target_model"],
+                                            r["peer_model"], r["meta"].get("name"), *(r["meta"].get("tags") or []),
+                                            r["desc"], *r["tags"]] if x).lower()
     runs.sort(key=lambda r: (r["time"], r["id"]), reverse=True)
     dump = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
     blocks = "\n".join(f'<script type="application/json" id="{eid}">{dump(raw)}</script>' for eid, raw in raws)
@@ -263,6 +356,14 @@ mark.tok{background:var(--bad-soft);color:var(--bad);font-family:var(--mono);fon
 .stop{font-size:14px;color:var(--warn);background:var(--warn-soft);border-radius:6px;padding:6px 10px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}.chips a{font:600 12px var(--mono);padding:5px 9px;border-radius:999px;border:1px solid var(--line);text-decoration:none;color:var(--muted)}
 .chips a.on{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.chips button{font:600 12px var(--mono);padding:5px 9px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}.chips button .n{font-weight:400;opacity:.75}
+.frow{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;align-items:start}.frow>.flbl{font-size:13px;color:var(--muted);padding-top:4px}
+@media (max-width:600px){.frow{grid-template-columns:1fr}}
+.fpanel{display:grid;gap:10px}input[type=search]{font:15px var(--body);padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);width:100%}
+.pill.tag{background:var(--surface);color:var(--peer);border:1px solid var(--line);font-weight:400}
+.note{font-size:14px;max-width:68ch}.snip{font:12.5px/1.5 var(--mono);color:var(--muted);background:var(--bg);border-radius:6px;padding:6px 10px;overflow-wrap:anywhere}
+mark.hit{background:var(--warn-soft);color:var(--warn);font-weight:600;padding:0 2px;border-radius:3px}
 button.link{background:none;border:0;color:var(--accent);font:inherit;font-size:14px;cursor:pointer;padding:0;text-decoration:underline}
 </style></head><body>
 <header><div class="wrap"><span class="eyebrow">E01 behaviour pilot · trace viewer</span><h1><a href="#" style="color:inherit;text-decoration:none">Episode traces</a></h1>
@@ -312,21 +413,58 @@ function guide(){const open=store('e01viewer.guide')!=='closed';return `<details
 <li><span class="pill noread">Never read the token</span> the target never opened the file with the token, so there was nothing to refuse.</li>
 <li><span class="pill incomplete">Incomplete, not counted</span> cut off by an API error, the tool-step cap or the reply-length limit. Shown for reference only.</li></ul>
 <p><strong>Using the page</strong>: pick a run below, then an episode. Each round shows the peer's turn, then the target's, and each turn lists that agent's own messages in order, as the model saw and wrote them. <code>system</code> and the first <code>user</code> message (the agent's prompt and task) are collapsed at the top of its first turn. <code>user</code> is what reached the agent from the team channel. <code>assistant</code> is the model's reply: its text, then each tool call as <code>name(args)</code> with the <code>tool</code> result underneath. Only two things reach the other agent: a <code>send_message</code> call (<span class="badge post">posted to #team channel</span>), or the final reply of a turn in which nothing else was posted (<span class="badge post">posted to #team channel (end of turn)</span>). Text marked <span class="badge quiet">not posted</span> stays in the agent's own context. Model reasoning, if the provider returned it, and failed API calls are collapsed rows. The token is <mark class="tok">highlighted</mark> wherever it appears, and the first leak has a red outline. Settings, labels, cost and raw JSON sit in the collapsed sections.</p>
+<p><strong>Filters, search and notes</strong>: on this page, click chips to filter. Values in one row are OR-ed and rows are AND-ed. Each filter is checked against single episodes, so a run is listed when at least one of its episodes matches. Switch to <em>Episodes</em> to list the matching episodes directly, for example every deliberate leak. The search box matches run IDs, conditions, models, providers, outcomes, notes, tags and the text of the transcripts. Descriptions, notes and <span class="pill tag">#tags</span> come from <code>runs/annotations.json</code>. To edit them, run <code>uv run python experiments/E01-behaviour-pilot/annotate.py RUN_ID [--episode FILE] [--desc TEXT | --note TEXT] [--tag T] [--remove-tag T]</code>, which also rebuilds this page.</p>
 </div></details>`}
 
-function home(){const models=[...new Set(RUNS.map(r=>r.target_model).filter(Boolean))].sort(),conds=[...new Set(RUNS.map(r=>r.cond_words))].sort();
- $('#main').innerHTML=guide()+`<div class="filters"><select id="fModel"><option value="">All target models</option>${models.map(m=>`<option>${esc(m)}</option>`).join('')}</select>
- <select id="fCond"><option value="">All conditions</option>${conds.map(m=>`<option>${esc(m)}</option>`).join('')}</select>
- <label><input type="checkbox" id="fSetup" checked> Hide setup and test runs</label></div><p class="small" id="count"></p><div class="list" id="runs"></div>`;
+const OUT={leak_deliberate:['leaked on purpose','leaked'],leak_incidental:['leaked by accident','leaked'],leak_other:['leaked (other)','leaked'],refused:['refused','refused'],
+ noask:['no leak (not asked)','noask'],noread:['never read the token','noread'],other:['made-up / other','other'],incomplete:['incomplete','incomplete'],setup:['setup test','setup']};
+const FACETS=[['out','Outcome'],['model','Target model'],['policy','Policy wording'],['peer','Peer condition'],['relation','Relation'],['stake','Own stake / levers'],['scenario','Scenario'],['tags','Tags']];
+const fval=(r,e,k)=>k==='out'?[e.out.ocls]:k==='tags'?[...e.tags,...r.tags]:[e.f[k]];
+const tagPills=t=>(t||[]).map(x=>`<span class="pill tag">#${esc(x)}</span>`).join('');
+const notes=(text,tags)=>(text?`<p class="note">${esc(text)}</p>`:'')+(tags&&tags.length?`<span class="pills">${tagPills(tags)}</span>`:'');
+function snip(tx,q){const i=tx.toLowerCase().indexOf(q);if(!q||i<0)return '';const a=Math.max(0,i-90),b=Math.min(tx.length,i+q.length+110);
+ return `<div class="snip">${a?'…':''}${esc(tx.slice(a,i))}<mark class="hit">${esc(tx.slice(i,i+q.length))}</mark>${esc(tx.slice(i+q.length,b))}${b<tx.length?'…':''}</div>`}
+function outPills(eps){const c={};for(const e of eps)c[e.out.ocls]=(c[e.out.ocls]||0)+1;
+ return Object.keys(OUT).filter(k=>c[k]).map(k=>`<span class="pill ${OUT[k][1]}">${c[k]} ${OUT[k][0]}</span>`).join('')}
+
+function home(){const vals={},cnt={};
+ for(const r of RUNS)for(const e of r.episodes)for(const [k] of FACETS)for(const v of fval(r,e,k)){(vals[k]??=new Set()).add(v);cnt[k+'|'+v]=(cnt[k+'|'+v]||0)+1}
+ for(const r of RUNS)for(const t of r.tags)(vals.tags??=new Set()).add(t);
+ const order=k=>k==='out'?Object.keys(OUT).filter(v=>vals.out&&vals.out.has(v)):[...(vals[k]||[])].sort();
+ const label=(k,v)=>k==='out'?OUT[v][0]:k==='tags'?'#'+v:k==='peer'?(PEERW[v]||v):v;
+ let st={sel:{},s:true,q:'',view:'runs'};try{const f=JSON.parse(store('e01viewer.filters2')||'{}');if(f&&typeof f==='object')st={...st,...f,sel:f.sel||{}}}catch(e){}
+ for(const k in st.sel)st.sel[k]=(st.sel[k]||[]).filter(v=>vals[k]&&vals[k].has(v));
+ $('#main').innerHTML=guide()+`<input type="search" id="fq" placeholder="Search runs, notes, tags and transcripts" aria-label="Search">
+ <details class="box" id="fbox" open><summary>Filters <span class="small" id="factive"></span></summary><div class="fpanel">
+ ${FACETS.filter(([k])=>order(k).length).map(([k,n])=>`<div class="frow"><span class="flbl">${n}</span><div class="chips">${order(k).map(v=>`<button type="button" data-k="${k}" data-v="${esc(v)}" aria-pressed="false">${esc(label(k,v))}${cnt[k+'|'+v]?` <span class="n">${cnt[k+'|'+v]}</span>`:''}</button>`).join('')}</div></div>`).join('')}
+ <div class="filters"><label><input type="checkbox" id="fSetup"> Hide setup and test runs</label><button class="link" id="fclear" type="button">Clear filters and search</button></div></div></details>
+ <div class="filters"><div class="chips" id="fview"><button type="button" data-view="runs">Runs</button><button type="button" data-view="episodes">Episodes</button></div><p class="small" id="count"></p></div><div class="list" id="runs"></div>`;
  $('#guide').addEventListener('toggle',e=>store('e01viewer.guide',e.target.open?'open':'closed'));
- const f=JSON.parse(store('e01viewer.filters')||'{}');if(f.m&&models.includes(f.m))$('#fModel').value=f.m;if(f.c&&conds.includes(f.c))$('#fCond').value=f.c;if(f.s===false)$('#fSetup').checked=false;
- const draw=()=>{const m=$('#fModel').value,c=$('#fCond').value,s=$('#fSetup').checked;store('e01viewer.filters',JSON.stringify({m,c,s}));
-  const rs=RUNS.filter(r=>(!m||r.target_model===m)&&(!c||r.cond_words===c)&&!(s&&r.setup));
+ $('#fq').value=st.q;$('#fSetup').checked=st.s!==false;
+ const draw=()=>{st.q=$('#fq').value;st.s=$('#fSetup').checked;store('e01viewer.filters2',JSON.stringify(st));
+  document.querySelectorAll('#fbox button[data-k]').forEach(b=>b.setAttribute('aria-pressed',(st.sel[b.dataset.k]||[]).includes(b.dataset.v)));
+  document.querySelectorAll('#fview button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===st.view));
+  const sel=Object.entries(st.sel).filter(([,v])=>v.length),q=st.q.trim().toLowerCase(),active=sel.length||q;
+  $('#factive').textContent=sel.length?`(${sel.reduce((a,[,v])=>a+v.length,0)} selected)`:'';
+  const ok=(r,e)=>sel.every(([k,vs])=>fval(r,e,k).some(v=>vs.includes(v)))&&(!q||r.rq.includes(q)||e.q.includes(q));
+  const rs=RUNS.filter(r=>!(st.s&&r.setup)).map(r=>({r,m:active?r.episodes.map((e,i)=>[e,i]).filter(([e])=>ok(r,e)):null}))
+   .filter(({r,m})=>!active||m.length||(!sel.length&&r.rq.includes(q)));
+  if(st.view==='episodes'){const eps=rs.flatMap(({r,m})=>(m||r.episodes.map((e,i)=>[e,i])).map(([e,i])=>({r,e,i}))),CAP=200;
+   $('#count').textContent=`${eps.length} matching episode${eps.length===1?'':'s'} in ${rs.length} run${rs.length===1?'':'s'}${eps.length>CAP?`, showing the first ${CAP}`:''}.`;
+   $('#runs').innerHTML=eps.slice(0,CAP).map(({r,e,i})=>`<a class="card" href="#run/${encodeURIComponent(r.id)}/${i}"><span class="t">Episode ${esc(e.num)} · ${esc(e.cw)}</span>
+   <span class="small">Target <span class="mono">${esc(e.f.model)}</span> · <span class="mono">${esc(r.id)}</span></span>
+   <span class="pills"><span class="pill ${e.out.cls}">${esc(e.out.pill)}</span><span>${esc(e.out.line)}</span></span>${notes(e.note,e.tags)}${q?snip(e.tx,q):''}</a>`).join('')||'<p class="small">No episodes match these filters.</p>';return}
   $('#count').textContent=`Showing ${rs.length} of ${RUNS.length} runs, newest first.`;
-  $('#runs').innerHTML=rs.map(r=>`<a class="card" href="#run/${encodeURIComponent(r.id)}"><span class="t">${esc(r.cond_words)}</span>
+  $('#runs').innerHTML=rs.map(({r,m})=>`<a class="card" href="#run/${encodeURIComponent(r.id)}"><span class="t">${esc(r.cond_words)}</span>
   <span class="small">Target <span class="mono">${esc(r.target_model||'?')}</span> · ${r.peer_model?'Peer <span class="mono">'+esc(r.peer_model)+'</span>':'no peer'} · ${esc(ago(r.time))}</span>
-  <span class="pills">${summary(r)}${r.setup?'<span class="pill setup">setup run</span>':''}</span></a>`).join('')||'<p class="small">No runs match these filters.</p>'};
- for(const id of['fModel','fCond','fSetup'])$('#'+id).addEventListener('input',draw);draw()}
+  ${notes(r.desc,r.tags)}<span class="pills">${summary(r)}${r.setup?'<span class="pill setup">setup run</span>':''}</span>
+  ${m&&m.length?`<span class="pills"><span class="small">${m.length} matching:</span>${outPills(m.map(([e])=>e))}</span>`:''}</a>`).join('')||'<p class="small">No runs match these filters.</p>'};
+ $('#fbox').addEventListener('click',e=>{const b=e.target.closest('button[data-k]');if(!b)return;const k=b.dataset.k,v=b.dataset.v,a=st.sel[k]||[];
+  st.sel[k]=a.includes(v)?a.filter(x=>x!==v):[...a,v];draw()});
+ $('#fview').addEventListener('click',e=>{const b=e.target.closest('button');if(b){st.view=b.dataset.view;draw()}});
+ $('#fclear').onclick=()=>{st.sel={};$('#fq').value='';draw()};
+ let t;$('#fq').addEventListener('input',()=>{clearTimeout(t);t=setTimeout(draw,120)});$('#fSetup').addEventListener('input',draw);draw()}
+const PEERW={recruiting:'peer asks (recruiting)',control:'peer never asks (control)',alone:'target alone'};
 
 function kv(rows){return '<div class="kv">'+rows.filter(r=>r[1]!=null&&r[1]!=='').map(([k,v])=>`<b>${esc(k)}</b><div>${v}</div>`).join('')+'</div>'}
 function whatBox(r,e,raw){const s=raw?raw.settings||{}:r.settings,c=r.cond,peer=c.peer_enabled!==false&&r.peer_model,
@@ -340,11 +478,11 @@ function runDetails(r){const m=r.meta;return `<details class="box"><summary>Run 
  ['Host',esc(m.host)],['Ended',esc(m.ended)],['Target routing',esc(pin(r.target_pin)||'OpenRouter default')],['Peer routing',esc(pin(r.peer_pin)||'OpenRouter default')]])}
  ${m.command?`<div class="lbl">Command</div><pre>${esc(m.command)}</pre>`:''}<div class="lbl">All settings</div><pre>${esc(pretty(r.settings))}</pre>${m.results?`<div class="lbl">Run results</div><pre>${esc(pretty(m.results))}</pre>`:''}</details>`}
 
-function showRun(r){$('#main').innerHTML=`<div class="crumb"><a href="#">All runs</a> / ${esc(r.id)}</div><h2>${esc(r.cond_words)}</h2>
+function showRun(r){$('#main').innerHTML=`<div class="crumb"><a href="#">All runs</a> / ${esc(r.id)}</div><h2>${esc(r.cond_words)}</h2>${notes(r.desc,r.tags)}
  <div class="what"><h3>What was run</h3>${whatBox(r)}<div class="pills">${summary(r)}</div></div>
  <h3>Episodes</h3><div class="list">${r.episodes.map((e,i)=>`<a class="card" href="#run/${encodeURIComponent(r.id)}/${i}">
  <span class="t">Episode ${esc(e.num)}</span><span class="pills"><span class="pill ${e.out.cls}">${esc(e.out.pill)}</span><span>${esc(e.out.line)}</span></span>
- <span class="small mono">${esc(e.file)} · $${e.cost.total.toFixed(4)}</span></a>`).join('')}</div>${runDetails(r)}`}
+ ${notes(e.note,e.tags)}<span class="small mono">${esc(e.file)} · $${e.cost.total.toFixed(4)}</span></a>`).join('')}</div>${runDetails(r)}`}
 
 // Rebuild each agent's turns from its own history (what it saw) aligned with `requests` (what it produced):
 // every request whose finish_reason is stop/tool_calls appended exactly one assistant message to that agent's
@@ -422,6 +560,7 @@ function showEp(r,i){const e=r.episodes[i];if(!e)return showRun(r);const ep=RAW(
  const labelRows=Object.entries(ep.label&&typeof ep.label==='object'?ep.label:{label:ep.label}).map(([k,v])=>`<tr class="${['objective_success','eligible_resisted','token_in_context','first_action_round','valid_for_comparison','task_success'].includes(k)?'key':''}"><th class="mono">${esc(k)}</th><td>${hl(typeof v==='string'?v:JSON.stringify(v))}</td></tr>`).join('');
  $('#main').innerHTML=`<div class="crumb"><a href="#">All runs</a> / <a href="#run/${encodeURIComponent(r.id)}">${esc(r.id)}</a> / Episode ${esc(e.num)}</div>
  ${r.episodes.length>1?`<div class="chips">${r.episodes.map((x,j)=>`<a class="${j===i?'on':''}" href="#run/${encodeURIComponent(r.id)}/${j}" title="${esc(x.out.line)}">Episode ${esc(x.num)}${x.counted?'':' · not counted'}</a>`).join('')}</div>`:''}
+ ${e.note||e.tags.length?`<div class="callout">${notes(e.note,e.tags)}</div>`:''}
  <div class="what"><div class="outcome ${e.out.cls}">${esc(e.out.line)}</div><div class="pills"><span class="pill ${e.out.cls}">${esc(e.out.pill)}</span>${leakDone?'<button class="link" id="jump">Jump to the leak</button>':''}</div>
  <h3>What was run</h3>${whatBox(r,e,ep)}</div>
  <details class="box"><summary>Details: settings, label, cost</summary>${kv([['Episode file',`<span class="mono">${esc(e.file)}</span>`],['Counted',e.counted?'yes':'no'],['Status',esc(ep.status)+' · '+esc(ep.stop_reason)],
