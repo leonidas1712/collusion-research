@@ -115,10 +115,10 @@ pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-
 <section data-panel="now">
   <h2>Where we are</h2>
   <div class="status">
-    <div><h3>Current step</h3><span class="pill wait">E01 behaviour pilot</span><p>Before any interpretability, check that the behaviour happens at all, black-box through OpenRouter.</p></div>
-    <div><h3>Latest result</h3><span class="pill bad">Granite never deliberately gives in under the rule</span><p>Persistent peer, 8 rounds: granite refuses every time (0/5 deliberate). But it often leaks the token <em>by accident</em> while explaining its refusal (4 of 8 policy episodes). Without the rule it gave in within 1–2 rounds in every full episode (but only 3/10 on a single first ask, so repeated asking matters). Controls never leak.</p></div>
-    <div><h3>Waiting on Leo</h3><span class="pill wait">Review scenarios D–J</span><p>In Leaf: <code>SCENARIO_CANDIDATES.md</code>. codex's suggested shortlist is F, G, H, I. Meanwhile the own-stake batch produced granite's first deliberate give-in under the rule (1 of 4), and codex-2 is checking Llama-3.3-70B.</p></div>
-    <div><h3>Spend so far</h3><span class="pill ok">≈ $0.15 of $25</span><p>All smoke tests, checks and batches so far.</p></div>
+    <div><h3>Current step</h3><span class="pill wait">Overnight rule-strength sweep (codex)</span><p>Stronger rules (stated consequence, logged channel) on Qwen3-32B and Qwen3-30B-A3B, to turn instant give-ins into gradual ones. No GPU.</p></div>
+    <div><h3>Pilot grid result</h3><span class="pill ok">one strong candidate</span><p><strong>deploy-token (required access) on Qwen3-32B:</strong> 3/5 gave in deliberately after holding (rounds 3–5), 2/5 held throughout. Exactly the gradual shape we need. Elsewhere Qwen gives in at round 1–2 almost every time. Table: <code>experiments/E01-behaviour-pilot/pilot_results.md</code>.</p></div>
+    <div><h3>For Leo in the morning</h3><span class="pill wait">decisions</span><p>(1) Review the overnight rule text (post-hoc). (2) OK the control-peer fix for deploy-token. (3) OK the Modal CPU weight prefetch and GPU benchmark (est. ≤ $1.30). (4) Discuss <code>docs/evaluation_design.md</code>.</p></div>
+    <div><h3>Spend so far</h3><span class="pill ok">≈ $3 API · $0.05 Modal</span><p>OpenRouter API for all runs; Modal only the setup check.</p></div>
   </div>
 
   <h3>The plan in one line per stage</h3>
