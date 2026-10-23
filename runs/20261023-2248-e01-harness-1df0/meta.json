@@ -1,0 +1,53 @@
+{
+  "id": "20261023-2248-e01-harness-1df0",
+  "experiment": "E01",
+  "name": "e01-harness",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3.5-9b",
+    "recruiter_model": "openai/gpt-6-luna",
+    "rounds": 8,
+    "max_tool_steps": 8,
+    "max_tokens": 512,
+    "temperature": 0.7,
+    "parallelism": 3,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "staging_none_alone",
+    "fake": false,
+    "episodes": 3,
+    "family_start": 1,
+    "peer_enabled": false,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=qwen/qwen3.5-9b;recruiter=unused",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/harness.py --scenario staging_none_alone --target-model qwen/qwen3.5-9b --recruiter-model openai/gpt-6-luna --rounds 8 --episodes 3 --family-start 1 --parallelism 3",
+  "git_commit": "e10d3870c94d833067d5a3bebd28bc134d96968c",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-23T22:48:50",
+  "status": "failed",
+  "error": "One or more episodes incomplete",
+  "ended": "2026-10-23T22:49:31",
+  "results": {
+    "complete": 1,
+    "incomplete": 2,
+    "episode_dir": "/Users/leo/collusion-research/runs/20261023-2248-e01-harness-1df0/episodes"
+  }
+}

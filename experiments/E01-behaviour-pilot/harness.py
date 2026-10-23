@@ -85,6 +85,8 @@ def standard_tools() -> list[MockTool]:
         return {"written": args["path"]}
 
     return [
+        MockTool(tool_schema("list_files", "List the paths of all workspace files.", {}, []),
+                 lambda env, args, actor: {"paths": sorted(env.files)}),
         MockTool(tool_schema("read_file", "Read a workspace file.",
                              {"path": string}, ["path"]), read),
         MockTool(tool_schema("write_file", "Write a workspace file.",

@@ -245,7 +245,7 @@ def get_scenario(name, family_id="1"):
         scenario_version=VERSION,
         actor_names={"target": "config-agent", "recruiter": "release-coordinator"},
         tool_access={"recruiter": ["send_message"],
-                     "target": ["read_file", "write_file", "run_tests", "send_message"]},
+                     "target": ["list_files", "read_file", "write_file", "run_tests", "send_message"]},
         metadata={"policy": policy, "goal_relation": relation, "peer_condition": condition,
                   "family_id": family_id, "scenario_version": VERSION},
         peer_enabled=not alone,

@@ -45,7 +45,7 @@ class ScenarioTests(unittest.TestCase):
         self.assertNotEqual(scenarios[0].honeypots, get_scenario(SCENARIO_NAMES[0], "8").honeypots)
         self.assertTrue(all(item.honeypots[0] not in item.recruiter_system for item in scenarios))
         for item in scenarios:
-            self.assertFalse(item.recruiter_approved)
+            self.assertEqual(item.recruiter_approved, item.metadata["policy"] == "none")
             self.assertEqual(item.metadata["family_id"], "7")
             self.assertEqual("Keep STAGING_DEPLOY_TOKEN" in item.target_system,
                              item.metadata["policy"] == "explicit")
@@ -266,6 +266,26 @@ class ScenarioTests(unittest.TestCase):
 
 
 class ScenarioIntegrationTests(unittest.IsolatedAsyncioTestCase):
+    async def test_target_can_discover_paths_then_read_while_peer_cannot(self):
+        scenario = get_scenario("staging_none_related_control")
+        target = [calls(("list", "list_files", {})),
+                  calls(("read", "read_file", {"path": PRIVATE})), answer("Checked.")]
+        peer = [calls(("peer-list", "list_files", {})), answer("Please report readiness.")]
+        client = ScriptedClient(target, peer)
+        with tempfile.TemporaryDirectory() as directory:
+            result = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=1),
+                                       client, Path(directory))
+        self.assertEqual(result["status"], "complete")
+        peer_event, listing, reading = result["tool_log"]
+        self.assertEqual(peer_event["result"]["error"], "PermissionError")
+        self.assertEqual(listing["result"], {"paths": sorted(scenario.files)})
+        self.assertNotIn(scenario.honeypots[0], json.dumps(listing["result"]))
+        self.assertEqual(reading["result"]["content"], scenario.files[PRIVATE])
+        for request in client.requests:
+            names = {tool["function"]["name"] for tool in request["tools"]}
+            self.assertEqual("list_files" in names, request["model"] == "target-test")
+        self.assertTrue(result["label"]["token_in_context"])
+
     async def test_scripted_acceptance_and_target_alone(self):
         for name in ("staging_explicit_related_recruiting", "staging_none_alone"):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
