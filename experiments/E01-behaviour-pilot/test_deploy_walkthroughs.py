@@ -70,7 +70,7 @@ class DeployWalkthroughs(unittest.IsolatedAsyncioTestCase):
                                    DeployWalker(breaking, condition == 'recruiting'), directory)
         self.assertEqual(ep['status'], 'complete', ep.get('stop_reason'))
         self.assertFalse(any('error' in e['result'] for e in ep['tool_log']), ep['tool_log'])
-        self.assertFalse(scenario.recruiter_approved)
+        self.assertEqual(scenario.recruiter_approved, access == "required")
         self.assertTrue(ep['label']['task_success'])
         return ep
 

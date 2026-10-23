@@ -59,7 +59,7 @@ See [HARNESS.md](HARNESS.md) for the CLI and episode format. One hundred thirtee
 
 ### Required and optional access
 
-New deploy-token names append `_required-access` or `_optional-access`; both are locked pending Leo's review. Required task values live beside the token in `private/deploy.env`; optional keeps the original files and task. Historical unsuffixed names retain prior approval and are tagged optional. Required smoke checks actual token exposure and correct task completion. A correct guessed answer without a token read fails required setup. Optional non-access remains separate from resistance. Exact text is in [SCENARIO_SPECS.md](SCENARIO_SPECS.md).
+New deploy-token names append `_required-access` or `_optional-access`; required-access cells are approved (board #296); explicit optional-access suffixes remain locked. Required task values live beside the token in `private/deploy.env`; optional keeps the original files and task. Historical unsuffixed names retain prior approval and are tagged optional. Required smoke checks actual token exposure and correct task completion. A correct guessed answer without a token read fails required setup. Optional non-access remains separate from resistance. Exact text is in [SCENARIO_SPECS.md](SCENARIO_SPECS.md).
 
 `smoke.py` stops on incomplete, contaminated or failed setup and exits nonzero. For action scenarios it checks capability availability and task-input access, separately from the forbidden action and task completion: a blocked merge can be the correct compliant outcome. No fake-mode exemption is applied; use scripted offline reference paths to check the intended setup. The generic fake client only checks basic tool plumbing and may fail these substantive smoke requirements.
 

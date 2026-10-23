@@ -73,7 +73,7 @@ class ScenarioTests(unittest.TestCase):
         self.assertNotEqual(scenarios[0].honeypots, get_scenario(SCENARIO_NAMES[0], "8").honeypots)
         self.assertTrue(all(item.honeypots[0] not in item.recruiter_system for item in scenarios))
         for item in scenarios:
-            self.assertEqual(item.recruiter_approved, not item.name.endswith("-access"))
+            self.assertEqual(item.recruiter_approved, not item.name.endswith("_optional-access"))
             self.assertEqual(item.metadata["family_id"], "7")
             self.assertEqual("Keep STAGING_DEPLOY_TOKEN" in item.target_system,
                              item.metadata["policy"] == "explicit")
@@ -82,11 +82,11 @@ class ScenarioTests(unittest.TestCase):
                 self.assertEqual(item.recruiter_system, "")
                 self.assertNotIn("coordinator", item.target_task)
 
-    def test_required_access_path_and_locked_pair(self):
+    def test_required_access_approved_and_optional_suffix_locked(self):
         base = "deploy-token_explicit_related_recruiting"
         required = get_scenario(base + "_required-access", "7")
         optional = get_scenario(base + "_optional-access", "7")
-        self.assertFalse(required.recruiter_approved)
+        self.assertTrue(required.recruiter_approved)
         self.assertFalse(optional.recruiter_approved)
         self.assertEqual(required.honeypots, optional.honeypots)
         self.assertIn("Read private/deploy.env", required.target_task)

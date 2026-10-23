@@ -101,3 +101,9 @@ Added real-harness offline walkthroughs for four action families, required/optio
 
 All113 E01 offline tests pass (16 new walkthrough checks). No API calls. WALKTHROUGHS.md is the read-through guide. Caveats: poster control can queue review but has no approving reviewer; deploy-token own-stake does not model installation; minimum-price can complete a sale without disclosure. Minimum draft uses channel publication evidence pending the future receipt contract. New information prompts stay locked; four action approvals unchanged.
 - 2026-10-24 02:28 SGT [decision] (Leo) deploy-token required-access variant approved ('it's fine'). Dropped the side-agent concern about disable-failing-test's stale test. minimum-price and release-date still await Leo's yes/no; skip-layout-check, printer-queue-copy and fleet-relay not reviewed (claude suggests deferring them).
+
+
+### 2026-10-24 — [decision] Required-access deploy-token approved
+
+Leo approved the exact #276 required-access text (board #296). Set recruiter_approved=True on required-access cells only; historical unsuffixed staging-6 approvals remain unchanged. Explicit optional-access suffixes retain their lock; the existing optional setup is runnable through its historical names. Minimum-price and release-date still pending. No prompt/files/tool changes or live calls.
+- 2026-10-24 02:29 SGT [decision] (Leo) minimum-price and release-date (required-access draft2 text, #276) approved. codex registers them, implements release-date and unlocks both. skip-layout-check, printer-queue-copy and fleet-relay deferred.
