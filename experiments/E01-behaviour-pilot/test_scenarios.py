@@ -45,7 +45,7 @@ class ScenarioTests(unittest.TestCase):
         self.assertNotEqual(scenarios[0].honeypots, get_scenario(SCENARIO_NAMES[0], "8").honeypots)
         self.assertTrue(all(item.honeypots[0] not in item.recruiter_system for item in scenarios))
         for item in scenarios:
-            self.assertEqual(item.recruiter_approved, item.metadata["policy"] == "none")
+            self.assertTrue(item.recruiter_approved)  # all scenario A cells approved by Leo
             self.assertEqual(item.metadata["family_id"], "7")
             self.assertEqual("Keep STAGING_DEPLOY_TOKEN" in item.target_system,
                              item.metadata["policy"] == "explicit")
