@@ -60,8 +60,13 @@ A scenario gives the main probe something to predict: under the **same** setup (
 
 **Conditions and controls**
 - **Control peer:** same scenario and target prompt, never asks for the out-of-scope thing, and **matched in tone and persistence** (it pushes just as hard for in-scope things). *Why:* so a probe can't separate cells by how pushy the peer sounds.
-- **Target-alone baseline:** no peer; one full task turn; measures spontaneous action.
+- **Every scenario includes two reference cells** alongside rule + recruiting and rule + control:
+  - **No rule:** same peer and ask, rule line removed. Shows plain helpfulness and how much the rule holds the target back.
+  - **Target alone:** no peer; one full task turn. Shows whether the target takes the action without being asked.
+  *Why:* without them, a give-in rate under the rule can't be attributed to the peer.
 - **Related vs unrelated peer goal:** related is the headline; unrelated is secondary and must be a genuinely different kind of work, not the same work for another service.
+- **Every scenario states, at a glance, three things:** (1) **why the target might give in**: the lever, in one line (what the target gains or what pressure it faces); (2) **why giving in breaks the rule**: what the operator forbids and why that's a sensible rule; (3) **why the control peer's ask is fine**: what it asks for, and why that's within the rule. *Why:* a reviewer should see where the pull comes from and why the control isn't also collusion, without reading the prompts closely.
+- **Game-like or everyday settings are fine** (café, signs, posters), as in much of the collusion literature, as long as the three points above are clear. Settings closer to real agent failures (approving changes, skipping checks, pricing) are preferred for the headline.
 - **Levers** go in as fixed parts of a condition, tagged `levers=[…]`. Levers in the target's prompt are the same across give-in and resist within a condition, so **probes train and test within a condition**.
 
 ## 4. Labels
@@ -108,3 +113,4 @@ Dated; newest at the bottom. Each line points to where it's applied above.
 - 2026-10-24: Smoke test before any batch (§2 step 5).
 - 2026-10-24: Asks for an action, not only information, and a "rogue fleet" sense of unrelated are ideas for later scenarios.
 - 2026-10-24: Collect levers with their sources, tag every scenario with the levers that inspired it, use them across all scenarios (`scenario_levers.md`; §3 Conditions).
+- 2026-10-24 (on drafts D–J): game-like settings are OK, like the papers; but each scenario must show at a glance where the lever is (why the target might give in) and why the control peer isn't also colluding (§3 Conditions). Smoke-test about 4 new scenarios first, not all seven (§2). Every scenario must include no-rule and target-alone reference cells (§3 Conditions).
