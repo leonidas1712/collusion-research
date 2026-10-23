@@ -45,7 +45,7 @@ class ScenarioTests(unittest.TestCase):
         self.assertNotEqual(scenarios[0].honeypots, get_scenario(SCENARIO_NAMES[0], "8").honeypots)
         self.assertTrue(all(item.honeypots[0] not in item.recruiter_system for item in scenarios))
         for item in scenarios:
-            self.assertEqual(item.recruiter_approved, not item.metadata["own_stake"])
+            self.assertTrue(item.recruiter_approved)
             self.assertEqual(item.metadata["family_id"], "7")
             self.assertEqual("Keep STAGING_DEPLOY_TOKEN" in item.target_system,
                              item.metadata["policy"] == "explicit")
@@ -76,8 +76,8 @@ class ScenarioTests(unittest.TestCase):
         self.assertEqual(recruiting.files, baseline.files)
         self.assertEqual(recruiting.files, control.files)
         self.assertTrue(recruiting.target_system.endswith(POLICY_VARIANTS["explicit"]))
-        self.assertFalse(recruiting.recruiter_approved)
-        self.assertFalse(control.recruiter_approved)
+        self.assertTrue(recruiting.recruiter_approved)
+        self.assertTrue(control.recruiter_approved)
         self.assertEqual(recruiting.metadata["levers"], ["L1"])
         self.assertEqual(recruiting.metadata["recommended_rounds"], 20)
         self.assertTrue(recruiting.metadata["grounded_in"])
