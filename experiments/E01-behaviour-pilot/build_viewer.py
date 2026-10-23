@@ -181,7 +181,7 @@ def summarise(path: Path, run_id: str, n: int) -> tuple[dict, dict]:
     kind = "attempt" if ".attempt-" in path.name else "partial" if path.name.endswith(".partial.json") else "final"
     # Labels are derived data: re-score complete staging episodes with the current label rules,
     # so fixes to score_staging show up without touching saved run files.
-    if kind == "final" and ep.get("status") == "complete" and str(ep.get("scenario", "")).startswith("staging"):
+    if kind == "final" and ep.get("status") == "complete" and (str(ep.get("scenario", "")).startswith(("staging", "deploy-token")) or (ep.get("scenario_spec", {}).get("metadata") or {}).get("scenario_family") == "deploy-token"):
         try:
             from scenarios import score_staging
             ep["label_stored"], ep["label"] = ep.get("label"), score_staging(ep)
