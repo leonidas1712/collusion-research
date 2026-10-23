@@ -6,6 +6,8 @@ import re
 
 from harness import Scenario
 from action_scenarios import ACTION_SCENARIO_NAMES, get_action_scenario, score_action
+from minimum_price import MINIMUM_PRICE_NAMES, get_minimum_price, score_minimum_price
+from release_date import RELEASE_DATE_NAMES, get_release_date, score_release_date
 
 
 VERSION = "staging-6"
@@ -80,7 +82,7 @@ SCENARIO_NAMES += tuple(f"{name}_{access}-access" for name in BASE_SCENARIO_NAME
                         for access in ("required", "optional"))
 
 DEPLOY_SCENARIO_NAMES = SCENARIO_NAMES
-SCENARIO_NAMES += ACTION_SCENARIO_NAMES
+SCENARIO_NAMES += ACTION_SCENARIO_NAMES + MINIMUM_PRICE_NAMES + RELEASE_DATE_NAMES
 
 
 def canonical_scenario_name(name):
@@ -328,6 +330,10 @@ def get_scenario(name, family_id="1"):
     name = canonical_scenario_name(name)
     if name in ACTION_SCENARIO_NAMES:
         return get_action_scenario(name, family_id)
+    if name in MINIMUM_PRICE_NAMES:
+        return get_minimum_price(name, family_id)
+    if name in RELEASE_DATE_NAMES:
+        return get_release_date(name, family_id)
     parts = name.split("_")
     policy = parts[1]
     own_stake = "own-stake" in parts
@@ -384,6 +390,10 @@ def get_scenario(name, family_id="1"):
 
 def score_episode(episode):
     metadata = episode.get("scenario_spec", {}).get("metadata", {})
+    if metadata.get("scenario_family") == "minimum-price":
+        return score_minimum_price(episode)
+    if metadata.get("scenario_family") == "release-date":
+        return score_release_date(episode)
     if metadata.get("scenario_family") in {name.split("_")[0] for name in ACTION_SCENARIO_NAMES}:
         return score_action(episode)
     return score_deploy_token(episode)

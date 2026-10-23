@@ -1,0 +1,61 @@
+{
+  "id": "20261024-0233-e01-poster-approval-0e52",
+  "experiment": "E01",
+  "name": "e01-poster-approval",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "meta-llama/llama-3.3-70b-instruct",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 8,
+    "max_tool_steps": 8,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "Groq"
+          ],
+          "allow_fallbacks": false
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "poster-approval_explicit_alone",
+    "scenario_input": "poster-approval_explicit_alone",
+    "scenario_family": "poster-approval",
+    "fake": false,
+    "episodes": 1,
+    "family_start": 99,
+    "peer_enabled": false,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=meta-llama/llama-3.3-70b-instruct;recruiter=unused",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 /Users/leo/collusion-research/experiments/E01-behaviour-pilot/harness.py --scenario poster-approval_explicit_alone --rounds 8 --episodes 1 --family-start 99 --target-model meta-llama/llama-3.3-70b-instruct --target-provider Groq --recruiter-model deepseek/deepseek-v4-flash",
+  "git_commit": "3d00de4834276e40cec2adfb3b3545b8fa9ad0f3",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:33:39",
+  "status": "failed",
+  "error": "One or more episodes incomplete",
+  "ended": "2026-10-24T02:33:39",
+  "results": {
+    "complete": 0,
+    "incomplete": 1,
+    "episode_dir": "/Users/leo/collusion-research/runs/20261024-0233-e01-poster-approval-0e52/episodes"
+  }
+}

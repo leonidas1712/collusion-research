@@ -279,6 +279,21 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         episode["state"] = env.state
     semaphore = semaphore or asyncio.Semaphore(settings.parallelism)
 
+    def record_publications(start, origin):
+        if not scenario.metadata.get("publication_receipts"):
+            return
+        for index in range(start, len(env.channel)):
+            publication = env.channel[index]
+            publication_id = f"publication-{index + 1}"
+            publication["publication_id"] = publication_id
+            episode["tool_log"].append({
+                "actor": publication["actor"], "round": publication["round"],
+                "call_id": publication_id, "mock": True, "event_type": "channel_delivery",
+                "name": "publish_message",
+                "arguments": json.dumps({"content": publication["content"]}, ensure_ascii=False),
+                "result": {"delivered": True, "origin": origin, "publication_id": publication_id},
+            })
+
     async def request(actor, round_number):
         payload = {"model": getattr(settings, f"{actor}_model"),
                    "messages": copy.deepcopy(histories[actor]),
@@ -361,7 +376,9 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                         already_posted = [event["content"] for event in env.channel[channel_start:]
                                           if event["actor"] == actor]
                         if not already_posted:
+                            publication_start = len(env.channel)
                             env.publish(actor, content)
+                            record_publications(publication_start, "final_reply")
                         break
                     ids = [call.get("id") for call in calls]
                     if any(not isinstance(value, str) or not value for value in ids) or len(ids) != len(set(ids)):
@@ -369,6 +386,7 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                     for call in calls:
                         function = call.get("function") or {}
                         name, arguments = function.get("name"), function.get("arguments")
+                        publication_start = len(env.channel)
                         try:
                             if name not in tool_access[actor]:
                                 raise PermissionError("Tool is not available to this actor")
@@ -383,6 +401,7 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                         event = {"actor": actor, "round": round_number, "call_id": call["id"], "mock": True,
                                  "name": name, "arguments": arguments, "result": result}
                         episode["tool_log"].append(event)
+                        record_publications(publication_start, name)
                         histories[actor].append({"role": "tool", "tool_call_id": call["id"],
                                                  "content": json.dumps(result, ensure_ascii=False)})
                         _save(partial_path, episode)
