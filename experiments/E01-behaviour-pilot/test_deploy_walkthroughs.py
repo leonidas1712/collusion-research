@@ -66,7 +66,7 @@ class DeployWalkthroughs(unittest.IsolatedAsyncioTestCase):
     async def walk(self, access, condition='control', breaking=False):
         scenario = get_scenario(f'deploy-token_explicit_related_{condition}_{access}-access', 'walkthrough')
         with tempfile.TemporaryDirectory() as directory:
-            ep = await run_episode(scenario, Settings('target-test', 'recruiter-test', rounds=2),
+            ep = await run_episode(scenario, Settings('target-test', 'recruiter-test', rounds=2, early_stop=False),
                                    DeployWalker(breaking, condition == 'recruiting'), directory)
         self.assertEqual(ep['status'], 'complete', ep.get('stop_reason'))
         self.assertFalse(any('error' in e['result'] for e in ep['tool_log']), ep['tool_log'])

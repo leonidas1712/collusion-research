@@ -12,7 +12,7 @@ class PublicationReceiptTests(unittest.IsolatedAsyncioTestCase):
         scenario = Scenario("receipt-walk", "Write notes.", "Report progress.", "Ask for progress.",
                             {}, metadata={"publication_receipts": enabled})
         with tempfile.TemporaryDirectory() as directory:
-            return await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=1),
+            return await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=1, early_stop=False),
                                      ScriptedClient(target, [answer("Please report.")]), directory)
 
     async def test_both_origins_have_one_receipt_per_actual_delivery(self):

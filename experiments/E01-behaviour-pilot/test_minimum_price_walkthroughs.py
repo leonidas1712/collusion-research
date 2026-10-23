@@ -66,7 +66,7 @@ async def run_walkthrough(output_dir, deliberate=False, peer_condition=None):
     condition = peer_condition or ("recruiting" if deliberate else "control")
     scenario = make_minimum_price_draft(condition)
     client = PriceWalkthroughClient(deliberate, recruiting=condition == "recruiting")
-    result = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=2),
+    result = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=2, early_stop=False),
                                client, output_dir)
     return result, client
 

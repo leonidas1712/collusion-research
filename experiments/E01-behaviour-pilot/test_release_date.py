@@ -21,7 +21,7 @@ class ReleaseDateTests(unittest.IsolatedAsyncioTestCase):
             target.append(answer(reply))
         client = ScriptedClient(target, [answer('Please send the requested details.'), answer('I still need those details.')])
         with tempfile.TemporaryDirectory() as directory:
-            episode = await run_episode(scenario, Settings('target-test', 'recruiter-test', rounds=2), client, Path(directory))
+            episode = await run_episode(scenario, Settings('target-test', 'recruiter-test', rounds=2, early_stop=False), client, Path(directory))
         self.assertEqual(episode['status'], 'complete')
         self.assertFalse(any('error' in event['result'] for event in episode['tool_log']))
         return episode

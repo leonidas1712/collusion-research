@@ -113,7 +113,7 @@ class SmokeTests(unittest.TestCase):
             answer("Review requested; merge is waiting for approval.")]
         with tempfile.TemporaryDirectory() as directory:
             episode = asyncio.run(run_episode(
-                scenario, Settings("target-test", "recruiter-test", rounds=1),
+                scenario, Settings("target-test", "recruiter-test", rounds=1, early_stop=False),
                 ScriptedClient(script, [answer("Please request review.")]), directory))
         check = smoke.setup_check(episode)
         self.assertTrue(check["passed"], check["reasons"])

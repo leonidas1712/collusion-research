@@ -52,7 +52,7 @@ class Settings:
     target_model: str
     recruiter_model: str
     rounds: int = 3
-    max_tool_steps: int = 8
+    max_tool_steps: int = 12
     max_tokens: int = 1536
     temperature: float = 0.7
     parallelism: int = 1
@@ -61,6 +61,7 @@ class Settings:
         "provider": {"order": ["DeepInfra"], "allow_fallbacks": False},
     }})
     recruiter_request_options: dict = field(default_factory=lambda: {"extra_body": {"reasoning": {"enabled": False}}})
+    early_stop: bool = True
 
 
 @dataclass
@@ -350,7 +351,13 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         _save(partial_path, episode)
         rounds = settings.rounds if scenario.peer_enabled else 1
         actors = (("recruiter", "target"), ("target", "recruiter")) if scenario.peer_enabled else (("target", None),)
-        for round_number in range(1, rounds + 1):
+        from scenarios import SCENARIO_NAMES, score_episode
+        detect_action = settings.early_stop and scenario.peer_enabled and scenario.name in SCENARIO_NAMES
+        action_round = None
+        stop_after_round = rounds
+        round_number = 0
+        while round_number < stop_after_round:
+            round_number += 1
             env.round = round_number
             for actor, peer in actors:
                 channel_start = len(env.channel)
@@ -414,8 +421,15 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                                                            content=event["content"])})
                 _save(partial_path, episode)
             episode["rounds_completed"] = round_number
+            if detect_action and action_round is None and score_episode(episode).get("objective_success"):
+                action_round = round_number
+                stop_after_round = action_round + 2
+                episode["early_stop_action_round"] = action_round
+                episode["early_stop_after_round"] = stop_after_round
+            _save(partial_path, episode)
         episode["status"] = "complete"
-        episode["stop_reason"] = "round_limit" if scenario.peer_enabled else "target_finished"
+        episode["stop_reason"] = ("early_stop_after_action" if action_round is not None else
+                                  "round_limit" if scenario.peer_enabled else "target_finished")
         if scenario.label_fn is not None:
             episode["label"] = scenario.label_fn(episode)
     except Exception as exc:
@@ -474,7 +488,8 @@ async def _main(args):
     scenarios = [_scenario(args.scenario, args.fake, family_id=str(index))
                  for index in range(args.family_start, args.family_start + args.episodes)]
     settings = Settings(args.target_model, args.recruiter_model, args.rounds,
-                        args.max_tool_steps, args.max_tokens, args.temperature, args.parallelism)
+                        args.max_tool_steps, args.max_tokens, args.temperature, args.parallelism,
+                        early_stop=not getattr(args, "no_early_stop", False))
     for actor in ("target", "recruiter"):
         provider = getattr(args, f"{actor}_provider", None)
         quantization = getattr(args, f"{actor}_quantization", None)
@@ -542,7 +557,9 @@ if __name__ == "__main__":
     parser.add_argument("--target-quantization", help="Optional OpenRouter quantization filter, e.g. bf16")
     parser.add_argument("--recruiter-quantization", help="Optional OpenRouter quantization filter")
     parser.add_argument("--rounds", type=int, default=3)
-    parser.add_argument("--max-tool-steps", type=int, default=8)
+    parser.add_argument("--max-tool-steps", type=int, default=12)
+    parser.add_argument("--no-early-stop", action="store_true",
+                        help="Run to the round limit even after the designated action")
     parser.add_argument("--max-tokens", type=int, default=1536)
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--target-reasoning", action="store_true")

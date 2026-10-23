@@ -77,7 +77,7 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         )
 
     def settings(self, **kwargs):
-        return harness.Settings(target_model="target-test", recruiter_model="recruiter-test", **{"rounds": 1, **kwargs})
+        return harness.Settings(target_model="target-test", recruiter_model="recruiter-test", **{"rounds": 1, "early_stop": False, **kwargs})
 
     async def run_case(self, client, **kwargs):
         result = await harness.run_episode(self.scenario(), self.settings(**kwargs), client, self.out)
@@ -118,7 +118,7 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
             answer(),
             answer(),
         ], [answer("Please report your progress."), answer("Thanks.")])
-        episode = await harness.run_episode(scenario, self.settings(rounds=2), client, self.out)
+        episode = await harness.run_episode(scenario, self.settings(rounds=2, early_stop=False), client, self.out)
         self.assertEqual(episode["status"], "complete")
         recruiter_requests = [r for r in client.requests if r["model"] == "recruiter-test"]
         self.assertEqual(len(recruiter_requests), 2)
@@ -133,7 +133,7 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
             answer("Done! I updated the status."),
             answer("No further updates."),
         ], [answer("Please update status."), answer("Thanks.")])
-        episode = await self.run_case(client, rounds=2)
+        episode = await self.run_case(client, rounds=2, early_stop=False)
         self.assertEqual(episode["status"], "complete")
         target_posts = [event["content"] for event in episode["channel"]
                         if event["actor"] == "target"]
@@ -446,7 +446,7 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
             max_tool_steps=8, max_tokens=128, temperature=0.7, parallelism=1,
             target_reasoning=False, recruiter_reasoning=False, output=self.out,
             target_provider="TargetProvider", recruiter_provider="PeerProvider",
-            target_quantization="bf16", recruiter_quantization="fp16",
+            target_quantization="bf16", recruiter_quantization="fp16", no_early_stop=True,
         )
         with patch.dict(sys.modules, {"collusion.runs": SimpleNamespace(start_run=lambda *a, **kw: run)}), \
              patch("harness._scenario", side_effect=factory), patch("builtins.print"):
@@ -455,6 +455,7 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         episodes = [json.loads(path.read_text()) for path in sorted(self.out.glob("episode-*.json"))]
         self.assertEqual([ep["condition"]["family_id"] for ep in episodes], ["7", "8"])
         self.assertTrue(all(ep["rounds_completed"] == 1 for ep in episodes))
+        self.assertTrue(all(ep["settings"]["early_stop"] is False for ep in episodes))
         options = episodes[0]["settings"]
         self.assertEqual(options["target_request_options"]["extra_body"]["provider"],
                          {"order": ["TargetProvider"], "allow_fallbacks": False, "quantizations": ["bf16"]})

@@ -474,7 +474,7 @@ class ScenarioTests(unittest.TestCase):
 class ScenarioIntegrationTests(unittest.IsolatedAsyncioTestCase):
     async def test_legacy_resume_keeps_original_file_and_rejects_stimulus_change(self):
         scenario = get_scenario("deploy-token_explicit_related_recruiting")
-        settings = Settings("target-test", "recruiter-test", rounds=1)
+        settings = Settings("target-test", "recruiter-test", rounds=1, early_stop=False)
         with tempfile.TemporaryDirectory() as directory:
             original = await run_episode(scenario, settings, ScriptedClient([answer()], [answer()]), directory)
             original["scenario"] = original["scenario_spec"]["name"] = "staging_explicit_related_recruiting"
@@ -501,7 +501,7 @@ class ScenarioIntegrationTests(unittest.IsolatedAsyncioTestCase):
         peer = [calls(("peer-list", "list_files", {})), answer("Please report readiness.")]
         client = ScriptedClient(target, peer)
         with tempfile.TemporaryDirectory() as directory:
-            result = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=1),
+            result = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=1, early_stop=False),
                                        client, Path(directory))
         self.assertEqual(result["status"], "complete")
         peer_event, listing, reading = result["tool_log"]
@@ -526,7 +526,7 @@ class ScenarioIntegrationTests(unittest.IsolatedAsyncioTestCase):
                     answer("Done."),
                 ]
                 client = ScriptedClient(target, [answer("Please report readiness.")] if scenario.peer_enabled else [])
-                settings = Settings("target-test", "recruiter-test", rounds=1)
+                settings = Settings("target-test", "recruiter-test", rounds=1, early_stop=False)
                 self.assertEqual(settings.max_tokens, 1536)
                 result = await run_episode(scenario, settings,
                                            client, Path(directory))

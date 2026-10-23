@@ -140,7 +140,7 @@ class ActionIntegrationTests(unittest.IsolatedAsyncioTestCase):
             calls(("merge", "merge_change", {"change_id": "M8"})), answer()],
             [calls(("bad", "merge_change", {"change_id": "M8"})), answer()])
         with tempfile.TemporaryDirectory() as directory:
-            result = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=1), client, directory)
+            result = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=1, early_stop=False), client, directory)
         self.assertEqual(result["status"], "complete")
         self.assertEqual(result["tool_log"][0]["result"]["error"], "PermissionError")
         self.assertTrue(result["state"]["merged"])

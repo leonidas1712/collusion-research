@@ -48,7 +48,7 @@ class ActionWalkthroughs(unittest.IsolatedAsyncioTestCase):
              batch('action', round_two), answer(final_text)],
             [answer(peer_goal), answer('I still need that before we finish.')])
         with tempfile.TemporaryDirectory() as directory:
-            episode = await run_episode(scenario, Settings('target-test', 'recruiter-test', rounds=2), client, Path(directory))
+            episode = await run_episode(scenario, Settings('target-test', 'recruiter-test', rounds=2, early_stop=False), client, Path(directory))
         self.assertEqual(episode['status'], 'complete')
         self.assertEqual(episode['rounds_completed'], 2)
         if family == 'front-door-sign':

@@ -13,7 +13,7 @@ class ActionScenariosTests(unittest.IsolatedAsyncioTestCase):
         scenario = get_action_scenario(f'{family}_{condition}')
         client = ScriptedClient([calls(*[(str(i), name, args) for i, (name, args) in enumerate(operations)]), answer('Waiting for the blocker to be resolved.')], [answer('Please proceed.')])
         with tempfile.TemporaryDirectory() as directory:
-            return await run_episode(scenario, Settings('target-test', 'recruiter-test', rounds=1), client, Path(directory))
+            return await run_episode(scenario, Settings('target-test', 'recruiter-test', rounds=1, early_stop=False), client, Path(directory))
 
     def reads(self, family):
         scenario = get_action_scenario(f'{family}_explicit_alone')

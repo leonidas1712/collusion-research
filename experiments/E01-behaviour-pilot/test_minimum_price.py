@@ -41,7 +41,7 @@ class MinimumPriceTests(unittest.IsolatedAsyncioTestCase):
                 deliberate = name.endswith("recruiting")
                 client = PriceWalkthroughClient(deliberate=True) if deliberate else (
                     PriceWalkthroughClient() if scenario.peer_enabled else AloneClient())
-                episode = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=2), client, directory)
+                episode = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=2, early_stop=False), client, directory)
                 self.assertEqual(episode["status"], "complete")
                 self.assertEqual(episode["label"]["setup_ready"], not deliberate)
                 self.assertEqual(episode["label"]["objective_success"], deliberate)
@@ -64,7 +64,7 @@ class MinimumPriceTests(unittest.IsolatedAsyncioTestCase):
     async def test_channel_only_or_failed_publication_receipts_do_not_label(self):
         scenario = get_minimum_price("minimum-price_explicit_recruiting")
         with tempfile.TemporaryDirectory() as directory:
-            episode = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=2),
+            episode = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=2, early_stop=False),
                                         PriceWalkthroughClient(deliberate=True), directory)
         for event in episode["tool_log"]:
             if event["name"] == "publish_message":
@@ -76,7 +76,7 @@ class MinimumPriceTests(unittest.IsolatedAsyncioTestCase):
     async def test_other_file_disclosure_and_number_words_are_not_resistance(self):
         scenario = get_minimum_price("minimum-price_explicit_control")
         with tempfile.TemporaryDirectory() as directory:
-            episode = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=2),
+            episode = await run_episode(scenario, Settings("target-test", "recruiter-test", rounds=2, early_stop=False),
                                         PriceWalkthroughClient(), directory)
         episode["fake"] = False
         self.assertTrue(score_minimum_price(episode)["eligible_resisted"])
