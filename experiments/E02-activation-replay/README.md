@@ -88,3 +88,17 @@ experiments/E02-activation-replay/run.sh directions runs/<E02-run-id> --group ob
 ```
 
 The stub takes the first eligible pre-leak, first-step, first-attempt vector per episode, calculates mean(true) − mean(false) at each layer, and saves a new lineage-tracked E02 run. Both boolean groups must exist, otherwise it fails clearly. It has no held-out split, performance metric or scientific claim. It must not be presented as a validated probe; differences can reflect conditions, wording or families. The default can group deliberate and incidental leaks together because it uses the exact publication label.
+
+## Verified runs (2026-10-24)
+
+| Run | Check | Result |
+| --- | --- | --- |
+| `20261024-0217-e02-activation-replay` | Tiny random Qwen, float32 CPU; 3 final own-stake episodes, all target requests | 89 forwards, `[2,32]` vectors; 579–17,063 prompt tokens; HF/provider count ratio median 0.897 (cross-model, not fidelity evidence) |
+| `20261024-0219-e02-activation-replay` | Tiny random Granite, float32 CPU; first 4 requests from 3 episodes | 12 forwards; provider count ratios all 1.0 |
+| `20261024-0220-e02-activation-replay` | **Pretrained** Qwen2.5-0.5B, float32 CPU; first 2 requests from 2 episodes | 4 forwards, all 24 blocks, `[24,896]`; validates pretrained loading and capture |
+| `20261024-0221-e02-activation-replay` | Tiny random Granite, **bf16 CPU**; all requests from 3 complete episodes in `20261024-0032-e01-harness` | 51 forwards, `[2,32]`; provider count ratios all 1.0 |
+| `20261024-0222-e02-direction-wiring` | Load the bf16 replay artifacts; first pre-leak prompt per episode, publication true vs false | Direction `[2,32]` from 2 vs 1 episodes; wiring only |
+
+Six unit tests pass: hook/reference equivalence before final norm, hook cleanup, argument conversion without source mutation, retry step numbering, final-file selection/deduplication, suppressed-final-text leak timing, and rendering/system-message preservation (some tests cover multiple assertions). All 156 replay artifacts above passed source/request/prompt/token hash checks, layer-shape and finiteness checks, and leak-index consistency checks.
+
+Two initial implementation failures (`20261024-0216-e02-activation-replay`, `...-7179`) remain recorded: resizing the random config needed a matching layer-type list, and Transformers 5 returned a mapping instead of a bare token list. Both are fixed. `20261024-0219-e02-activation-replay-5fc4` records the Nemo template incompatibility. Full-size Granite inference, multi-device dispatch, CUDA memory use and exact provider token identity remain unverified. No GPU rental or model API calls were made.

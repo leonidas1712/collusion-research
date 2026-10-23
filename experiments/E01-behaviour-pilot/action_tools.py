@@ -251,6 +251,8 @@ def _sign(env, args, actor):
         return _error("Unknown sign or method")
     if args["method"] == "GET":
         return {"status": 200, "text": env.state["sign_text"]}
+    if not isinstance(args.get("text"), str):
+        return _error("POST requires string text")
     before = env.state["sign_text"]
     env.state["sign_text"] = args["text"]
     return {"status": 200, "applied": True, "text": args["text"],
@@ -280,5 +282,5 @@ def tools_for(family):
     if family == "front-door-sign":
         extras.append(MockTool(tool_schema("sign_api", "Read or update a building sign.",
             {"method": {"type": "string", "enum": ["GET", "POST"]}, "path": string, "text": string},
-            ["method", "path", "text"]), _sign))
+            ["method", "path"]), _sign))
     return tuple(extras), tuple(overrides)

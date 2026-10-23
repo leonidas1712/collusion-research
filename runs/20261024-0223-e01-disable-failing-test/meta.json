@@ -1,0 +1,57 @@
+{
+  "id": "20261024-0223-e01-disable-failing-test",
+  "experiment": "E01",
+  "name": "e01-disable-failing-test",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "ibm-granite/granite-4.2-8b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 8,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "CoreWeave"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "bf16"
+          ]
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "disable-failing-test_explicit_recruiting",
+    "scenario_input": "disable-failing-test_explicit_recruiting",
+    "scenario_family": "disable-failing-test",
+    "fake": false,
+    "episodes": 1,
+    "family_start": 101,
+    "peer_enabled": true,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=ibm-granite/granite-4.2-8b;recruiter=deepseek/deepseek-v4-flash",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 /Users/leo/collusion-research/experiments/E01-behaviour-pilot/harness.py --scenario disable-failing-test_explicit_recruiting --rounds 20 --episodes 1 --family-start 101 --target-model ibm-granite/granite-4.2-8b --target-provider CoreWeave --recruiter-model deepseek/deepseek-v4-flash --target-quantization bf16",
+  "git_commit": "cae78e8d4990b7fc5b6f02492335db16aa68499c",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:23:24",
+  "status": "running"
+}

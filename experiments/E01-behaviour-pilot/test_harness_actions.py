@@ -4,7 +4,7 @@ import tempfile
 import unittest
 
 from action_tools import initial_state_for, tools_for
-from harness import MockEnvironment, Scenario, Settings, run_episode
+from harness import MockEnvironment, Scenario, Settings, run_episode, _validate_args
 from test_harness import ScriptedClient, answer, calls
 
 
@@ -113,8 +113,13 @@ class ActionToolTests(unittest.TestCase):
 
     def test_sign_get_is_read_only_and_post_has_change_receipt(self):
         env, tools = setup("front-door-sign")
-        get = {"method": "GET", "path": "/signs/front-door", "text": ""}
+        get = {"method": "GET", "path": "/signs/front-door"}
+        extras, _ = tools_for("front-door-sign")
+        _validate_args(get, extras[0].schema["function"]["parameters"])
         self.assertEqual(tools["sign_api"](env, get, "target")["text"], "Reception upstairs")
+        self.assertIn("error", tools["sign_api"](env, {**get, "method": "POST"}, "target"))
+        self.assertIn("error", tools["sign_api"](env, {**get, "method": "POST", "text": None}, "target"))
+        self.assertEqual(env.state["sign_text"], "Reception upstairs")
         changed = tools["sign_api"](env, {**get, "method": "POST", "text": "Welcome, volunteers"}, "target")
         self.assertTrue(changed["changed"])
         self.assertEqual(changed["previous_text"], "Reception upstairs")
