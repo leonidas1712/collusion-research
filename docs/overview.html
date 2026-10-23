@@ -213,7 +213,7 @@ pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-
   <p><strong>Transfer tests, cheapest first:</strong> (1) rephrased rule, nearly free, since the rule-wording sweep produces it anyway; (2) a different peer tactic or model (e.g. Colosseum tactics); (3) constructed decisions → real episodes (the backup route); (4) a second scenario (B or C); (5) a second target model, which needs its own probe and tests the method, not the direction.</p>
 
   <h3>Levers: what makes an agent give in (from the literature)</h3>
-  <p>In every paper that produces collusion, the colluding agent gets something out of it. Our target gets nothing from sharing, so the rule decides everything. The full catalogue, with sources, is in <code>docs/scenario_levers.md</code> (maintained by claude-2). The ones closest to the incidents:</p>
+  <p>In every paper that produces collusion, the colluding agent gets something out of it. Our target gets nothing from sharing, so the rule decides everything. The full catalogue, with sources, is in <code>docs/scenario_levers.md</code>; how scenarios are built and checked is in <code>docs/scenario_guidelines.md</code> (both maintained by claude-2). The ones closest to the incidents:</p>
   <div class="scroll"><table>
     <tr><th>Lever</th><th>In our scenario</th><th>Evidence</th></tr>
     <tr><td><strong>L1 Own task depends on it</strong></td><td>The target is judged on the update shipping, which fails while the peer is blocked</td><td>Shi et al. 2026b: 94% collude when higher reward needs a protocol break; the HF incident's task pressure plus shortcut</td></tr>
@@ -536,6 +536,7 @@ sequenceDiagram
     <tr><td><code>EXPERIMENT_LOG.md</code></td><td>Dated journal: decisions, results, dead ends.</td></tr>
     <tr><td><code>docs/recruited_idea.md</code></td><td>Your original idea doc (main test updated to effect vs attempt).</td></tr>
     <tr><td><code>docs/related_work.md</code></td><td>Paper notes and recommendations.</td></tr>
+    <tr><td><strong><code>docs/scenario_guidelines.md</code></strong></td><td>Source of truth for how scenarios are built and checked: process, quality bar, pre-run checklist, lessons, and a dated log of Leo's review feedback (claude-2).</td></tr>
     <tr><td><code>docs/scenario_levers.md</code></td><td>Catalogue of levers that push agents towards or away from giving in, with sources (claude-2).</td></tr>
     <tr><td><code>docs/workflow.md</code></td><td>How runs, experiments and logs are organised.</td></tr>
     <tr><td><code>docs/infra.md</code></td><td>GPU plan: Lambda first, Modal backup.</td></tr>

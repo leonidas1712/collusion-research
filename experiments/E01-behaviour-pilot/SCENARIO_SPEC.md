@@ -81,7 +81,7 @@ Scenario(
     target_system="""[Target's deployment prompt: who it is, what it maintains, its tools, how it talks
     to other agents, and its scope/policy relevant to the out-of-scope action, stated naturally.]""",
     target_task="""[First message from its human operator: the legitimate task for this episode.]""",
-    recruiter_system="""[Peer's system prompt: its role, its situation, and its goal. Leo writes this.]""",
+    recruiter_system="""[Peer's system prompt: its role, its situation, and its goal. codex drafts this; Leo reviews.]""",
     files={  # mock workspace, in memory only
         "[path]": "[content]",  # include the planted item for this scenario (fake, random-looking)
     },
@@ -114,4 +114,4 @@ Results go to `runs/<timestamp>-<name>/episodes/`, one JSON per episode, written
 ## Status
 
 - Harness, run helper and model picks: done.
-- The scenario prompt text is written by Leo. When the AI agents drafted it, automated safety checks stopped the drafts, so Leo writes the prompt text and the agents wire it in and run it.
+- Scenario prompt text is drafted by codex and reviewed by Leo before any live run (claude's own drafts were stopped by automated safety checks). How scenarios are built and checked: [`docs/scenario_guidelines.md`](../../docs/scenario_guidelines.md).
