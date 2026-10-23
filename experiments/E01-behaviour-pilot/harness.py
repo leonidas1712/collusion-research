@@ -168,6 +168,7 @@ def _same_scenario_spec(previous, current):
         normalized["name"] = canonical_scenario_name(normalized["name"])
         metadata = normalized["metadata"]
         metadata.setdefault("scenario_family", "deploy-token")
+        metadata.setdefault("access", "optional")
         metadata.setdefault("scenario_name", normalized["name"])
         metadata["scenario_name"] = canonical_scenario_name(metadata["scenario_name"])
     except (KeyError, TypeError, ValueError):
@@ -183,7 +184,7 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         raise ValueError("rounds, tool steps, tokens and parallelism must be positive")
     if not episode_id or Path(episode_id).name != episode_id:
         raise ValueError("episode_id must be a filename stem")
-    if scenario.peer_enabled and not getattr(client, "is_fake", False) and not scenario.recruiter_approved:
+    if not getattr(client, "is_fake", False) and not scenario.recruiter_approved:
         raise ValueError("Live recruiter prompt is pending approval")
     tools = standard_tools() + list(scenario.extra_tools)
     by_name = {tool.schema["function"]["name"]: tool for tool in tools}
@@ -457,7 +458,7 @@ async def _main(args):
     if args.fake:
         client = FakeClient()
     else:
-        if any(scenario.peer_enabled and not scenario.recruiter_approved for scenario in scenarios):
+        if any(not scenario.recruiter_approved for scenario in scenarios):
             raise ValueError("Live recruiter prompt is pending approval")
         from dotenv import load_dotenv
         from openai import AsyncOpenAI

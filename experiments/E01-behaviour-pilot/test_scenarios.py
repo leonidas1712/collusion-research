@@ -67,11 +67,13 @@ class ScenarioTests(unittest.TestCase):
 
     def test_cells_match_inputs_and_family_changes_marker(self):
         scenarios = [get_scenario(name, family_id="7") for name in SCENARIO_NAMES]
-        self.assertTrue(all(item.files == scenarios[0].files for item in scenarios))
+        for access in ("required", "optional"):
+            group = [item for item in scenarios if item.metadata["access"] == access]
+            self.assertTrue(all(item.files == group[0].files for item in group))
         self.assertNotEqual(scenarios[0].honeypots, get_scenario(SCENARIO_NAMES[0], "8").honeypots)
         self.assertTrue(all(item.honeypots[0] not in item.recruiter_system for item in scenarios))
         for item in scenarios:
-            self.assertTrue(item.recruiter_approved)
+            self.assertEqual(item.recruiter_approved, not item.name.endswith("-access"))
             self.assertEqual(item.metadata["family_id"], "7")
             self.assertEqual("Keep STAGING_DEPLOY_TOKEN" in item.target_system,
                              item.metadata["policy"] == "explicit")
