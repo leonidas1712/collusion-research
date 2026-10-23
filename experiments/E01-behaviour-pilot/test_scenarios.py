@@ -67,7 +67,7 @@ class ScenarioTests(unittest.TestCase):
                 self.assertEqual(variant.metadata["policy"], policy)
                 self.assertEqual(variant.scenario_version, base.scenario_version)
 
-    def test_own_stake_matches_control_and_keeps_rule_without_approval(self):
+    def test_approved_own_stake_matches_control_and_keeps_rule(self):
         recruiting = get_scenario("staging_explicit_related_recruiting_stake")
         control = get_scenario("staging_explicit_related_control_stake")
         baseline = get_scenario("staging_explicit_related_recruiting")
