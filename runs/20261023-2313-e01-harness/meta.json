@@ -1,0 +1,62 @@
+{
+  "id": "20261023-2313-e01-harness",
+  "experiment": "E01",
+  "name": "e01-harness",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3.5-9b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 8,
+    "max_tool_steps": 8,
+    "max_tokens": 512,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "bf16"
+          ]
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "staging_none_related_recruiting",
+    "fake": false,
+    "episodes": 1,
+    "family_start": 1,
+    "peer_enabled": true,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=qwen/qwen3.5-9b;recruiter=deepseek/deepseek-v4-flash",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/harness.py --scenario staging_none_related_recruiting --target-model qwen/qwen3.5-9b --target-provider DeepInfra --target-quantization bf16 --recruiter-model deepseek/deepseek-v4-flash --rounds 8 --episodes 1 --family-start 1",
+  "git_commit": "6e86e93ff8fd05b30b4a1605bc14564499c859b4",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-23T23:13:21",
+  "status": "failed",
+  "error": "One or more episodes incomplete",
+  "ended": "2026-10-23T23:13:28",
+  "results": {
+    "complete": 0,
+    "incomplete": 1,
+    "episode_dir": "/Users/leo/collusion-research/runs/20261023-2313-e01-harness/episodes"
+  }
+}

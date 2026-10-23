@@ -149,6 +149,33 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(episode["status"], "incomplete")
         self.assertIsNone(episode["label"])
 
+    async def test_provider_pin_and_reported_serving_metadata_are_separate(self):
+        target_response = answer()
+        target_response.data.update(provider="ReportedProvider", quantization="bf16")
+        client = ScriptedClient([target_response], [answer()])
+        episode = await self.run_case(client)
+        target = next(r for r in episode["requests"] if r["actor"] == "target")
+        peer = next(r for r in episode["requests"] if r["actor"] == "recruiter")
+        self.assertEqual(target["request_body"]["provider"],
+                         {"order": ["DeepInfra"], "allow_fallbacks": False})
+        self.assertFalse(target["request_body"]["reasoning"]["enabled"])
+        self.assertEqual(target["served_provider"], "ReportedProvider")
+        self.assertEqual(target["served_quantization"], "bf16")
+        self.assertIsNone(peer["served_provider"])
+        self.assertIsNone(peer["served_quantization"])
+        self.assertEqual(peer["serving_metadata_source"]["quantization"], "not_reported")
+
+    async def test_requested_quantization_is_not_claimed_as_served(self):
+        settings = self.settings()
+        settings.target_request_options["extra_body"]["provider"]["quantizations"] = ["bf16"]
+        response = answer()
+        response.data["provider"] = "DeepInfra"
+        result = await harness.run_episode(self.scenario(), settings,
+                                          ScriptedClient([response], [answer()]), self.out)
+        record = next(r for r in result["requests"] if r["actor"] == "target")
+        self.assertEqual(record["requested_routing"]["quantizations"], ["bf16"])
+        self.assertIsNone(record["served_quantization"])
+
     async def test_token_truncation_is_not_a_resisted_episode(self):
         client = ScriptedClient([Response({"role": "assistant", "content": ""}, finish_reason="length")], [answer()])
         episode = await self.run_case(client)
@@ -244,6 +271,56 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         ))
         self.assertEqual(client.peak, 2)
         self.assertTrue(all(result["status"] == "complete" for result in results))
+
+    async def test_transient_errors_recover_on_sixth_attempt(self):
+        class TransientError(Exception):
+            status_code = 503
+
+        client = ScriptedClient([*[TransientError() for _ in range(5)], answer()], [answer()])
+        with patch("harness.asyncio.sleep") as sleep, patch("harness.random.uniform", return_value=0.5):
+            episode = await self.run_case(client)
+        self.assertEqual(episode["status"], "complete")
+        records = [r for r in episode["requests"] if r["actor"] == "target"]
+        self.assertEqual([r["attempt"] for r in records], list(range(1, 7)))
+        self.assertEqual([r["retry_delay_seconds"] for r in records[:-1]], [2.5, 4.5, 8.5, 16.5, 30.5])
+        self.assertEqual([c.args[0] for c in sleep.await_args_list], [2.5, 4.5, 8.5, 16.5, 30.5])
+        self.assertNotIn("retry_delay_seconds", records[-1])
+
+    async def test_rate_limit_exhaustion_keeps_six_records_and_five_waits(self):
+        class RateLimited(Exception):
+            status_code = 429
+            response = SimpleNamespace(headers={"Retry-After": "45"})
+
+        client = ScriptedClient([RateLimited() for _ in range(6)], [answer()])
+        with patch("harness.asyncio.sleep") as sleep:
+            episode = await self.run_case(client)
+        self.assertEqual(episode["status"], "incomplete")
+        self.assertIsNone(episode["label"])
+        records = [r for r in episode["requests"] if r["actor"] == "target"]
+        self.assertEqual(len(records), 6)
+        self.assertEqual([c.args[0] for c in sleep.await_args_list], [45] * 5)
+        self.assertEqual(records[0]["retry_after"], "45")
+        self.assertNotIn("retry_delay_seconds", records[-1])
+
+    async def test_permanent_error_is_not_retried(self):
+        class Unauthorized(Exception):
+            status_code = 401
+
+        with patch("harness.asyncio.sleep") as sleep:
+            episode = await self.run_case(ScriptedClient([Unauthorized()], [answer()]))
+        self.assertEqual(episode["status"], "incomplete")
+        self.assertEqual(len([r for r in episode["requests"] if r["actor"] == "target"]), 1)
+        sleep.assert_not_awaited()
+
+    def test_retry_after_date_and_invalid_values(self):
+        exc = RuntimeError()
+        with patch("harness.time.time", return_value=0), patch("harness.random.uniform", return_value=0.25):
+            exc.response = SimpleNamespace(headers={"retry-after": "Thu, 01 Jan 1970 00:01:00 GMT"})
+            self.assertEqual(harness._retry_delay(exc, 0)[0], 60)
+            for value in ("bad-date", "NaN", "inf", "-5", "Thu, 01 Jan 1970 00:00:00 GMT"):
+                with self.subTest(value=value):
+                    exc.response = SimpleNamespace(headers={"retry-after": value})
+                    self.assertEqual(harness._retry_delay(exc, 0)[0], 2.25)
 
     async def test_tool_access_blocks_recruiter_but_allows_target(self):
         scenario = self.scenario()
@@ -358,6 +435,8 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
             target_model="target-test", recruiter_model="recruiter-test", rounds=8,
             max_tool_steps=8, max_tokens=128, temperature=0.7, parallelism=1,
             target_reasoning=False, recruiter_reasoning=False, output=self.out,
+            target_provider="TargetProvider", recruiter_provider="PeerProvider",
+            target_quantization="bf16", recruiter_quantization="fp16",
         )
         with patch.dict(sys.modules, {"collusion.runs": SimpleNamespace(start_run=lambda *a, **kw: run)}), \
              patch("harness._scenario", side_effect=factory), patch("builtins.print"):
@@ -366,6 +445,11 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         episodes = [json.loads(path.read_text()) for path in sorted(self.out.glob("episode-*.json"))]
         self.assertEqual([ep["condition"]["family_id"] for ep in episodes], ["7", "8"])
         self.assertTrue(all(ep["rounds_completed"] == 1 for ep in episodes))
+        options = episodes[0]["settings"]
+        self.assertEqual(options["target_request_options"]["extra_body"]["provider"],
+                         {"order": ["TargetProvider"], "allow_fallbacks": False, "quantizations": ["bf16"]})
+        self.assertEqual(options["recruiter_request_options"]["extra_body"]["provider"],
+                         {"order": ["PeerProvider"], "allow_fallbacks": False, "quantizations": ["fp16"]})
 
     def test_scenario_factory_receives_family_id(self):
         captured = []

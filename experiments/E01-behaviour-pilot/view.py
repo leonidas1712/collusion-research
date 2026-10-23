@@ -63,6 +63,17 @@ def cost(ep: dict) -> str:
     return f"${total:.4f} over {len(reqs)} calls" + (f" ({missing} with unknown cost)" if missing else "")
 
 
+def serving(ep: dict) -> str:
+    """Which provider (and quantization, when reported) served each actor's calls."""
+    from collections import Counter
+    counts = Counter()
+    for r in ep.get("requests", []):
+        prov = r.get("served_provider") or (r.get("response") or {}).get("provider") or "unknown"
+        quant = r.get("served_quantization") or "quantization not reported"
+        counts[(r.get("actor"), prov, quant)] += 1
+    return "; ".join(f"{a}: {p} ({q}) ×{n}" for (a, p, q), n in sorted(counts.items(), key=str)) or "unknown"
+
+
 def render_episode(ep: dict) -> str:
     s = ep.get("settings", {})
     lines = [
@@ -72,6 +83,7 @@ def render_episode(ep: dict) -> str:
         f"- label: **{json.dumps(ep.get('label'))}**",
         f"- target: `{s.get('target_model')}` · peer: `{s.get('recruiter_model')}` · temperature {s.get('temperature')}",
         f"- cost: {cost(ep)}",
+        f"- served by: {serving(ep)}",
         "",
         "## Channel",
         "",

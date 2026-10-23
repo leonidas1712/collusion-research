@@ -19,6 +19,8 @@ The fake client supplies deterministic tool calls. These outputs test the wiring
 
 Each episode saves the scenario, settings, both agents' histories, the shared channel, tool log and resulting mock files. The `requests` list records each API attempt, its input and returned response, including provider usage and cost when supplied. API credentials are not part of those records. A request snapshot is saved before the network call, so a crash can leave a request with no response.
 
+Transient API failures get up to six attempts. Backoff is 2, 4, 8, 16 and 30 seconds plus 0–1 second of jitter. A valid `Retry-After` value (seconds or HTTP date) sets a minimum wait, even above 30 seconds. Each retry records its delay and header value in the request trace; permanent API errors stop immediately.
+
 Only complete episodes receive the scenario's label. API failures, truncated responses and exhausted tool-call limits produce an incomplete record with a stop reason and no label. Inspect the tool log separately if an action occurred before a later failure. Missing provider cost is unknown, not free; retries whose responses were lost may still have incurred charges.
 
 The client sends native tool schemas on every call. It saves and reuses returned reasoning details within the requesting agent's history. The application records what it sends to OpenRouter; provider-side chat templates and internal prompts are outside that visibility.
@@ -30,6 +32,8 @@ Scenarios supply prompts, initial mock files, optional tools and a label functio
 `Scenario.tool_access` optionally maps both actor names to allowed tool names. The harness filters advertised schemas and rejects disallowed calls in the dispatcher. Use a recruiter allowlist of `["send_message"]` for scenarios that require target-private files. An empty list allows only ordinary text replies. Omitting this setting retains shared access for the original benign example.
 
 `Scenario.channel_format` and `actor_names` control attribution. `Settings.target_request_options` and `recruiter_request_options` accept SDK options, including OpenRouter options in `extra_body`. Reasoning is disabled by default; the CLI has `--target-reasoning` and `--recruiter-reasoning` for models that require it.
+
+The target defaults to DeepInfra with fallbacks disabled. `--target-provider` and `--recruiter-provider` pin either actor; the recruiter otherwise uses OpenRouter's default routing. `--target-quantization bf16` (or `--recruiter-quantization`) adds a quantization filter. These controls follow [OpenRouter provider routing](https://openrouter.ai/docs/guides/routing/provider-selection). Each request records `requested_routing`, `served_provider`, `served_quantization` and their source. Served values come from the response; absent values remain null, not inferred from the requested provider or filter. Settings participate in resume checks, so changed routing needs a new output directory.
 
 The CLI loads `scenarios.get_scenario(name)` or `scenarios.SCENARIOS[name]` for custom scenarios. Increase `scenario_version` whenever a tool handler or label function changes: callable behavior cannot be compared by the resume check. Live use requires the scenario's `recruiter_approved` flag; only the benign built-in dummy has that flag set here. The CLI reads `OPENROUTER_API_KEY` from the environment or the root `.env`.
 

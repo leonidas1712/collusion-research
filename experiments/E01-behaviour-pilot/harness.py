@@ -7,10 +7,14 @@ import asyncio
 import copy
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 import importlib
 import json
+import math
 import os
 from pathlib import Path
+import random
+import time
 from types import SimpleNamespace
 from typing import Any, Callable
 
@@ -50,7 +54,10 @@ class Settings:
     max_tokens: int = 512
     temperature: float = 0.7
     parallelism: int = 1
-    target_request_options: dict = field(default_factory=lambda: {"extra_body": {"reasoning": {"enabled": False}}})
+    target_request_options: dict = field(default_factory=lambda: {"extra_body": {
+        "reasoning": {"enabled": False},
+        "provider": {"order": ["DeepInfra"], "allow_fallbacks": False},
+    }})
     recruiter_request_options: dict = field(default_factory=lambda: {"extra_body": {"reasoning": {"enabled": False}}})
 
 
@@ -131,6 +138,23 @@ def _save(path: Path, episode: dict):
 
 class EpisodeIncomplete(Exception):
     pass
+
+
+def _retry_delay(exc, attempt):
+    delay = min(30, 2 * 2 ** attempt) + random.uniform(0, 1)
+    headers = getattr(getattr(exc, "response", None), "headers", {}) or {}
+    raw = headers.get("retry-after") or headers.get("Retry-After")
+    if raw is not None:
+        try:
+            retry_after = float(raw)
+        except (TypeError, ValueError):
+            try:
+                retry_after = parsedate_to_datetime(raw).timestamp() - time.time()
+            except (TypeError, ValueError, OverflowError):
+                retry_after = 0
+        if math.isfinite(retry_after) and retry_after > 0:
+            delay = max(delay, retry_after)
+    return delay, raw
 
 
 async def run_episode(scenario: Scenario, settings: Settings, client, output_dir,
@@ -225,9 +249,11 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         payload.update(options)
         wire_body = {key: copy.deepcopy(value) for key, value in payload.items() if key != "extra_body"}
         wire_body.update(extra_body)
-        for attempt in range(3):
+        for attempt in range(6):
             record = {"actor": actor, "round": round_number, "attempt": attempt + 1,
                       "request": copy.deepcopy(payload), "request_body": copy.deepcopy(wire_body),
+                      "requested_routing": copy.deepcopy(extra_body.get("provider")),
+                      "served_provider": None, "served_quantization": None,
                       "response": None, "usage": None}
             episode["requests"].append(record)
             _save(partial_path, episode)
@@ -236,17 +262,27 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                     response = _plain(await client.chat.completions.create(**payload))
                 record["response"] = response
                 record["usage"] = response.get("usage")
+                record["served_provider"] = response.get("provider")
+                record["served_quantization"] = response.get("quantization")
+                record["serving_metadata_source"] = {
+                    "provider": "response.provider" if record["served_provider"] else "not_reported",
+                    "quantization": "response.quantization" if record["served_quantization"] else "not_reported",
+                }
                 _save(partial_path, episode)
                 return response
             except Exception as exc:
                 status = getattr(exc, "status_code", None)
                 record["error"] = {"type": type(exc).__name__, "status_code": status}
                 _save(partial_path, episode)
-                transient = status in (408, 409, 429) or isinstance(status, int) and status >= 500
+                transient = status in (408, 409, 429) or isinstance(status, int) and 500 <= status < 600
                 transient = transient or type(exc).__name__ in ("APIConnectionError", "APITimeoutError")
-                if not transient or attempt == 2:
+                if not transient or attempt == 5:
                     raise EpisodeIncomplete(f"api_error:{type(exc).__name__}") from exc
-                await asyncio.sleep(2 ** attempt)
+                delay, retry_after = _retry_delay(exc, attempt)
+                record["retry_delay_seconds"] = delay
+                record["retry_after"] = retry_after
+                _save(partial_path, episode)
+                await asyncio.sleep(delay)
 
     try:
         _save(partial_path, episode)
@@ -373,6 +409,14 @@ async def _main(args):
                  for index in range(args.family_start, args.family_start + args.episodes)]
     settings = Settings(args.target_model, args.recruiter_model, args.rounds,
                         args.max_tool_steps, args.max_tokens, args.temperature, args.parallelism)
+    for actor in ("target", "recruiter"):
+        provider = getattr(args, f"{actor}_provider", None)
+        quantization = getattr(args, f"{actor}_quantization", None)
+        extra = getattr(settings, f"{actor}_request_options")["extra_body"]
+        if provider:
+            extra["provider"] = {"order": [provider], "allow_fallbacks": False}
+        if quantization:
+            extra.setdefault("provider", {})["quantizations"] = [quantization]
     if args.target_reasoning:
         settings.target_request_options["extra_body"]["reasoning"]["enabled"] = True
     if args.recruiter_reasoning:
@@ -424,6 +468,10 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, help="Existing episode directory to resume, or custom destination")
     parser.add_argument("--target-model", default="fake-target")
     parser.add_argument("--recruiter-model", default="fake-recruiter")
+    parser.add_argument("--target-provider", default="DeepInfra", help="Pin target provider; fallbacks disabled")
+    parser.add_argument("--recruiter-provider", help="Pin peer provider; fallbacks disabled")
+    parser.add_argument("--target-quantization", help="Optional OpenRouter quantization filter, e.g. bf16")
+    parser.add_argument("--recruiter-quantization", help="Optional OpenRouter quantization filter")
     parser.add_argument("--rounds", type=int, default=3)
     parser.add_argument("--max-tool-steps", type=int, default=8)
     parser.add_argument("--max-tokens", type=int, default=512)
