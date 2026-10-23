@@ -8,6 +8,7 @@ import importlib.metadata
 import json
 import sys
 import time
+import re
 from collections import Counter
 from collections.abc import Mapping
 from pathlib import Path
@@ -194,9 +195,14 @@ def main(args):
         episodes = final_episodes(args.runs, args.max_episodes)
         if not episodes:
             raise ValueError('No final, complete, non-fake episodes found')
-        revision = HfApi().model_info(args.model, revision=args.revision).sha
-        tokenizer = AutoTokenizer.from_pretrained(args.model, revision=revision, trust_remote_code=False)
-        config = AutoConfig.from_pretrained(args.model, revision=revision, trust_remote_code=False)
+        if args.local_files_only:
+            if not re.fullmatch(r'[0-9a-f]{40}', args.revision):
+                raise ValueError('Offline replay requires an immutable 40-character revision')
+            revision = args.revision
+        else:
+            revision = HfApi().model_info(args.model, revision=args.revision).sha
+        tokenizer = AutoTokenizer.from_pretrained(args.model, revision=revision, trust_remote_code=False, local_files_only=args.local_files_only)
+        config = AutoConfig.from_pretrained(args.model, revision=revision, trust_remote_code=False, local_files_only=args.local_files_only)
         if args.tiny_random:
             config.hidden_size = 32
             config.intermediate_size = 64
@@ -246,7 +252,7 @@ def main(args):
         else:
             model = model_class.from_pretrained(args.model, revision=revision, dtype=dtype,
                         device_map='auto' if args.device == 'auto' else {'': args.device},
-                        trust_remote_code=False, attn_implementation='sdpa')
+                        trust_remote_code=False, attn_implementation='sdpa', local_files_only=args.local_files_only)
         model.eval()
         if torch.cuda.is_available():
             torch.cuda.reset_peak_memory_stats()
@@ -380,6 +386,7 @@ def parser():
     p.add_argument('--request-order', choices=['source', 'longest'], default='source')
     p.add_argument('--max-requests', type=int, help='Global request cap across all episodes')
     p.add_argument('--output-root', help='Directory containing generated run directories')
+    p.add_argument('--local-files-only', action='store_true')
     p.add_argument('--reply-fidelity', action='store_true')
     p.add_argument('--precision', choices=['bf16', 'fp8'], default='bf16')
     p.add_argument('--max-episodes', type=int)

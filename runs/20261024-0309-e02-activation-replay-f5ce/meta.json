@@ -1,0 +1,61 @@
+{
+  "id": "20261024-0309-e02-activation-replay-f5ce",
+  "experiment": "E02",
+  "name": "e02-activation-replay",
+  "tags": [
+    "wiring"
+  ],
+  "settings": {
+    "runs": [
+      "runs/20261024-0233-e01-deploy-token-own-stake"
+    ],
+    "model": "Qwen/Qwen3-32B",
+    "source_model": [
+      "qwen/qwen3-32b"
+    ],
+    "revision": "main",
+    "device": "cpu",
+    "dtype": "float32",
+    "thinking": "from-request",
+    "layers_path": null,
+    "layers": "all",
+    "request_order": "source",
+    "max_requests": 2,
+    "output_root": null,
+    "reply_fidelity": true,
+    "precision": "bf16",
+    "max_episodes": null,
+    "max_requests_per_episode": null,
+    "max_tokens": 32768,
+    "cpu_threads": 4,
+    "tiny_random": true,
+    "allow_cross_model": false,
+    "seed": 0
+  },
+  "parents": [
+    "20261024-0233-e01-deploy-token-own-stake"
+  ],
+  "model": "Qwen/Qwen3-32B",
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E02-activation-replay/replay.py runs/20261024-0233-e01-deploy-token-own-stake --model Qwen/Qwen3-32B --source-model qwen/qwen3-32b --tiny-random --device cpu --dtype float32 --max-requests 2 --reply-fidelity --request-order source",
+  "git_commit": "88fa9187035cbfd942266ee7b883a726677bea9d",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T03:09:45",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T03:09:47",
+  "results": {
+    "peak_cuda_memory_bytes": null,
+    "episodes": 1,
+    "requests": 2,
+    "first_step_requests": 1,
+    "token_ratio_n": 2,
+    "token_ratio_min": 1.0,
+    "token_ratio_median": 1.0,
+    "token_ratio_max": 1.0,
+    "normalizations": {
+      "argument_strings": 1
+    }
+  }
+}

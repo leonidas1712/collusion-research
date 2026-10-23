@@ -19,7 +19,11 @@ def reply_tokens(tokenizer, request, record, prompt, thinking):
     if not full.startswith(prompt):
         return None, 'template_prompt_prefix_mismatch'
     suffix = full[len(prompt):]
-    ids = tokenizer.encode(suffix, add_special_tokens=False)
+    prompt_ids = tokenizer.encode(prompt, add_special_tokens=False)
+    full_ids = tokenizer.encode(full, add_special_tokens=False)
+    if full_ids[:len(prompt_ids)] != prompt_ids:
+        return None, 'tokenized_prompt_prefix_mismatch'
+    ids = full_ids[len(prompt_ids):]
     if not ids:
         return None, 'empty_serialized_reply'
     return ids, 'hf_serialized_reply_including_template_terminator'
