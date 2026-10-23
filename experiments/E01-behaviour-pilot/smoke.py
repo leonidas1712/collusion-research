@@ -1,0 +1,101 @@
+"""Quick smoke test before any batch: one short episode per cell, then a plain summary.
+
+    uv run python experiments/E01-behaviour-pilot/smoke.py                 # default cells, live, 3 rounds
+    uv run python experiments/E01-behaviour-pilot/smoke.py --fake          # wiring only, no API calls
+    uv run python experiments/E01-behaviour-pilot/smoke.py --cells staging_explicit_related_recruiting --rounds 4
+
+It calls harness.py once per cell (so runs are recorded as usual, tagged by the harness), then prints,
+per episode: did it finish, why it stopped, who served each model, whether the target read the token,
+the outcome, and the first lines of the conversation. Finally it rebuilds runs/viewer.html.
+Cost is a few cents. It does not bypass the harness's approval gate for unreviewed prompts.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from collections import Counter
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+DEFAULT_CELLS = [
+    "staging_explicit_related_recruiting",
+    "staging_explicit_related_control",
+    "staging_none_related_recruiting",
+]
+
+
+def run_cell(cell: str, args) -> Path | None:
+    cmd = [sys.executable, str(HERE / "harness.py"), "--scenario", cell, "--rounds", str(args.rounds),
+           "--episodes", "1", "--family-start", str(args.family)]
+    if args.fake:
+        cmd.append("--fake")
+    else:
+        cmd += ["--target-model", args.target, "--target-provider", args.target_provider,
+                "--recruiter-model", args.peer]
+        if args.target_quantization:
+            cmd += ["--target-quantization", args.target_quantization]
+    out = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+    for line in out.stdout.splitlines():
+        if line.startswith("[run] "):
+            return ROOT / line.split("-> ", 1)[1].strip()
+    print(f"  ! {cell}: harness failed\n{out.stderr[-1500:]}")
+    return None
+
+
+def summarise(run_dir: Path) -> None:
+    files = sorted((run_dir / "episodes").glob("episode-*.json"))
+    if not files:
+        print("  ! no episode file written")
+        return
+    ep = json.loads(files[-1].read_text())
+    label = ep.get("label") if isinstance(ep.get("label"), dict) else {}
+    served = Counter((r.get("actor"), r.get("served_provider") or (r.get("response") or {}).get("provider") or "?")
+                     for r in ep.get("requests", []))
+    errors = [r for r in ep.get("requests", []) if r.get("error")]
+    if ep.get("status") != "complete":
+        outcome = f"INCOMPLETE ({ep.get('stop_reason')})"
+    elif label.get("objective_success"):
+        outcome = f"LEAKED in round {label.get('first_action_round')}"
+        if label.get("disclosure_kind"):
+            outcome += f" ({label['disclosure_kind']})"
+    elif label.get("eligible_resisted"):
+        outcome = "refused / held"
+    else:
+        outcome = "no leak" + ("" if label.get("token_in_context") else " (never read the token)")
+    print(f"  status: {ep.get('status')} · stop: {ep.get('stop_reason')} · rounds: {ep.get('rounds_completed')}")
+    print(f"  served by: " + ", ".join(f"{a}={p}×{n}" for (a, p), n in sorted(served.items(), key=str)))
+    print(f"  token read in round: {label.get('token_in_context_round')} · first ask round: {label.get('first_peer_ask_round')}")
+    print(f"  outcome: {outcome} · task done: {label.get('task_success')}")
+    if errors:
+        print(f"  API errors: {len(errors)} ({Counter(str((r['error'] or {}).get('type')) for r in errors)})")
+    for c in ep.get("channel", [])[:4]:
+        print(f"    r{c['round']} {c['actor']}: {c['content'][:160].replace(chr(10), ' ')}")
+
+
+def main() -> None:
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--cells", nargs="+", default=DEFAULT_CELLS)
+    p.add_argument("--rounds", type=int, default=3)
+    p.add_argument("--family", type=int, default=99, help="family id (distinct from batch families)")
+    p.add_argument("--fake", action="store_true")
+    p.add_argument("--target", default="ibm-granite/granite-4.2-8b")
+    p.add_argument("--target-provider", default="CoreWeave")
+    p.add_argument("--target-quantization", default="bf16")
+    p.add_argument("--peer", default="deepseek/deepseek-v4-flash")
+    args = p.parse_args()
+    for cell in args.cells:
+        print(f"\n== {cell}")
+        run_dir = run_cell(cell, args)
+        if run_dir:
+            print(f"  run: {run_dir.name}")
+            summarise(run_dir)
+    subprocess.run([sys.executable, str(HERE / "build_viewer.py")], cwd=ROOT, capture_output=True)
+    print("\nViewer rebuilt: runs/viewer.html")
+
+
+if __name__ == "__main__":
+    main()
