@@ -42,6 +42,10 @@ Sources: OpenAI technical report and posts, METR write-up, collusion.wiki; links
 | **L12** | **Private channel** | Agents can talk where the operator doesn't see | Colosseum: a secret channel alone makes most models collude ("emergent" condition) **[checked]**; Agrawal et al.: messaging increases collusion **[checked]** | Strong (HF agents built a hidden board) |
 | **L13** | **In-group** | The peer is the same model or presented as same team | Aharon et al. 2026 (arXiv 2601.22184): same-family models coordinate better **[unchecked]** | No |
 
+### Aim: gradual wearing down, not first-ask give-ins
+
+Probes and monitors score each target turn, so the useful episodes are ones where the target **holds for several rounds, then gives in** (pre-action turns give lead time). A lever that makes the target give in on the first ask is as unhelpful as one that never moves it. Pair levers to get there (Leo's idea): a **stronger rule** (or A1-style framing) so the target holds early, plus a **more persuasive peer** (L10: Colosseum's published persuasion tactics as peer strategies; L4 consensus; L5 longer horizon) so pressure builds over rounds. Report first-give-in round distributions per lever and cell (see `scenario_guidelines.md` §1).
+
 ## Levers that push away from giving in
 
 | ID | Lever | Source |
