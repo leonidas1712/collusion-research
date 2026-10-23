@@ -7,6 +7,7 @@ import hashlib
 import importlib.metadata
 import json
 import sys
+import time
 from collections import Counter
 from collections.abc import Mapping
 from pathlib import Path
@@ -173,8 +174,17 @@ def main(args):
     import torch
     import transformers
     from huggingface_hub import HfApi
-    from transformers import AutoConfig, AutoModel, AutoTokenizer
+    from transformers import AutoConfig, AutoModel, AutoModelForCausalLM, AutoTokenizer
 
+    if args.precision == 'fp8':
+        if args.model != 'Qwen/Qwen3-32B-FP8' or args.tiny_random or args.device == 'cpu':
+            raise ValueError('fp8 requires Qwen/Qwen3-32B-FP8 pretrained weights on a supported GPU')
+    if args.precision == 'bf16' and args.model.endswith('-FP8'):
+        raise ValueError('FP8 checkpoint requires --precision fp8')
+    if args.output_root:
+        import collusion.runs as run_helpers
+        run_helpers.RUNS = Path(args.output_root).resolve()
+        run_helpers.INDEX = run_helpers.RUNS / 'index.jsonl'
     parents = [Path(p).resolve().name for p in args.runs]
     run = start_run('e02-activation-replay', experiment='E02', settings=vars(args),
                     parents=parents, model=args.model, tags=['wiring' if args.tiny_random else 'replay'])
@@ -197,11 +207,19 @@ def main(args):
             config.num_key_value_heads = 2
             if hasattr(config, 'head_dim'):
                 config.head_dim = 16
+        remaining = args.max_requests
+        selection = {}
+        for _, path, episode in episodes:
+            rows = list(request_rows(episode))
+            if args.max_requests_per_episode:
+                rows = rows[:args.max_requests_per_episode]
+            if remaining is not None:
+                rows = rows[:remaining]
+                remaining -= len(rows)
+            selection[path] = rows
         # Validate templates before allocating pretrained weights or running any forwards.
         for _, path, episode in episodes:
-            selected = list(request_rows(episode))
-            if args.max_requests_per_episode:
-                selected = selected[:args.max_requests_per_episode]
+            selected = selection[path]
             for request_idx, _, record in selected:
                 source_model = record['request'].get('model')
                 if source_model not in [args.model, *args.source_model] and not args.allow_cross_model:
@@ -210,15 +228,20 @@ def main(args):
                 if len(ids) > min(args.max_tokens, config.max_position_embeddings):
                     raise ValueError(f'{path.name} request {request_idx}: {len(ids)} tokens exceeds limit; no truncation allowed')
         dtype = getattr(torch, args.dtype)
+        model_class = AutoModelForCausalLM if args.reply_fidelity else AutoModel
         if args.tiny_random:
-            model = AutoModel.from_config(config, trust_remote_code=False, attn_implementation='sdpa').to(dtype=dtype)
+            model = model_class.from_config(config, trust_remote_code=False, attn_implementation='sdpa').to(dtype=dtype)
             model.to('cpu' if args.device == 'auto' else args.device)
         else:
-            model = AutoModel.from_pretrained(args.model, revision=revision, dtype=dtype,
+            model = model_class.from_pretrained(args.model, revision=revision, dtype=dtype,
                         device_map='auto' if args.device == 'auto' else {'': args.device},
                         trust_remote_code=False, attn_implementation='sdpa')
         model.eval()
         layers_path, layers = decoder_layers(model, args.layers_path)
+        selected_layers = list(range(len(layers))) if args.layers == 'all' else [int(x) for x in args.layers.split(',')]
+        if not selected_layers or len(set(selected_layers)) != len(selected_layers) or any(x < 0 or x >= len(layers) for x in selected_layers):
+            raise ValueError('Invalid --layers indices')
+        capture_layers = [layers[i] for i in selected_layers]
         input_device = model.get_input_embeddings().weight.device
         tokenizer.save_pretrained(run.dir / 'tokenizer')
         config.save_pretrained(run.dir / 'model_config')
@@ -228,7 +251,8 @@ def main(args):
             i for i,r in enumerate(episodes[0][2]['requests']) if r.get('actor') == 'target')]['request'].get('tools'))
         (run.dir / 'selected_chat_template.jinja').write_text(template)
         provenance = dict(model=args.model, revision=revision, versions=versions,
-                          tiny_random=args.tiny_random, seed=args.seed, dtype=args.dtype,
+                          tiny_random=args.tiny_random, seed=args.seed, dtype=args.dtype, precision=args.precision,
+                          selected_layers=selected_layers, quantization_config=getattr(config, "quantization_config", None),
                           device_map=str(getattr(model, 'hf_device_map', input_device)),
                           layers_path=layers_path, layer_count=len(layers), hidden_size=config.hidden_size,
                           activation='decoder block output, last prompt token, before final model norm',
@@ -246,9 +270,7 @@ def main(args):
                 source_hash = digest(path.read_bytes())
                 leak_idx = first_leak_request(episode)
                 label = episode.get('label') or {}
-                selected = list(request_rows(episode))
-                if args.max_requests_per_episode:
-                    selected = selected[:args.max_requests_per_episode]
+                selected = selection[path]
                 for request_idx, step, record in selected:
                     request = record['request']
                     source_model = request.get('model')
@@ -263,13 +285,26 @@ def main(args):
                     template_file = run.dir / f'template-{template_hash}.jinja'
                     if not template_file.exists():
                         template_file.write_text(current_template)
-                    values = capture(model, layers, ids, input_device)
+                    started = time.perf_counter()
+                    values = capture(model.base_model if args.reply_fidelity else model, capture_layers, ids, input_device)
+                    activation_seconds = time.perf_counter() - started
+                    fidelity = {'status': 'disabled'}
+                    reply_ids = []
+                    if args.reply_fidelity:
+                        from fidelity import reply_tokens, score_reply
+                        reply_ids, status = reply_tokens(tokenizer, request, record, rendered, thinking)
+                        fidelity = {'status': status}
+                        if reply_ids and len(ids) + len(reply_ids) > limit:
+                            fidelity['status'] = 'prompt_plus_reply_exceeds_limit'
+                        elif reply_ids:
+                            fidelity.update(score_reply(model, ids, reply_ids, input_device))
+                        reply_ids = reply_ids or []
                     key = f'call-{count:06d}'
                     relative = f'activations/{key}.npz'
                     artifact = run.dir / relative
                     artifact.parent.mkdir(exist_ok=True)
                     with artifact.with_suffix('.tmp').open('wb') as output:
-                        np.savez_compressed(output, residual_last=values, input_ids=np.asarray(ids, dtype=np.int64))
+                        np.savez_compressed(output, residual_last=values, input_ids=np.asarray(ids, dtype=np.int64), reply_ids=np.asarray(reply_ids, dtype=np.int64), layer_indices=np.asarray(selected_layers))
                     artifact.with_suffix('.tmp').replace(artifact)
                     prompt_path = run.dir / 'prompts' / f'{key}.txt'
                     prompt_path.parent.mkdir(exist_ok=True)
@@ -287,6 +322,7 @@ def main(args):
                                episode_sha256=source_hash, episode_id=episode.get('episode_id'), round=record['round'],
                                request_idx=request_idx, step_in_turn=step, attempt=record.get('attempt',1),
                                request_error=record.get('error'), response_present=record.get('response') is not None,
+                               activation_seconds=activation_seconds, total_seconds=time.perf_counter()-started, reply_fidelity=fidelity,
                                n_tokens=len(ids), provider_prompt_tokens=provider_tokens, token_count_ratio=ratio,
                                source_model=source_model, same_model=same_model, first_leak_request_idx=leak_idx,
                                before_first_leak=before, before_first_leak_round=(record['round'] < label['first_action_round']
@@ -327,6 +363,11 @@ def parser():
     p.add_argument('--dtype', choices=['bfloat16','float32','float16'], default='bfloat16')
     p.add_argument('--thinking', choices=['from-request','on','off'], default='from-request')
     p.add_argument('--layers-path')
+    p.add_argument('--layers', default='all', help='all or comma-separated zero-based block indices')
+    p.add_argument('--max-requests', type=int, help='Global request cap across all episodes')
+    p.add_argument('--output-root', help='Directory containing generated run directories')
+    p.add_argument('--reply-fidelity', action='store_true')
+    p.add_argument('--precision', choices=['bf16', 'fp8'], default='bf16')
     p.add_argument('--max-episodes', type=int)
     p.add_argument('--max-requests-per-episode', type=int)
     p.add_argument('--max-tokens', type=int, default=32768)
@@ -339,7 +380,7 @@ def parser():
 
 if __name__ == '__main__':
     args = parser().parse_args()
-    for name in ('max_episodes', 'max_requests_per_episode', 'max_tokens', 'cpu_threads'):
+    for name in ('max_requests', 'max_episodes', 'max_requests_per_episode', 'max_tokens', 'cpu_threads'):
         value = getattr(args, name)
         if value is not None and value < 1:
             raise SystemExit(f'--{name.replace("_", "-")} must be positive')
