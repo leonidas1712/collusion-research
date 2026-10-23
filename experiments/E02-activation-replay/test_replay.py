@@ -18,7 +18,9 @@ class ReplayTests(unittest.TestCase):
                           num_hidden_layers=2, num_attention_heads=2, num_key_value_heads=2)).eval()
         _, layers = decoder_layers(model)
         ids = [1, 5, 8, 2]
+        before = [set(layer._forward_hooks) for layer in layers]
         actual = capture(model, layers, ids, 'cpu')
+        self.assertEqual(before, [set(layer._forward_hooks) for layer in layers])
         with torch.inference_mode():
             out = model(torch.tensor([ids]), output_hidden_states=True, use_cache=False)
         np.testing.assert_allclose(actual[0], out.hidden_states[1][0,-1].numpy(), rtol=1e-5, atol=1e-6)
@@ -26,7 +28,6 @@ class ReplayTests(unittest.TestCase):
             normalized = model.norm(torch.tensor(actual[-1])).numpy()
         np.testing.assert_allclose(normalized, out.last_hidden_state[0,-1].numpy(), rtol=1e-5, atol=1e-6)
         self.assertFalse(np.allclose(actual[-1], normalized))
-        self.assertTrue(all(not layer._forward_hooks for layer in layers))
 
     def test_source_immutable_and_json_argument_semantics(self):
         original = [{'role':'assistant', 'tool_calls':[{'function':{'name':'x','arguments':'{"content":"a\\nb"}'}}]}]

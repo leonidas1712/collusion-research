@@ -97,6 +97,7 @@ pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-
   <div class="wrap" role="tablist">
     <button role="tab" data-tab="now" aria-selected="true">Where we are</button>
     <button role="tab" data-tab="idea" aria-selected="false">The idea</button>
+    <button role="tab" data-tab="final" aria-selected="false">Final shape</button>
     <button role="tab" data-tab="episode" aria-selected="false">How an episode works</button>
     <button role="tab" data-tab="scenario" aria-selected="false">Scenarios</button>
     <button role="tab" data-tab="models" aria-selected="false">Models</button>
@@ -265,6 +266,54 @@ pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-
     <li><strong>2.2 Say vs do:</strong> text monitors vs action monitor vs probe, turn by turn.</li>
     <li><strong>2.3 Evidence of collusion:</strong> the policy contrast separates coordination against a rule from coordination with none.</li>
   </ul>
+</section>
+
+<!-- FINAL SHAPE -->
+<section data-panel="final" hidden>
+  <h2>The finished project, if things go well</h2>
+  <div class="callout"><p><strong>Target claim:</strong> when a peer agent pushes an open-weight agent to break its operator's rule, the target's activations show it is about to give in N turns before it does, as well as or better than monitors that read its messages, across scenarios and models.</p></div>
+
+  <h3>What's in it</h3>
+  <div class="scroll"><table>
+    <tr><th>Part</th><th>Plan for Monday</th><th>Stretch</th><th>Status</th></tr>
+    <tr><td>Scenarios</td><td>6–8 in two families. Information: deploy-token, minimum-price, release-date. Action: disable-failing-test, self-merge-without-review, poster-approval, front-door-sign (no-stake contrast), fleet-relay. Four cells each; tagged required/optional access. 3–4 with mixed giving in become the probe dataset.</td><td>More scenarios</td><td><span class="pill wait">building</span></td></tr>
+    <tr><td>Episodes</td><td>~30–50 per recruiting cell in the probed scenarios: ~200–400 episodes, a few thousand target turns. A few dollars of API; a few A6000 hours for the replay.</td><td>More per cell</td><td><span class="pill plain">not started</span></td></tr>
+    <tr><td>Target models</td><td>granite-4.2-8b (main) + one second (mistral-nemo or a ~30B, e.g. Qwen3-32B / Gemma-27B)</td><td>A third; Llama-3.3-70B on our own GPU</td><td><span class="pill wait">granite only</span></td></tr>
+    <tr><td>Peer model</td><td>deepseek-v4-flash</td><td>A second peer model</td><td><span class="pill ok">done</span></td></tr>
+    <tr><td>Multi-agent</td><td>One peer → one target; several peers (2–3) as a pressure setting in 1–2 scenarios</td><td>Spread: the recruited target recruits the next agent (ties to Leo's Share-Borne paper)</td><td><span class="pill plain">not started</span></td></tr>
+    <tr><td>Activation replay</td><td>Replay saved target turns on the open weights, save last-token activations per layer (E02)</td><td>—</td><td><span class="pill wait">codex-2 building</span></td></tr>
+  </table></div>
+
+  <h3>Results we'd show</h3>
+  <ol>
+    <li><strong>Behaviour table:</strong> giving-in rate per scenario × condition (rule or not, stake or not, number of peers); controls ≈ 0. Which levers matter, tied to the literature.</li>
+    <li><strong>"Knew but complied":</strong> the share of deliberate give-ins where the target names the rule first (LLM judge validated against hand labels).</li>
+    <li><strong>The probe's main result:</strong> probe score over turns before giving in, give-in vs resisted within the same condition; AUROC for predicting giving in k turns ahead on held-out episodes.</li>
+    <li><strong>Monitor ladder:</strong> probe vs monitors seeing actions only / + conversation / + unposted text / + reasoning: AUROC, lead time, cost and intrusiveness.</li>
+    <li><strong>Transfer:</strong> across scenarios (information ↔ action), required ↔ optional access, granite → second model (method, not direction), constructed → real (backup route).</li>
+    <li><strong>Shortcut checks:</strong> rule-only episodes, rephrased rule, matching on peer pressure, shuffled labels and random directions.</li>
+    <li><em>Stretch:</em> a steering vector that reduces giving in.</li>
+  </ol>
+
+  <h3>Report shape (Apart template, ~4–6 pages + appendix)</h3>
+  <ul>
+    <li><strong>Intro:</strong> the 2026 incidents; recruitment as how collusion forms; sprint 3.2 (trusted/undercover agents) and 2.2 (say vs do).</li>
+    <li><strong>Setup:</strong> episode diagram, scenario table, levers with citations, labelling principle.</li>
+    <li><strong>Results:</strong> behaviour → knew-but-complied → probe → monitor ladder → transfer.</li>
+    <li><strong>Limitations:</strong> small models, synthetic scenarios, heuristic secondary labels, two targets.</li>
+    <li><strong>Appendix:</strong> dual-use, full scenario text, scenario-construction guidelines.</li>
+  </ul>
+
+  <h3>Critical path (working backwards from Monday 7:59 PM SGT)</h3>
+  <div class="scroll"><table>
+    <tr><th>When</th><th>Step</th></tr>
+    <tr><td>Sat</td><td>Find 3–4 scenarios with mixed giving in (biggest risk)</td></tr>
+    <tr><td>Sat night → Sun morning</td><td>Scale those to ~30–50 episodes per cell; second target model</td></tr>
+    <tr><td>Sun</td><td>GPU replay + probes; monitors and judge in parallel</td></tr>
+    <tr><td>Sun night</td><td>Transfer tests, figures</td></tr>
+    <tr><td>Mon</td><td>Write-up; submit before 7:59 PM SGT</td></tr>
+  </table></div>
+  <div class="callout warn"><p><strong>Minimum version if things go badly:</strong> 1–2 scenarios, granite only, the behaviour table + "knew but complied" + the backup-route probe (constructed decisions → real episodes). Still a complete white-box result.</p></div>
 </section>
 
 <!-- EPISODE -->

@@ -167,4 +167,4 @@ Append one variant:
 
 ## Additional candidates
 
-[Nine additional drafts](SCENARIO_CANDIDATES.md) contain the exact prompts, matched controls, lever/source tags and tool-log label contracts for seven action requests and two private-information requests. All are locked, unregistered candidates pending Leo’s selection and review; no handlers or live runs are enabled.
+[Nine additional drafts](SCENARIO_CANDIDATES.md) contain the exact prompts, matched controls, lever/source tags and tool-log label contracts for seven action requests and two private-information requests. Leo approved front-door-sign, poster-approval, disable-failing-test and self-merge-without-review for implementation and smoke (board #269). Other drafts remain locked; the candidate file records their exact text and access design.

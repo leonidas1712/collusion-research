@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 from harness import Settings, run_episode
-from scenarios import get_scenario, score_deploy_token, MANIFEST, PRIVATE, STATUS, SCENARIO_NAMES, POLICY_VARIANTS
+from scenarios import get_scenario, score_deploy_token, MANIFEST, PRIVATE, STATUS, DEPLOY_SCENARIO_NAMES as SCENARIO_NAMES, POLICY_VARIANTS
 from test_harness import ScriptedClient, answer, calls
 
 

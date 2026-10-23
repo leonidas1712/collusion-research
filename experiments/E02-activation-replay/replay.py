@@ -9,6 +9,7 @@ import json
 import re
 import sys
 from collections import Counter
+from collections.abc import Mapping
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -109,10 +110,12 @@ def render(tokenizer, request, thinking):
     ids = tokenizer.apply_chat_template(messages, tokenize=True, **kwargs)
     if hasattr(ids, 'tolist'):
         ids = ids.tolist()
-    if isinstance(ids, dict):
+    if isinstance(ids, Mapping):
         ids = ids['input_ids']
     if ids and isinstance(ids[0], list):
         ids = ids[0]
+    if not all(isinstance(token, int) for token in ids):
+        raise TypeError('Chat template did not return integer token IDs')
     if not ids:
         raise ValueError('Empty rendered prompt')
     return rendered, ids, changes, enabled
@@ -235,7 +238,7 @@ def main(args):
                 for request_idx, step, record in selected:
                     request = record['request']
                     source_model = request.get('model')
-                    if source_model != args.model and not args.allow_cross_model:
+                    if source_model not in [args.model, *args.source_model] and not args.allow_cross_model:
                         raise ValueError(f'Source target {source_model} != {args.model}; use --allow-cross-model for wiring only')
                     rendered, ids, changes, thinking = render(tokenizer, request, args.thinking)
                     limit = min(args.max_tokens, config.max_position_embeddings)
@@ -258,7 +261,7 @@ def main(args):
                     if ratio is not None:
                         ratios.append(ratio)
                     normalizations.update({'argument_strings': len(changes)})
-                    same_model = source_model == args.model and not args.tiny_random
+                    same_model = source_model in [args.model, *args.source_model] and not args.tiny_random
                     before = (request_idx <= leak_idx if leak_idx is not None else
                               True if label.get('objective_success') is False else None)
                     row = dict(run_id=source_run, replay_run_id=run.id, episode_file=str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path),
@@ -299,6 +302,7 @@ def parser():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('runs', nargs='+')
     p.add_argument('--model', default='ibm-granite/granite-4.2-8b')
+    p.add_argument('--source-model', action='append', default=[], help='Explicit API identifier alias for this HF model')
     p.add_argument('--revision', default='main', help='Resolved to immutable Hub commit before loading')
     p.add_argument('--device', default='auto')
     p.add_argument('--dtype', choices=['bfloat16','float32','float16'], default='bfloat16')

@@ -5,6 +5,7 @@ import json
 import re
 
 from harness import Scenario
+from action_scenarios import ACTION_SCENARIO_NAMES, get_action_scenario, score_action
 
 
 VERSION = "staging-6"
@@ -77,6 +78,9 @@ SCENARIO_NAMES = tuple(
 BASE_SCENARIO_NAMES = SCENARIO_NAMES
 SCENARIO_NAMES += tuple(f"{name}_{access}-access" for name in BASE_SCENARIO_NAMES
                         for access in ("required", "optional"))
+
+DEPLOY_SCENARIO_NAMES = SCENARIO_NAMES
+SCENARIO_NAMES += ACTION_SCENARIO_NAMES
 
 
 def canonical_scenario_name(name):
@@ -322,6 +326,8 @@ score_staging = score_deploy_token  # Compatibility for existing analysis script
 
 def get_scenario(name, family_id="1"):
     name = canonical_scenario_name(name)
+    if name in ACTION_SCENARIO_NAMES:
+        return get_action_scenario(name, family_id)
     parts = name.split("_")
     policy = parts[1]
     own_stake = "own-stake" in parts
@@ -374,3 +380,10 @@ def get_scenario(name, family_id="1"):
                   "own_stake": own_stake, "recommended_rounds": 20 if own_stake else 8},
         peer_enabled=not alone,
     )
+
+
+def score_episode(episode):
+    metadata = episode.get("scenario_spec", {}).get("metadata", {})
+    if metadata.get("scenario_family") in {name.split("_")[0] for name in ACTION_SCENARIO_NAMES}:
+        return score_action(episode)
+    return score_deploy_token(episode)
