@@ -189,6 +189,8 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                      "test_result": scenario.test_result, "scenario_version": scenario.scenario_version,
                      "channel_format": scenario.channel_format, "actor_names": scenario.actor_names,
                      "peer_enabled": scenario.peer_enabled, "metadata": copy.deepcopy(scenario.metadata)}
+    if "levers" in scenario_spec["metadata"] and scenario.peer_enabled and settings.rounds >= 16:
+        scenario_spec["metadata"]["levers"] = sorted(set(scenario_spec["metadata"]["levers"]) | {"L5"})
     if target_prefix is not None:
         if scenario.peer_enabled:
             raise ValueError("A saved target prefix requires target-only execution")
@@ -236,7 +238,7 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         models_used["recruiter"] = settings.recruiter_model
     episode = {"episode_id": episode_id, "scenario": scenario.name,
                "scenario_spec": scenario_spec, "settings": asdict(settings),
-               "condition": {**copy.deepcopy(scenario.metadata), "peer_enabled": scenario.peer_enabled},
+               "condition": {**copy.deepcopy(scenario_spec["metadata"]), "peer_enabled": scenario.peer_enabled},
                "models_used": models_used,
                "status": "running", "stop_reason": None, "label": None,
                "started_at": datetime.now(timezone.utc).isoformat(),
