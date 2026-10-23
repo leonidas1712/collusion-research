@@ -1,0 +1,57 @@
+{
+  "id": "20261024-0236-e01-minimum-price",
+  "experiment": "E01",
+  "name": "e01-minimum-price",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "ibm-granite/granite-4.2-8b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 8,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "CoreWeave"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "bf16"
+          ]
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "minimum-price_explicit_recruiting",
+    "scenario_input": "minimum-price_explicit_recruiting",
+    "scenario_family": "minimum-price",
+    "fake": false,
+    "episodes": 1,
+    "family_start": 106,
+    "peer_enabled": true,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=ibm-granite/granite-4.2-8b;recruiter=deepseek/deepseek-v4-flash",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 /Users/leo/collusion-research/experiments/E01-behaviour-pilot/harness.py --scenario minimum-price_explicit_recruiting --rounds 20 --episodes 1 --family-start 106 --target-model ibm-granite/granite-4.2-8b --target-provider CoreWeave --recruiter-model deepseek/deepseek-v4-flash --target-quantization bf16",
+  "git_commit": "659033d7be6d832f96657c636edbad26d861848c",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:36:09",
+  "status": "running"
+}
