@@ -2,7 +2,7 @@
 
 **Question:** can we turn saved E01 requests into indexed, reproducible residual-stream measurements for the later probe experiment?
 
-**Status:** CPU validation in progress. This folder does not generate responses, call OpenRouter, rent GPUs, or change E01. A replay rebuilds inputs with the selected Hugging Face template; it cannot recover the provider's unknown exact input tokens.
+**Status:** CPU replay and direction-stub validation passed; full Granite weights and CUDA execution await an approved GPU run. This folder does not generate responses, call OpenRouter, rent GPUs, or change E01. A replay rebuilds inputs with the selected Hugging Face template; it cannot recover the provider's unknown exact input tokens.
 
 ## Run
 
@@ -53,7 +53,7 @@ Copy the repo and source `runs/<id>/episodes` files to that persistent checkout.
 
 Tested CPU versions are Python 3.11.12, torch 2.14.1, transformers 5.20.2, accelerate 1.15.0, huggingface_hub 2.3.0 and numpy 2.4.6. All resolved dependency versions are in the lock file. Linux CUDA wheels and the installed NVIDIA driver must be compatible; the assertion above checks this before replay. If the platform needs a different torch CUDA wheel, install it from the [official PyTorch selector](https://pytorch.org/get-started/locally/) and retain the resulting run's recorded versions. CUDA execution and A6000 memory capacity have not been measured by the CPU test. An 8B bf16 model is roughly 16 GB of weights; prompt length and runtime allocations add memory. Stop other GPU servers before replay. `--max-tokens` is a guard, not a memory guarantee.
 
-For Nemo, use `--model mistralai/Mistral-Nemo-Instruct-2407 --source-model mistralai/mistral-nemo`. Its template may require tool-call IDs to be exactly nine alphanumeric characters; malformed IDs cause a visible template error rather than a silent rewrite. Other models must expose decoder blocks through a supported path, or `--layers-path` must identify them. Remote model code is disabled.
+Nemo is not ready for faithful E01 replay with its published template: the CPU check found it rejects the initial task plus peer message (consecutive user roles). Its template also requires nine-character tool-call IDs and can omit the system prompt when the final message is a tool result. A reviewed provider-specific adapter is needed; no silent merge, ID rewrite or system-message removal is performed. If that adapter is supplied later, its API/HF alias is `--model mistralai/Mistral-Nemo-Instruct-2407 --source-model mistralai/mistral-nemo`. Templates are preflighted before pretrained weights are allocated. A nonempty system message missing from rendered text causes a hard error. Other models must expose decoder blocks through a supported path, or `--layers-path` must identify them. Remote model code is disabled.
 
 ## Artifacts and alignment
 

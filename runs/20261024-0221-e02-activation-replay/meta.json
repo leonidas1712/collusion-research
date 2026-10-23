@@ -1,0 +1,52 @@
+{
+  "id": "20261024-0221-e02-activation-replay",
+  "experiment": "E02",
+  "name": "e02-activation-replay",
+  "tags": [
+    "wiring"
+  ],
+  "settings": {
+    "runs": [
+      "runs/20261024-0032-e01-harness"
+    ],
+    "model": "ibm-granite/granite-4.2-8b",
+    "source_model": [],
+    "revision": "a7042144125ce5ae64f89610e8289647fc000b9a",
+    "device": "cpu",
+    "dtype": "bfloat16",
+    "thinking": "from-request",
+    "layers_path": null,
+    "max_episodes": 3,
+    "max_requests_per_episode": null,
+    "max_tokens": 32768,
+    "cpu_threads": 4,
+    "tiny_random": true,
+    "allow_cross_model": false,
+    "seed": 0
+  },
+  "parents": [
+    "20261024-0032-e01-harness"
+  ],
+  "model": "ibm-granite/granite-4.2-8b",
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python /Users/leo/collusion-research/experiments/E02-activation-replay/replay.py runs/20261024-0032-e01-harness --model ibm-granite/granite-4.2-8b --revision a7042144125ce5ae64f89610e8289647fc000b9a --tiny-random --device cpu --dtype bfloat16 --max-episodes 3",
+  "git_commit": "82b2edcd3db56ffe6ba28c03ed3d242b1aa152df",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:21:21",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T02:21:28",
+  "results": {
+    "episodes": 3,
+    "requests": 51,
+    "first_step_requests": 24,
+    "token_ratio_n": 51,
+    "token_ratio_min": 1.0,
+    "token_ratio_median": 1.0,
+    "token_ratio_max": 1.0,
+    "normalizations": {
+      "argument_strings": 308
+    }
+  }
+}

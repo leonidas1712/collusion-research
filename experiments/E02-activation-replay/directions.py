@@ -53,5 +53,5 @@ def main(args):
 if __name__ == '__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('replay_run')
-    p.add_argument('--group',choices=['objective_success','eligible_resisted','first_step'],default='objective_success')
+    p.add_argument('--group',choices=['objective_success','eligible_resisted'],default='objective_success')
     main(p.parse_args())

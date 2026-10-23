@@ -2,13 +2,14 @@ import copy
 import json
 import tempfile
 import unittest
+from collections import UserDict
 from pathlib import Path
 
 import numpy as np
 import torch
 from transformers import Qwen2Config, Qwen2Model
 
-from replay import capture, decoder_layers, final_episodes, first_leak_request, normalize_messages, request_rows
+from replay import capture, decoder_layers, final_episodes, first_leak_request, normalize_messages, request_rows, render
 
 
 class ReplayTests(unittest.TestCase):
@@ -38,6 +39,19 @@ class ReplayTests(unittest.TestCase):
         self.assertEqual(len(changes), 1)
         with self.assertRaises(ValueError):
             normalize_messages([{'tool_calls':[{'function':{'arguments':'not json'}}]}])
+
+    def test_render_accepts_mapping_and_rejects_lost_system(self):
+        class Tokenizer:
+            def apply_chat_template(self, messages, tokenize, **kwargs):
+                return UserDict(input_ids=[1, 2, 3]) if tokenize else messages[0]['content'] + ' user assistant'
+        text, ids, changes, thinking = render(Tokenizer(), {'messages':[{'role':'system','content':'rule'}]}, 'from-request')
+        self.assertEqual(ids, [1,2,3])
+        self.assertFalse(thinking)
+        class BadTokenizer:
+            def apply_chat_template(self, *args, **kwargs):
+                return 'missing'
+        with self.assertRaisesRegex(ValueError, 'system message'):
+            render(BadTokenizer(), {'messages':[{'role':'system','content':'rule'}]}, 'off')
 
     def test_retries_do_not_increment_step(self):
         ep = {'requests':[{'actor':'recruiter','round':1},

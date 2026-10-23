@@ -6,7 +6,6 @@ import copy
 import hashlib
 import importlib.metadata
 import json
-import re
 import sys
 from collections import Counter
 from collections.abc import Mapping
@@ -107,6 +106,9 @@ def render(tokenizer, request, thinking):
     enabled = reasoning.get('enabled', False) if thinking == 'from-request' else thinking == 'on'
     kwargs = dict(tools=tools, add_generation_prompt=True, enable_thinking=enabled)
     rendered = tokenizer.apply_chat_template(messages, tokenize=False, **kwargs)
+    system_messages = [m.get('content') for m in messages if m.get('role') == 'system']
+    if any(isinstance(text, str) and text and text not in rendered for text in system_messages):
+        raise ValueError('Chat template omitted or changed a system message; a reviewed adapter is required')
     ids = tokenizer.apply_chat_template(messages, tokenize=True, **kwargs)
     if hasattr(ids, 'tolist'):
         ids = ids.tolist()
@@ -195,6 +197,18 @@ def main(args):
             config.num_key_value_heads = 2
             if hasattr(config, 'head_dim'):
                 config.head_dim = 16
+        # Validate templates before allocating pretrained weights or running any forwards.
+        for _, path, episode in episodes:
+            selected = list(request_rows(episode))
+            if args.max_requests_per_episode:
+                selected = selected[:args.max_requests_per_episode]
+            for request_idx, _, record in selected:
+                source_model = record['request'].get('model')
+                if source_model not in [args.model, *args.source_model] and not args.allow_cross_model:
+                    raise ValueError(f'Source target {source_model} != {args.model}; use --allow-cross-model for wiring only')
+                _, ids, _, _ = render(tokenizer, record['request'], args.thinking)
+                if len(ids) > min(args.max_tokens, config.max_position_embeddings):
+                    raise ValueError(f'{path.name} request {request_idx}: {len(ids)} tokens exceeds limit; no truncation allowed')
         dtype = getattr(torch, args.dtype)
         if args.tiny_random:
             model = AutoModel.from_config(config, trust_remote_code=False, attn_implementation='sdpa').to(dtype=dtype)
@@ -324,4 +338,9 @@ def parser():
 
 
 if __name__ == '__main__':
-    main(parser().parse_args())
+    args = parser().parse_args()
+    for name in ('max_episodes', 'max_requests_per_episode', 'max_tokens', 'cpu_threads'):
+        value = getattr(args, name)
+        if value is not None and value < 1:
+            raise SystemExit(f'--{name.replace("_", "-")} must be positive')
+    main(args)
