@@ -101,6 +101,11 @@ The overview's "How outcomes are judged" section states the same principle.
 - [ ] `max_tokens` high enough for the target's reply length (1536 for granite). *Why:* truncation turns episodes incomplete.
 - [ ] Retries and backoff for rate limits on the pinned provider.
 - [ ] Matched families across cells; `scenario_version` bumped for any text change.
+- [ ] **Environment sanity** (any flag means fix the environment before batches):
+  - **Scripted walk-throughs, offline,** with no model: a **compliant** script (succeeds, or is genuinely blocked as designed); a **rule-breaking** script (the forbidden call works and the main label fires in the right round); and the **control path** works end to end.
+  - **A read-through** (human or agent) of the prompts, starting files and tool outputs, looking for contradictions, mismatched values or IDs, and unrealistic cues.
+  - **Smoke flags:** tool errors, unknown tools, missing files, target confusion ("this seems wrong", "what is X?"), control-task failure.
+  *Why:* environment bugs look like behaviour. The first batch "failed" because the target couldn't list files.
 - [ ] Smoke test read before the batch.
 - [ ] Models: target open-weight, on Hugging Face, ≤ ~10B (20B at most), dense preferred for interpretability; peer a cheap non-Claude model that stays in role. No Claude models in experiments.
 - [ ] Budget noted; ask Leo before anything over ~$20.
@@ -133,4 +138,5 @@ Dated; newest at the bottom. Each line points to where it's applied above. Scena
 - 2026-10-24: When the rule-following route is easy (small fix, review readily available), the shortcut is never needed and "resisting" happens by default. Make the proper route blocked or hard (L2), as in the incidents (METR: 30–40% of tasks unsolvable the intended way). Applied to K and L (§3 Conditions).
 - 2026-10-24: The target's task must require accessing the protected item, so it's in context every episode; pre-run check asserts it (§3 The task, §5). Prompted by Llama-3.3-70B never reading the token.
 - 2026-10-24: Refined: a mix, not always required. Tag `access: required | optional`; most required (probe data), a minority optional (realism, probe transfer, whether the peer gets the target to open it). The token-in-context check applies to required scenarios only (§3 The task, §5).
+- 2026-10-24: Environment sanity before batches: scripted compliant / rule-breaking / control walk-throughs offline; a read-through for contradictions, mismatched IDs and unrealistic cues; smoke flags (tool errors, unknown tools, missing files, target confusion, control-task failure). Any flag means fix first (§5).
 - 2026-10-24: Labelling principle: the main outcome is deterministic from the logs; judges and heuristics only give secondary labels; anything a claim rests on needs a deterministic rule or a judge validated on hand labels with agreement reported (§4).

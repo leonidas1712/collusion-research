@@ -43,6 +43,8 @@ class Scenario:
     tool_access: dict[str, list[str]] | None = None
     peer_enabled: bool = True
     metadata: dict = field(default_factory=dict)
+    initial_state: dict = field(default_factory=dict)
+    tool_overrides: tuple[MockTool, ...] = ()
 
 
 @dataclass
@@ -67,6 +69,7 @@ class MockEnvironment:
     channel: list[dict] = field(default_factory=list)
     test_result: Any = "Mock test suite passed."
     round: int = 0
+    state: dict = field(default_factory=dict)
 
     def publish(self, actor: str, content: str) -> dict:
         event = {"actor": actor, "round": self.round, "content": content}
@@ -186,7 +189,11 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         raise ValueError("episode_id must be a filename stem")
     if not getattr(client, "is_fake", False) and not scenario.recruiter_approved:
         raise ValueError("Live recruiter prompt is pending approval")
-    tools = standard_tools() + list(scenario.extra_tools)
+    base_tools = standard_tools()
+    overrides = {tool.schema["function"]["name"]: tool for tool in scenario.tool_overrides}
+    if len(overrides) != len(scenario.tool_overrides) or set(overrides) - {tool.schema["function"]["name"] for tool in base_tools}:
+        raise ValueError("tool_overrides must uniquely name standard tools")
+    tools = [overrides.get(tool.schema["function"]["name"], tool) for tool in base_tools] + list(scenario.extra_tools)
     by_name = {tool.schema["function"]["name"]: tool for tool in tools}
     if len(by_name) != len(tools):
         raise ValueError("duplicate tool names")
@@ -208,6 +215,9 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                      "test_result": scenario.test_result, "scenario_version": scenario.scenario_version,
                      "channel_format": scenario.channel_format, "actor_names": scenario.actor_names,
                      "peer_enabled": scenario.peer_enabled, "metadata": copy.deepcopy(scenario.metadata)}
+    if scenario.initial_state or scenario.tool_overrides:
+        scenario_spec["initial_state"] = copy.deepcopy(scenario.initial_state)
+        scenario_spec["tool_overrides"] = sorted(overrides)
     if "levers" in scenario_spec["metadata"] and scenario.peer_enabled and settings.rounds >= 16:
         scenario_spec["metadata"]["levers"] = sorted(set(scenario_spec["metadata"]["levers"]) | {"L5"})
     if target_prefix is not None:
@@ -242,7 +252,8 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         while (output_dir / f"{episode_id}.attempt-{attempt}.json").exists():
             attempt += 1
         partial_path.replace(output_dir / f"{episode_id}.attempt-{attempt}.json")
-    env = MockEnvironment(copy.deepcopy(scenario.files), test_result=scenario.test_result)
+    env = MockEnvironment(copy.deepcopy(scenario.files), test_result=scenario.test_result,
+                          state=copy.deepcopy(scenario.initial_state))
     histories = {
         "target": [{"role": "system", "content": scenario.target_system},
                    {"role": "user", "content": scenario.target_task}],
@@ -264,6 +275,8 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                "requests": [], "channel": env.channel, "tool_log": [],
                "histories": histories, "files": env.files, "rounds_completed": 0,
                "fake": bool(getattr(client, "is_fake", False))}
+    if scenario.initial_state:
+        episode["state"] = env.state
     semaphore = semaphore or asyncio.Semaphore(settings.parallelism)
 
     async def request(actor, round_number):

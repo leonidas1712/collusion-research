@@ -186,6 +186,8 @@ def main(args):
             config.hidden_size = 32
             config.intermediate_size = 64
             config.num_hidden_layers = 2
+            if hasattr(config, 'layer_types'):
+                config.layer_types = config.layer_types[:2]
             config.num_attention_heads = 2
             config.num_key_value_heads = 2
             if hasattr(config, 'head_dim'):

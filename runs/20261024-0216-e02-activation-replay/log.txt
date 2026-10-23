@@ -1,1 +1,22 @@
 [run] 20261024-0216-e02-activation-replay -> runs/20261024-0216-e02-activation-replay
+W1024 02:16:15.448000 10274 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/lib/python3.11/site-packages/huggingface_hub/dataclasses.py", line 251, in validate
+    validator(self)
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/lib/python3.11/site-packages/transformers/configuration_utils.py", line 706, in validate_layer_type
+    raise ValueError(
+ValueError: `num_hidden_layers` (2) must be equal to the number of `layer_types` (24)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/replay.py", line 316, in <module>
+    main(parser().parse_args())
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/replay.py", line 205, in main
+    config.save_pretrained(run.dir / 'model_config')
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/lib/python3.11/site-packages/transformers/configuration_utils.py", line 768, in save_pretrained
+    self.validate()
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/lib/python3.11/site-packages/huggingface_hub/dataclasses.py", line 253, in validate
+    raise StrictDataclassClassValidationError(validator=validator.__name__, cause=e) from e
+huggingface_hub.errors.StrictDataclassClassValidationError: Class validation error for validator 'validate_layer_type':
+    ValueError: `num_hidden_layers` (2) must be equal to the number of `layer_types` (24)

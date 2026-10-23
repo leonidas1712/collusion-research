@@ -1,0 +1,12 @@
+[run] 20261024-0216-e02-activation-replay-7179 -> runs/20261024-0216-e02-activation-replay-7179
+W1024 02:16:59.168000 13445 .venv/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/replay.py", line 318, in <module>
+    main(parser().parse_args())
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/replay.py", line 244, in main
+    values = capture(model, layers, ids, input_device)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/replay.py", line 150, in capture
+    inputs = torch.tensor([ids], dtype=torch.long, device=device)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'str' object cannot be interpreted as an integer
