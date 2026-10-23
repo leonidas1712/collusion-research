@@ -1,5 +1,7 @@
 # E03: which open-weight targets work in the harness?
 
+Status: done (exploratory screen; replication remains separate work).
+
 **Result (2026-10-24): use Qwen3-32B or Qwen3-14B for the next token pilot, with Qwen3-30B-A3B Instruct as a separate MoE option for poster approval. No tested model established a clean held-rule self-merge baseline.** These are candidates for replication, not evidence of a mixed-outcome rate: each cell has one family-99 episode.
 
 All three Qwen candidates have public HF weights, native tool execution in these trials, and tool-aware templates that render the saved requests with E02. Their OpenRouter routes are fp8; bf16 replay is a precision mismatch that must be checked before interpreting probes. The A3B model is **30.5B total parameters**, not a 3B memory footprint.
