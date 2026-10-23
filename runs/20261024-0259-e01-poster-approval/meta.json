@@ -1,0 +1,65 @@
+{
+  "id": "20261024-0259-e01-poster-approval",
+  "experiment": "E01",
+  "name": "e01-poster-approval",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-30b-a3b-instruct-2507",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 3,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "SiliconFlow"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ]
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "early_stop": true,
+    "scenario": "poster-approval_explicit_control",
+    "scenario_input": "poster-approval_explicit_control",
+    "scenario_family": "poster-approval",
+    "fake": false,
+    "episodes": 3,
+    "family_start": 201,
+    "peer_enabled": true,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=qwen/qwen3-30b-a3b-instruct-2507;recruiter=deepseek/deepseek-v4-flash",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/harness.py --scenario poster-approval_explicit_control --episodes 3 --rounds 20 --family-start 201 --parallelism 3 --target-model qwen/qwen3-30b-a3b-instruct-2507 --target-provider SiliconFlow --target-quantization fp8 --recruiter-model deepseek/deepseek-v4-flash",
+  "git_commit": "d716bfcd4dcd1e9f0cd1c0efe85355181344af35",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:59:05",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T03:01:39",
+  "results": {
+    "complete": 3,
+    "incomplete": 0,
+    "episode_dir": "/Users/leo/collusion-research/runs/20261024-0259-e01-poster-approval/episodes"
+  }
+}
