@@ -228,7 +228,7 @@ details.box.guide{background:var(--accent-soft);border:0}
 .what{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:grid;gap:12px}
 .kv{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;font-size:14px}.kv>b{color:var(--muted);font-weight:600}
 .kv>div{min-width:0;overflow-wrap:anywhere}
-.outcome{font:650 26px/1.2 var(--display)}.outcome.leaked{color:var(--bad)}.outcome.refused{color:var(--good)}.outcome.noask{color:var(--accent)}
+.via{font:11px var(--mono);color:var(--muted);margin-top:6px}.outcome{font:650 26px/1.2 var(--display)}.outcome.leaked{color:var(--bad)}.outcome.refused{color:var(--good)}.outcome.noask{color:var(--accent)}
 .outcome.incomplete,.outcome.other{color:var(--warn)}
 table{border-collapse:collapse;width:100%;font-size:13.5px}td,th{text-align:left;vertical-align:top;padding:5px 8px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
 th{color:var(--muted);font-weight:600;width:38%}tr.key td,tr.key th{background:var(--warn-soft)}
@@ -341,11 +341,11 @@ function transcript(ep){const tl={},names=(ep.scenario_spec||{}).actor_names||{}
   const ch=(q.response.choices||[])[0]||{},m=ch.message||{},text=txt(m.content),calls=m.tool_calls||[],u=(typeof q.usage==='object'&&q.usage)||q.response.usage||{};
   T.tokens[0]+=u.prompt_tokens||0;T.tokens[1]+=u.completion_tokens||0;T.cost+=u.cost||0;T.prov.add((q.served_provider||q.response.provider||'?')+(q.served_quantization?' '+q.served_quantization:''));
   if(m.reasoning||(m.reasoning_details||[]).length)T.items.push({k:'think',text:m.reasoning,det:m.reasoning_details});
-  if(!calls.length&&text.trim()&&ch.finish_reason==='stop'&&!T.posted){T.items.push({k:'msg',text});T.posted=true}
+  if(!calls.length&&text.trim()&&ch.finish_reason==='stop'&&!T.posted){T.items.push({k:'msg',text,via:'auto'});T.posted=true}
   else if(text.trim())T.items.push({k:'note',text,cut:!['stop','tool_calls'].includes(ch.finish_reason)});
   if(m.refusal)T.items.push({k:'note',text:'Refusal field: '+m.refusal});
   for(const c of calls){const f=c.function||{},log=tl[c.id],args=parse(f.arguments),res=log?log.result:undefined;
-   if(f.name==='send_message'&&log&&!(res&&res.error)&&args&&typeof args.content==='string'){T.items.push({k:'msg',text:args.content});T.posted=true}
+   if(f.name==='send_message'&&log&&!(res&&res.error)&&args&&typeof args.content==='string'){T.items.push({k:'msg',text:args.content,via:'send_message'});T.posted=true}
    else T.items.push({k:'tool',name:f.name,args,res,log:!!log})}
   if(ch.error)T.items.push({k:'stop',text:'The model provider returned an error instead of a reply. The episode stopped here.',data:ch.error});
   else if(ch.finish_reason&&!['stop','tool_calls'].includes(ch.finish_reason))T.items.push({k:'stop',text:ch.finish_reason==='length'?`Reply cut off here: it hit the length limit (${s.max_tokens} tokens). The episode stopped.`:`Reply ended unexpectedly (${ch.finish_reason}). The episode stopped.`})}
@@ -364,7 +364,7 @@ function showEp(r,i){const e=r.episodes[i];if(!e)return showRun(r);const ep=RAW(
   for(const T of R.turns){body+=`<div class="turn ${esc(T.actor)}"><span class="who" title="${T.calls} API call(s) · served by ${esc([...T.prov].join(', '))} · ${T.tokens[0]} → ${T.tokens[1]} tokens · $${T.cost.toFixed(5)}">${esc(who(T.actor,names))}</span>`;
    for(const it of T.items){
     if(it.k==='msg'){const leak=!leakDone&&T.actor==='target'&&hasTok(it.text);if(leak)leakDone=true;
-     body+=`<div class="msg${leak?' leak" id="leak':''}">${leak?'<span class="leakmark">First leak: the real token was posted to the channel here</span>':''}${md(it.text)}</div>`}
+     body+=`<div class="msg${leak?' leak" id="leak':''}">${leak?'<span class="leakmark">First leak: the real token was posted to the channel here</span>':''}${md(it.text)}<div class="via">${it.via==='send_message'?'sent with the send_message tool':'end-of-turn reply, posted to the channel automatically'}</div></div>`}
     else if(it.k==='note')body+=`<div class="note" title="Not sent to the channel">${it.cut?'<span class="cap">Unfinished reply, never sent</span>':''}${md(it.text)}</div>`;
     else if(it.k==='tool')body+=toolRow(it);else if(it.k==='err')body+=errRow(it.q);
     else if(it.k==='think')body+=`<details class="row"><summary>Reasoning</summary>${it.text?`<div class="msg">${md(it.text)}</div>`:''}${(it.det||[]).length?`<div class="lbl">reasoning_details</div><pre>${hl(pretty(it.det))}</pre>`:''}</details>`;
