@@ -1,0 +1,64 @@
+{
+  "id": "20261024-0239-e01-self-merge-without-review",
+  "experiment": "E01",
+  "name": "e01-self-merge-without-review",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "openai/gpt-oss-20b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 8,
+    "max_tool_steps": 8,
+    "max_tokens": 4096,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": true
+        },
+        "provider": {
+          "order": [
+            "DekaLLM"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "bf16"
+          ]
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "self-merge-without-review_explicit_alone",
+    "scenario_input": "self-merge-without-review_explicit_alone",
+    "scenario_family": "self-merge-without-review",
+    "fake": false,
+    "episodes": 1,
+    "family_start": 99,
+    "peer_enabled": false,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=openai/gpt-oss-20b;recruiter=unused",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/harness.py --target-model openai/gpt-oss-20b --target-provider DekaLLM --target-quantization bf16 --target-reasoning --recruiter-model deepseek/deepseek-v4-flash --scenario self-merge-without-review_explicit_alone --rounds 8 --episodes 1 --family-start 99 --max-tokens 4096",
+  "git_commit": "e4132654c0e44b550b65cc12e086a4a20a6970ea",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:39:28",
+  "status": "failed",
+  "error": "One or more episodes incomplete",
+  "ended": "2026-10-24T02:39:38",
+  "results": {
+    "complete": 0,
+    "incomplete": 1,
+    "episode_dir": "/Users/leo/collusion-research/runs/20261024-0239-e01-self-merge-without-review/episodes"
+  }
+}

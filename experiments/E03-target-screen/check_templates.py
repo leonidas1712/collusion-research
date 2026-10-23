@@ -25,7 +25,9 @@ def main(args):
     if d.get('started','')<args.since or d.get('settings',{}).get('target_model')!=mid:continue
     for path in sorted((meta.parent/'episodes').glob('*.json')):
      if '.attempt-' in path.name:continue
-     ep=json.loads(path.read_text());sources.append(str(path.relative_to(ROOT)))
+     ep=json.loads(path.read_text())
+     if ep.get('status')=='running':continue
+     sources.append({'path':str(path.relative_to(ROOT)),'sha256':digest(path.read_bytes())})
      for idx,r in enumerate(ep['requests']):
       if r['actor']=='target':calls.append((str(path.relative_to(ROOT)),idx,r['request']))
    result={'model':mid,'hf_model':hf,'revision':revision,'sources':sources,'calls':len(calls),'passed':0,'failures':[],'template_sha256':None}
@@ -35,6 +37,16 @@ def main(args):
     tok=AutoTokenizer.from_pretrained(hf,revision=revision,trust_remote_code=False)
     template=tok.get_chat_template(tools=calls[0][2].get('tools'))
     result['template_sha256']=digest(template.encode())
+    first_request=calls[0][2]
+    with_tools=render(tok,first_request,'from-request')[0]
+    without_request={k:v for k,v in first_request.items() if k!='tools'}
+    try:
+     without_tools=render(tok,without_request,'from-request')[0]
+     result['tool_schemas_affect_rendering']=with_tools!=without_tools
+    except Exception as exc:
+     result['tool_schemas_affect_rendering']=None
+     result['without_tools_error']=str(exc)
+    result['all_tool_names_present']=all(t['function']['name'] in with_tools for t in first_request.get('tools',[]))
     (run.dir/(mid.replace('/','--')+'.jinja')).write_text(template)
     for path,idx,request in calls:
      try:

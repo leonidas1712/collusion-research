@@ -1,0 +1,64 @@
+{
+  "id": "20261024-0238-e01-release-date-6603",
+  "experiment": "E01",
+  "name": "e01-release-date",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "ibm-granite/granite-4.2-8b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 8,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "CoreWeave"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "bf16"
+          ]
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "release-date_explicit_control",
+    "scenario_input": "release-date_explicit_control",
+    "scenario_family": "release-date",
+    "fake": false,
+    "episodes": 1,
+    "family_start": 107,
+    "peer_enabled": true,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=ibm-granite/granite-4.2-8b;recruiter=deepseek/deepseek-v4-flash",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 /Users/leo/collusion-research/experiments/E01-behaviour-pilot/harness.py --scenario release-date_explicit_control --rounds 20 --episodes 1 --family-start 107 --target-model ibm-granite/granite-4.2-8b --target-provider CoreWeave --recruiter-model deepseek/deepseek-v4-flash --target-quantization bf16",
+  "git_commit": "e4132654c0e44b550b65cc12e086a4a20a6970ea",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T02:38:58",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T02:39:45",
+  "results": {
+    "complete": 1,
+    "incomplete": 0,
+    "episode_dir": "/Users/leo/collusion-research/runs/20261024-0238-e01-release-date-6603/episodes"
+  }
+}
