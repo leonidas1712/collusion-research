@@ -1,6 +1,23 @@
 # Lambda capacity check — 2026-10-24 03:01 SGT
 
-**Live inventory is blocked, not empty.** All four requested GET endpoints returned HTTP 403. A diagnostic read identified Cloudflare error 1010, `browser_signature_banned`, with `retryable=false`. No further requests were made after identifying that block. API-key validity cannot be inferred from this edge-layer response.
+## Updated capacity snapshot — 2026-10-24, Aboard #333
+
+Claude independently checked with curl and reported that **only `gpu_1x_a10` (24 GB) had capacity**, in `us-east-1` and `us-west-1`. A6000, A100, H100 and every 2× type had no capacity. Because A10 was the only available type, GH200 also had none. This is Claude's read-only snapshot, not a successful rerun of the Python helper; the exact query time and raw response were not supplied. Availability can change immediately.
+
+| Type | Reported regions with capacity |
+| --- | --- |
+| 1× A10 24 GB | `us-east-1`, `us-west-1` |
+| A6000, A100, H100 | None |
+| Every 2× type | None |
+| GH200 | None (only A10 was available) |
+
+Claude identified the default Python User-Agent as the cause of Cloudflare 1010. The helper now sends an explicit, descriptive `User-Agent: collusion-research-lambda-inventory/1.0` and records it in run settings. This change has been syntax-checked but not live-verified. It retains GET-only behavior, key redaction by omission, and the non-retryable-response stop.
+
+Existing instances, filesystems and SSH key names remain **unknown**: #333 supplied capacity only. A10 has insufficient VRAM for either full bf16 Qwen target. Granite's weights fit 24 GB, but prompt/runtime headroom needs testing. For Qwen replay, wait for an 80 GB card or evaluate the proposed Modal fallback; no Modal deployment or GPU launch is authorized by this update.
+
+## Initial check
+
+**The initial Python-client inventory was blocked, not empty.** All four requested GET endpoints returned HTTP 403. A diagnostic read identified Cloudflare error 1010, `browser_signature_banned`, with `retryable=false`. No further requests were made after identifying that block. API-key validity cannot be inferred from this edge-layer response.
 
 The key was loaded from `.env` in code and sent only as a Bearer header to `https://cloud.lambda.ai/api/v1`. No credential was printed or stored in the report. No instance, filesystem or key was created, changed or deleted; no GPU was rented.
 
@@ -13,23 +30,23 @@ The key was loaded from `.env` in code and sent only as a Bearer header to `http
 | `GET file-systems` | HTTP 403 | Whether persistent storage exists and in which regions |
 | `GET ssh-keys` | HTTP 403 | SSH key names |
 
-Recorded check: [20261024-0301-e02-lambda-inventory](../../runs/20261024-0301-e02-lambda-inventory/inventory.json). The follow-up diagnostic classified the 403 as Cloudflare 1010; the initial run records HTTP status only. The read-only helper is [lambda_inventory.py](lambda_inventory.py), now stopping immediately on an explicitly non-retryable response. Do not rerun until access is resolved.
+Recorded check: [20261024-0301-e02-lambda-inventory](../../runs/20261024-0301-e02-lambda-inventory/inventory.json). The follow-up diagnostic classified the 403 as Cloudflare 1010; the initial run records HTTP status only. The read-only helper is [lambda_inventory.py](lambda_inventory.py), now stopping immediately on an explicitly non-retryable response. The explicit User-Agent change described above addresses the reported client issue; a successful live check remains to be recorded.
 
 The current [API docs](https://docs.lambda.ai/api/cloud) confirm the base URL and Bearer authentication. `/file-systems` remains documented as a deprecated path; `/filesystems` is the current path. The [console documentation](https://docs.lambda.ai/public-cloud/console/) describes the account views Leo can inspect while API access is blocked. No console inspection was performed here.
 
 ## Public list prices, not confirmed available capacity
 
-All regions and live availability below are **unknown**. Prices are USD per whole instance-hour, excluding tax, from the [current Lambda pricing page](https://lambda.ai/pricing), checked 2026-10-24. They are not successful authenticated API quotes.
+Capacity below reflects Claude's snapshot in #333; the price column remains public list pricing. Prices are USD per whole instance-hour, excluding tax, from the [current Lambda pricing page](https://lambda.ai/pricing), checked 2026-10-24. They are not successful authenticated API quotes.
 
 | Type | VRAM | Public USD/hour | Capacity regions | Suitability |
 | --- | --- | ---: | --- | --- |
-| 1× A6000 | 48 GB | 1.09 | Unknown | Granite 8B; insufficient for either full bf16 Qwen target |
-| 1× A100 PCIe or SXM | 40 GB | 1.99 | Unknown | Granite; insufficient for full bf16 Qwen targets |
-| 1× A100 | 80 GB | Not listed in current 1× table | Unknown | Memory candidate if API confirms a single-card offering; do not reuse 8× per-GPU price |
-| 1× H100 PCIe | 80 GB | 3.29 | Unknown | Preferred initial Qwen replay candidate |
-| 1× H100 SXM | 80 GB | 4.29 | Unknown | Alternative; measure whether speed offsets price |
-| 2× H100 SXM | 2×80 GB | 8.38 total (2×4.19) | Unknown | Memory fallback; E02 layer dispatch is not automatic 2× throughput |
-| 1× GH200 | 96 GB | 2.29 | Unknown | ARM CPU; avoid for this unvalidated software environment |
+| 1× A6000 | 48 GB | 1.09 | None in #333 | Granite 8B; insufficient for either full bf16 Qwen target |
+| 1× A100 PCIe or SXM | 40 GB | 1.99 | None in #333 | Granite; insufficient for full bf16 Qwen targets |
+| 1× A100 | 80 GB | Not listed in current 1× table | None in #333 | Memory candidate if API confirms a single-card offering; do not reuse 8× per-GPU price |
+| 1× H100 PCIe | 80 GB | 3.29 | None in #333 | Preferred initial Qwen replay candidate |
+| 1× H100 SXM | 80 GB | 4.29 | None in #333 | Alternative; measure whether speed offsets price |
+| 2× H100 SXM | 2×80 GB | 8.38 total (2×4.19) | None in #333 | Memory fallback; E02 layer dispatch is not automatic 2× throughput |
+| 1× GH200 | 96 GB | 2.29 | None in #333 | ARM CPU; avoid for this unvalidated software environment |
 
 GH200's ARM architecture is documented in Lambda's [on-demand overview](https://docs.lambda.ai/public-cloud/on-demand/). The pricing page lists A100 80GB in the 8× table only; this does not establish a 1× offering.
 
@@ -57,4 +74,4 @@ MoE active parameters reduce arithmetic but do not ensure the HF expert kernels 
 
 Before authorizing a full batch, benchmark 50–100 representative saved requests including the longest contexts on an approved machine; record peak VRAM, device map, prompt lengths and per-forward timings. Extrapolate by prompt-length bins across the actual request manifest, adding startup and I/O time. For Qwen32, 6,000 × 64 layers × 5,120 width × 4 bytes is about 7.9 GB of uncompressed last-token vectors, plus token IDs, prompts and indexes. Weight cache and retained source runs require additional storage.
 
-**Next dependency:** Leo or Lambda support must resolve API access, or supply the read-only inventory from the console. This check cannot name a currently available region or assert that the account is empty.
+**Next dependency:** capacity for a Qwen-sized GPU or a separately authorized fallback. Account inventory still needs a successful read-only check. No launch is implied by the capacity snapshot.

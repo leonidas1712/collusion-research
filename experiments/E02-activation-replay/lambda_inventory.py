@@ -8,13 +8,14 @@ from dotenv import dotenv_values
 from collusion.runs import REPO, start_run
 
 BASE = 'https://cloud.lambda.ai/api/v1'
+USER_AGENT = 'collusion-research-lambda-inventory/1.0'
 key = dotenv_values(REPO / '.env').get('LAMBDA_API_KEY')
 if not key:
     raise SystemExit('LAMBDA_API_KEY is missing from .env')
-run = start_run('e02-lambda-inventory', experiment='E02', settings={'base_url': BASE, 'method': 'GET', 'endpoints': ['instance-types', 'instances', 'file-systems', 'ssh-keys']})
+run = start_run('e02-lambda-inventory', experiment='E02', settings={'base_url': BASE, 'method': 'GET', 'user_agent': USER_AGENT, 'endpoints': ['instance-types', 'instances', 'file-systems', 'ssh-keys']})
 result = {'checked_at_utc': datetime.now(timezone.utc).isoformat(), 'base_url': BASE}
 for endpoint in ('instance-types', 'instances', 'file-systems', 'ssh-keys'):
-    request = Request(f'{BASE}/{endpoint}', headers={'Authorization': f'Bearer {key}', 'Accept': 'application/json'}, method='GET')
+    request = Request(f'{BASE}/{endpoint}', headers={'Authorization': f'Bearer {key}', 'Accept': 'application/json', 'User-Agent': USER_AGENT}, method='GET')
     try:
         with urlopen(request, timeout=45) as response:
             data = json.load(response)['data']
