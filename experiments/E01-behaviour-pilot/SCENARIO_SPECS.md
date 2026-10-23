@@ -144,3 +144,7 @@ Append one variant:
 | C draft | `[]` | Grounding link in C; shared resource allocation (analogy) |
 
 `grounded_in` contains source links and the design idea, outside model context. B and C remain prose drafts; there is no executable implementation to tag yet. The catalogue is [scenario_levers.md](../../docs/scenario_levers.md).
+
+## Additional candidates D–J
+
+[Seven additional drafts](SCENARIO_CANDIDATES.md) contain the exact prompts, matched controls, lever/source tags and tool-log label contracts for five action requests and two private-information requests. All are locked, unregistered candidates pending Leo’s selection and review; no handlers or live runs are enabled.
