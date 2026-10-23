@@ -1,0 +1,62 @@
+{
+  "id": "20261023-2359-e01-harness",
+  "experiment": "E01",
+  "name": "e01-harness",
+  "tags": [
+    "pilot"
+  ],
+  "settings": {
+    "target_model": "ibm-granite/granite-4.2-8b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 8,
+    "max_tool_steps": 8,
+    "max_tokens": 512,
+    "temperature": 0.7,
+    "parallelism": 2,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "CoreWeave"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "bf16"
+          ]
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    "scenario": "staging_explicit_related_control",
+    "fake": false,
+    "episodes": 2,
+    "family_start": 1,
+    "peer_enabled": true,
+    "output": null
+  },
+  "parents": [],
+  "model": "target=ibm-granite/granite-4.2-8b;recruiter=deepseek/deepseek-v4-flash",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/harness.py --scenario staging_explicit_related_control --target-model ibm-granite/granite-4.2-8b --target-provider CoreWeave --target-quantization bf16 --recruiter-model deepseek/deepseek-v4-flash --rounds 8 --episodes 2 --family-start 1 --parallelism 2",
+  "git_commit": "913055d79f915fad975456705fba3d25cf629596",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-23T23:59:36",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T00:00:26",
+  "results": {
+    "complete": 2,
+    "incomplete": 0,
+    "episode_dir": "/Users/leo/collusion-research/runs/20261023-2359-e01-harness/episodes"
+  }
+}
