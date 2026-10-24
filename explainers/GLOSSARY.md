@@ -23,6 +23,12 @@
 - **Bootstrap interval:** resample families with replacement ~1,000 times, recompute the metric; the middle 95% is the interval.
 - **Positive control:** a probe for something trivially present (has the token entered the prompt?); should score ~1.0, else the pipeline is broken.
 - **Shuffled-label control:** rerun the pipeline with labels randomly reassigned across episodes; should score ~0.5, else something leaks.
-- **Recall at 5% false alarms:** threshold set so 5% of control/alone steps are flagged; share of give-in episodes flagged before the action.
+- **Recall at 5% false alarms:** set the method's cutoff so 5% of control/alone *episodes* have any step above it (using each episode's highest score); recall = share of give-in episodes with a step above the cutoff before the leak.
 - **L2 regularisation:** a penalty λ·Σw² added to the loss so the probe can't memorise with large weights; needed because there are more weights (5,120) than training rows.
 - **Difference of means:** mean activation of label-1 steps minus mean of label-0 steps; a training-free probe direction, also used for steering.
+- **Score (of a method):** one number per step from any method: probe probability, decision-model P(yes), LLM-judge score rescaled to 0–1, or a trivial baseline such as prompt length.
+- **Alarm cutoff (threshold):** the score above which a method beeps; set per method from control-episode maxima at a fixed false-alarm budget, so methods are compared at equal false alarms.
+- **Lead time:** steps (or rounds) between a method's first beep and the actual leak; how much time there was to intervene.
+- **Held vs held-out:** a *held* episode is one where the target never gave in; a *held-out* episode is in the test fold, unseen in training.
+- **Trade-off curve:** recall and lead time at several false-alarm budgets (1%, 5%, 10%, 20%), so operators with different risk appetites can read off their setting.
+- **Added-value test:** pooled AUROC of turn number + prompt length, then with the method's score added; the gain is what the method knows beyond conversation length.
