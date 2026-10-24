@@ -44,8 +44,8 @@ header .wrap { padding-block: 28px 18px; display: grid; gap: 6px; }
 h1 { font: 650 clamp(28px, 5vw, 40px)/1.1 var(--display); margin: 0; text-wrap: balance; }
 .sub { color: var(--muted); margin: 0; max-width: 62ch; }
 nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
-nav .wrap { display: flex; gap: 4px; overflow-x: auto; padding-block: 0; }
-nav button { font: 600 13px var(--body); color: var(--muted); background: none; border: 0; border-bottom: 2px solid transparent; padding: 12px 10px; cursor: pointer; white-space: nowrap; }
+nav .wrap { display: flex; flex-wrap: wrap; column-gap: 2px; padding-block: 0; }
+nav button { font: 600 13px var(--body); color: var(--muted); background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 8px; cursor: pointer; white-space: nowrap; }
 nav button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
 nav button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 main .wrap { padding-block: 28px 64px; }
@@ -77,6 +77,11 @@ td.num { font-variant-numeric: tabular-nums; font-family: var(--mono); }
 blockquote { margin: 0; padding: 10px 14px; border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 6px 6px 0; font-size: 14px; }
 blockquote .who { display: block; font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; overflow-x: auto; margin: 0; }
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.flow .step { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 4px; min-width: 150px; flex: 1 1 150px; }
+.flow .step span { font-size: 13px; color: var(--muted); }
+.flow .split { display: grid; gap: 8px; flex: 1 1 200px; }
+.flow .arrow { color: var(--muted); font-size: 18px; }
 .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
 .grid2 > div { min-width: 0; }
 .small { font-size: 13px; color: var(--muted); }
@@ -95,17 +100,17 @@ pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-
 
 <nav aria-label="Sections">
   <div class="wrap" role="tablist">
-    <button role="tab" data-tab="now" aria-selected="true">Where we are</button>
+    <button role="tab" data-tab="now" aria-selected="true">Now</button>
     <button role="tab" data-tab="idea" aria-selected="false">The idea</button>
     <button role="tab" data-tab="final" aria-selected="false">Final shape</button>
-    <button role="tab" data-tab="eval" aria-selected="false">Evaluation &amp; dataset</button>
-    <button role="tab" data-tab="episode" aria-selected="false">How an episode works</button>
+    <button role="tab" data-tab="eval" aria-selected="false">Evaluation</button>
+    <button role="tab" data-tab="episode" aria-selected="false">Episode</button>
     <button role="tab" data-tab="scenario" aria-selected="false">Scenarios</button>
     <button role="tab" data-tab="models" aria-selected="false">Models</button>
     <button role="tab" data-tab="results" aria-selected="false">Results</button>
     <button role="tab" data-tab="decisions" aria-selected="false">Decisions</button>
     <button role="tab" data-tab="log" aria-selected="false">Log</button>
-    <button role="tab" data-tab="repo" aria-selected="false">Repo map</button>
+    <button role="tab" data-tab="repo" aria-selected="false">Repo</button>
   </div>
 </nav>
 
@@ -355,16 +360,18 @@ Episode C (gives in at round 1): X                         → no turns before t
   <div class="callout"><p><strong>In one line:</strong> at every target turn before it acts, several detectors answer "will this agent give in soon?". We score them on held-out episodes: which warns earliest, with the fewest false alarms, at what cost. Full draft: <code>docs/evaluation_design.md</code>.</p></div>
 
   <h3>The pipeline</h3>
-  <pre class="mermaid">
-flowchart LR
-  A["Episodes<br/>(API runs: scenario x tactic x condition)"] --> B["Turn rows<br/>(one per target turn before the action)"]
-  B --> C["GPU replay (E02)<br/>activations [64 x 5120] per turn"]
-  B --> D["Text slices per turn<br/>actions / channel / + unposted"]
-  C --> E["Probe<br/>sigmoid(w·h + b)"]
-  D --> F["LLM-judge monitors<br/>0–10 per turn"]
-  E --> G["Held-out scoring<br/>AUROC, lead time, false alarms, cost"]
-  F --> G
-  </pre>
+  <div class="flow">
+    <div class="step"><strong>1. Episodes</strong><span>API runs: scenario × tactic × condition</span></div>
+    <div class="arrow">→</div>
+    <div class="step"><strong>2. Turn rows</strong><span>one per target turn before it acts, labelled</span></div>
+    <div class="arrow">→</div>
+    <div class="split">
+      <div class="step"><strong>3a. GPU replay</strong><span>activations [64 × 5120] per turn → <b>probe</b></span></div>
+      <div class="step"><strong>3b. Text slices</strong><span>actions / channel / + unposted → <b>LLM-judge monitors</b></span></div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step"><strong>4. Held-out scoring</strong><span>within-round AUROC, lead time, false alarms, cost</span></div>
+  </div>
 
   <h3>The claims</h3>
   <ol>
