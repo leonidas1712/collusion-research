@@ -45,6 +45,22 @@ Add or subtract the probe direction at the chosen layer during live generation, 
 - No Kirch probe-steering paper was found; the steering claim in the lit doc probably refers to Kortukov et al.
 - The `aclanthology …/unverified` and `catalyzex` links in the lit doc are author or search pages, not papers.
 
-## claude-2's additions
+## claude-2's additions (full text: `docs/activations_takeaways_claude2.md`)
 
-Pending: Activation Oracles / LatentQA, steering design, and corrections to the lit doc.
+| # | Add | Why | Cost | Source |
+|---|---|---|---|---|
+| 12 | **Activation Oracle as an extra monitor rung.** A trained LoRA for Qwen3-32B exists (adamkarvonen checkpoints; check its config). Inject the saved layer-32 vector, ask "about to send the token?", score P(Yes) | Open-ended reader; expect weaker than logistic regression; never tested on agentic contexts | <$1 GPU, minutes | Activation Oracles 2512.15674 |
+| 13 | **Causal check, stage 1 (forward only).** Teacher-forced log-prob of the target's own recorded replies under 0 / −a·d / +a·d / 3 norm-matched random directions, on ~100 held-out pre-give-in and matched hold steps. Pass: −a·d lowers give-in reply log-prob and raises hold reply log-prob beyond random; KL on control next tokens <0.1 | Cheap test of whether the direction matters, using the replay pipeline | ~5M tokens, ~$1–3 GPU | Arditi; CAA; random baselines are our addition |
+| 14 | **Causal check, stage 2 (only if 13 passes).** Branch generation from saved prefixes (25 prefixes × {0, −a·d, random} × 10), deterministic share label; choose a and the layer on validation by effect. Report per prefix (steering flips many inputs the wrong way) | Behavioural evidence | ~$3–6 GPU; needs a local tool-calling generate path | Tan 2407.12404; Braun 2505.22637 |
+| 15 | **Free pre-check of steerability:** cosine agreement of per-example differences, separability along d. If difference-of-means AUROC is far below logistic regression, expect weak steering | Decide whether 13–14 are worth it | free | Braun 2505.22637; Kumar 2605.27958 |
+| 16 | **Frame the held-out-tactic test as the style-shift test** (probes at 0.998 collapse under style shifts, recover with varied training) | Positions a test we already run | free | Kumar 2605.27958 |
+
+Skipped: LatentQA (only a Llama-3-8B decoder is released).
+
+**Corrections to `docs/llm_activations_lit.md`:**
+- The off-policy claim is Kirch, Dower, Skapars et al., arXiv 2511.17408 (ACL 2026 Findings). The claim holds: incentivised data proxies on-policy data, r = 0.793.
+- The non-linear-probe claim is arXiv 2411.03343, about jailbreak-compliance interventions.
+- The style-shift claim is Kumar et al., arXiv 2605.27958.
+- Apollo and CC++: use arXiv abs links. Apollo's layer 22 of 80 and 1% FPR on Alpaca are confirmed.
+- Caught in the Act's "nearly 100 directions" is specific to DeepSeek 7B and Qwen 14B.
+- Kramár's 99% figure is from Table 3 only (99.13%); the 8% deferral is confirmed.
