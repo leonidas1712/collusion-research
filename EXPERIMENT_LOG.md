@@ -309,3 +309,19 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 - **Jev forecaster L3**, within scenario × round: **A 0.660 [0.613, 0.704], B 0.677 [0.627, 0.725], C 0.687 [0.630, 0.739]**. Added value over turn + length: +0.055 [0.027, 0.086]. Jev L2 scores 0.635–0.654. This is the first method whose CI clears 0.5 by a margin and adds value. All other monitors stay at 0.50–0.60.
 - **Probe:** these numbers are the *eventual-label* probe scored against the near-term label: A 0.52 / 0.57 held-out scenario, B 0.52 / 0.58. The refit on near-term labels is still running (codex-2).
 - **Caution:** the forecaster reads the target's own recent text, and the last steps before a leak may already *sound* wavering. So this may be "the words give it away", not hidden intent. The refit probe decides whether activations add anything over the text.
+
+- 2026-10-25 07:42 SGT [infra] APA-62 near-term CPU run restarted as runs/20261025-0730-e05-near-term after catching a new-runner split-reconstruction bug: LOSO stacking validation must filter by saved validation scenario as well as family. The initial0722 run was deliberately stopped before any LOSO fit; six completed, unaffected pooled fits were checked against exact saved splits and reused. Regression test now reproduces every original stacking inner split for all variants/seeds/folds; all22 E05 tests pass. Corrected preflight passed all99 outer fits. No original replay2 fits/results changed; no GPU/API use. A2910/168 positive rows, B2460/168, C2478/186; strict pre-action eligibility preserved.
+
+### 2026-10-25 ~08:40 SGT — Probe refit on near-term label A (codex-2 checkpoint)
+
+`runs/20261025-0752-e05-near-term-checkpoint/report.md`. All numbers are within scenario × round AUROC with 95% CI.
+
+| Probe | Pooled CV | Pooled CV, fold-stratified | Held-out scenario |
+|---|---|---|---|
+| Refit, inner-selected | 0.585 [0.526, 0.641] | 0.627 [0.559, 0.685] | 0.611 [0.560, 0.658] |
+| Refit, fixed layer 32 | 0.576 | — | 0.590 |
+| Eventual-label probe, rescored on A | 0.522 | — | 0.569 |
+
+- **Added value of the refit probe:** +0.036 [0.014, 0.057] in pooled CV; +0.019 [−0.012, 0.048] on a held-out scenario.
+- **Comparison:** the Jev forecaster L3 scores 0.660 [0.613, 0.704] on the same label. The near-term label helps the probe (0.55 → 0.61 held-out scenario), but it is still below the best text-reading monitor. B/C are still fitting.
+- **Next:** a paired Jev − probe difference with a family-bootstrap CI, plus probe + Jev combined, to test whether the activations add anything over the text.
