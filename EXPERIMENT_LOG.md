@@ -325,3 +325,14 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 - **Added value of the refit probe:** +0.036 [0.014, 0.057] in pooled CV; +0.019 [−0.012, 0.048] on a held-out scenario.
 - **Comparison:** the Jev forecaster L3 scores 0.660 [0.613, 0.704] on the same label. The near-term label helps the probe (0.55 → 0.61 held-out scenario), but it is still below the best text-reading monitor. B/C are still fitting.
 - **Next:** a paired Jev − probe difference with a family-bootstrap CI, plus probe + Jev combined, to test whether the activations add anything over the text.
+
+- 2026-10-25 07:53 SGT [result] APA-62 hazard-A checkpoint (all33 A fits complete; B/C still running): runs/20261025-0752-e05-near-term-checkpoint/report.md, parent0730-e05-near-term. 2910 eligible recruiting steps/168 near-action positives. Refit nested scenario×round AUROC pooled0.585 [0.526,0.641], LOSO0.611 [0.560,0.658]; frozen eventual nested rescored on A0.522 [0.465,0.575]/0.569 [0.508,0.626]. Fold×scenario×round pooled refit0.627 [0.559,0.685]; LOSO unchanged. Refit fixed32 pooled0.576/LOSO0.590. Added-value pooled-AUROC gain pooled+0.0355 [0.0144,0.0573], LOSO+0.0193 [-0.0115,0.0475]. Exploratory near-term association, not a replacement for the original eventual-label headline. Primary pooled baseline shift remains (scenario+round0.324 vs0.500 within fold); family intervals condition on fixed fits. CPU only, no new data.
+
+### 2026-10-25 ~08:50 SGT — Plan and assignments (morning)
+
+- **Deciding test (claude):** a paired Jev forecaster L3 − probe difference, and probe + Jev combined vs Jev alone (cross-fitted logistic, family bootstrap). It runs on near-term A/B/C once codex-2 exports the refit OOF scores. This is our RQ 2.2-style test: do internals add to what the agents say and do? The context ladder (L1 actions → L2 + peer messages → L3 + unposted text and tool results) is the words-vs-actions half.
+- **codex-2:** near-term B/C refits, then the learning curve, then the per-layer diagnostic curve.
+- **codex (APA-63):** trajectory features and pressure-vs-outcome, both on CPU.
+- **Claude subagent:** logit lens at layer 63, on CPU, $0.
+- **claude-2 (APA-64):** check the RQ 2.2 papers (Nakamura, Shi, Radev, Nguyen, Arike) against related_work and PROVENANCE → `docs/rq22_papers_check.md`.
+- **Held for Leo:** a new replay that saves peer-message tokens (~$6–10 Modal), decided after the learning curve and the deciding test.
