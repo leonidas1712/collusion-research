@@ -32,3 +32,19 @@
 - **Held vs held-out:** a *held* episode is one where the target never gave in; a *held-out* episode is in the test fold, unseen in training.
 - **Trade-off curve:** recall and lead time at several false-alarm budgets (1%, 5%, 10%, 20%), so operators with different risk appetites can read off their setting.
 - **Added-value test:** pooled AUROC of turn number + prompt length, then with the method's score added; the gain is what the method knows beyond conversation length.
+- **Token ID:** the integer the tokenizer assigns to one piece of text; the model reads a list of these, not characters.
+- **Chat template:** the small Jinja program shipped with a model that turns a message list into the one marked-up string the model reads (Qwen: `<|im_start|>role ... <|im_end|>`).
+- **add_generation_prompt:** chat-template option that appends the opening of the assistant's turn, so the prompt ends exactly where the model would start writing.
+- **Last prompt token:** the final token of that rendered prompt; its vector has read the whole conversation and is what the model uses to pick the reply's first token. In our Qwen3 replay it is the `\n\n` after an empty `<think></think>`.
+- **Decoder layer (block):** one of the identical stacked units in the model (64 in Qwen3-32B); each reads the residual stream, mixes in earlier tokens and adds its result back.
+- **Forward pass:** one run of the model over a token list, producing outputs for every position at once; no new text is generated.
+- **Forward hook:** a function attached to a PyTorch module that is called with the module's output every time it runs; we use it to copy one row out of each block.
+- **Causal attention:** each token can see only earlier tokens, so adding tokens after a position never changes that position's vectors.
+- **Teacher forcing:** feeding a known reply in as input and reading the model's probability for each of its tokens, instead of sampling new ones.
+- **Logits:** the model's raw score for every vocabulary entry at a position; softmax turns them into next-token probabilities.
+- **NLL (negative log-likelihood):** minus the log-probability the model gave the true next token, averaged over tokens, in nats; 0 is certain, ~0.25 means about 0.78 probability on average.
+- **Top-5 fraction:** share of reply tokens that were among the model's five highest-scoring guesses at their position.
+- **Replay fidelity:** how well our locally rebuilt prompt matches what the API model saw, measured by the NLL and top-5 fraction of the real saved reply (99.8% top-5 in the main replay).
+- **SHA-256 hash:** a 64-character fingerprint of some bytes; any one-byte change gives a different hash. We store hashes of each episode, request, rendered prompt and token list.
+- **Pinned revision:** a 40-character Hugging Face commit ID that fixes the exact weights, tokenizer and template, unlike the moving "main" branch.
+- **Modal / Modal Volume:** a service that runs a Python function on a rented GPU, billed per second; a Volume is its persistent network disk, where we keep weights and outputs.
