@@ -465,6 +465,47 @@ Weighted by positives per round (2, 2, 1):
     <tr><td>split</td><td>train / val / test by family</td><td>all</td></tr>
   </table></div>
 
+  <h3>The probe pipeline, step by step</h3>
+  <ol>
+    <li><strong>Replay</strong> (GPU, running). In: 143 episodes. Out: for each of 3,034 steps, an array [64 layers × 5,120] plus metadata (episode, round, step, condition, tactic).</li>
+    <li><strong>Build rows.</strong> One row per step = (vector, label). Drop steps after the action, steps before the target read the token, and never-read episodes. Keep negatives only from rounds where give-ins happen.</li>
+    <li><strong>Make 5 folds.</strong> Deal whole episodes into 5 piles with a similar mix of give-in, held and control episodes.</li>
+    <li><strong>For each of the 5 rounds:</strong> lock one pile away as the test set; choose the layer using a practice split of the other four; retrain at that layer on all four; score the locked pile. Logistic regression, seconds on a laptop.</li>
+    <li><strong>Score.</strong> Every step now has a score from a probe that never saw its episode: within-round AUROC (headline), recall at 5% false alarms, lead time, the climb curve.</li>
+    <li><strong>Checks</strong>, same pipeline: shuffled labels (~0.5), turn-number baseline, positive control (~1.0), fixed layer 32.</li>
+    <li><strong>Monitors</strong> score the same steps (judge 0–10, no training) → same metrics → comparison table.</li>
+    <li><strong>Held-out tests:</strong> same machinery, but a fold is a whole tactic (or scenario) instead of random episodes.</li>
+  </ol>
+
+  <h3>Cross-validation, worked through (10 episodes, 3 layers)</h3>
+  <p><strong>Cross-validation</strong> = train on most episodes, test on the rest, then rotate which episodes are the test set so every episode is tested exactly once by a probe that never saw it.</p>
+  <pre style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font:13px var(--mono)">Episodes:  gives in G1 G2 G3 G4 · holds H1 H2 H3 H4 · control C1 C2
+
+Deal into 5 piles ("folds"), whole episodes, mixed outcomes:
+  A: G1 H1    B: G2 H2    C: G3 H3    D: G4 H4    E: C1 C2
+
+Five rounds, each pile is the test set once:
+  Round 1: test A   train on B C D E
+  Round 2: test B   train on A C D E
+  Round 3: test C   train on A B D E
+  Round 4: test D   train on A B C E
+  Round 5: test E   train on A B C D
+
+After five rounds every step has a score from a probe that never saw its episode
+→ compute AUROC once over all of them.</pre>
+  <p><strong>Inside one round: choosing the layer without peeking</strong> (nested cross-validation). Round 1, test pile A is locked away:</p>
+  <pre style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font:13px var(--mono)">training piles B C D E
+  fit on B C D, practice-test on E:
+    layer 10 → 0.61
+    layer 32 → 0.74   ← chosen
+    layer 50 → 0.66
+  retrain layer 32 on B C D E
+  unlock A, score G1's and H1's steps   (first and only look at A)</pre>
+  <div class="grid2">
+    <div class="callout"><p><strong>Why rotate?</strong></p><p>One 80/20 split tests only a few episodes, and the score depends on which ones. Rotating tests all of them and uses the data fully.</p></div>
+    <div class="callout warn"><p><strong>Why the practice split?</strong></p><p>Choosing the best of 64 layers by its test score flatters the result by luck. Choosing on the practice pile keeps the test score a genuine first look. Different rounds may pick different layers; that shows how stable the choice is.</p></div>
+  </div>
+
   <h3>The detectors</h3>
   <div class="scroll"><table>
     <tr><th>Detector</th><th>Input at turn t</th><th>Output</th></tr>
