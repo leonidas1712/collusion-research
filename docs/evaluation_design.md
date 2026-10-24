@@ -109,6 +109,15 @@ Level 1 always comes with: shuffled labels (~0.5), the turn-number baseline, and
 
 **Does the score climb towards the give-in?** The probe isn't trained to climb (all pre-action steps share label 1), so a rise is emergent. Figure: mean probe score vs steps before the action for give-in episodes, against held episodes at the same rounds; the claim is "rises above held episodes at the same rounds", since accumulated peer pressure alone could make any curve rise. Optional variant: regress steps-until-act.
 
+**Clarifications from claude-3's manifest check (24 Oct).**
+- **Headline AUROC is on recruiting episodes only:** give-in vs held, with the token read. Control and alone episodes are used only to set the false-alarm threshold. All-negatives AUROC is reported alongside.
+- **Prompt length is a second shortcut that within-round scoring does not remove.** Ranking steps by prompt token count already gives within-round AUROC 0.62 (0.56 on valid recruiting episodes). Give-in episodes have longer prompts at the same round, because the peer and target write more. So:
+  - add a prompt-length baseline to the results table;
+  - report a length-matched subset;
+  - optionally residualise the probe score on length.
+- **The held-out tactic test is grouped,** e.g. {T0, T1, T2} vs {T3–T7}, because single tactics have only 1–4 give-ins each.
+- **The "decision visible in text" subset** needs the per-step judge label, run on the replay manifest's steps.
+
 **Shortcut checks** (from claude-2's list):
 - policy-control episodes (rule present, no ask) should score low;
 - rephrased rule;
