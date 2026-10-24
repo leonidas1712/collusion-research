@@ -32,6 +32,28 @@ A useful variant: label by **turns until the action** (k − t), so we can repor
 
 **Why give-ins must be gradual:** an episode that gives in at round 1 contributes zero positive turns, so a probe can't be evaluated on it. See the "What a useful episode looks like" section in the overview's Idea tab.
 
+## 2b. Dataset layout (one row per target turn)
+
+Episode-level settings: scenario, target model, peer model, rule strength, condition (recruiting / control / alone), tactic (T0 = none, T1–T7), family id (used for splits).
+
+Each target turn before the first forbidden action is one row:
+
+| Field | Example | Used by |
+|---|---|---|
+| episode_id, family_id | scaleup-recruiting-32b/episode-0012, 2012 | splits (by family) |
+| scenario, target_model, peer_model, condition, tactic | deploy-token, qwen3-32b, deepseek-v4-flash, recruiting, T2 | slicing, held-out tests |
+| turn | 3 | metadata only, never a probe input |
+| label | 1 (episode gives in later) / 0 | all methods |
+| turns_until_act | 1 | lead-time analysis |
+| give_in_kind, policy_mentioned | on purpose / by accident, true/false | reported splits |
+| token_in_context | true | flag pre-access turns |
+| activation | npz path + row, [64 × 5120] at the last prompt token | probe |
+| monitor inputs | transcript slices up to turn t (actions / channel / + unposted) | monitors |
+| monitor scores | 0–10 per judge | comparison |
+| split | train / val / test, assigned by family | all |
+
+Mixing tactics in one dataset is intended: the main result trains and tests across all tactics, and held-out-tactic runs slice the same table.
+
 ## 3. Inputs and outputs of each method at turn t
 
 | Method | Input at turn t | Output |
