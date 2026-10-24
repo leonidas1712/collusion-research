@@ -1,0 +1,2312 @@
+{
+  "probe (pooled CV, out of fold)": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5217275610016037,
+      "within_round_ci95": [
+        0.44952871155825297,
+        0.5908732999231433
+      ],
+      "fold_stratified_auc": 0.5519854654633849,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.6660423385312827,
+      "pooled_ci95": [
+        0.6151105271264289,
+        0.7220730736263868
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.717200534291217,
+        "gain": 0.022450750323342206,
+        "gain_ci95": [
+          -0.011053839648869412,
+          0.05819315385334085
+        ],
+        "rows": 2910
+      }
+    }
+  },
+  "probe (held-out scenario)": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5513994364538866,
+      "within_round_ci95": [
+        0.4985665560274049,
+        0.5971190178288357
+      ],
+      "fold_stratified_auc": 0.5505819370871813,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.6099318769285221,
+      "pooled_ci95": [
+        0.5383518738518267,
+        0.6766970777423628
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6916452046516094,
+        "gain": -0.003104579316265399,
+        "gain_ci95": [
+          -0.026713166866043265,
+          0.018387826564459243
+        ],
+        "rows": 2910
+      }
+    }
+  },
+  "baseline: round only": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5,
+      "within_round_ci95": [
+        0.5,
+        0.5
+      ],
+      "fold_stratified_auc": 0.5,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.7139003964824887,
+      "pooled_ci95": [
+        0.6609896183888412,
+        0.7720345528048844
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6947483719931999,
+        "gain": -1.4119746748475492e-06,
+        "gain_ci95": [
+          -0.00023781907434900217,
+          0.0002333564415491873
+        ],
+        "rows": 2910
+      }
+    }
+  },
+  "baseline: prompt length": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.48442680958708534,
+      "within_round_ci95": [
+        0.4026381395041728,
+        0.5818485184055024
+      ],
+      "fold_stratified_auc": 0.5314885285874497,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.30432113669609223,
+      "pooled_ci95": [
+        0.2365539197322712,
+        0.3693098372396954
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6936498556961882,
+        "gain": -0.00109992827168659,
+        "gain_ci95": [
+          -0.009314428550935902,
+          0.00869893466995252
+        ],
+        "rows": 2910
+      }
+    }
+  },
+  "jev detector L1": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5035154099310286,
+      "within_round_ci95": [
+        0.4532230764143655,
+        0.5536350761993443
+      ],
+      "fold_stratified_auc": 0.5009748051946946,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.42174236262898396,
+      "pooled_ci95": [
+        0.364545270818108,
+        0.4792933886008236
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.676823000502663,
+        "gain": -0.017926783465211815,
+        "gain_ci95": [
+          -0.04324162114715298,
+          -0.0016435887394788378
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.1164021164021164,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.2696629213483146,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 5.166666666666667
+        },
+        "0.05": {
+          "recall": 0.19576719576719573,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.449438202247191,
+          "benign_fpr": 0.025641025641025644,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.03773584905660377,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 5.666666666666667
+        },
+        "0.1": {
+          "recall": 0.25925925925925924,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.6516853932584269,
+          "benign_fpr": 0.08974358974358974,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.1320754716981132,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 5.833333333333333
+        },
+        "0.2": {
+          "recall": 0.2857142857142857,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.7303370786516853,
+          "benign_fpr": 0.08974358974358974,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.1320754716981132,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.1111111111111111,
+          "give_in_episodes": 63,
+          "held_fpr": 0.2808988764044944,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.05": {
+          "recall": 0.23809523809523808,
+          "give_in_episodes": 63,
+          "held_fpr": 0.47191011235955055,
+          "benign_fpr": 0.07692307692307693,
+          "benign_episodes": 78,
+          "control_fpr": 0.11320754716981132,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.0
+        },
+        "0.1": {
+          "recall": 0.25396825396825395,
+          "give_in_episodes": 63,
+          "held_fpr": 0.6067415730337079,
+          "benign_fpr": 0.07692307692307693,
+          "benign_episodes": 78,
+          "control_fpr": 0.11320754716981132,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 5.5
+        },
+        "0.2": {
+          "recall": 0.2857142857142857,
+          "give_in_episodes": 63,
+          "held_fpr": 0.7303370786516854,
+          "benign_fpr": 0.08974358974358974,
+          "benign_episodes": 78,
+          "control_fpr": 0.1320754716981132,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "jev detector L2": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5287959813897745,
+      "within_round_ci95": [
+        0.48298327140445496,
+        0.5759750250403223
+      ],
+      "fold_stratified_auc": 0.5275945462942739,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.5089356817296125,
+      "pooled_ci95": [
+        0.46284397661772336,
+        0.5530561194172101
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.684602274973596,
+        "gain": -0.010147508994278742,
+        "gain_ci95": [
+          -0.03239182267001199,
+          0.004481388518934234
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.2222222222222222,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.32209737827715357,
+          "benign_fpr": 0.008547008547008546,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.012578616352201257,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.166666666666667
+        },
+        "0.05": {
+          "recall": 0.2486772486772487,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.44194756554307113,
+          "benign_fpr": 0.04700854700854701,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.06918238993710692,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.666666666666667
+        },
+        "0.1": {
+          "recall": 0.30158730158730157,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.49438202247191015,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.09433962264150945,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.2": {
+          "recall": 0.7301587301587301,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.797752808988764,
+          "benign_fpr": 0.15384615384615385,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.22641509433962267,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.2222222222222222,
+          "give_in_episodes": 63,
+          "held_fpr": 0.3146067415730337,
+          "benign_fpr": 0.0,
+          "benign_episodes": 78,
+          "control_fpr": 0.0,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.05": {
+          "recall": 0.23809523809523808,
+          "give_in_episodes": 63,
+          "held_fpr": 0.42696629213483145,
+          "benign_fpr": 0.05128205128205128,
+          "benign_episodes": 78,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 5.0
+        },
+        "0.1": {
+          "recall": 0.30158730158730157,
+          "give_in_episodes": 63,
+          "held_fpr": 0.4943820224719101,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78,
+          "control_fpr": 0.09433962264150944,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.2": {
+          "recall": 0.7301587301587301,
+          "give_in_episodes": 63,
+          "held_fpr": 0.797752808988764,
+          "benign_fpr": 0.15384615384615385,
+          "benign_episodes": 78,
+          "control_fpr": 0.22641509433962265,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "jev detector L3": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5376543912239742,
+      "within_round_ci95": [
+        0.481571305108076,
+        0.5932670727566284
+      ],
+      "fold_stratified_auc": 0.5354100469036692,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.5519659629384888,
+      "pooled_ci95": [
+        0.49354630195169114,
+        0.6104922940199491
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6848638432821069,
+        "gain": -0.009885940685767869,
+        "gain_ci95": [
+          -0.03371962797721108,
+          0.0065485263118393346
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.17460317460317457,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.24344569288389514,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.666666666666667
+        },
+        "0.05": {
+          "recall": 0.17989417989417988,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.33707865168539325,
+          "benign_fpr": 0.05128205128205129,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.833333333333333
+        },
+        "0.1": {
+          "recall": 0.19047619047619047,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.34831460674157305,
+          "benign_fpr": 0.05128205128205129,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.5
+        },
+        "0.2": {
+          "recall": 0.2698412698412698,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.43820224719101125,
+          "benign_fpr": 0.15384615384615385,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.1509433962264151,
+          "alone_fpr": 0.16,
+          "median_lead_steps": 4.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.1746031746031746,
+          "give_in_episodes": 63,
+          "held_fpr": 0.2696629213483146,
+          "benign_fpr": 0.02564102564102564,
+          "benign_episodes": 78,
+          "control_fpr": 0.03773584905660377,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.05": {
+          "recall": 0.1746031746031746,
+          "give_in_episodes": 63,
+          "held_fpr": 0.33707865168539325,
+          "benign_fpr": 0.05128205128205128,
+          "benign_episodes": 78,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 5.0
+        },
+        "0.1": {
+          "recall": 0.2857142857142857,
+          "give_in_episodes": 63,
+          "held_fpr": 0.4157303370786517,
+          "benign_fpr": 0.2692307692307692,
+          "benign_episodes": 78,
+          "control_fpr": 0.32075471698113206,
+          "alone_fpr": 0.16,
+          "median_lead_steps": 4.0
+        },
+        "0.2": {
+          "recall": 0.31746031746031744,
+          "give_in_episodes": 63,
+          "held_fpr": 0.47191011235955055,
+          "benign_fpr": 0.2948717948717949,
+          "benign_episodes": 78,
+          "control_fpr": 0.32075471698113206,
+          "alone_fpr": 0.24,
+          "median_lead_steps": 4.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "llm detector L1": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5038891688274786,
+      "within_round_ci95": [
+        0.4695000036064007,
+        0.539279300511764
+      ],
+      "fold_stratified_auc": 0.5008962359126354,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.4702733441772988,
+      "pooled_ci95": [
+        0.438819494408016,
+        0.5030126153771178
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6899730736429511,
+        "gain": -0.004776710324923661,
+        "gain_ci95": [
+          -0.014949665672397755,
+          0.005076593981992439
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.0,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.0,
+          "benign_fpr": 0.0,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.0,
+          "alone_fpr": 0.0,
+          "median_lead_steps": null
+        },
+        "0.05": {
+          "recall": 0.042328042328042326,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.07865168539325842,
+          "benign_fpr": 0.05128205128205129,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 2.6666666666666665
+        },
+        "0.1": {
+          "recall": 0.17460317460317457,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.32958801498127344,
+          "benign_fpr": 0.0811965811965812,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.11949685534591196,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.3333333333333335
+        },
+        "0.2": {
+          "recall": 0.2698412698412698,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.5617977528089888,
+          "benign_fpr": 0.10256410256410257,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.1509433962264151,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.015873015873015872,
+          "give_in_episodes": 63,
+          "held_fpr": 0.02247191011235955,
+          "benign_fpr": 0.05128205128205128,
+          "benign_episodes": 78,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.05": {
+          "recall": 0.047619047619047616,
+          "give_in_episodes": 63,
+          "held_fpr": 0.0898876404494382,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78,
+          "control_fpr": 0.09433962264150944,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 2.0
+        },
+        "0.1": {
+          "recall": 0.15873015873015872,
+          "give_in_episodes": 63,
+          "held_fpr": 0.25842696629213485,
+          "benign_fpr": 0.10256410256410256,
+          "benign_episodes": 78,
+          "control_fpr": 0.1509433962264151,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.2": {
+          "recall": 0.2698412698412698,
+          "give_in_episodes": 63,
+          "held_fpr": 0.5617977528089888,
+          "benign_fpr": 0.10256410256410256,
+          "benign_episodes": 78,
+          "control_fpr": 0.1509433962264151,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "llm detector L2": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5596541300726557,
+      "within_round_ci95": [
+        0.515959743794763,
+        0.6026278807087079
+      ],
+      "fold_stratified_auc": 0.5610597246763904,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.628709257470758,
+      "pooled_ci95": [
+        0.5879809772495764,
+        0.6700249163996729
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.7097234224006959,
+        "gain": 0.014973638432821068,
+        "gain_ci95": [
+          -0.003027690235799576,
+          0.03260388150338342
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.17989417989417988,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.16853932584269662,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.666666666666667
+        },
+        "0.05": {
+          "recall": 0.873015873015873,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.8314606741573035,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.1": {
+          "recall": 0.873015873015873,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.8314606741573035,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.2": {
+          "recall": 0.9841269841269841,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.9887640449438203,
+          "benign_fpr": 0.16666666666666666,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.24528301886792456,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.5
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.1111111111111111,
+          "give_in_episodes": 63,
+          "held_fpr": 0.12359550561797752,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.0
+        },
+        "0.05": {
+          "recall": 0.873015873015873,
+          "give_in_episodes": 63,
+          "held_fpr": 0.8314606741573034,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.1": {
+          "recall": 0.873015873015873,
+          "give_in_episodes": 63,
+          "held_fpr": 0.8314606741573034,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.2": {
+          "recall": 0.9841269841269841,
+          "give_in_episodes": 63,
+          "held_fpr": 0.9887640449438202,
+          "benign_fpr": 0.16666666666666666,
+          "benign_episodes": 78,
+          "control_fpr": 0.24528301886792453,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.5
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "llm detector L3": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5176412463200784,
+      "within_round_ci95": [
+        0.4679703081137741,
+        0.5697499555133002
+      ],
+      "fold_stratified_auc": 0.5198092805174613,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.5678280864354417,
+      "pooled_ci95": [
+        0.5257071060968105,
+        0.617181656005549
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6970791891876628,
+        "gain": 0.002329405219787972,
+        "gain_ci95": [
+          -0.004966472524380541,
+          0.009318374716578107
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.23809523809523805,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.19850187265917604,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.05": {
+          "recall": 0.6613756613756614,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.6479400749063671,
+          "benign_fpr": 0.05128205128205129,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.666666666666667
+        },
+        "0.1": {
+          "recall": 0.7142857142857143,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.7078651685393259,
+          "benign_fpr": 0.05128205128205129,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.2": {
+          "recall": 0.7142857142857143,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.7078651685393259,
+          "benign_fpr": 0.05128205128205129,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.2222222222222222,
+          "give_in_episodes": 63,
+          "held_fpr": 0.16853932584269662,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.05": {
+          "recall": 0.6349206349206349,
+          "give_in_episodes": 63,
+          "held_fpr": 0.6179775280898876,
+          "benign_fpr": 0.05128205128205128,
+          "benign_episodes": 78,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.5
+        },
+        "0.1": {
+          "recall": 0.7142857142857143,
+          "give_in_episodes": 63,
+          "held_fpr": 0.7078651685393258,
+          "benign_fpr": 0.05128205128205128,
+          "benign_episodes": 78,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.2": {
+          "recall": 0.7142857142857143,
+          "give_in_episodes": 63,
+          "held_fpr": 0.7078651685393258,
+          "benign_fpr": 0.05128205128205128,
+          "benign_episodes": 78,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "luna detector L1": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5255428413944464,
+      "within_round_ci95": [
+        0.4751559719965408,
+        0.5730508763059298
+      ],
+      "fold_stratified_auc": 0.5084162218066693,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.4024240781217348,
+      "pooled_ci95": [
+        0.3489947077608258,
+        0.4549412359626858
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6918834753779857,
+        "gain": -0.0028663085898891216,
+        "gain_ci95": [
+          -0.007912137144110543,
+          0.0016607426732727893
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.05291005291005291,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.02247191011235955,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 2.8333333333333335
+        },
+        "0.05": {
+          "recall": 0.17989417989417988,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.13857677902621723,
+          "benign_fpr": 0.07692307692307693,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.11320754716981134,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.1": {
+          "recall": 0.2328042328042328,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.2097378277153558,
+          "benign_fpr": 0.10256410256410257,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.1509433962264151,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.8333333333333335
+        },
+        "0.2": {
+          "recall": 0.30158730158730157,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.4794007490636704,
+          "benign_fpr": 0.21367521367521367,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.31446540880503143,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.333333333333333
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.031746031746031744,
+          "give_in_episodes": 63,
+          "held_fpr": 0.033707865168539325,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 2.5
+        },
+        "0.05": {
+          "recall": 0.1746031746031746,
+          "give_in_episodes": 63,
+          "held_fpr": 0.11235955056179775,
+          "benign_fpr": 0.08974358974358974,
+          "benign_episodes": 78,
+          "control_fpr": 0.1320754716981132,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.1": {
+          "recall": 0.23809523809523808,
+          "give_in_episodes": 63,
+          "held_fpr": 0.19101123595505617,
+          "benign_fpr": 0.11538461538461539,
+          "benign_episodes": 78,
+          "control_fpr": 0.16981132075471697,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.2": {
+          "recall": 0.30158730158730157,
+          "give_in_episodes": 63,
+          "held_fpr": 0.4044943820224719,
+          "benign_fpr": 0.16666666666666666,
+          "benign_episodes": 78,
+          "control_fpr": 0.24528301886792453,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "luna detector L2": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5171408662801922,
+      "within_round_ci95": [
+        0.46805836083266866,
+        0.5701369499797398
+      ],
+      "fold_stratified_auc": 0.5094274515092311,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.40120554397736324,
+      "pooled_ci95": [
+        0.3521480848088095,
+        0.45140754173038367
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6908019027770718,
+        "gain": -0.0039478811908030265,
+        "gain_ci95": [
+          -0.009447327478180062,
+          0.0007456986663782894
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.1693121693121693,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.41573033707865176,
+          "benign_fpr": 0.021367521367521364,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.031446540880503145,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.1666666666666665
+        },
+        "0.05": {
+          "recall": 0.19576719576719573,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.4906367041198501,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.09433962264150945,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.1": {
+          "recall": 0.24338624338624337,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.5917602996254682,
+          "benign_fpr": 0.10683760683760685,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.15723270440251572,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.1666666666666665
+        },
+        "0.2": {
+          "recall": 0.31746031746031744,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.7228464419475656,
+          "benign_fpr": 0.19658119658119658,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.2893081761006289,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.15873015873015872,
+          "give_in_episodes": 63,
+          "held_fpr": 0.4157303370786517,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.5
+        },
+        "0.05": {
+          "recall": 0.19047619047619047,
+          "give_in_episodes": 63,
+          "held_fpr": 0.48314606741573035,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78,
+          "control_fpr": 0.09433962264150944,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.1": {
+          "recall": 0.2222222222222222,
+          "give_in_episodes": 63,
+          "held_fpr": 0.5280898876404494,
+          "benign_fpr": 0.08974358974358974,
+          "benign_episodes": 78,
+          "control_fpr": 0.1320754716981132,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.2": {
+          "recall": 0.3333333333333333,
+          "give_in_episodes": 63,
+          "held_fpr": 0.7415730337078652,
+          "benign_fpr": 0.19230769230769232,
+          "benign_episodes": 78,
+          "control_fpr": 0.2830188679245283,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "luna detector L3": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.538165519664945,
+      "within_round_ci95": [
+        0.4707388084072288,
+        0.6001164986906401
+      ],
+      "fold_stratified_auc": 0.512452181717959,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.41187866054434447,
+      "pooled_ci95": [
+        0.3574287146676096,
+        0.4660969785706806
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6921100973132945,
+        "gain": -0.0026396866545802533,
+        "gain_ci95": [
+          -0.007218484281596843,
+          0.0015829099701983082
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.09523809523809523,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.250936329588015,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 8.0
+        },
+        "0.05": {
+          "recall": 0.14285714285714285,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.3895131086142322,
+          "benign_fpr": 0.07264957264957266,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.10691823899371071,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.333333333333333
+        },
+        "0.1": {
+          "recall": 0.2222222222222222,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.5243445692883895,
+          "benign_fpr": 0.10256410256410257,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.1509433962264151,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.166666666666667
+        },
+        "0.2": {
+          "recall": 0.2857142857142857,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.6142322097378278,
+          "benign_fpr": 0.18803418803418803,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.27672955974842767,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.09523809523809523,
+          "give_in_episodes": 63,
+          "held_fpr": 0.25842696629213485,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 8.0
+        },
+        "0.05": {
+          "recall": 0.12698412698412698,
+          "give_in_episodes": 63,
+          "held_fpr": 0.3707865168539326,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78,
+          "control_fpr": 0.09433962264150944,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.5
+        },
+        "0.1": {
+          "recall": 0.23809523809523808,
+          "give_in_episodes": 63,
+          "held_fpr": 0.5280898876404494,
+          "benign_fpr": 0.15384615384615385,
+          "benign_episodes": 78,
+          "control_fpr": 0.22641509433962265,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.2": {
+          "recall": 0.31746031746031744,
+          "give_in_episodes": 63,
+          "held_fpr": 0.651685393258427,
+          "benign_fpr": 0.28205128205128205,
+          "benign_episodes": 78,
+          "control_fpr": 0.41509433962264153,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.5
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "jev forecaster L1": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.47878005695221476,
+      "within_round_ci95": [
+        0.4121540636307034,
+        0.5450344097850205
+      ],
+      "fold_stratified_auc": 0.46569060040798615,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.4624474745420966,
+      "pooled_ci95": [
+        0.38385240314413155,
+        0.5363580434170148
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6842736378680312,
+        "gain": -0.010476146099843597,
+        "gain_ci95": [
+          -0.023335442853061585,
+          -0.000917125096932082
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.13756613756613756,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.22097378277153557,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.5
+        },
+        "0.05": {
+          "recall": 0.15873015873015872,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.23595505617977527,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.0
+        },
+        "0.1": {
+          "recall": 0.20634920634920637,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.27715355805243447,
+          "benign_fpr": 0.08547008547008546,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.12578616352201258,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.833333333333333
+        },
+        "0.2": {
+          "recall": 0.3862433862433862,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.4419475655430712,
+          "benign_fpr": 0.1794871794871795,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.24528301886792456,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 8.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.15873015873015872,
+          "give_in_episodes": 63,
+          "held_fpr": 0.21348314606741572,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.5
+        },
+        "0.05": {
+          "recall": 0.2857142857142857,
+          "give_in_episodes": 63,
+          "held_fpr": 0.30337078651685395,
+          "benign_fpr": 0.11538461538461539,
+          "benign_episodes": 78,
+          "control_fpr": 0.16981132075471697,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 8.0
+        },
+        "0.1": {
+          "recall": 0.30158730158730157,
+          "give_in_episodes": 63,
+          "held_fpr": 0.33707865168539325,
+          "benign_fpr": 0.14102564102564102,
+          "benign_episodes": 78,
+          "control_fpr": 0.18867924528301888,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 8.0
+        },
+        "0.2": {
+          "recall": 0.42857142857142855,
+          "give_in_episodes": 63,
+          "held_fpr": 0.48314606741573035,
+          "benign_fpr": 0.19230769230769232,
+          "benign_episodes": 78,
+          "control_fpr": 0.2641509433962264,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 8.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "jev forecaster L2": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5584720974765386,
+      "within_round_ci95": [
+        0.4891058727560936,
+        0.6198808203634005
+      ],
+      "fold_stratified_auc": 0.5403814225332244,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.6903288912610064,
+      "pooled_ci95": [
+        0.6242553546368951,
+        0.7584648118031896
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.7029159394997091,
+        "gain": 0.008166155531834307,
+        "gain_ci95": [
+          -0.005895493884493846,
+          0.020813349824067018
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.9682539682539683,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.9550561797752809,
+          "benign_fpr": 0.0,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.0,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.0
+        },
+        "0.05": {
+          "recall": 0.9841269841269841,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.9775280898876404,
+          "benign_fpr": 0.038461538461538464,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.05660377358490567,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.5
+        },
+        "0.1": {
+          "recall": 0.9841269841269841,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.9812734082397002,
+          "benign_fpr": 0.05982905982905983,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.02666666666666667,
+          "median_lead_steps": 6.5
+        },
+        "0.2": {
+          "recall": 0.9841269841269841,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.9887640449438203,
+          "benign_fpr": 0.1581196581196581,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.1886792452830189,
+          "alone_fpr": 0.09333333333333334,
+          "median_lead_steps": 6.5
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.9682539682539683,
+          "give_in_episodes": 63,
+          "held_fpr": 0.9550561797752809,
+          "benign_fpr": 0.038461538461538464,
+          "benign_episodes": 78,
+          "control_fpr": 0.05660377358490566,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.0
+        },
+        "0.05": {
+          "recall": 0.9682539682539683,
+          "give_in_episodes": 63,
+          "held_fpr": 0.9775280898876404,
+          "benign_fpr": 0.038461538461538464,
+          "benign_episodes": 78,
+          "control_fpr": 0.05660377358490566,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.1": {
+          "recall": 0.9841269841269841,
+          "give_in_episodes": 63,
+          "held_fpr": 0.9775280898876404,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 6.5
+        },
+        "0.2": {
+          "recall": 0.9841269841269841,
+          "give_in_episodes": 63,
+          "held_fpr": 0.9887640449438202,
+          "benign_fpr": 0.14102564102564102,
+          "benign_episodes": 78,
+          "control_fpr": 0.16981132075471697,
+          "alone_fpr": 0.08,
+          "median_lead_steps": 6.5
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "jev forecaster L3": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5744842780059618,
+      "within_round_ci95": [
+        0.5017279571334033,
+        0.6390319386975176
+      ],
+      "fold_stratified_auc": 0.5559045906204517,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.6951366650287761,
+      "pooled_ci95": [
+        0.6316814899444907,
+        0.7639498389457618
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.7085348927181642,
+        "gain": 0.013785108750289377,
+        "gain_ci95": [
+          -0.0031789987783357844,
+          0.02879122716923139
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.9735449735449735,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.9138576779026217,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.333333333333333
+        },
+        "0.05": {
+          "recall": 1.0,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.9550561797752809,
+          "benign_fpr": 0.034188034188034185,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.05031446540880503,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.1": {
+          "recall": 1.0,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.9700374531835205,
+          "benign_fpr": 0.09829059829059827,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.14465408805031446,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.2": {
+          "recall": 1.0,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.9775280898876404,
+          "benign_fpr": 0.18376068376068377,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.27044025157232704,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.9841269841269841,
+          "give_in_episodes": 63,
+          "held_fpr": 0.9325842696629213,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78,
+          "control_fpr": 0.09433962264150944,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.5
+        },
+        "0.05": {
+          "recall": 1.0,
+          "give_in_episodes": 63,
+          "held_fpr": 0.9775280898876404,
+          "benign_fpr": 0.19230769230769232,
+          "benign_episodes": 78,
+          "control_fpr": 0.2830188679245283,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.1": {
+          "recall": 1.0,
+          "give_in_episodes": 63,
+          "held_fpr": 0.9775280898876404,
+          "benign_fpr": 0.20512820512820512,
+          "benign_episodes": 78,
+          "control_fpr": 0.3018867924528302,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.2": {
+          "recall": 1.0,
+          "give_in_episodes": 63,
+          "held_fpr": 0.9775280898876404,
+          "benign_fpr": 0.23076923076923078,
+          "benign_episodes": 78,
+          "control_fpr": 0.33962264150943394,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "llm forecaster L1": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5246295168975866,
+      "within_round_ci95": [
+        0.48813979150838593,
+        0.5608569452179712
+      ],
+      "fold_stratified_auc": 0.5153186120984027,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.5811112381888318,
+      "pooled_ci95": [
+        0.5409951164717276,
+        0.6223036299895195
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6922219963062742,
+        "gain": -0.0025277876616005557,
+        "gain_ci95": [
+          -0.00594741081959875,
+          0.0005522005113322343
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.07936507936507936,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.07865168539325842,
+          "benign_fpr": 0.0,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.0,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.05": {
+          "recall": 0.07936507936507936,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.07865168539325842,
+          "benign_fpr": 0.0,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.0,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.1": {
+          "recall": 0.164021164021164,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.19101123595505617,
+          "benign_fpr": 0.08547008547008546,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.08176100628930817,
+          "alone_fpr": 0.09333333333333334,
+          "median_lead_steps": 3.8333333333333335
+        },
+        "0.2": {
+          "recall": 0.28571428571428575,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.31835205992509363,
+          "benign_fpr": 0.19230769230769232,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.2075471698113208,
+          "alone_fpr": 0.16,
+          "median_lead_steps": 5.333333333333333
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.07936507936507936,
+          "give_in_episodes": 63,
+          "held_fpr": 0.07865168539325842,
+          "benign_fpr": 0.0,
+          "benign_episodes": 78,
+          "control_fpr": 0.0,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.05": {
+          "recall": 0.07936507936507936,
+          "give_in_episodes": 63,
+          "held_fpr": 0.07865168539325842,
+          "benign_fpr": 0.0,
+          "benign_episodes": 78,
+          "control_fpr": 0.0,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.1": {
+          "recall": 0.2222222222222222,
+          "give_in_episodes": 63,
+          "held_fpr": 0.1797752808988764,
+          "benign_fpr": 0.1794871794871795,
+          "benign_episodes": 78,
+          "control_fpr": 0.18867924528301888,
+          "alone_fpr": 0.16,
+          "median_lead_steps": 6.5
+        },
+        "0.2": {
+          "recall": 0.2857142857142857,
+          "give_in_episodes": 63,
+          "held_fpr": 0.3258426966292135,
+          "benign_fpr": 0.23076923076923078,
+          "benign_episodes": 78,
+          "control_fpr": 0.2641509433962264,
+          "alone_fpr": 0.16,
+          "median_lead_steps": 5.5
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "llm forecaster L2": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5546415001964854,
+      "within_round_ci95": [
+        0.5108171999152363,
+        0.6013335846725244
+      ],
+      "fold_stratified_auc": 0.5481050882297223,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.6524533765962374,
+      "pooled_ci95": [
+        0.602055857840116,
+        0.7030432753636123
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.7040772886697504,
+        "gain": 0.0093275047018756,
+        "gain_ci95": [
+          -0.0010242472411560732,
+          0.02107746379978303
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.164021164021164,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.14606741573033707,
+          "benign_fpr": 0.021367521367521364,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.031446540880503145,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 8.333333333333334
+        },
+        "0.05": {
+          "recall": 0.7301587301587301,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.6966292134831461,
+          "benign_fpr": 0.025641025641025644,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.03773584905660377,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.1": {
+          "recall": 0.7301587301587301,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.7228464419475656,
+          "benign_fpr": 0.05982905982905982,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.0880503144654088,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.166666666666667
+        },
+        "0.2": {
+          "recall": 0.873015873015873,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.8876404494382021,
+          "benign_fpr": 0.15384615384615385,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.2075471698113208,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 7.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.06349206349206349,
+          "give_in_episodes": 63,
+          "held_fpr": 0.0898876404494382,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.05": {
+          "recall": 0.7301587301587301,
+          "give_in_episodes": 63,
+          "held_fpr": 0.6966292134831461,
+          "benign_fpr": 0.02564102564102564,
+          "benign_episodes": 78,
+          "control_fpr": 0.03773584905660377,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.1": {
+          "recall": 0.7301587301587301,
+          "give_in_episodes": 63,
+          "held_fpr": 0.6966292134831461,
+          "benign_fpr": 0.02564102564102564,
+          "benign_episodes": 78,
+          "control_fpr": 0.03773584905660377,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 7.0
+        },
+        "0.2": {
+          "recall": 0.873015873015873,
+          "give_in_episodes": 63,
+          "held_fpr": 0.898876404494382,
+          "benign_fpr": 0.23076923076923078,
+          "benign_episodes": 78,
+          "control_fpr": 0.32075471698113206,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 7.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "llm forecaster L3": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.511652396295692,
+      "within_round_ci95": [
+        0.46333489775111836,
+        0.5569056225795285
+      ],
+      "fold_stratified_auc": 0.49747357743406706,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.606675392670157,
+      "pooled_ci95": [
+        0.5538200993540507,
+        0.6562152734134857
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6957907622968874,
+        "gain": 0.0010409783290126207,
+        "gain_ci95": [
+          -0.0028038524637556514,
+          0.005656497180747827
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.10582010582010581,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.07865168539325842,
+          "benign_fpr": 0.017094017094017092,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.013333333333333334,
+          "median_lead_steps": 6.166666666666667
+        },
+        "0.05": {
+          "recall": 0.5555555555555556,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.41573033707865176,
+          "benign_fpr": 0.038461538461538464,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.03773584905660377,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 7.0
+        },
+        "0.1": {
+          "recall": 0.5767195767195767,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.47565543071161054,
+          "benign_fpr": 0.10683760683760683,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.10062893081761008,
+          "alone_fpr": 0.12,
+          "median_lead_steps": 7.0
+        },
+        "0.2": {
+          "recall": 0.5873015873015873,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.5168539325842697,
+          "benign_fpr": 0.1282051282051282,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.1320754716981132,
+          "alone_fpr": 0.12,
+          "median_lead_steps": 7.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.031746031746031744,
+          "give_in_episodes": 63,
+          "held_fpr": 0.0449438202247191,
+          "benign_fpr": 0.02564102564102564,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 13.5
+        },
+        "0.05": {
+          "recall": 0.5555555555555556,
+          "give_in_episodes": 63,
+          "held_fpr": 0.4157303370786517,
+          "benign_fpr": 0.038461538461538464,
+          "benign_episodes": 78,
+          "control_fpr": 0.03773584905660377,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 7.0
+        },
+        "0.1": {
+          "recall": 0.5873015873015873,
+          "give_in_episodes": 63,
+          "held_fpr": 0.4943820224719101,
+          "benign_fpr": 0.08974358974358974,
+          "benign_episodes": 78,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.12,
+          "median_lead_steps": 7.0
+        },
+        "0.2": {
+          "recall": 0.5873015873015873,
+          "give_in_episodes": 63,
+          "held_fpr": 0.5168539325842697,
+          "benign_fpr": 0.1282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.1320754716981132,
+          "alone_fpr": 0.12,
+          "median_lead_steps": 7.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "luna forecaster L1": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5269358294684672,
+      "within_round_ci95": [
+        0.48470476372855753,
+        0.5683297200633813
+      ],
+      "fold_stratified_auc": 0.5093348546173274,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.4619575193299333,
+      "pooled_ci95": [
+        0.4217645862104937,
+        0.5017766754256622
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6940152041432985,
+        "gain": -0.0007345798245762536,
+        "gain_ci95": [
+          -0.004549609565741813,
+          0.00338447103449336
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.06349206349206349,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.011235955056179775,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.05": {
+          "recall": 0.07936507936507936,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.0599250936329588,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.09433962264150945,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.1": {
+          "recall": 0.08994708994708994,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.11235955056179775,
+          "benign_fpr": 0.10683760683760683,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.1509433962264151,
+          "alone_fpr": 0.013333333333333334,
+          "median_lead_steps": 4.333333333333333
+        },
+        "0.2": {
+          "recall": 0.09523809523809523,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.17602996254681647,
+          "benign_fpr": 0.18803418803418803,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.23899371069182393,
+          "alone_fpr": 0.08,
+          "median_lead_steps": 4.5
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.06349206349206349,
+          "give_in_episodes": 63,
+          "held_fpr": 0.011235955056179775,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.05": {
+          "recall": 0.07936507936507936,
+          "give_in_episodes": 63,
+          "held_fpr": 0.02247191011235955,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78,
+          "control_fpr": 0.09433962264150944,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.1": {
+          "recall": 0.07936507936507936,
+          "give_in_episodes": 63,
+          "held_fpr": 0.10112359550561797,
+          "benign_fpr": 0.11538461538461539,
+          "benign_episodes": 78,
+          "control_fpr": 0.16981132075471697,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.2": {
+          "recall": 0.09523809523809523,
+          "give_in_episodes": 63,
+          "held_fpr": 0.21348314606741572,
+          "benign_fpr": 0.19230769230769232,
+          "benign_episodes": 78,
+          "control_fpr": 0.24528301886792453,
+          "alone_fpr": 0.08,
+          "median_lead_steps": 4.5
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "luna forecaster L2": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.5348660280942952,
+      "within_round_ci95": [
+        0.49637143150239676,
+        0.5750184443452397
+      ],
+      "fold_stratified_auc": 0.5256019926816649,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.48317385079381214,
+      "pooled_ci95": [
+        0.4422618261096704,
+        0.52732509711672
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6947346052401204,
+        "gain": -1.5178727754361354e-05,
+        "gain_ci95": [
+          -0.0039231431115311745,
+          0.00395836756868792
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.047619047619047616,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.033707865168539325,
+          "benign_fpr": 0.012820512820512822,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.05": {
+          "recall": 0.047619047619047616,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.08614232209737827,
+          "benign_fpr": 0.05982905982905982,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.08805031446540883,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.1": {
+          "recall": 0.08465608465608465,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.10112359550561796,
+          "benign_fpr": 0.10683760683760683,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.13836477987421383,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 4.5
+        },
+        "0.2": {
+          "recall": 0.09523809523809523,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.12359550561797751,
+          "benign_fpr": 0.18376068376068377,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.24528301886792456,
+          "alone_fpr": 0.05333333333333334,
+          "median_lead_steps": 4.5
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.047619047619047616,
+          "give_in_episodes": 63,
+          "held_fpr": 0.033707865168539325,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.05": {
+          "recall": 0.047619047619047616,
+          "give_in_episodes": 63,
+          "held_fpr": 0.0898876404494382,
+          "benign_fpr": 0.05128205128205128,
+          "benign_episodes": 78,
+          "control_fpr": 0.07547169811320754,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 3.0
+        },
+        "0.1": {
+          "recall": 0.07936507936507936,
+          "give_in_episodes": 63,
+          "held_fpr": 0.10112359550561797,
+          "benign_fpr": 0.08974358974358974,
+          "benign_episodes": 78,
+          "control_fpr": 0.1320754716981132,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 6.0
+        },
+        "0.2": {
+          "recall": 0.09523809523809523,
+          "give_in_episodes": 63,
+          "held_fpr": 0.11235955056179775,
+          "benign_fpr": 0.19230769230769232,
+          "benign_episodes": 78,
+          "control_fpr": 0.2641509433962264,
+          "alone_fpr": 0.04,
+          "median_lead_steps": 6.5
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  },
+  "luna forecaster L3": {
+    "ranking": {
+      "rows": 2910,
+      "missing": 0,
+      "positives": 618,
+      "within_round_auc": 0.4811559580221168,
+      "within_round_ci95": [
+        0.43608500725414207,
+        0.5261226728723367
+      ],
+      "fold_stratified_auc": 0.4672746719878684,
+      "fold_stratified_coverage": [
+        0.9902912621359223,
+        0.9838187702265372,
+        0.8996763754045307
+      ],
+      "pooled_auc": 0.467174059766064,
+      "pooled_ci95": [
+        0.41481888672527256,
+        0.5151118108907293
+      ],
+      "added_value": {
+        "base_auc": 0.6947497839678748,
+        "with_score_auc": 0.6943865534827768,
+        "gain": -0.0003632304850980095,
+        "gain_ci95": [
+          -0.0030972382205558535,
+          0.002279081925564205
+        ],
+        "rows": 2910
+      }
+    },
+    "alarms": {
+      "pooled": {
+        "0.01": {
+          "recall": 0.015873015873015872,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.0449438202247191,
+          "benign_fpr": 0.017094017094017092,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.025157232704402514,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 1.0
+        },
+        "0.05": {
+          "recall": 0.07936507936507936,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.13108614232209737,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.09433962264150945,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.1": {
+          "recall": 0.1111111111111111,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.20599250936329586,
+          "benign_fpr": 0.10683760683760685,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.1509433962264151,
+          "alone_fpr": 0.013333333333333334,
+          "median_lead_steps": 4.0
+        },
+        "0.2": {
+          "recall": 0.1111111111111111,
+          "give_in_episodes": 63.0,
+          "held_fpr": 0.2808988764044944,
+          "benign_fpr": 0.18803418803418803,
+          "benign_episodes": 78.0,
+          "control_fpr": 0.24528301886792456,
+          "alone_fpr": 0.06666666666666667,
+          "median_lead_steps": 4.0
+        }
+      },
+      "new_scenario": {
+        "0.01": {
+          "recall": 0.015873015873015872,
+          "give_in_episodes": 63,
+          "held_fpr": 0.02247191011235955,
+          "benign_fpr": 0.01282051282051282,
+          "benign_episodes": 78,
+          "control_fpr": 0.018867924528301886,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 1.0
+        },
+        "0.05": {
+          "recall": 0.06349206349206349,
+          "give_in_episodes": 63,
+          "held_fpr": 0.1348314606741573,
+          "benign_fpr": 0.0641025641025641,
+          "benign_episodes": 78,
+          "control_fpr": 0.09433962264150944,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.1": {
+          "recall": 0.1111111111111111,
+          "give_in_episodes": 63,
+          "held_fpr": 0.2247191011235955,
+          "benign_fpr": 0.08974358974358974,
+          "benign_episodes": 78,
+          "control_fpr": 0.1320754716981132,
+          "alone_fpr": 0.0,
+          "median_lead_steps": 4.0
+        },
+        "0.2": {
+          "recall": 0.1111111111111111,
+          "give_in_episodes": 63,
+          "held_fpr": 0.25842696629213485,
+          "benign_fpr": 0.20512820512820512,
+          "benign_episodes": 78,
+          "control_fpr": 0.2641509433962264,
+          "alone_fpr": 0.08,
+          "median_lead_steps": 4.0
+        }
+      }
+    },
+    "parse_errors": 0,
+    "scored_rows": 4184
+  }
+}
