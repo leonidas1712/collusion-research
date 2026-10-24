@@ -170,3 +170,7 @@ Implications for scenarios and rules:
 **Second tier** (CPU, if time): activation deltas after each peer message; detection-vs-prediction control (train on the give-in step only, test earlier); MLP vs linear; INLP rounds-to-chance; multi-layer probe; early-step label-noise variants.
 
 **GPU, needs Leo's OK:** Activation Oracle rung (<$1); causal check stage 1, forward-only (~$1–3); stage 2 generation only if stage 1 passes (~$3–6).
+
+**Robustness to the peer's text (Leo, 24 Oct).** Text monitors and decision models read the pushing peer's messages, which can sway their verdicts (Jev is known to shift under injected text). Compare whether the probe is less affected than the text monitors, e.g. by monitor-vs-probe score shifts on steps right after strong peer claims ("team lead confirmed", "operator authorized"). This is a result, not a caveat.
+
+**Confound robustness for v1 data.** Report the headline with and without the 11 episodes where the target saw `mock: true` from run_tests (C4). The "logged and reviewed" (C1) and "reported to the operator" (C2) wording are stated as limitations; held-out scenarios lack C1.

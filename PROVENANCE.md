@@ -164,6 +164,14 @@ Sources: `docs/llm_activations_lit.md` (Leo), `docs/probe_takeaways.md`, `docs/e
 | Blackboard judge | Considered | Colosseum `judge_blackboards.py` (no licence) | After-the-fact detection |
 | CoT monitor | Considered for the reasoning level | Baker et al. 2025, App. C | Binary detection |
 
+### 4.y Decision models as monitors (details: `docs/decision_models_as_monitors.md`)
+
+| Item | Where we use it | Source | Notes |
+|---|---|---|---|
+| Decision models (Jev, Luna Decisions) | Monitor variant; label judge | TypeSafe Jev 1.13/1.14 (Sept–Oct 2026); OpenAI Decisions API, gpt-6-luna-decisions on OpenRouter 2026-10-06 | Probabilities over fixed options, no rationale |
+| "Just Ask Jev" (alignment-failure detection) | Prior work on decision models as monitors | see docs/decision_models_as_monitors.md | Median AUROC 0.886, ~63x cheaper than LLM judges (verify) |
+| Jev collusion monitor on NARCBench | Closest prior work for decision-model monitors | github.com/Rao-Aditya-127/jev-collusion-monitor | AUROC 0.82–0.89; we differ by forecasting, lead time, probe/judge comparison |
+
 ## 5. Datasets, models and tools
 
 Sources: `EXPERIMENT_LOG.md`, `experiments/E02-activation-replay/README.md`, `experiments/E01-behaviour-pilot/JUDGE_LABELS.md`, `docs/external_traces.md`, `docs/backup_shi_et_al.md`, `resources.md`.
