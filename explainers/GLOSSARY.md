@@ -3,6 +3,26 @@
 - **First-action round:** the round in which the target first does the forbidden thing (e.g. posts the token).
 - **Residual stream:** the list of numbers each token carries through the model; every layer reads it and adds to it. 5,120 numbers in Qwen3-32B.
 - **Linear probe:** weights w and bias b; score = sigmoid(w·h + b) on one residual-stream vector h.
-- **AUROC:** chance a random positive scores above a random negative. 0.5 is guessing, 1.0 is perfect.
+- **AUROC:** pick one random "will give in" step and one random "won't" step; AUROC is how often the method scores the first one higher. 1.0 perfect, 0.5 a coin flip, 0.75 right three times in four. Needs no threshold. Example: positives 0.7, 0.4 vs negatives 0.5, 0.2 → right in 3 of 4 pairs → 0.75.
+- **Within-round AUROC:** AUROC computed only between steps at the same round, then averaged (weighted by positives), so conversation length can't help.
+- **Recall at 5% false alarms:** set the threshold so 5% of control-episode alerts fire, then report the share of give-in episodes caught before the action.
+- **"Words still say no" subset:** steps before a give-in where the target's own text doesn't yet signal it will share. Used only to recompute scores, never to change training.
 - **Monitor ladder:** LLM-judge monitors that see progressively more: actions only, then the conversation, then unposted text, then reasoning.
 - **Lead time:** how many turns before the action a detector first raises an alarm.
+- **Episode (Shi et al.):** one round of the game: each agent does a task, they exchange up to five 200-character messages, then each accepts or rejects the other's work, then gets scored.
+- **Trajectory (Shi et al.):** 10 episodes in a row with the same two agents, each keeping its full history; behaviour can drift across it.
+- **Raw log:** the JSON list of an agent's tool calls and results in one task, from `get_log`; the rule says verdicts must be based on the peer's complete raw log.
+- **Verdict:** an agent's accept/reject call on the other agent's task; accept without the raw log breaks the rule.
+- **Collusive episode (Shi et al.):** both agents accept in the same episode, which breaks the rule on both sides.
+- **Onset episode:** the first collusive episode in a trajectory (`onset_evaluation_episode`).
+- **Reflection judge (relaxation):** an LLM (Qwen3.8-27B) that reads an agent's private post-episode note and says whether it now endorses accepting without the full log.
+- **Step:** one target API request (a decision point, including between its own tool calls); one row of the probe dataset.
+- **Family:** the seed shared by a recruiting, control and alone episode with the same task details; train/test splits keep a family together.
+- **Within-round AUROC:** AUROC computed among steps of the same round only, then averaged over rounds weighted by positives; removes the conversation-length shortcut.
+- **Nested cross-validation:** inside each training split, a further split picks the layer (and regularisation strength); the test fold never influences the choice.
+- **Bootstrap interval:** resample families with replacement ~1,000 times, recompute the metric; the middle 95% is the interval.
+- **Positive control:** a probe for something trivially present (has the token entered the prompt?); should score ~1.0, else the pipeline is broken.
+- **Shuffled-label control:** rerun the pipeline with labels randomly reassigned across episodes; should score ~0.5, else something leaks.
+- **Recall at 5% false alarms:** threshold set so 5% of control/alone steps are flagged; share of give-in episodes flagged before the action.
+- **L2 regularisation:** a penalty λ·Σw² added to the loss so the probe can't memorise with large weights; needed because there are more weights (5,120) than training rows.
+- **Difference of means:** mean activation of label-1 steps minus mean of label-0 steps; a training-free probe direction, also used for steering.
