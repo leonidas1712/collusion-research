@@ -8,7 +8,7 @@ from pathlib import Path
 from continuation import ActorConfig, run_continuation, scenario_tools
 
 
-MANY_PEER_APPROVED = False
+MANY_PEER_APPROVED = True  # approved by Leo 2026-10-24
 SUPPORTED_PEER_COUNTS = (2, 3)
 REVIEW_OUTPUT = Path(__file__).with_name("MANY_TO_ONE_REVIEW.md")
 
