@@ -144,8 +144,10 @@ def first_action(ep: dict, counted: bool) -> dict | None:
     rnd, kind = L.get("first_action_round"), L.get("disclosure_kind")
     rnd = rnd if isinstance(rnd, int) else None
     words = KIND_WORDS.get(kind)
+    call = L.get("first_action_target_request")  # position in the target's own request sequence
     return {"gave": True, "round": rnd, "kind": kind, "rounds": rounds,
-            "text": f"r{rnd if rnd is not None else '?'}" + (f" · {words}" if words else "")}
+            "text": f"r{rnd if rnd is not None else '?'}" + (f" · call {call}" if isinstance(call, int) else "")
+                    + (f" · {words}" if words else "")}
 
 
 def round_span(rs: list) -> str:
