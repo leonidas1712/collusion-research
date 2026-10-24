@@ -2,7 +2,7 @@
 
 **Question:** can we turn saved E01 requests into indexed, reproducible residual-stream measurements for the later probe experiment?
 
-**Status:** CPU replay and direction-stub validation passed; full Granite weights and CUDA execution await an approved GPU run. This folder does not generate responses, call OpenRouter, rent GPUs, or change E01. A replay rebuilds inputs with the selected Hugging Face template; it cannot recover the provider's unknown exact input tokens.
+**Status:** Main replay complete: 3,034 requests /143 episodes, 58.5 minutes, USD 2.86 app billing; fidelity and full artifact validation passed. Middle-layer exposure AUROC reaches 0.9994; the initial last-layer 0.9549 result is retained. See [main results](MAIN_REPLAY_RESULTS.md). The earlier full-weight Qwen3-32B bf16 A100 benchmark covered 50 requests. See [Modal benchmark results](MODAL_BENCHMARK.md) for cost, throughput, NLL and wrapper fixes. Full Granite weights and FP8 remain untested. This folder does not generate responses, call OpenRouter, rent GPUs, or change E01. A replay rebuilds inputs with the selected Hugging Face template; it cannot recover the provider's unknown exact input tokens.
 
 ## Run
 
@@ -15,7 +15,7 @@ experiments/E02-activation-replay/run.sh replay \
   --revision a7042144125ce5ae64f89610e8289647fc000b9a
 ```
 
-The entry point creates its own `.venv` on first use from `requirements-lock.txt`. It leaves the root E01 environment alone. Default inference is bf16, `device_map="auto"`, SDPA, evaluation mode, no gradients and no KV cache. The base decoder performs exactly one forward pass per saved target API attempt; no generation or vocabulary logits are needed. Input tensors go to the input-embedding device. Accelerate dispatches the remaining layers.
+The entry point creates its own `.venv` on first use from `requirements-lock.txt`. It leaves the root E01 environment alone. Default inference is bf16, `device_map="auto"`, SDPA, evaluation mode, no gradients and no KV cache. The base decoder performs one forward per saved target API attempt. By default that pass includes up to 64 saved reply tokens for fidelity scoring, while hooks capture the original prompt endpoint. Only reply-predicting positions are projected to vocabulary logits; no text is generated. Use --activations-only to disable scoring. Input tensors go to the input-embedding device. Accelerate dispatches the remaining layers.
 
 Pass multiple run directories as positional arguments. Only final `.json` episode files with `status=complete` and `fake=false` are included. `.partial.json` and `.attempt-N.json` files are excluded. Duplicate input paths are deduplicated. Saved API retries within a complete episode remain separate, explicitly indexed attempts. No prompt is silently truncated: exceeding the model context or `--max-tokens` (default 32768) fails the run and preserves prior outputs.
 
@@ -105,7 +105,7 @@ Two initial implementation failures (`20261024-0216-e02-activation-replay`, `...
 
 ## Modal: CPU prefetch → GPU benchmark → full replay
 
-`modal_app.py` is implemented and locally checked with Modal **1.6.2**. **No remote function or image build was run by this agent.** Leo requires explicit approval for each GPU run; the separate CPU download also requires approval from Leo/Claude. Authentication alone is not launch approval.
+`modal_app.py` uses Modal **1.6.2**. The initial local checks below were followed by the approved CPU prefetch and GPU benchmark in [MODAL_BENCHMARK.md](MODAL_BENCHMARK.md). Leo requires explicit approval for each GPU run; the separate CPU download also requires approval from Leo/Claude. Authentication alone is not launch approval.
 
 The image pins torch 2.14.1, transformers 5.20.2, accelerate 1.15.0, safetensors 0.8.0, numpy 2.4.6 and huggingface-hub 2.3.0, matching the CPU environment. Linux image construction, CUDA execution and FP8 kernels remain untested. Only E02 source and `src/collusion` are mounted. Selected run folders are sent as complete, non-fake episode JSON via the function argument; `.env`, partial files and unrelated run folders are excluded. API-call upload is suitable for the small pilot; larger corpora may need an input Volume later.
 
@@ -133,27 +133,30 @@ modal run experiments/E02-activation-replay/modal_app.py::main \
 
 This proposes the 50 longest locally rendered requests from 218 complete target calls across those three source runs: **1,879–2,611 prompt tokens, 103,483 prompt tokens total**. Selection is recorded in [20261024-0311-e02-benchmark-plan](../../runs/20261024-0311-e02-benchmark-plan/selection.json). It is a stress benchmark within this input set, not a representative throughput estimate or the longest context across all E01 data. The request limit is global. `--request-order source` preserves episode/request order; `longest` chooses by actual local prompt-token length. No prompt is truncated. `--layers 0,16,32,63` saves only those zero-based block outputs; it does not skip model computation.
 
-The benchmark uses A100-80GB, a 30-minute function timeout, one container, 4 CPU cores and 32 GiB requested host memory. The full replay function (`--gpu fallback`) has a four-hour timeout and ordered GPU choices `['H100!', 'A100-80GB']`; `--gpu h100` pins H100. No retries are configured. `H100!` excludes automatic H200 substitution. A four-hour timeout is not a spending authorization. Full replay requires another approval, a measured estimate and an explicit request cap, e.g. `--max-requests 6000 --request-order source` on the approved input IDs. Do not use `a100-benchmark` for a job expected to exceed 30 minutes.
+The benchmark uses A100-80GB, a 20-minute function timeout, one container, a hard limit of 4 CPU cores, 32 GiB requested host memory and a 64 GiB memory limit (tightened for the approved USD 2 combined test cap). The full replay function (`--gpu fallback`) has a four-hour timeout and ordered GPU choices `['H100!', 'A100-80GB']`; `--gpu h100` pins H100. No retries are configured. `H100!` excludes automatic H200 substitution. A four-hour timeout is not a spending authorization. Full replay requires another approval, a measured estimate and an explicit request cap, e.g. `--max-requests 6000 --request-order source` on the approved input IDs. Do not use `a100-benchmark` for a job expected to exceed 20 minutes.
 
 Download the returned run path, including indexes and activation arrays:
 
 ```bash
-modal volume get collusion-activations runs/REPLAY_RUN_ID ./modal-results/REPLAY_RUN_ID
+mkdir -p ./modal-results
+modal volume get collusion-activations runs/REPLAY_RUN_ID ./modal-results
 ```
 
-The entry point prints this exact command with the new ID. To inspect CPU-download records separately: `modal volume get collusion-weights prefetch-runs ./modal-prefetch-runs`.
+The entry point prints this exact command with the new ID. Create the destination directory before downloading (Modal 1.6.2 can mis-handle a nonexistent directory). To inspect CPU-download records separately, first run `mkdir -p ./modal-prefetch-runs`, then `modal volume get collusion-weights prefetch-runs ./modal-prefetch-runs`.
 
 ### First-run proposal and cost
 
-Request CPU prefetch first: allow **USD 1** for downloading the approximately 65.5 GB checkpoint, expected roughly USD 0.05–0.30 for 10–30 minutes with the requested CPU/memory (bandwidth unmeasured). The two-hour timeout corresponds to roughly USD 0.63 at requested CPU/memory rates, excluding image building, usage above requests and storage. Then request the 50-call A100 benchmark: expected **5–20 minutes, roughly USD 0.25–1.00** after weights are cached; propose a **USD 2 allowance**, including load and overhead. These are planning assumptions, not measurements. Reply scoring adds a second forward plus vocabulary projection, so old activation-only timing estimates are not directly applicable.
+Request CPU prefetch first: allow **USD 1** for downloading the approximately 65.5 GB checkpoint, expected roughly USD 0.05–0.30 for 10–30 minutes with the requested CPU/memory (bandwidth unmeasured). The CPU prefetch timeout is now 20 minutes, corresponding to roughly USD 0.106 at its hard CPU/memory limits, excluding image building, usage above requests and storage. Then request the 50-call A100 benchmark: expected **5–20 minutes, roughly USD 0.25–1.00** after weights are cached; propose a **USD 2 allowance**, including load and overhead. These are planning assumptions, not measurements. The original benchmark used two forwards. Current replay combines capture and bounded reply scoring in one forward; its extra GPU overhead remains an estimate until the approved run.
 
-Current [Modal prices](https://modal.com/pricing) are USD 0.000694/sec for A100-80GB (~2.50/hour), 0.001097/sec for H100 (~3.95/hour), 0.0000131/core/sec and 0.00000222/GiB/sec. Requested benchmark resources total roughly USD 2.94/hour; 30 minutes is about USD 1.47 before image build, usage above requested resources, storage and other overhead. The timeout is not a strict dollar cap. No assumption about remaining free credits is made. The first benchmark must report actual billed time, loading time, per-request activation/total time, scoring coverage, peak allocated CUDA memory and device map before a full replay proposal. CPU/disk offload would invalidate a GPU-only throughput estimate.
+Current [Modal prices](https://modal.com/pricing) are USD 0.000694/sec for A100-80GB (~2.50/hour), 0.001097/sec for H100 (~3.95/hour), 0.0000131/core/sec and 0.00000222/GiB/sec. Requested benchmark resources total roughly USD 2.94/hour; at its CPU/memory hard limits the rate is approximately USD 3.20/hour, or USD 1.07 for 20 minutes before image build, usage above requested resources, storage and other overhead. The timeout is not a strict dollar cap. No assumption about remaining free credits is made. The first benchmark must report actual billed time, loading time, per-request activation/total time, scoring coverage, peak allocated CUDA memory and device map before a full replay proposal. CPU/disk offload would invalidate a GPU-only throughput estimate.
 
 ### Reply-token fidelity and precision comparison
 
-`--reply-fidelity` loads a causal LM head. The activation pass uses its base decoder on the **prompt only**, then removes hooks. A separate teacher-forced pass scores the saved assistant reply: `mean_token_nll`, `mean_token_logprob`, `top5_fraction` and `n_reply_tokens` are stored in each index row's `reply_fidelity`. Logits are projected in 64-token chunks rather than retained for the entire prompt vocabulary. NPZ files additionally contain `reply_ids` and `layer_indices`. No text is generated. Chunked likelihood scoring currently supports Qwen2/Qwen3/Qwen3-MoE; other architectures receive unsupported_likelihood_head_adapter rather than risk omitting architecture-specific logit transforms. Activation capture remains available.
+Reply fidelity is **on by default**, both locally and on Modal. The causal LM base decoder sees the prompt plus the first **64** locally reconstructed reply tokens (or the whole reply if shorter). Capture hooks read position `len(prompt_ids)-1`, never the end of the appended reply. Causal attention prevents future reply tokens from affecting that position. The same decoder output supplies NLL/top-5 via chunked head projection; there is no second decoder pass. `--fidelity-tokens N` changes the diagnostic horizon; `--activations-only` / `--no-reply-fidelity` disables it locally, and Modal exposes `--activations-only`.
 
-These are likelihoods of the **HF reconstruction of the saved reply**, including local tool serialization and template terminators, not the provider's unknown original token IDs. Both text-prefix and token-prefix alignment must hold. Missing/empty responses, unadapted provider reasoning, prefix mismatch or prompt-plus-reply exceeding the context guard receive an explicit status and no numeric score; there is no silent truncation. Whitespace, tool argument order and termination syntax can differ from the provider. The diagnostics cannot establish exact provider fidelity, and high/low NLL is not a behavioral success score. Modal enables this diagnostic by default.
+Each row stores mean per-token NLL/log-prob, top-5 fraction, available/scored reply lengths and serialization status. Summary values are weighted by scored tokens. NPZ files contain prompt IDs, scored reply IDs and layer indices. Qwen2/Qwen3/Qwen3-MoE heads are supported; other heads are explicitly unscored until their architecture-specific logit transforms are reviewed.
+
+These are likelihoods of the **HF reconstruction of the saved reply**, including tool syntax and terminators, not the unknown provider token IDs. The normal path verifies text and token prefix equality. Two explicit adapters preserve the original prompt: remove a generation-only empty-thinking block from the history-rendered reply boundary when necessary; or tokenize the reply suffix separately when BPE would merge across that boundary. The adapter used is recorded. Missing/empty replies, unsupported provider reasoning and context-limit problems remain explicit unscored statuses. Only the diagnostic reply is capped; prompts are never truncated. High likelihood does not prove provider token identity or behavioral correctness.
 
 `--precision bf16` is the normal path. For the robustness alternative, use the official [Qwen3-32B-FP8](https://huggingface.co/Qwen/Qwen3-32B-FP8) checkpoint, not an improvised dtype cast. Its pinned revision is `aa55da1ecc13d006e8b8e4f54579b1ea8c3db2df`. After separate approvals, prefetch with that model/revision, then use the same benchmark command with:
 
@@ -174,3 +177,30 @@ Nine unit tests pass, including shifted next-token NLL/top-5 agreement with full
 - `20261024-0311-e02-activation-replay`: cached **pretrained Qwen2.5-0.5B**, one CPU request, all 24 layers plus reply scoring. Cross-model wiring only.
 
 CPU float32 test runs retain their explicit dtype and random/cross-model labels; they are not bf16 scientific results. Remote Linux image build, Volume persistence across workers, CUDA memory fit and FP8 execution still require the approved live pilot.
+
+
+## Main dataset: verified manifest replay
+
+The [main plan](MAIN_REPLAY_PLAN.md) freezes 143 episodes / 3,034 requests, including the input that produces the first forbidden action. `--manifest` checks source episode, request, rendered prompt, token-ID hashes, token count, round and step before loading model weights. Missing, duplicate or changed inputs fail. The output copies the exact manifest and stores `manifest_verified=true`, request-specific exposure and action flags. Manifest mode rejects request limits and reordering locally; Modal derives its input run IDs from the manifest and ignores its benchmark selection defaults. It also verifies source episode hashes before submitting remote work.
+
+Leo approved this exact run with a USD 9 hard cap in Aboard #458. The command submitted by client 20261024-1818-e02-main-modal-client is:
+
+```bash
+modal run experiments/E02-activation-replay/modal_app.py::main \
+  --manifest-path runs/20261024-1803-e02-step-prefix-plan/steps.jsonl \
+  --model Qwen/Qwen3-32B --revision 9216db5781bf21249d130ec9da846c4624c16137 \
+  --source-model qwen/qwen3-32b --precision bf16 --gpu a100 --layers all \
+  --fidelity-tokens 64
+```
+
+The A100 full-run function has a 160-minute timeout, a clean 150-minute between-request stop, 100-request output checkpoints, four-CPU limit, 32-GiB requested / 64-GiB capped host RAM, one container and no automatic retries. It loads only the cached weights. A timeout is not approval or an exact billing cap. Download using the printed `modal volume get` command into an existing directory.
+
+Then run the positive control locally:
+
+```bash
+experiments/E02-activation-replay/run.sh exposure-probe modal-results/REPLAY_RUN_ID
+```
+
+This fits a regularized linear logistic probe for `token_in_context` at the fixed last saved layer. It holds out 30% of entire episodes (seed 42), fits scaling on training rows only, keeps retries/tool steps together and reports held-out AUROC, class counts, exact episode split, coefficients and predictions in a new E02 run. No test-set layer search occurs. The diagnostic target is AUROC ≥0.98; a lower result triggers inspection of alignment, labels, representation/layer and generalization. It does not uniquely prove an extraction bug, and a high result does not validate every label or guarantee provider fidelity.
+
+Local verification for this extension: 20 tests pass, including one-forward activation equivalence against a prompt-only reference, next-token NLL/top-5 alignment, manifest tamper rejection, episode-disjoint splitting and a known synthetic linear signal. Nine real requests from three episodes also ran end to end with tiny random Qwen weights on CPU. The synthetic positive control achieved AUROC 1.0 on six held-out episodes; this checks the analysis wiring, not the real model. These checks ran locally before the approved main launch.

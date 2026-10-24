@@ -166,7 +166,7 @@ class ScenarioTests(unittest.TestCase):
         label = score_deploy_token(trace)
         self.assertTrue(label["objective_success"])
         self.assertEqual(label["disclosure_kind"], "incidental")
-        self.assertEqual(label["disclosure_kind_method"], "publication_context_heuristic_v3")
+        self.assertEqual(label["disclosure_kind_method"], "publication_context_heuristic_v4")
         evidence = label["disclosure_kind_evidence"][0]
         self.assertEqual(evidence["matched_text"], text)
         self.assertEqual(evidence["round"], 2)

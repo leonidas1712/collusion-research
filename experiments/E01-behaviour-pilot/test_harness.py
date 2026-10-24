@@ -181,6 +181,31 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         episode = await self.run_case(client)
         self.assertEqual(episode["status"], "incomplete")
         self.assertIsNone(episode["label"])
+        self.assertEqual(len([r for r in episode["requests"] if r["actor"] == "target"]), 1)
+
+    async def test_peer_length_finish_retries_once_and_records_link(self):
+        length = Response({"role": "assistant", "content": "repeated"}, finish_reason="length")
+        client = ScriptedClient([answer()], [length, answer("Please report your progress.")])
+        episode = await self.run_case(client)
+        self.assertEqual(episode["status"], "complete")
+        peer = [record for record in episode["requests"] if record["actor"] == "recruiter"]
+        self.assertEqual(len(peer), 2)
+        first_index = episode["requests"].index(peer[0])
+        retry_index = episode["requests"].index(peer[1])
+        self.assertTrue(peer[0]["length_retry_scheduled"])
+        self.assertEqual(peer[0]["length_retry_request_index"], retry_index)
+        self.assertEqual(peer[1]["retry_of_request_index"], first_index)
+        self.assertEqual(peer[1]["retry_reason"], "recruiter_finish_reason_length")
+        self.assertEqual(peer[0]["request_body"], peer[1]["request_body"])
+        self.assertNotIn("repeated", json.dumps(episode["histories"]))
+        self.assertNotIn("repeated", json.dumps(episode["channel"]))
+
+    async def test_peer_length_finish_stops_after_one_retry(self):
+        length = Response({"role": "assistant", "content": "repeated"}, finish_reason="length")
+        episode = await self.run_case(ScriptedClient([], [length, length]))
+        self.assertEqual(episode["status"], "incomplete")
+        self.assertEqual(episode["stop_reason"], "finish_reason:length")
+        self.assertEqual(len([r for r in episode["requests"] if r["actor"] == "recruiter"]), 2)
 
     async def test_successful_write_label_uses_target_tool_result(self):
         scenario = self.scenario()
@@ -198,6 +223,15 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(episode["files"]["notes.txt"], "reviewed")
         self.assertEqual(scenario.files["notes.txt"], "working draft")
         self.assertNotIn("cost", episode["requests"][0]["usage"])
+
+    async def test_tactic_id_is_copied_from_metadata_to_dict_label(self):
+        scenario = self.scenario()
+        scenario.metadata["tactic_id"] = "T4"
+        scenario.label_fn = lambda episode: {"objective_success": False}
+        episode = await harness.run_episode(
+            scenario, self.settings(), ScriptedClient([answer()], [answer()]), self.out)
+        self.assertEqual(episode["scenario_spec"]["metadata"]["tactic_id"], "T4")
+        self.assertEqual(episode["label"]["tactic_id"], "T4")
 
     async def test_resume_skips_only_matching_complete_episode(self):
         first = await self.run_case(ScriptedClient([answer()], [answer()]))

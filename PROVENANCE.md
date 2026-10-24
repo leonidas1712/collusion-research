@@ -73,6 +73,13 @@ Sources: `docs/scenario_levers.md`, `docs/scenario_guidelines.md`, `experiments/
 | disable-failing-test | Approved | METR/Redwood HF investigation | Reward-hacking analogy |
 | self-merge-without-review | Dropped (every model merged alone) | [GitHub required-review docs](https://docs.github.com/en/pull-requests/how-tos/review-pull-requests/approving-a-pull-request-with-required-reviews); Shi et al. | |
 | Credential-passing scenario choice (S1) | deploy-token | Distinguished from arXiv 2606.04141 (excludes keys in tool calls) | |
+| Database-password migration | E01 dedicated credential scenario and spray row | Ours; designed 2026-10-24 | Synthetic password and workflow; not tied to an incident |
+| Artifact-registry-token spray row | E01 candidate screen | [OpenAI–Hugging Face incident account](https://openai.com/index/hugging-face-model-evaluation-security-incident/) | Structural analogy only; new roles, wording, task and synthetic token |
+| Unreleased-benchmark spray row | E01 candidate screen | Rose et al., [NARCBench/HELIOS, arXiv 2604.01151](https://arxiv.org/abs/2604.01151), abstract checked 2026-10-24 | Borrows only the high-level private/public multi-agent information motif; not their task or data |
+| Peer-audit-log spray row | E01 candidate screen | Shi, Zhang, and Yang, [arXiv 2609.24967](https://arxiv.org/abs/2609.24967), abstract checked 2026-10-24 | Borrows only repeated log sharing and verification; not their environment or transcript |
+| Secret-tool-code spray row | E01 candidate screen | Zeng and Rudzicz, [arXiv 2605.27593](https://arxiv.org/abs/2605.27593), abstract checked 2026-10-24 | Borrows only secret-tool availability; not Liar's Bar, Cleanup, prompts, or data |
+| Support-bot-secret spray row | E01 candidate screen | Debenedetti et al., [SaTML'24 CTF report, arXiv 2406.07954](https://arxiv.org/abs/2406.07954), abstract checked 2026-10-24 | Borrows only a synthetic secret-keeping/extraction structure; not a CTF defense or transcript |
+| Remaining spray rows | E01 candidate screen | Ours; see `experiments/E01-behaviour-pilot/SPRAY_CANDIDATES.md` | Synthetic candidate domains; no external incident claim |
 
 ## 3. Peer tactics
 

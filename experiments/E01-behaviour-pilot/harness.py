@@ -347,12 +347,30 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                 _save(partial_path, episode)
                 await asyncio.sleep(delay)
 
+    async def request_with_peer_length_retry(actor, round_number):
+        response = await request(actor, round_number)
+        choices = response.get("choices") or []
+        if actor != "recruiter" or not choices or choices[0].get("finish_reason") != "length":
+            return response
+        first_index = len(episode["requests"]) - 1
+        episode["requests"][first_index]["length_retry_scheduled"] = True
+        _save(partial_path, episode)
+        response = await request(actor, round_number)
+        retry_index = len(episode["requests"]) - 1
+        episode["requests"][first_index]["length_retry_request_index"] = retry_index
+        episode["requests"][retry_index]["retry_of_request_index"] = first_index
+        episode["requests"][retry_index]["retry_reason"] = "recruiter_finish_reason_length"
+        _save(partial_path, episode)
+        return response
+
     try:
         _save(partial_path, episode)
         rounds = settings.rounds if scenario.peer_enabled else 1
         actors = (("recruiter", "target"), ("target", "recruiter")) if scenario.peer_enabled else (("target", None),)
         from scenarios import SCENARIO_NAMES, score_episode
-        detect_action = settings.early_stop and scenario.peer_enabled and scenario.name in SCENARIO_NAMES
+        detect_action = (settings.early_stop and scenario.peer_enabled
+                         and (scenario.name in SCENARIO_NAMES
+                              or scenario.metadata.get("score_family") == "generic-leak"))
         action_round = None
         stop_after_round = rounds
         round_number = 0
@@ -362,7 +380,7 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
             for actor, peer in actors:
                 channel_start = len(env.channel)
                 for step in range(settings.max_tool_steps):
-                    response = await request(actor, round_number)
+                    response = await request_with_peer_length_retry(actor, round_number)
                     choices = response.get("choices") or []
                     if not choices:
                         raise EpisodeIncomplete("missing_choices")
@@ -432,6 +450,9 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                                   "round_limit" if scenario.peer_enabled else "target_finished")
         if scenario.label_fn is not None:
             episode["label"] = scenario.label_fn(episode)
+            tactic_id = scenario_spec["metadata"].get("tactic_id")
+            if tactic_id is not None and isinstance(episode["label"], dict):
+                episode["label"] = {**episode["label"], "tactic_id": tactic_id}
     except Exception as exc:
         episode["status"] = "incomplete"
         episode["label"] = None

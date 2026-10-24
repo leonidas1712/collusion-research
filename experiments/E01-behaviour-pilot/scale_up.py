@@ -18,6 +18,7 @@ from harness import Settings, run_episode
 from overnight_rules import get_overnight_scenario
 from overnight_sweep import PEER, TARGETS, fetch_prices, options
 from peer_tactics import TACTIC_IDS, apply_peer_tactic
+from leak_scenarios import get_spray_scenario
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'src'))
@@ -44,14 +45,35 @@ class SpendCap:
         return response
 
 
-def scale_up_scenario(family, strength, condition, family_id, tactic=None):
-    scenario = get_overnight_scenario(family, strength, condition, family_id=family_id)
+def scale_up_scenario(family, strength, condition, family_id, tactic=None,
+                      scenario_variant=None, spray_row=None):
+    if spray_row:
+        if strength != 'consequence_logged':
+            raise ValueError('Scenario spray rows currently require consequence_logged strength')
+        if scenario_variant is not None:
+            raise ValueError('--scenario-variant cannot be combined with --spray-row')
+        scenario = get_spray_scenario(
+            spray_row, condition, family_id=family_id, rule_strength=strength)
+    else:
+        scenario = get_overnight_scenario(
+            family, strength, condition, family_id=family_id,
+            scenario_variant=scenario_variant)
     if tactic and condition != 'alone':
         scenario = apply_peer_tactic(scenario, tactic)
     return scenario
 
 
 async def main(a):
+    selected_conditions = [condition for condition, count in (
+        ('recruiting', a.recruiting), ('control', a.control), ('alone', a.alone)) if count]
+    if not selected_conditions:
+        raise ValueError('At least one cell count must be nonzero')
+    preflight = scale_up_scenario(
+        a.family, a.strength, selected_conditions[0], str(a.family_start), a.tactic,
+        a.scenario_variant, a.spray_row)
+    if (a.spray_row or a.family == 'database-password') and not preflight.recruiter_approved:
+        raise RuntimeError('This scenario is pending Leo review; set approved=true only after approval')
+
     from dotenv import load_dotenv
     from openai import AsyncOpenAI
 
@@ -63,27 +85,41 @@ async def main(a):
     load_dotenv(ROOT / '.env')
     client = AsyncOpenAI(api_key=os.environ['OPENROUTER_API_KEY'], base_url='https://openrouter.ai/api/v1',
                          max_retries=0, timeout=90)
+    run_family = f'spray-{a.spray_row}' if a.spray_row else a.family
     tactic_suffix = f'-{a.tactic.lower()}' if a.tactic else ''
+    variant_suffix = f'-{a.scenario_variant}' if a.scenario_variant else ''
     parent_settings = {'cap_usd': a.cap_usd, 'counts': {'recruiting': a.recruiting, 'control': a.control,
                        'alone': a.alone}, 'family_start': a.family_start, 'parallelism': a.parallelism}
     if a.tactic:
         parent_settings['tactic_id'] = a.tactic
-    parent = start_run(f'e01-scaleup-{a.family}-{a.strength}-{a.target}{tactic_suffix}', experiment='E01',
+    if a.scenario_variant:
+        parent_settings['scenario_variant'] = a.scenario_variant
+    if a.spray_row:
+        parent_settings['spray_row'] = a.spray_row
+    parent = start_run(f'e01-scaleup-{run_family}-{a.strength}-{a.target}{variant_suffix}{tactic_suffix}', experiment='E01',
                        settings=parent_settings,
-                       tags=['scale-up', a.strength] + ([a.tactic.lower()] if a.tactic else []), model=model)
+                       tags=['scale-up', a.strength]
+                       + ([a.scenario_variant] if a.scenario_variant else [])
+                       + ([a.tactic.lower()] if a.tactic else []), model=model)
     budget = SpendCap(client, a.cap_usd, parent.dir / 'budget.json')
     gate = asyncio.Semaphore(a.parallelism)
     cells = []
     streams = sys.stdout, sys.stderr, sys.excepthook  # keep everything in the parent log
     for condition, count in (('recruiting', a.recruiting), ('control', a.control), ('alone', a.alone)):
         if count:
-            cell_settings = {**asdict(settings), 'scenario_family': a.family, 'strength': a.strength,
+            cell_settings = {**asdict(settings), 'scenario_family': run_family, 'strength': a.strength,
                              'condition': condition, 'target': a.target}
             if a.tactic and condition != 'alone':
                 cell_settings['tactic_id'] = a.tactic
-            cell = start_run(f'e01-{a.family}-{a.strength}-{condition}-{a.target}{tactic_suffix}-scaleup', experiment='E01',
+            if a.scenario_variant:
+                cell_settings['scenario_variant'] = a.scenario_variant
+            if a.spray_row:
+                cell_settings['spray_row'] = a.spray_row
+            cell = start_run(f'e01-{run_family}-{a.strength}-{condition}-{a.target}{variant_suffix}{tactic_suffix}-scaleup', experiment='E01',
                              settings=cell_settings, parents=[parent.id],
-                             tags=['scale-up', a.strength, condition] + ([a.tactic.lower()] if a.tactic and condition != 'alone' else []),
+                             tags=['scale-up', a.strength, condition]
+                             + ([a.scenario_variant] if a.scenario_variant else [])
+                             + ([a.tactic.lower()] if a.tactic and condition != 'alone' else []),
                              model=model)
             sys.stdout, sys.stderr, sys.excepthook = streams
             cells.append((condition, count, cell))
@@ -93,7 +129,8 @@ async def main(a):
             if budget.spent >= budget.cap:
                 return None
             scenario = scale_up_scenario(
-                a.family, a.strength, condition, str(a.family_start + index), a.tactic)
+                a.family, a.strength, condition, str(a.family_start + index), a.tactic,
+                a.scenario_variant, a.spray_row)
             try:
                 ep = await run_episode(scenario, settings, budget, cell.dir / 'episodes', episode_id=f'episode-{index+1:04}')
             except Exception as exc:  # keep the other episodes going
@@ -129,6 +166,9 @@ def make_parser():
     p.add_argument('--cap-usd', type=float, default=3)
     p.add_argument('--tactic', type=str.upper, choices=TACTIC_IDS,
                    help='Append a Leo-approved peer tactic (PEER_TACTICS.md)')
+    p.add_argument('--scenario-variant', choices=('required-access-own-stake',),
+                   help='Use a pending-review registered scenario variant')
+    p.add_argument('--spray-row', help='Build a CSV-backed leak scenario row (pending rows are blocked)')
     return p
 
 

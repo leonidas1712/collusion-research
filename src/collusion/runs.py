@@ -162,7 +162,8 @@ def start_run(name: str, experiment: str, settings: dict | None = None, parents:
         run.finish("failed" if state["error"] else "finished", state["error"])
 
     atexit.register(at_exit)
-    print(f"[run] {run_id} -> {run_dir.relative_to(REPO)}")
+    display_dir = run_dir.relative_to(REPO) if run_dir.is_relative_to(REPO) else run_dir
+    print(f"[run] {run_id} -> {display_dir}")
     return run
 
 

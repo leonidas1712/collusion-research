@@ -36,10 +36,10 @@ class OvernightReportTests(unittest.TestCase):
             (directory / f"episode-{index}{suffix}").write_text(json.dumps(episode))
         return directory
 
-    def report(self):
+    def report(self, **extra):
         manifest = self.root / "manifest.json"
         manifest.write_text(json.dumps({"cells": self.cells, "cost_ledger": {"spent_usd": 1.23},
-                                        "reference_runs": ["old-explicit-pilot"]}))
+                                        "reference_runs": ["old-explicit-pilot"], **extra}))
         with patch("overnight_report.score_episode", side_effect=lambda episode: episode["_score"]):
             return build_report(manifest, self.root / "report")
 
@@ -118,6 +118,51 @@ class OvernightReportTests(unittest.TestCase):
             missing = build_report(manifest, self.root / "report")
         self.assertIsNone(missing["reported_cost_usd"])
         self.assertTrue(any("cost_ledger_error" in warning for warning in missing["warnings"]))
+
+    def test_disclosure_kind_is_only_counted_when_supplied_and_partials_separate(self):
+        directory = self.add_cell("recruiting", [True, True, True, False])
+        for index, kind in enumerate(("deliberate", "incidental", None, "none")):
+            path = directory / f"episode-{index}.json"
+            episode = json.loads(path.read_text())
+            if kind is not None:
+                episode["_score"].update(disclosure_kind=kind, disclosure_kind_method="context_heuristic")
+            path.write_text(json.dumps(episode))
+        partial = self.add_cell("recruiting", [True], partial=True) / "episode-0.partial.json"
+        episode = json.loads(partial.read_text())
+        episode["_score"]["disclosure_kind"] = "unclear"
+        partial.write_text(json.dumps(episode))
+        report = self.report()
+        stats = report["groups"][0]["conditions"]["recruiting"]
+        self.assertEqual(stats["objective_success"], 3)
+        self.assertEqual(stats["disclosure_kind_counts"], {"deliberate": 1, "incidental": 1, "none": 1})
+        self.assertEqual(stats["incomplete_disclosure_kind_counts"], {"unclear": 1})
+        self.assertEqual(stats["disclosure_kind_methods"], {"context_heuristic": 3})
+        text = (self.root / "report/report.md").read_text()
+        self.assertIn("2 of 3", text)
+        self.assertIn("1001–1005", text)
+        self.assertIn("no control draws or peer-text fix", text)
+
+    def test_explicit_362_expansion_supersedes_extreme_gate_and_preserves_waves(self):
+        self.add_cell("recruiting", [True, False, False, False])
+        self.add_cell("recruiting", [True], partial=True)
+        self.add_cell("alone", [False, False])
+        self.add_cell("recruiting", [True, False] * 4, round=2)
+        self.add_cell("alone", [False, False], round=2)
+        report = self.report(selection_policy="explicit_expansion_362", final_wave_authorization="Aboard #362",
+                             round_two_plan=[{"target": "32b", "scenario_family": "deploy-token", "strength": "consequence", "sweep_round": 2}])
+        self.assertEqual(report["round_two_candidates"], [])
+        self.assertEqual(report["final_wave_design"]["planned_episodes"], 30)
+        self.assertEqual(report["final_wave_design"]["recruiting_families"], list(range(1001, 1009)))
+        first, second = report["groups"]
+        self.assertEqual(first["conditions"]["recruiting"]["completed"], 4)
+        self.assertEqual(first["conditions"]["recruiting"]["observed_objective_incomplete"], 1)
+        self.assertEqual(second["conditions"]["recruiting"]["completed"], 8)
+        self.assertEqual(second["conditions"]["recruiting"]["objective_success"], 4)
+        self.assertIsNone(first["round_two"]["recommendation"])
+        text = (self.root / "report/report.md").read_text()
+        self.assertIn("mixed outcomes are permitted", text)
+        self.assertIn("not replaced or overwritten", text)
+        self.assertIn("explicit final-wave outcomes", text)
 
 
 if __name__ == "__main__":

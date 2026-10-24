@@ -65,6 +65,12 @@ class BudgetClient:
         except Exception as exc:
             row['state'] = 'error_reservation_retained'
             row['error_type'] = type(exc).__name__
+            row['status_code'] = getattr(exc, 'status_code', None)
+            # HTTP 429 rejects this non-streaming request; no paid plugins are used.
+            if row['status_code'] == 429 and not payload.get('plugins'):
+                row.update(state='rate_limit_unbilled', reported_cost_usd='0',
+                           settlement_source='https://openrouter.ai/pricing#frequently-asked-questions')
+                self.ledger['charged_or_reserved_usd'] = str(used)
             write_json_atomic(self.path, self.ledger)
             raise
         data = response.model_dump() if hasattr(response, 'model_dump') else response
@@ -118,6 +124,18 @@ def round_one_plan():
             for strength in ('consequence', 'consequence_logged')]
 
 
+def final_wave_plan():
+    return [{'target': target, 'scenario_family': 'deploy-token', 'strength': strength,
+             'sweep_round': 2}
+            for target, strength in [('30b', 'consequence'), ('32b', 'consequence'),
+                                     ('32b', 'consequence_logged')]]
+
+
+def validate_final_plan(plan):
+    if plan != final_wave_plan():
+        raise ValueError('Final wave must match the three deploy-token cells authorized in Aboard #362')
+
+
 async def execute(args):
     from dotenv import load_dotenv
     from openai import AsyncOpenAI
@@ -146,23 +164,10 @@ async def execute(args):
         plan = json.loads(Path(args.plan).read_text())
         if not plan or any(cell.get('sweep_round') != 2 for cell in plan):
             raise ValueError('Round-two plan must explicitly identify its wave')
-        report = build_report(parent / 'manifest.json', parent)
-        eligible = {(row['scenario_family'], row['target_model'], row['strength'])
-                    for row in report['round_two_candidates']}
-        from overnight_rules import STRENGTHS
-        selected = set()
-        for group in plan:
-            key = group.get('target')
-            family = group.get('scenario_family')
-            if key not in TARGETS or family not in FAMILIES:
-                raise ValueError('Unknown round-two model/scenario')
-            if (family, TARGETS[key][0], group.get('base_strength')) not in eligible:
-                raise ValueError('Round-two source was not an eligible all-or-nothing cell')
-            if group.get('strength') not in STRENGTHS or group['strength'] == group['base_strength']:
-                raise ValueError('Round two must use a named adjusted strength')
-            if (family, key) in selected:
-                raise ValueError('Only one adjustment per model/scenario in round two')
-            selected.add((family, key))
+        validate_final_plan(plan)
+        manifest['selection_policy'] = 'explicit_expansion_362'
+        manifest['final_wave_authorization'] = 'Aboard #362'
+        manifest['round_two_plan'] = plan
         manifest['rounds_started'].append(2)
         write_json_atomic(parent / 'manifest.json', manifest)
         prices = json.loads((parent / 'prices.json').read_text())
@@ -179,7 +184,7 @@ async def execute(args):
             if family == 'minimum-price' and key != '32b':
                 raise ValueError('Minimum-price restricted to 32B')
             model, provider = TARGETS[key]
-            for condition, count in (('alone', 2), ('recruiting', 5)):
+            for condition, count in (('alone', 2), ('recruiting', 8 if args.sweep_round == 2 else 5)):
                 settings = Settings(model, PEER, rounds=20, max_tool_steps=12, max_tokens=1536,
                                     target_request_options=options(prices[model]),
                                     recruiter_request_options=options(prices[PEER]))
@@ -198,6 +203,9 @@ async def execute(args):
                     for index in range(count):
                         scenario = get_overnight_scenario(family, strength, condition,
                                                          family_id=str(1001 + index))
+                        scenario.metadata.update(sweep_round=args.sweep_round,
+                                                 preparation_status='executed sweep; pending post-hoc review',
+                                                 base_strength=group.get('base_strength'))
                         ep = await run_episode(scenario, settings, budget, cell.dir / 'episodes',
                                                episode_id=f'episode-{index+1:04}')
                         outcomes.append(ep)

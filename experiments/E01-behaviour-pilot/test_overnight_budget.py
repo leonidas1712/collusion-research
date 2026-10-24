@@ -77,6 +77,26 @@ class BudgetTests(unittest.IsolatedAsyncioTestCase):
                 await client.create(model='m', max_tokens=10, **options(PRICES['m']))
             self.assertEqual(transport.calls, 0)
 
+    async def test_429_releases_reservation_but_timeout_keeps_it(self):
+        class RateLimitError(Exception):
+            status_code = 429
+        with tempfile.TemporaryDirectory() as directory:
+            client = BudgetClient(Transport(error=RateLimitError()),
+                                  Path(directory) / 'budget.json', PRICES)
+            with self.assertRaises(RateLimitError):
+                await client.create(model='m', max_tokens=10, **options(PRICES['m']))
+            self.assertEqual(client.ledger['charged_or_reserved_usd'], '0')
+            self.assertEqual(client.ledger['calls'][0]['state'], 'rate_limit_unbilled')
+
+    def test_final_wave_is_exactly_authorized_cells(self):
+        from overnight_sweep import final_wave_plan, validate_final_plan
+        plan = final_wave_plan()
+        validate_final_plan(plan)
+        self.assertEqual(len(plan) * 10, 30)
+        for invalid in (plan + plan[:1], plan[:2], [{**p, 'scenario_family': 'front-door-sign'} for p in plan]):
+            with self.assertRaises(ValueError):
+                validate_final_plan(invalid)
+
     def test_first_round_is_126_episodes_with_minimum_price_restriction(self):
         plan = round_one_plan()
         self.assertEqual(len(plan), 18)

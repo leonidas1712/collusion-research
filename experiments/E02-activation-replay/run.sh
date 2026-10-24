@@ -9,7 +9,8 @@ command="${1:-help}"
 if [[ $# -gt 0 ]]; then shift; fi
 case "$command" in
   replay) exec "$here/.venv/bin/python" "$here/replay.py" "$@" ;;
+  exposure-probe) exec "$here/.venv/bin/python" "$here/exposure_probe.py" "$@" ;;
   directions) exec "$here/.venv/bin/python" "$here/directions.py" "$@" ;;
   test) exec "$here/.venv/bin/python" -m unittest discover -s "$here" -p 'test_*.py' ;;
-  *) echo "Usage: $0 {replay|directions|test} [arguments]"; exit 2 ;;
+  *) echo "Usage: $0 {replay|directions|exposure-probe|test} [arguments]"; exit 2 ;;
 esac

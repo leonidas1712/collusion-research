@@ -143,20 +143,23 @@ def decoder_layers(model, explicit=None):
     return path, layers
 
 
-def capture(model, layers, ids, device):
+def capture(model, layers, ids, device, prompt_length=None, return_hidden=False):
+    prompt_length = len(ids) if prompt_length is None else prompt_length
+    if not 0 < prompt_length <= len(ids):
+        raise ValueError("Invalid prompt endpoint")
     import torch
     values = [None] * len(layers)
     handles = []
     def hook(i):
         def save(_module, _inputs, output):
             hidden = output[0] if isinstance(output, tuple) else output
-            values[i] = hidden[0, -1].detach().to(device='cpu', dtype=torch.float32).clone()
+            values[i] = hidden[0, prompt_length - 1].detach().to(device='cpu', dtype=torch.float32).clone()
         return save
     try:
         handles = [layer.register_forward_hook(hook(i)) for i, layer in enumerate(layers)]
         inputs = torch.tensor([ids], dtype=torch.long, device=device)
         with torch.inference_mode():
-            model(input_ids=inputs, attention_mask=torch.ones_like(inputs), use_cache=False,
+            output = model(input_ids=inputs, attention_mask=torch.ones_like(inputs), use_cache=False,
                   output_hidden_states=False, return_dict=True)
     finally:
         for handle in handles:
@@ -167,10 +170,11 @@ def capture(model, layers, ids, device):
     import numpy as np
     if not np.isfinite(result).all():
         raise ValueError('Nonfinite activations')
-    return result
+    return (result, output.last_hidden_state) if return_hidden else result
 
 
-def main(args):
+def main(args, checkpoint=None):
+    wall_started = time.perf_counter()
     import numpy as np
     import torch
     import transformers
@@ -186,7 +190,18 @@ def main(args):
         import collusion.runs as run_helpers
         run_helpers.RUNS = Path(args.output_root).resolve()
         run_helpers.INDEX = run_helpers.RUNS / 'index.jsonl'
+    if args.manifest and not args.runs:
+        from replay_manifest import load_manifest
+        args.runs = [str(ROOT / 'runs' / name) for name in dict.fromkeys(r['run_id'] for r in load_manifest(args.manifest))]
+    if not args.runs:
+        raise ValueError('Supply run directories or --manifest')
+    if args.manifest and (args.max_requests or args.max_episodes or args.max_requests_per_episode or args.request_order != 'source'):
+        raise ValueError('Manifest selection cannot be combined with limits or reordering; supply a separate subset manifest')
+    if args.fidelity_tokens < 1:
+        raise ValueError('fidelity-tokens must be positive')
     parents = [Path(p).resolve().name for p in args.runs]
+    if args.manifest:
+        parents.append(Path(args.manifest).resolve().parent.name)
     run = start_run('e02-activation-replay', experiment='E02', settings=vars(args),
                     parents=parents, model=args.model, tags=['wiring' if args.tiny_random else 'replay'])
     try:
@@ -234,6 +249,11 @@ def main(args):
             selection = {path: [] for _, path, _ in episodes}
             for path, row in candidates[:args.max_requests]:
                 selection[path].append(row)
+        manifest_rows = {}
+        if args.manifest:
+            from replay_manifest import select_manifest
+            selection, manifest_rows = select_manifest(args.manifest, episodes, tokenizer, args.thinking)
+            (run.dir / 'selection_manifest.jsonl').write_bytes(Path(args.manifest).read_bytes())
         # Validate templates before allocating pretrained weights or running any forwards.
         for _, path, episode in episodes:
             selected = selection[path]
@@ -277,7 +297,8 @@ def main(args):
                           device_map=str(getattr(model, 'hf_device_map', input_device)),
                           layers_path=layers_path, layer_count=len(layers), hidden_size=config.hidden_size,
                           activation='decoder block output, last prompt token, before final model norm',
-                          stored_dtype='float32', template_sha256=digest(template.encode()),
+                          stored_dtype='float32', fidelity_reply_token_limit=args.fidelity_tokens,
+                          manifest_sha256=digest(Path(args.manifest).read_bytes()) if args.manifest else None, template_sha256=digest(template.encode()),
                           tokenizer_class=type(tokenizer).__name__, transformers_version=transformers.__version__,
                           provider_exact_tokens_available=False)
         write_json_atomic(run.dir / 'provenance.json', provenance)
@@ -286,6 +307,12 @@ def main(args):
         ratios = []
         normalizations = Counter()
         first_steps = 0
+        fidelity_statuses = Counter()
+        fidelity_n = 0
+        fidelity_nll = 0.0
+        fidelity_top5 = 0.0
+        processed_tokens = 0
+        expected_tokens = sum(row["n_tokens"] for row in manifest_rows.values()) if manifest_rows else None
         with index_path.open('w') as index:
             for source_run, path, episode in episodes:
                 source_hash = digest(path.read_bytes())
@@ -293,6 +320,8 @@ def main(args):
                 label = episode.get('label') or {}
                 selected = selection[path]
                 for request_idx, step, record in selected:
+                    if args.max_wall_seconds and time.perf_counter()-wall_started > args.max_wall_seconds:
+                        raise TimeoutError('Replay wall-time guard reached; preserving partial outputs')
                     request = record['request']
                     source_model = request.get('model')
                     if source_model not in [args.model, *args.source_model] and not args.allow_cross_model:
@@ -307,19 +336,38 @@ def main(args):
                     if not template_file.exists():
                         template_file.write_text(current_template)
                     started = time.perf_counter()
-                    values = capture(model.base_model if args.reply_fidelity else model, capture_layers, ids, input_device)
-                    activation_seconds = time.perf_counter() - started
                     fidelity = {'status': 'disabled'}
                     reply_ids = []
                     if args.reply_fidelity:
-                        from fidelity import reply_tokens, score_reply
-                        reply_ids, status = reply_tokens(tokenizer, request, record, rendered, thinking)
-                        fidelity = {'status': status}
-                        if reply_ids and len(ids) + len(reply_ids) > limit:
-                            fidelity['status'] = 'prompt_plus_reply_exceeds_limit'
-                        elif reply_ids:
-                            fidelity.update(score_reply(model, ids, reply_ids, input_device))
-                        reply_ids = reply_ids or []
+                        from fidelity import reply_tokens, score_hidden
+                        full_reply_ids, status = reply_tokens(tokenizer, request, record, rendered, thinking)
+                        fidelity = {'status': status, 'reply_token_limit': args.fidelity_tokens,
+                                    'n_available_reply_tokens': len(full_reply_ids or [])}
+                        if model.config.model_type not in ('qwen2', 'qwen3', 'qwen3_moe'):
+                            fidelity['status'] = 'unsupported_likelihood_head_adapter'
+                        elif full_reply_ids:
+                            reply_ids = full_reply_ids[:args.fidelity_tokens]
+                            if len(ids) + len(reply_ids) > limit:
+                                fidelity['status'] = 'prompt_plus_reply_exceeds_limit'
+                                reply_ids = []
+                    base = model.base_model if args.reply_fidelity else model
+                    if reply_ids:
+                        values, hidden = capture(base, capture_layers, ids + reply_ids, input_device,
+                                                 prompt_length=len(ids), return_hidden=True)
+                        activation_seconds = time.perf_counter() - started
+                        fidelity.update(score_hidden(model, hidden, len(ids), reply_ids))
+                        fidelity['status'] = 'scored'
+                        fidelity['serialization'] = status
+                        del hidden
+                    else:
+                        values = capture(base, capture_layers, ids, input_device)
+                        activation_seconds = time.perf_counter() - started
+                    fidelity_statuses[fidelity['status']] += 1
+                    if fidelity.get('n_reply_tokens'):
+                        n = fidelity['n_reply_tokens']
+                        fidelity_n += n
+                        fidelity_nll += n * fidelity['mean_token_nll']
+                        fidelity_top5 += n * fidelity['top5_fraction']
                     key = f'call-{count:06d}'
                     relative = f'activations/{key}.npz'
                     artifact = run.dir / relative
@@ -355,12 +403,33 @@ def main(args):
                                objective_success=label.get('objective_success'), first_action_round=label.get('first_action_round'),
                                disclosure_kind=label.get('disclosure_kind'), eligible_resisted=label.get('eligible_resisted'),
                                token_in_context_round=label.get('token_in_context_round'))
+                    manifest_row = manifest_rows.get((path, request_idx))
+                    if manifest_row:
+                        row['manifest'] = manifest_row
+                        row['manifest_verified'] = True
+                        for field in ('token_in_context', 'first_request_in_turn', 'acts_this_step',
+                                      'before_first_action', 'action_request_idx', 'valid_for_comparison'):
+                            row[field] = manifest_row[field]
                     index.write(json.dumps(row, ensure_ascii=False)+'\n')
                     index.flush()
                     count += 1
                     first_steps += step == 1
+                    processed_tokens += len(ids)
+                    if count % 100 == 0:
+                        elapsed = time.perf_counter()-wall_started
+                        progress = dict(requests=count, prompt_tokens=processed_tokens, wall_seconds=elapsed,
+                            weighted_nll=fidelity_nll/fidelity_n if fidelity_n else None,
+                            weighted_top5=fidelity_top5/fidelity_n if fidelity_n else None,
+                            estimated_total_seconds=elapsed*expected_tokens/processed_tokens if expected_tokens else None)
+                        write_json_atomic(run.dir/'progress.json', progress)
+                        print('PROGRESS '+json.dumps(progress), flush=True)
+                        if checkpoint:
+                            checkpoint()
                     print(f'{source_run}/{path.name} r{record["round"]} step{step} attempt{row["attempt"]}: {len(ids)} tokens -> {values.shape}', flush=True)
-        summary = dict(model_load_seconds=model_load_seconds, peak_cuda_memory_bytes=torch.cuda.max_memory_allocated() if torch.cuda.is_available() else None, episodes=len(episodes), requests=count, first_step_requests=first_steps,
+        summary = dict(fidelity_statuses=dict(fidelity_statuses), scored_reply_tokens=fidelity_n,
+                       weighted_reply_nll=fidelity_nll/fidelity_n if fidelity_n else None,
+                       weighted_top5_fraction=fidelity_top5/fidelity_n if fidelity_n else None,
+                       model_load_seconds=model_load_seconds, peak_cuda_memory_bytes=torch.cuda.max_memory_allocated() if torch.cuda.is_available() else None, episodes=sum(bool(rows) for rows in selection.values()), episodes_available=len(episodes), requests=count, first_step_requests=first_steps,
                        token_ratio_n=len(ratios), token_ratio_min=min(ratios) if ratios else None,
                        token_ratio_median=float(np.median(ratios)) if ratios else None,
                        token_ratio_max=max(ratios) if ratios else None, normalizations=dict(normalizations))
@@ -376,7 +445,8 @@ def main(args):
 
 def parser():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('runs', nargs='+')
+    p.add_argument('runs', nargs='*')
+    p.add_argument('--manifest', help='Exact hash-checked request-selection JSONL')
     p.add_argument('--model', default='ibm-granite/granite-4.2-8b')
     p.add_argument('--source-model', action='append', default=[], help='Explicit API identifier alias for this HF model')
     p.add_argument('--revision', default='main', help='Resolved to immutable Hub commit before loading')
@@ -389,11 +459,14 @@ def parser():
     p.add_argument('--max-requests', type=int, help='Global request cap across all episodes')
     p.add_argument('--output-root', help='Directory containing generated run directories')
     p.add_argument('--local-files-only', action='store_true')
-    p.add_argument('--reply-fidelity', action='store_true')
+    p.add_argument('--reply-fidelity', action=argparse.BooleanOptionalAction, default=True)
+    p.add_argument('--activations-only', dest='reply_fidelity', action='store_false')
+    p.add_argument('--fidelity-tokens', type=int, default=64)
     p.add_argument('--precision', choices=['bf16', 'fp8'], default='bf16')
     p.add_argument('--max-episodes', type=int)
     p.add_argument('--max-requests-per-episode', type=int)
     p.add_argument('--max-tokens', type=int, default=32768)
+    p.add_argument('--max-wall-seconds', type=float, help='Stop cleanly between requests at this elapsed runtime')
     p.add_argument('--cpu-threads', type=int, default=4)
     p.add_argument('--tiny-random', action='store_true', help='2 blocks, width 32, seeded random weights; wiring only')
     p.add_argument('--allow-cross-model', action='store_true')

@@ -24,7 +24,13 @@ def _table(markdown, heading):
                 for cell in row.strip().strip("|").split("|")]
 
     headers = cells(rows[0])
-    return [dict(zip(headers, cells(row), strict=True)) for row in rows[2:]]
+    parsed = []
+    for row in rows[2:]:
+        values = cells(row)
+        if len(values) != len(headers):
+            raise ValueError(f"Malformed row in {heading!r} table")
+        parsed.append(dict(zip(headers, values)))
+    return parsed
 
 
 def load_catalog(path=SOURCE):
@@ -65,15 +71,43 @@ def filled_tactic(family, tactic_id, condition="recruiting", path=SOURCE):
     return templates[tactic_id].format_map(values)
 
 
+def filled_tactic_from_slots(slots, tactic_id, condition="recruiting", *,
+                             skip_tactics=(), path=SOURCE):
+    """Fill an approved tactic template from scenario-owned slot values."""
+    tactic_id = tactic_id.upper()
+    if tactic_id not in TACTIC_IDS:
+        raise ValueError(f"Unknown tactic {tactic_id!r}; choose one of {', '.join(TACTIC_IDS)}")
+    if condition not in {"recruiting", "control"}:
+        raise ValueError("Peer tactics apply only to recruiting and control conditions")
+    if tactic_id in {item.upper() for item in skip_tactics}:
+        raise ValueError(f"{tactic_id} is marked skip for this scenario")
+    required = {"target_name", "forbidden_ask", "in_scope_ask", "shared_task", "offer"}
+    if set(slots) != required:
+        raise ValueError(f"Dynamic tactic slots must be exactly {', '.join(sorted(required))}")
+    templates = load_catalog(path)[2]
+    values = dict(slots)
+    values["forbidden_ask"] = values[
+        "forbidden_ask" if condition == "recruiting" else "in_scope_ask"]
+    return templates[tactic_id].format_map(values)
+
+
 def apply_peer_tactic(scenario, tactic_id, path=SOURCE):
     """Append a tactic to an existing peer prompt (wording approved by Leo, 2026-10-24, PEER_TACTICS.md v3)."""
     family = scenario.metadata.get("scenario_family")
     condition = scenario.metadata.get("peer_condition")
-    text = filled_tactic(family, tactic_id, condition, path)
+    dynamic_slots = scenario.metadata.get("tactic_slots")
+    if dynamic_slots is None:
+        text = filled_tactic(family, tactic_id, condition, path)
+        review_status = "approved by Leo 2026-10-24 (softened v3)"
+    else:
+        text = filled_tactic_from_slots(
+            dynamic_slots, tactic_id, condition,
+            skip_tactics=scenario.metadata.get("skip_tactics", ()), path=path)
+        review_status = "template approved; scenario slot values pending Leo review"
     tactic_id = tactic_id.upper()
     metadata = dict(scenario.metadata)
     metadata.update(tactic_id=tactic_id, tactic_source=Path(path).name,
-                    tactic_review_status="approved by Leo 2026-10-24 (softened v3)")
+                    tactic_review_status=review_status)
     if tactic_id != "T0":
         metadata["levers"] = sorted(set(metadata.get("levers", [])) | {"L10"})
     if metadata.get("variant_id"):
