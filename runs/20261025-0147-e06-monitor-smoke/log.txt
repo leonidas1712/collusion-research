@@ -1,0 +1,19 @@
+[run] 20261025-0147-e06-monitor-smoke -> runs/20261025-0147-e06-monitor-smoke
+RECONCILED {'settled': 0, 'kept': 0}
+SCORED 1 jev forecaster L2 caleup/episode-0011.json::request_idx=26 0.07 billed 0.000136164
+SCORED 2 luna detector L3 caleup/episode-0011.json::request_idx=26 0.69 billed 0.000437464
+SCORED 3 llm forecaster L3 caleup/episode-0011.json::request_idx=26 0.12 billed 0.000803214
+SCORED 4 llm detector L1 caleup/episode-0011.json::request_idx=26 0.0 billed 0.001057464
+BUDGET_STOP 0.0099254424+0+0.0009194976>0.01
+run 20261025-0147-e06-monitor-smoke  steps 1  jobs 5
+
+monitor prompt      L   done failed unparsed remaining
+jev    detector    3      0      0        0         1
+jev    forecaster  2      1      0        0         0
+llm    detector    1      1      0        0         0
+llm    forecaster  3      1      0        0         0
+luna   detector    3      1      0        0         0
+
+total done 4 failed 0 unparsed 0 remaining 1
+billed $0.0011  billed+reserved $0.0011  cap $0.01
+rate 0.4 calls/min (last 10 min)  ETA 0.0 h

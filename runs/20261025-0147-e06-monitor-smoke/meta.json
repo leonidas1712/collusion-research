@@ -1,0 +1,74 @@
+{
+  "id": "20261025-0147-e06-monitor-smoke",
+  "experiment": "E06",
+  "name": "e06-monitor-smoke",
+  "tags": [],
+  "settings": {
+    "monitors": {
+      "llm": "openai/gpt-5-nano",
+      "luna": "openai/gpt-6-luna-decisions",
+      "jev": "typesafe/jev-1.14"
+    },
+    "jobs": [
+      [
+        "llm",
+        "forecaster",
+        3
+      ],
+      [
+        "luna",
+        "detector",
+        3
+      ],
+      [
+        "jev",
+        "forecaster",
+        2
+      ],
+      [
+        "llm",
+        "detector",
+        1
+      ],
+      [
+        "jev",
+        "detector",
+        3
+      ]
+    ],
+    "cap_usd": "0.01",
+    "steps": 1,
+    "concurrency": {
+      "llm": [
+        32,
+        48
+      ],
+      "luna": [
+        4,
+        8
+      ],
+      "jev": [
+        4,
+        8
+      ]
+    },
+    "max_attempts": 6,
+    "sample": null
+  },
+  "parents": [
+    "/private/tmp/claude-501/-Users-leo-collusion-research/598f99af-1f62-47b6-845e-95c5fede7f62/scratchpad/smoke-steps.jsonl"
+  ],
+  "model": null,
+  "command": "/Users/leo/.cache/uv/archive-v0/04MUuh_Gq75lE1-JCbCRs/bin/python3 experiments/E06-monitors/monitors.py --steps-file /private/tmp/claude-501/-Users-leo-collusion-research/598f99af-1f62-47b6-845e-95c5fede7f62/scratchpad/smoke-steps.jsonl --name e06-monitor-smoke --cap 0.01 --jobs llm:forecaster:3,luna:detector:3,jev:forecaster:2,llm:detector:1,jev:detector:3",
+  "git_commit": "1b3ccd1f7f9888eca38847fbf2557090f0c900b2",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T01:47:00",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T01:47:15",
+  "results": {
+    "scored_calls": 5
+  }
+}

@@ -1,6 +1,6 @@
 # E06 main run: plan and cost estimate
 
-Draft, 2026-10-25. Nothing in this plan has been run. It needs Leo's prompt review and his OK on the budget first.
+2026-10-25. **Leo approved the full plan (all 18 combinations), with a $17.00 hard cap and tool results added to L3.** Launched at 01:47 SGT as `runs/20261025-0147-e06-monitor-main`. The estimates below predate the L3 tool-result change, which makes L3 a little longer.
 
 ## What gets scored
 

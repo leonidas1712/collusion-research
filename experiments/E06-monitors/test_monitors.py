@@ -4,7 +4,10 @@ import json
 import sys
 import tempfile
 import unittest
+import urllib.error
 import urllib.request
+import os
+import time
 from decimal import Decimal
 from pathlib import Path
 from unittest import mock
@@ -72,7 +75,8 @@ class TestLadder(unittest.TestCase):
         present = {
             1: {'POSTED_REPLY', 'SENT_VIA_TOOL', 'read_file'},
             2: {'POSTED_REPLY', 'SENT_VIA_TOOL', 'read_file', 'PEER_ONE', 'PEER_TWO', 'PEER_THREE'},
-            3: {'POSTED_REPLY', 'SENT_VIA_TOOL', 'read_file', 'PEER_ONE', 'PEER_TWO', 'PEER_THREE', 'UNPOSTED_NOTE', 'AFTER_SEND_TEXT'},
+            3: {'POSTED_REPLY', 'SENT_VIA_TOOL', 'read_file', 'PEER_ONE', 'PEER_TWO', 'PEER_THREE', 'UNPOSTED_NOTE', 'AFTER_SEND_TEXT',
+                'TOOL_RESULT_SECRET', '[tool result]', '"delivered": true'},
         }
         everything = set().union(*present.values())
         for level in P.LEVELS:
@@ -92,8 +96,22 @@ class TestLadder(unittest.TestCase):
     def test_no_future_information_at_any_level(self):
         for level in P.LEVELS:
             for name, text in self.rendered(level).items():
-                for marker in ('FUTURE_RESPONSE', 'FUTURE_PEER', 'FUTURE_FINAL', 'TOOL_RESULT_SECRET'):
+                for marker in ('FUTURE_RESPONSE', 'FUTURE_PEER', 'FUTURE_FINAL'):
                     self.assertNotIn(marker, text, (level, name))
+
+    def test_tool_results_only_at_level_3(self):
+        for level in (1, 2):
+            for name, text in self.rendered(level).items():
+                self.assertNotIn('TOOL_RESULT_SECRET', text, (level, name))
+                self.assertNotIn('[tool result]', text, (level, name))
+        for name, text in self.rendered(3).items():
+            self.assertIn('[tool result] {"content": "STAGING_DEPLOY_TOKEN=TOOL_RESULT_SECRET"}', text, name)
+            self.assertIn('and the results they returned', text, name)
+
+    def test_level_3_tool_result_follows_its_call(self):
+        hist = P.fields(self.msgs, 3, META)['history']
+        self.assertLess(hist.index('read_file('), hist.index('TOOL_RESULT_SECRET'))
+        self.assertLess(hist.index('TOOL_RESULT_SECRET'), hist.index('POSTED_REPLY'))
 
     def test_input_unchanged_when_future_is_deleted(self):
         truncated = copy.deepcopy(self.ep)
@@ -213,6 +231,17 @@ class TestParsing(unittest.TestCase):
         self.assertEqual(M.parse('llm', 'forecaster', raw), 0.4)
 
 
+SERIAL = {'llm': (1, 1), 'luna': (1, 1), 'jev': (1, 1)}
+
+
+def http_error(code, retry_after=None):
+    import email.message
+    headers = email.message.Message()
+    if retry_after is not None:
+        headers['Retry-After'] = str(retry_after)
+    return urllib.error.HTTPError('u', code, 'err', headers, None)
+
+
 def fake_steps(ep_key='run/episode-0001.json'):
     ep = make_episode()
     return ep, [{'episode': ep_key, 'request_idx': i, 'step_id': f'{ep_key}::request_idx={i}', 'row': i,
@@ -226,6 +255,7 @@ class TestRunner(unittest.TestCase):
         self.dir = Path(self.tmp.name)
         self.ep, self.steps = fake_steps()
         self.calls = []
+        self.sleeps = []
         self.prices = {'llm': (Decimal('5e-8'), Decimal('4e-7')), 'luna': (Decimal('1e-7'), Decimal(0)), 'jev': (Decimal('4.2e-8'), Decimal(0))}
 
     def tearDown(self):
@@ -238,9 +268,10 @@ class TestRunner(unittest.TestCase):
         q = next(iter(body['questions']))
         return {'answers': {q: {'probabilities': {'yes': 0.3, 'no': 0.7}}}, 'usage': {'cost': 0.00002}}
 
-    def run_once(self, ledger, jobs, **kw):
-        return M.score_steps(self.steps, jobs, self.dir / 'cache', ledger, self.prices, key='k', post=self.post,
-                             load_episode=lambda k: self.ep, **kw)
+    def run_once(self, ledger, jobs, post=None, **kw):
+        kw.setdefault('concurrency', SERIAL)
+        return M.score_steps(self.steps, jobs, self.dir / 'cache', ledger, self.prices, key='k', post=post or self.post,
+                             load_episode=lambda k: self.ep, sleep=self.sleeps.append, **kw)
 
     def test_cache_prevents_repeat_calls(self):
         jobs = [(m, p, lv) for m in M.MONITORS for p in P.PROMPTS for lv in P.LEVELS]
@@ -275,15 +306,54 @@ class TestRunner(unittest.TestCase):
         with self.assertRaises(ValueError):
             M.Ledger(self.dir / 'b.json', Decimal('2.51'))
 
-    def test_failed_call_keeps_reservation(self):
+    def test_failed_call_recorded_then_retried_on_rerun(self):
         ledger = M.Ledger(self.dir / 'budget.json', Decimal('0.5'))
+        attempts = []
         def broken(*a):
-            raise OSError('down')
-        with self.assertRaises(OSError):
-            M.score_steps(self.steps, [('luna', 'forecaster', 1)], self.dir / 'cache', ledger, self.prices, key='k',
-                          post=broken, load_episode=lambda k: self.ep)
-        self.assertGreater(Decimal(ledger.data['charged_or_reserved']), 0)
+            attempts.append(1); raise OSError('down')
+        self.run_once(ledger, [('luna', 'forecaster', 1)], post=broken)
+        self.assertEqual(len(attempts), 2 * M.MAX_ATTEMPTS)  # two steps, six attempts each
+        self.assertEqual(len(self.sleeps), 2 * (M.MAX_ATTEMPTS - 1))
+        self.assertGreater(Decimal(ledger.data['charged_or_reserved']), 0)  # reservation kept
         self.assertEqual(list((self.dir / 'cache').glob('*.json')), [])
+        failed = list((self.dir / 'failed').glob('*.json'))
+        self.assertEqual(len(failed), 2)
+        self.assertEqual({r['state'] for r in ledger.data['calls']}, {'failed_kept_reservation'})
+        # Rerun with a working endpoint: the failed calls are retried and the failure markers removed.
+        self.assertEqual(self.run_once(ledger, [('luna', 'forecaster', 1)]), 2)
+        self.assertEqual(len(list((self.dir / 'cache').glob('*.json'))), 2)
+        self.assertEqual(list((self.dir / 'failed').glob('*.json')), [])
+
+    def test_non_retryable_4xx_fails_once(self):
+        ledger = M.Ledger(self.dir / 'budget.json', Decimal('0.5'))
+        attempts = []
+        def bad_request(*a):
+            attempts.append(1); raise http_error(400)
+        self.run_once(ledger, [('jev', 'detector', 2)], post=bad_request)
+        self.assertEqual(len(attempts), 2); self.assertEqual(self.sleeps, [])
+        self.assertEqual(json.loads(next((self.dir / 'failed').glob('*.json')).read_text())['status'], 400)
+
+    def test_resume_skips_cached_calls(self):
+        jobs = [(m, p, lv) for m in M.MONITORS for p in P.PROMPTS for lv in P.LEVELS]
+        ledger = M.Ledger(self.dir / 'budget.json', Decimal('0.5'))
+        self.assertEqual(self.run_once(ledger, jobs, max_calls=7), 7)
+        self.assertEqual(len(list((self.dir / 'cache').glob('*.json'))), 7)
+        self.calls.clear()
+        self.assertEqual(self.run_once(ledger, jobs), 2 * len(jobs) - 7)
+        self.assertEqual(len(self.calls), 2 * len(jobs) - 7)
+        self.assertEqual(self.run_once(ledger, jobs), 0)
+
+    def test_parse_retry_then_success(self):
+        replies = iter(['no score here', '<score>6</score>'])
+        def flaky(url, body, key):
+            return {'choices': [{'message': {'content': next(replies)}}], 'usage': {'cost': 0.00001}}
+        ledger = M.Ledger(self.dir / 'budget.json', Decimal('0.5'))
+        self.steps = self.steps[:1]
+        self.run_once(ledger, [('llm', 'detector', 1)], post=flaky)
+        r = json.loads(next((self.dir / 'cache').glob('*.json')).read_text())
+        self.assertEqual(r['score'], 0.6); self.assertEqual(len(r['attempts']), 2)
+        self.assertEqual(len(ledger.data['calls']), 2)
+        self.assertEqual(list((self.dir / 'unparsed').glob('*.json')), [])
 
     def test_sha_mismatch_rejected(self):
         self.steps[0]['request_sha256'] = 'wrong'
@@ -298,10 +368,148 @@ class TestRunner(unittest.TestCase):
         def bad(url, body, key):
             return {'choices': [{'message': {'content': 'no score'}}], 'usage': {'cost': 0.0}}
         ledger = M.Ledger(self.dir / 'budget.json', Decimal('0.5'))
-        M.score_steps(self.steps[:1], [('llm', 'detector', 1)], self.dir / 'cache', ledger, self.prices, key='k',
-                      post=bad, load_episode=lambda k: self.ep)
+        self.steps = self.steps[:1]
+        self.run_once(ledger, [('llm', 'detector', 1)], post=bad)
         r = M.collect(self.dir / 'cache')[0]
         self.assertIsNone(r['score']); self.assertIn('score', r['parse_error'])
+        self.assertEqual(len(ledger.data['calls']), M.PARSE_ATTEMPTS)  # one retry, then recorded as unparsed
+        self.assertEqual(len(list((self.dir / 'unparsed').glob('*.json'))), 1)
+        self.assertEqual(self.run_once(ledger, [('llm', 'detector', 1)], post=bad), 0)  # unparsed counts as done
+
+    def test_threaded_run_matches_serial(self):
+        jobs = [(m, p, lv) for m in M.MONITORS for p in P.PROMPTS for lv in P.LEVELS]
+        ledger = M.Ledger(self.dir / 'budget.json', Decimal('0.5'))
+        self.assertEqual(self.run_once(ledger, jobs, concurrency={'llm': (3, 4), 'luna': (2, 2), 'jev': (2, 2)}), 2 * len(jobs))
+        self.assertEqual(len(M.collect(self.dir / 'cache')), 2 * len(jobs))
+        self.assertEqual(Decimal(ledger.data['charged_or_reserved']), Decimal(ledger.data['billed']))
+
+
+class TestRetries(unittest.TestCase):
+    def setUp(self):
+        self.sleeps = []
+
+    def run_post(self, outcomes, limiter=None):
+        seq = iter(outcomes)
+        def post(*a):
+            x = next(seq)
+            if isinstance(x, BaseException):
+                raise x
+            return x
+        return M.post_with_retry(post, 'u', {}, 'k', sleep=self.sleeps.append, rng=mock.Mock(random=lambda: 0.5), limiter=limiter)
+
+    def test_backoff_then_success(self):
+        raw, attempts = self.run_post([http_error(503), TimeoutError(), ConnectionResetError(), {'ok': 1}])
+        self.assertEqual((raw, attempts), ({'ok': 1}, 4))
+        self.assertEqual(self.sleeps, [2.0, 4.0, 8.0])  # 2**attempt * (0.5 + 0.5)
+
+    def test_retry_after_honoured_and_429_slows_limiter(self):
+        limiter = M.Limiter(8, 8, clock=lambda: 100.0)
+        raw, _ = self.run_post([http_error(429, retry_after=7), {'ok': 1}], limiter=limiter)
+        self.assertEqual(self.sleeps, [7.0]); self.assertEqual(limiter.limit, 4)
+
+    def test_gives_up_after_max_attempts(self):
+        with self.assertRaises(M.CallFailed) as ctx:
+            self.run_post([http_error(502)] * M.MAX_ATTEMPTS)
+        self.assertEqual(ctx.exception.attempts, M.MAX_ATTEMPTS)
+        self.assertEqual(len(self.sleeps), M.MAX_ATTEMPTS - 1)
+        self.assertTrue(all(s <= 60 * 1.0 for s in self.sleeps))
+
+    def test_no_retry_on_other_4xx(self):
+        for code in (400, 401, 402, 404):
+            with self.assertRaises(M.CallFailed) as ctx:
+                self.run_post([http_error(code), {'ok': 1}])
+            self.assertEqual((ctx.exception.attempts, ctx.exception.status), (1, code))
+        self.assertEqual(self.sleeps, [])
+
+
+class TestLimiter(unittest.TestCase):
+    def test_halves_once_per_cooldown_and_grows(self):
+        t = [0.0]
+        lim = M.Limiter(16, 20, minimum=2, grow_every=3, cooldown=10, clock=lambda: t[0])
+        lim.on_429(); self.assertEqual(lim.limit, 8)
+        lim.on_429(); self.assertEqual(lim.limit, 8)  # same burst
+        t[0] = 11; lim.on_429(); self.assertEqual(lim.limit, 4)
+        t[0] = 30; lim.on_429(); lim.on_429(); t[0] = 50; lim.on_429(); self.assertEqual(lim.limit, 2)  # floor
+        for _ in range(3):
+            lim.acquire(); lim.release(True)
+        self.assertEqual(lim.limit, 3)
+
+
+class TestLedgerRecovery(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(); self.dir = Path(self.tmp.name)
+        (self.dir / 'cache').mkdir()
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_reconcile_stale_reservations(self):
+        now = time.time()
+        dead = 2 ** 22 + 12345  # assumed not a live pid
+        self.assertFalse(M.pid_alive(dead))
+        data = {'billed': '0', 'charged_or_reserved': '0.40', 'calls': [
+            {'key': 'a', 'reserve': '0.10', 'state': 'reserved', 'pid': dead, 't': now},             # dead, cached cost
+            {'key': 'b', 'reserve': '0.10', 'state': 'reserved', 'pid': dead, 't': now},             # dead, nothing cached
+            {'key': 'c', 'reserve': '0.10', 'state': 'reserved', 'pid': os.getppid(), 't': now},     # live shard, recent
+            {'key': 'd', 'reserve': '0.10', 'state': 'reserved', 'pid': os.getppid(), 't': now - 7200}]}  # live but stale
+        (self.dir / 'budget.json').write_text(json.dumps(data))
+        (self.dir / 'cache' / 'a.json').write_text(json.dumps({'cost': 0.02}))
+        ledger = M.Ledger(self.dir / 'budget.json', Decimal('0.5'))
+        self.assertEqual(ledger.reconcile(self.dir / 'cache', stale_minutes=30, now=now), {'settled': 1, 'kept': 2})
+        states = {r['key']: r['state'] for r in ledger.data['calls']}
+        self.assertEqual(states, {'a': 'billed', 'b': 'stale_kept', 'c': 'reserved', 'd': 'stale_kept'})
+        self.assertEqual(Decimal(ledger.data['charged_or_reserved']), Decimal('0.32'))
+        self.assertEqual(Decimal(ledger.data['billed']), Decimal('0.02'))
+        self.assertEqual(json.loads((self.dir / 'budget.json').read_text())['charged_or_reserved'], '0.32')
+
+    def test_cap_is_global_across_shard_ledgers(self):
+        (self.dir / 'budget-llm-0.json').write_text(json.dumps({'billed': '0.4', 'charged_or_reserved': '0.49', 'calls': []}))
+        ledger = M.Ledger(self.dir / 'budget-luna.json', Decimal('0.5'))
+        ledger.reserve('x', Decimal('0.005'))
+        with self.assertRaises(M.BudgetStop):
+            ledger.reserve('y', Decimal('0.01'))
+        self.assertEqual(ledger.global_used(), Decimal('0.495'))
+
+    def test_main_cap_only_for_main_runs(self):
+        with self.assertRaises(ValueError):
+            M.Ledger(self.dir / 'b.json', Decimal('17.00'))
+        M.Ledger(self.dir / 'b.json', Decimal('17.00'), limit=M.MAX_CAP_MAIN)
+        with self.assertRaises(ValueError):
+            M.Ledger(self.dir / 'b.json', Decimal('17.01'), limit=M.MAX_CAP_MAIN)
+
+
+class TestAtomicCacheAndStatus(unittest.TestCase):
+    def test_interrupted_write_leaves_no_cache_entry(self):
+        with tempfile.TemporaryDirectory() as d:
+            cache = Path(d) / 'cache'; cache.mkdir()
+            with mock.patch('os.replace', side_effect=KeyboardInterrupt):
+                with self.assertRaises(KeyboardInterrupt):
+                    M.write_json_atomic(cache / 'k1.json', {'score': 1})
+            self.assertFalse((cache / 'k1.json').exists())
+            self.assertTrue((cache / 'k1.json.tmp').exists())
+            ep, steps = fake_steps()
+            tasks = M.plan_tasks(steps[:1], [('jev', 'detector', 1)], cache)
+            self.assertEqual(len(tasks), 1)  # the half-written temp file is not taken as done
+
+    def test_status_counts(self):
+        with tempfile.TemporaryDirectory() as d:
+            run = Path(d) / '20261025-0000-e06-monitor-main'; (run / 'cache').mkdir(parents=True)
+            (run / 'failed').mkdir(); (run / 'unparsed').mkdir()
+            ep, steps = fake_steps()
+            jobs = [['llm', 'detector', 3], ['jev', 'forecaster', 1]]
+            (run / 'meta.json').write_text(json.dumps({'settings': {'jobs': jobs, 'cap_usd': '17.00'}}))
+            (run / 'steps.jsonl').write_text(''.join(json.dumps(s) + '\n' for s in steps))
+            k0, _ = M.task_key(steps[0], ('llm', 'detector', 3)); k1, _ = M.task_key(steps[1], ('llm', 'detector', 3))
+            k2, _ = M.task_key(steps[0], ('jev', 'forecaster', 1))
+            (run / 'cache' / f'{k0}.json').write_text('{}'); (run / 'unparsed' / f'{k0}.json').write_text('{}')
+            (run / 'failed' / f'{k1}.json').write_text('{}'); (run / 'cache' / f'{k2}.json').write_text('{}')
+            (run / 'budget.json').write_text(json.dumps({'billed': '0.01', 'charged_or_reserved': '0.02', 'calls': []}))
+            with mock.patch.object(urllib.request, 'urlopen', no_network):
+                text, info = M.status(run)
+            self.assertEqual(info['rows']['llm|detector|3'], {'done': 1, 'unparsed': 1, 'failed': 1})
+            self.assertEqual(info['rows']['jev|forecaster|1'], {'done': 1, 'remaining': 1, 'unparsed': 0})
+            self.assertEqual(info['remaining'], 2); self.assertEqual(info['billed'], '0.01')
+            self.assertIn('calls/min', text)
 
 
 class TestStepsFile(unittest.TestCase):

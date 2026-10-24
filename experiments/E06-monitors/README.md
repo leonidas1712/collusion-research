@@ -20,6 +20,13 @@ experiments/E05-probes/.venv/bin/python -m unittest discover -s experiments/E06-
 
 For the main run, `--steps-file <step table>` scores every eligible row and does no sampling (see MAIN_RUN_PLAN.md).
 
-The code caps every ledger at $2.50 (`MAX_CAP`). The main run needs this raised, and only after the budget OK. Each process reserves the worst-case cost before every call and settles it to the billed `usage.cost`. When several processes run at once, each one gets its own ledger file, so the per-process caps must add up to no more than the total budget. Results already in the cache are reused, so no call is paid for twice.
+Caps: $2.50 (`MAX_CAP`) for prelim and smoke runs; $17.00 (`MAX_CAP_MAIN`, Leo 2026-10-25) only for run directories named `e06-monitor-main`. The cap is global over every `budget*.json` in the run directory.
+
+Robustness:
+- 429, 5xx, timeouts and connection errors back off exponentially with jitter, honour Retry-After, and give up after 6 attempts. The failure is recorded in `failed/` and the call is retried on the next run. Other 4xx errors fail at once.
+- A parse failure gets one retry, then is recorded in `unparsed/`.
+- Each monitor's concurrency halves when 429s cluster.
+- Every completed call is written atomically to `cache/`. Rerunning skips it, and on start any stale reservations are reconciled.
+- Progress: `monitors.py --run runs/<id> --status` (no API calls). Each process reserves the worst-case cost before every call and settles it to the billed `usage.cost`. When several processes run at once, each one gets its own ledger file, so the per-process caps must add up to no more than the total budget. Results already in the cache are reused, so no call is paid for twice.
 
 Preliminary run: `runs/20261024-2357-e06-monitor-prelim/report.md`.
