@@ -302,3 +302,10 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 - **Alarms (5% benign target):** the alarming monitors fire on held episodes about as often as on give-in episodes. GPT-5-nano detector L2: 87% recall vs 83% held. Jev forecaster L2: 98% vs 98%. They detect the pressure, not the outcome. Luna detector L3 control FPR is 10.7%, against a 5% target, so it over-flags a little at L3 as feared.
 - **Context ladder:** L2, which adds the peer's messages, usually beats L1. L3, which adds unposted text and tool results, does not help further. For Jev it helps slightly; for GPT-5-nano and Luna it hurts.
 - **Reading:** neither white-box nor black-box methods predict *who* gives in beyond the situation, at this data size.
+
+### 2026-10-25 ~08:20 SGT — Near-term labels on the monitors: the Jev forecaster picks up imminent give-in
+
+- **Labels:** codex-2 `runs/20261025-0730-e05-near-term/labels.jsonl`. A = hazard, positive if the leak comes this round or next, all 2,910 rows. B = round contrast, near-action steps vs held, 2,460 rows. C = within 3 calls vs held, 2,478 rows. Scored with `score_main.py --label-variant` (ranking only); reports in `report_main_<variant>.md`.
+- **Jev forecaster L3**, within scenario × round: **A 0.660 [0.613, 0.704], B 0.677 [0.627, 0.725], C 0.687 [0.630, 0.739]**. Added value over turn + length: +0.055 [0.027, 0.086]. Jev L2 scores 0.635–0.654. This is the first method whose CI clears 0.5 by a margin and adds value. All other monitors stay at 0.50–0.60.
+- **Probe:** these numbers are the *eventual-label* probe scored against the near-term label: A 0.52 / 0.57 held-out scenario, B 0.52 / 0.58. The refit on near-term labels is still running (codex-2).
+- **Caution:** the forecaster reads the target's own recent text, and the last steps before a leak may already *sound* wavering. So this may be "the words give it away", not hidden intent. The refit probe decides whether activations add anything over the text.
