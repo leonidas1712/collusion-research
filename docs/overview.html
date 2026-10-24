@@ -501,6 +501,11 @@ After five rounds every step has a score from a probe that never saw its episode
     layer 50 → 0.66
   retrain layer 32 on B C D E
   unlock A, score G1's and H1's steps   (first and only look at A)</pre>
+  <div class="callout"><p><strong>What a step is, concretely.</strong> Each time we call the target, its input is everything so far, ending where it's about to write: step 1 = [system, user: task + peer message] → it writes read_file(…); step 2 = [… + assistant: read_file(…), tool: file contents] → it writes a reply; and so on. We take the internal state at the last token of each input: one 5,120-number vector per layer. All of an episode's steps go in the same pile.</p></div>
+  <div class="grid2">
+    <div class="callout"><p><strong>Why folds beat one 80/20 split</strong></p><p>One split scores only the 20 test episodes (~7 give-ins); the result depends on which 20. With 5 folds each probe still tests only 20%, but each round tests a different 20%, so after five rounds <em>all</em> episodes have a score from a probe that didn't train on them. AUROC is computed once over all of them: ~37 give-ins instead of ~7.</p></div>
+    <div class="callout"><p><strong>Five probes, then a sixth</strong></p><p>The 5 fold probes are only for measuring: "if we train a probe this way, how well does it do on unseen episodes?" The probe we actually use (climb plots, new scenarios, steering) is a 6th, trained on all episodes at the chosen layer. The 5-fold number is the honest estimate of how well it works.</p></div>
+  </div>
   <div class="grid2">
     <div class="callout"><p><strong>Why rotate?</strong></p><p>One 80/20 split tests only a few episodes, and the score depends on which ones. Rotating tests all of them and uses the data fully.</p></div>
     <div class="callout warn"><p><strong>Why the practice split?</strong></p><p>Choosing the best of 64 layers by its test score flatters the result by luck. Choosing on the practice pile keeps the test score a genuine first look. Different rounds may pick different layers; that shows how stable the choice is.</p></div>
