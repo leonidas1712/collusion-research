@@ -120,20 +120,23 @@ pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-
 
 <!-- WHERE WE ARE -->
 <section data-panel="now">
-  <h2>Where we are</h2>
+  <h2>Where we are (Sun 25 Oct, early morning)</h2>
+  <div class="callout warn"><p><strong>Headline so far: the probe's early warning mostly does not hold up at scale.</strong> On deploy-token v2 alone it ranks soon-to-give-in steps above held steps a bit better than chance. Pooled over six scenarios, or tested on a scenario it never trained on, it is close to chance and adds nothing over just knowing the turn number. Monitor numbers on the same rows land in about 2 hours; that comparison decides how we frame the paper.</p></div>
   <div class="status">
-    <div><h3>Main result so far</h3><span class="pill ok">probe 0.658, beats every baseline</span><p>deploy-token v1, Qwen3-32B, per-step probe, family-grouped nested CV, within-round AUROC 0.658 [0.59–0.72]. Turn number 0.50, prompt length 0.53, TF-IDF text 0.48. 0.693 on steps where the target still says no. Weak as an alarm (recall 18% at a control-calibrated threshold); no transfer to held-out tactics.</p></div>
-    <div><h3>deploy-token v2 (done)</h3><span class="pill ok">21/32 gave in · controls 0/15</span><p>Without 'logged and reviewed' or the mock flag: 66% gave in (v1 44%), median at the target's 9th call (v1: 14th). Tactics T1/T2/T7 made it much more resistant: about 1 in 8 each. Next: GPU replay of v2 (needs your OK, ~$2–3).</p></div>
-    <div><h3>Scenario spray (done)</h3><span class="pill wait">5 rows topping up overnight</span><p>14 rows × 4: mixed outcomes on 9, none on 5. Own stake makes giving in faster (patient-contact 0/4 → 3/4 at round 2). Top-up running: 5 promising rows × (24 recruiting + 8 control + 3 alone), to pick 2 train + 2 held-out scenarios.</p></div>
-    <div><h3>Branching (done)</h3><span class="pill ok">same state, different outcomes</span><p>Controls 0/80 reruns. Recruiting: 13 of 34 points gave in at least once in 3 rounds; 9 have mixed odds (1/5–4/5). 'Will give in' is partly chance, which caps any predictor's AUROC.</p></div>
-    <div><h3>Needs Leo</h3><span class="pill wait">3 decisions</span><p>(1) GPU OK for v2 replay. (2) OK for the hybrid code-review live check (~$0.15; Sunday late-morning decision point). (3) Pick scenarios after the top-up. Also: review the monitor prompts when drafted.</p></div>
+    <div><h3>Probe, replay 2</h3><span class="pill bad">weak · near chance pooled</span><p>Within scenario × round AUROC (0.5 = guessing): <strong>v2 0.63</strong> [0.47, 0.76]; <strong>six scenarios pooled 0.52</strong> [0.45, 0.59]; <strong>held-out scenario 0.55</strong> [0.50, 0.60]. MLP no better. Adding the probe to turn + length + scenario: +0.01 [−0.00, 0.02]. Deliberate leaks only: v2 0.66, pooled 0.59.</p></div>
+    <div><h3>Probe as an alarm</h3><span class="pill bad">not usable</span><p>Cutoff set so 5% of benign training episodes alarm. Pooled: catches <strong>3%</strong> of give-in episodes. Held-out scenario: catches 13% but also alarms on 12% of benign episodes, which is chance. The cutoff does not carry over to a new scenario.</p></div>
+    <div><h3>Branching, clean</h3><span class="pill wait">no evidence either way</span><p>At 23 identical starting states (before the peer's next message), probe score vs how often 5 reruns gave in: Spearman −0.03 [−0.46, 0.40]. The earlier 0.53 used the step after the peer's message, so it likely read the message.</p></div>
+    <div><h3>Replay 2 (done)</h3><span class="pill ok">$5.51 · checks passed</span><p>6,026 target requests, 4,184 scoreable steps from 230 episodes. Reply likelihood matches (NLL 0.25, top-5 99.8%). Positive control: "has the token been read?" is decodable at 1.000, so the pipeline works.</p></div>
+    <div><h3>Monitors (running)</h3><span class="pill wait">~80% done · $10.9 of $17</span><p>GPT-5-nano judge, Luna and Jev decision models; detector and forecaster prompts; context levels L1–L3; all 4,184 steps. Scored with the same code and folds as the probe.</p></div>
+    <div><h3>Needs Leo</h3><span class="pill wait">decisions</span><p>(1) Framing once monitors land: negative result ("probes read the situation, not the action", now in a multi-agent setting) vs monitor comparison. (2) Review the monitor prompts (<code>experiments/E06-monitors/PROMPTS.md</code>). (3) Hybrid code-review live check (~$0.15). (4) ~40 hand labels for judge agreement.</p></div>
   </div>
 
-  <h3>The plan in one line per stage</h3>
+<h3>The plan in one line per stage</h3>
   <ol>
     <li><strong>Behaviour (done).</strong> deploy-token v1 and v2 give hold-then-give-in on Qwen3-32B; the spray found more scenarios with mixed outcomes.</li>
-    <li><strong>Replay + probe on v1 (done).</strong> 3,034 steps, 64 layers × 5120, $2.86 on Modal. Probe result above.</li>
-    <li><strong>Next.</strong> v2 replay and probe (v2 alone, v1+v2, v1→v2 shift); 2 train + 2 held-out scenarios from the spray; LLM-judge and decision-model monitors (ControlArena-based detector and forecaster) on the same steps.</li>
+    <li><strong>Replay + probe on v1 (done).</strong> 3,034 steps, within-round AUROC 0.658.</li>
+    <li><strong>Replay 2 + probe on v2 and six scenarios (done).</strong> 4,184 steps. v2 0.63, pooled 0.52, held-out scenario 0.55: see above.</li>
+    <li><strong>Now.</strong> Monitors on the same rows (finishing), probe vs monitor table, a fold-stratified check of the pooled number, then decide the framing.</li>
     <li><strong>Step-ups.</strong> Many-to-one (2/8 so far), thinking mode (more resistant), hybrid code review (both agents share the rule).</li>
     <li><strong>Write-up.</strong> Apart template, 4–8 pages plus appendix. Due Mon 26 Oct, 7:59 PM SGT. Leo's notes for it: <code>leo_notes.md</code> (local).</li>
   </ol>
