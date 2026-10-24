@@ -8,7 +8,24 @@
   - In-distribution AUROC was 1.00. Six held-out families scored 0.82–0.88, with recall at 1% FPR as low as 0.38.
   - Emergent (not instructed) collusion scored 0.49–0.73.
   - Expect a transfer drop of that order, and expect recall at a fixed FPR to fall much more than AUROC.
-- **Prediction probes, not detection probes.** Kortukov et al. (arXiv 2606.11172, ICML 2026), on reasoning models: features that *detect* a behaviour already in the text are poor predictors of future behaviour. But probes trained on future outcomes from intermediate reasoning steps predict the most likely behaviour at 64–91% accuracy. Their FPCG method steers by choosing candidate sentences with such a probe, with little quality loss, and works where activation steering fails. Our probe is a prediction probe (each step labelled with the episode's future outcome), so this supports the design. It also warns that a difference-of-means direction from give-in vs refusal *text* is a detection feature. Closest methodological precedent: single model and its own reasoning, not multi-agent pressure across turns, and no monitor comparison in the abstract (full-text check pending).
+- **Prediction probes, not detection probes. Kortukov et al. 2026,** "Predicting Future Behaviors in Reasoning Models Enables Better Steering", arXiv 2606.11172. Full text read; the venue isn't stated on arXiv.
+  - **Setup:**
+    - single-turn: one prompt and one chain of thought, with no agents or tools;
+    - 4 reasoning models up to QwQ-32B;
+    - 6 behaviours, e.g. refusal, sycophancy and prompt injection.
+  - **Labels:** the share of 10–30 resampled continuations that show the behaviour, at each sentence boundary of the CoT.
+  - **Probes:** logistic regression at a middle layer predicts the most likely behaviour at 64–91% accuracy. The error is still 20–30 points on some tasks. MLP probes beat linear ones by only a few points.
+  - **Detection vs prediction:** probes trained on final-answer activations (detection features) predict far worse, especially early in the CoT.
+  - **FPCG:** samples 10 candidate sentences and keeps the one the probe likes. It shifts behaviour strongly with almost no quality loss, and works where difference-of-means steering breaks generation.
+  - **What they don't do:** no comparison with text or LLM-judge monitors, no low-FPR operating point, no held-out tactic or scenario.
+  - **For us:** our probe is a prediction probe, so this supports the design. Our gap is still open: multi-turn, with an adversarial peer acting in between, tool use, outcomes that actually happened, and the monitor ladder.
+  - **To borrow:**
+    - a detection-vs-prediction control: train on the give-in step only, test on earlier steps;
+    - an MLP-vs-linear check;
+    - optionally, resampled probability labels for a few prefixes, to show when the target "decides";
+    - FPCG on the target's turns as a defence extension.
+  - **Positioning:** "Kortukov et al. show mid-layer probes predict a reasoning model's eventual behaviour within a single response, using features distinct from detection features. We test whether such prediction features extend across turns of a multi-agent, tool-using episode under peer pressure, and whether they beat LLM-judge monitors at a fixed false-positive rate."
+  - **Related, verified:** Dong et al., "Emergent Response Planning in LLMs", arXiv 2502.06258 (single-turn); Arghal et al., arXiv 2602.08964 (agent goal-directedness).
 - **Multi-turn favours judges.** Gemini's production probes missed 22–26% of multi-turn attacks, against 13.5% for Gemini Flash (Kramár et al. 2026). If our judges win, say so plainly.
 - **The scenario raises scores by itself.** Apollo's probe scored honest replies inside deception scenarios above control. A threshold set only on controls will over-flag episodes where the peer pushes and the target holds.
 - **On-policy data is the safe setting.** Probes on the model's own text generalise far better for intent-like behaviours (Kirch et al., arXiv 2511.17408). Our replays are on-policy, so we keep it that way.
