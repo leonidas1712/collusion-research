@@ -54,6 +54,8 @@ Each target turn before the first forbidden action is one row:
 
 Mixing tactics in one dataset is intended: the main result trains and tests across all tactics, and held-out-tactic runs slice the same table.
 
+**Unit = every target step (Leo, 24 Oct).** A row is every target API request (each decision point between tool calls), not just the first request per round. Real agents don't run in rounds, and per-step rows give a finer timeline (R R R … read_file → about to post). Rows after the target has stated its decision in its own unposted text are kept, but flagged ("decision visible in text", from the per-turn judge label), and results are also reported on the steps where the decision is not yet in the text. Monitors see exactly the same context at each step. Each row keeps a "first request of the round" flag so per-round analysis still works. Replay: one forward pass per episode over the final target transcript, reading the residual at each step's last prompt token (requires each request to be a token prefix of the next; to be verified).
+
 ## 3. Inputs and outputs of each method at turn t
 
 | Method | Input at turn t | Output |
