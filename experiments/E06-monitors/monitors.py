@@ -40,7 +40,11 @@ LLM_MAX_TOKENS = 3000
 # ---------- step table ----------
 
 def load_step_table(fit_run=FIT_RUN):
-    """E05 rows restricted to the main variant's eligible set, with seed-42 fold and probe scores."""
+    """E05 rows restricted to the main variant's eligible set, with seed-42 fold, step id and scenario.
+
+    For the main run, swap in the replay-2 step table; rows must carry episode, request_idx,
+    request_sha256, condition, label, round, family and a fold id ('fold' or 'fold_seed42').
+    'scenario' is filled from the episode when missing."""
     import numpy as np  # only needed here; tests use synthetic tables
     base = ROOT / 'runs' / fit_run
     rows = [json.loads(s) for s in (base / 'rows.jsonl').read_text().splitlines()]
@@ -52,6 +56,42 @@ def load_step_table(fit_run=FIT_RUN):
         r['fold_seed42'] = int(d['folds'][0, i])
         r['step_id'] = r['episode'] + '::request_idx=' + str(r['request_idx'])
         table.append(r)
+    return add_scenarios(table)
+
+
+REQUIRED = ('episode', 'request_idx', 'request_sha256', 'condition', 'round')
+
+
+def load_steps_file(path):
+    """All eligible rows of a replay step table (e.g. the replay-2 plan/fit rows), no sampling.
+
+    Eligible = valid_for_comparison and token_in_context and before_first_action (the action step's own
+    input is kept, as in E05). Accepts 'episode' or 'episode_key'."""
+    table = []
+    for line in Path(path).read_text().splitlines():
+        r = json.loads(line)
+        r.setdefault('episode', r.get('episode_key'))
+        if not (r.get('valid_for_comparison', r.get('valid')) and r.get('token_in_context') and r.get('before_first_action')):
+            continue
+        missing = [k for k in REQUIRED if r.get(k) is None]
+        if missing:
+            raise ValueError(f'Step table row lacks {missing}')
+        r['step_id'] = r['episode'] + '::request_idx=' + str(r['request_idx'])
+        r.setdefault('family', str(r.get('family_id')))
+        table.append(r)
+    if len({r['step_id'] for r in table}) != len(table):
+        raise ValueError('Duplicate step ids')
+    return add_scenarios(table)
+
+
+def add_scenarios(table, load_episode=None):
+    load_episode = load_episode or (lambda k: json.loads(episode_path(k).read_text()))
+    cache = {}
+    for r in table:
+        if not r.get('scenario'):
+            if r['episode'] not in cache:
+                cache[r['episode']] = scenario_id(load_episode(r['episode']))
+            r['scenario'] = cache[r['episode']]
     return table
 
 
@@ -117,19 +157,34 @@ def request_sha(ep, request_idx):
 
 # ---------- requests ----------
 
-def build_call(monitor, prompt_id, messages, level):
+def scenario_id(ep):
+    """Scenario label for strata: spray row id, else deploy-token generation (v1/v2)."""
+    md = ep['scenario_spec'].get('metadata', {})
+    if md.get('spray_row_id'):
+        return md['spray_row_id']
+    if md.get('scenario_family') == 'deploy-token':
+        return 'deploy-token-v2' if md.get('scenario_generation') == 'deploy-token-v2' else 'deploy-token-v1'
+    return md.get('scenario_family') or ep['scenario_spec'].get('name')
+
+
+def option_order(monitor, step_id):
+    return None if monitor == 'llm' else P.option_order(step_id)
+
+
+def build_call(monitor, prompt_id, messages, level, metadata, order=None):
     model = MONITORS[monitor]
     if monitor == 'llm':
-        body = {'model': model, 'messages': [{'role': 'user', 'content': P.llm_prompt(prompt_id, messages, level)}],
+        body = {'model': model, 'messages': [{'role': 'user', 'content': P.llm_prompt(prompt_id, messages, level, metadata)}],
                 'max_completion_tokens': LLM_MAX_TOKENS, 'reasoning': {'effort': 'low'},
                 'provider': {'order': ['OpenAI'], 'allow_fallbacks': False,
                              'max_price': {'prompt': 0.05, 'completion': 0.40}}}
         return CHAT_URL, body
-    return DECISION_URL, P.decision_payload(model, prompt_id, messages, level)
+    return DECISION_URL, P.decision_payload(model, prompt_id, messages, level, metadata, order or ('yes', 'no'))
 
 
-def cache_key(step_id, request_sha256, monitor, prompt_id, level):
-    raw = json.dumps([step_id, request_sha256, MONITORS[monitor], prompt_id, P.prompt_sha(prompt_id), level])
+def cache_key(step_id, request_sha256, monitor, prompt_id, level, order=None):
+    raw = json.dumps([step_id, request_sha256, MONITORS[monitor], prompt_id, P.prompt_sha(prompt_id), level]
+                     + ([list(order)] if order else []))
     return hashlib.sha256(raw.encode()).hexdigest()[:24]
 
 
@@ -246,14 +301,16 @@ def score_steps(steps, jobs, cache_dir, ledger, price_table, key=None, post=post
         if request_sha(ep, step['request_idx']) != step['request_sha256']:
             raise ValueError(f"request_sha256 mismatch for {step['step_id']}")
         messages = target_messages(ep, step['request_idx'])
+        metadata = ep['scenario_spec'].get('metadata', {})
         for monitor, prompt_id, level in jobs:
-            k = cache_key(step['step_id'], step['request_sha256'], monitor, prompt_id, level)
+            order = option_order(monitor, step['step_id'])
+            k = cache_key(step['step_id'], step['request_sha256'], monitor, prompt_id, level, order)
             path = cache_dir / f'{k}.json'
             if path.exists():
                 continue
             if max_calls is not None and calls >= max_calls:
                 return calls
-            url, body = build_call(monitor, prompt_id, messages, level)
+            url, body = build_call(monitor, prompt_id, messages, level, metadata, order)
             prompt_price, output_price = price_table[monitor]
             reserve = reserve_cost(body, prompt_price, output_price)
             if monitor == 'llm':  # judge_labels reserves 2048 output tokens; we allow more
@@ -269,7 +326,8 @@ def score_steps(steps, jobs, cache_dir, ledger, price_table, key=None, post=post
             ledger.settle(row, cost)
             record = {'key': k, 'step_id': step['step_id'], 'row': step.get('row'), 'request_sha256': step['request_sha256'],
                       'monitor': monitor, 'model': MONITORS[monitor], 'prompt': prompt_id, 'prompt_sha': P.prompt_sha(prompt_id),
-                      'level': level, 'request_url': url, 'request_body': body, 'response': raw, 'cost': cost}
+                      'level': level, 'option_order': list(order) if order else None, 'scenario': step.get('scenario'),
+                      'request_url': url, 'request_body': body, 'response': raw, 'cost': cost}
             try:
                 record['score'] = parse(monitor, prompt_id, raw)
             except (ValueError, TypeError, KeyError, IndexError, AttributeError) as exc:
@@ -285,12 +343,14 @@ def collect(cache_dir):
     out = []
     for path in sorted(Path(cache_dir).glob('*.json')):
         r = json.loads(path.read_text())
-        out.append({k: r.get(k) for k in ('key', 'step_id', 'row', 'request_sha256', 'monitor', 'model', 'prompt', 'level', 'score', 'parse_error', 'cost')})
+        out.append({k: r.get(k) for k in ('key', 'step_id', 'row', 'request_sha256', 'monitor', 'model', 'prompt', 'level',
+                                          'option_order', 'scenario', 'score', 'parse_error', 'cost')})
     return out
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--steps-file', type=Path, help='Score every eligible row of this step table (main run) instead of the E05 sample')
     ap.add_argument('--run', type=Path, help='Resume an existing run directory (same ledger and cache)')
     ap.add_argument('--cap', type=Decimal, default=MAX_CAP)
     ap.add_argument('--n-pos', type=int, default=60)
@@ -313,11 +373,13 @@ def main():
         write_json_atomic(directory / 'meta.json', meta); run = Run(directory.name, directory, meta)
         steps = [json.loads(s) for s in (directory / 'steps.jsonl').read_text().splitlines()]
     else:
-        run = start_run('e06-monitor-prelim', experiment='E06', parents=[FIT_RUN],
+        run = start_run('e06-monitor-main' if args.steps_file else 'e06-monitor-prelim', experiment='E06',
+                        parents=[str(args.steps_file) if args.steps_file else FIT_RUN],
                         settings={'monitors': MONITORS, 'jobs': jobs, 'cap_usd': str(args.cap),
                                   'sample': [args.n_pos, args.n_held, args.n_control]})
         directory = run.dir
-        steps = sample_steps(load_step_table(), args.n_pos, args.n_held, args.n_control)
+        steps = load_steps_file(args.steps_file) if args.steps_file else \
+            sample_steps(load_step_table(), args.n_pos, args.n_held, args.n_control)
         (directory / 'steps.jsonl').write_text(''.join(json.dumps(s) + '\n' for s in steps))
     if args.max_steps:
         steps = steps[:args.max_steps]

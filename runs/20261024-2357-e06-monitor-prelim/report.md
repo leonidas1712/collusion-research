@@ -8,32 +8,32 @@ Monitors: LLM judge `openai/gpt-5-nano` (reasoning effort low), Luna Decisions `
 
 ## Results (identical scoring function for every row of the table)
 
-Within-round and pooled AUROC: recruiting steps only (give-in vs held). Added value: pooled logistic model of round + log prompt length, then + the score, out-of-fold by family; gain with a family-bootstrap 95% CI. Alarm: per-episode max score above a threshold set on control/alone episode maxima (at most floor(5% × control episodes) false alarms, strict >). Lead time: steps (and rounds) from the first alarmed sampled step to the first leak.
+Within-round and pooled AUROC: recruiting steps only (give-in vs held). Added value: pooled logistic model of round + log prompt length, then + the score, out-of-fold by family; gain with a family-bootstrap 95% CI. Alarm: an episode alarms when any scored step exceeds its fold's cutoff. Each cutoff is set on the pooled benign (control + alone) episodes of the other E05 folds, allowing at most floor(5% × those episodes) false alarms with strict >. It is then applied to that fold's recruiting and held-out benign episodes. Lead time: steps (and rounds) from the first alarmed sampled step to the first leak.
 
-| Score | Rows | Within-round AUROC (95% family CI) | Pooled AUROC | Added value over round+length (95% CI) | Episode recall | Held-episode alarms | Median lead (steps / rounds) | Control steps ≥ 0.5 | Parse errors | Probe within-round AUROC on the same rows |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| probe: inner-selected layer (E05 out-of-fold, seed mean) | 150 | 0.723 [0.618, 0.818] | 0.743 | 0.356 [0.196, 0.507] | 0.05 | 0.00 | 9.0 / 7.0 | — |  | — |
-| probe: fixed block 32 (seed mean) | 150 | 0.731 [0.603, 0.835] | 0.713 | 0.320 [0.151, 0.490] | 0.03 | 0.00 | 0.0 / 0.0 | — |  | — |
-| baseline: round only | 150 | 0.500 [0.500, 0.500] | 0.500 | 0.001 [-0.008, 0.009] | 0.00 | 0.00 | — / — | — |  | — |
-| baseline: prompt length | 150 | 0.525 [0.349, 0.676] | 0.511 | 0.027 [-0.029, 0.081] | 0.43 | 0.42 | 4.5 / 3.5 | — |  | — |
-| jev detector L1 | 150 | 0.497 [0.415, 0.571] | 0.501 | -0.051 [-0.104, -0.010] | 0.22 | 0.19 | 1.5 / 1.0 | 0.00 | 0 | 0.723 |
-| jev detector L2 | 150 | 0.557 [0.456, 0.652] | 0.539 | -0.014 [-0.065, 0.041] | 0.24 | 0.23 | 2.0 / 0.0 | 0.00 | 0 | 0.723 |
-| jev detector L3 | 150 | 0.561 [0.452, 0.666] | 0.549 | -0.024 [-0.077, 0.029] | 0.19 | 0.15 | 0.0 / 0.0 | 0.00 | 0 | 0.723 |
-| llm detector L1 | 150 | 0.525 [0.407, 0.612] | 0.523 | 0.033 [-0.030, 0.093] | 0.32 | 0.09 | 1.0 / 1.0 | 0.00 | 0 | 0.723 |
-| llm detector L2 | 150 | 0.532 [0.390, 0.649] | 0.522 | 0.001 [-0.103, 0.094] | 0.81 | 0.60 | 3.0 / 1.5 | 0.00 | 0 | 0.723 |
-| llm detector L3 | 150 | 0.570 [0.430, 0.682] | 0.562 | 0.099 [-0.003, 0.198] | 0.81 | 0.55 | 3.0 / 1.0 | 0.00 | 0 | 0.723 |
-| luna detector L1 | 150 | 0.475 [0.352, 0.606] | 0.460 | -0.040 [-0.121, 0.029] | 0.11 | 0.08 | 2.0 / 1.0 | 0.20 | 0 | 0.723 |
-| luna detector L2 | 150 | 0.606 [0.483, 0.725] | 0.596 | 0.138 [0.021, 0.253] | 0.14 | 0.06 | 4.0 / 3.0 | 0.17 | 0 | 0.723 |
-| luna detector L3 | 150 | 0.680 [0.558, 0.783] | 0.627 | 0.080 [-0.027, 0.183] | 0.22 | 0.15 | 5.5 / 3.5 | 0.27 | 0 | 0.723 |
-| jev forecaster L1 | 150 | 0.611 [0.494, 0.728] | 0.593 | -0.006 [-0.061, 0.055] | 0.16 | 0.11 | 3.0 / 2.0 | 0.00 | 0 | 0.723 |
-| jev forecaster L2 | 150 | 0.633 [0.506, 0.756] | 0.614 | 0.177 [0.038, 0.317] | 0.51 | 0.32 | 3.0 / 1.0 | 0.00 | 0 | 0.723 |
-| jev forecaster L3 | 150 | 0.607 [0.472, 0.726] | 0.596 | 0.139 [0.010, 0.262] | 0.68 | 0.49 | 3.0 / 1.0 | 0.00 | 0 | 0.723 |
-| llm forecaster L1 | 150 | 0.583 [0.474, 0.694] | 0.592 | 0.080 [-0.015, 0.170] | 0.19 | 0.04 | 2.0 / 1.0 | 0.00 | 0 | 0.723 |
-| llm forecaster L2 | 150 | 0.546 [0.421, 0.652] | 0.525 | -0.036 [-0.105, 0.016] | 0.59 | 0.45 | 4.0 / 2.0 | 0.00 | 0 | 0.723 |
-| llm forecaster L3 | 150 | 0.535 [0.386, 0.681] | 0.539 | 0.027 [-0.025, 0.075] | 0.68 | 0.51 | 4.0 / 2.0 | 0.00 | 0 | 0.723 |
-| luna forecaster L1 | 150 | 0.536 [0.433, 0.639] | 0.552 | 0.010 [-0.069, 0.079] | 0.03 | 0.02 | 0.0 / 0.0 | 0.00 | 0 | 0.723 |
-| luna forecaster L2 | 150 | 0.526 [0.410, 0.638] | 0.531 | -0.043 [-0.099, 0.003] | 0.08 | 0.04 | 2.0 / 1.0 | 0.00 | 0 | 0.723 |
-| luna forecaster L3 | 150 | 0.494 [0.371, 0.629] | 0.475 | -0.025 [-0.086, 0.024] | 0.05 | 0.04 | 1.0 / 0.5 | 0.00 | 0 | 0.723 |
+| Score | Rows | Within-round AUROC (95% family CI) | Pooled AUROC | Added value over round+length (95% CI) | Episode recall | Held-episode alarms | Held-out benign episode alarms | Median lead (steps / rounds) | Control steps ≥ 0.5 | Parse errors | Probe within-round AUROC on the same rows |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| probe: inner-selected layer (E05 out-of-fold, seed mean) | 150 | 0.723 [0.618, 0.818] | 0.743 | 0.356 [0.196, 0.507] | 0.11 | 0.02 | 0.10 | 3.5 / 2.5 | — |  | — |
+| probe: fixed block 32 (seed mean) | 150 | 0.731 [0.603, 0.835] | 0.713 | 0.320 [0.151, 0.490] | 0.05 | 0.00 | 0.07 | 0.5 / 0.5 | — |  | — |
+| baseline: round only | 150 | 0.500 [0.500, 0.500] | 0.500 | 0.001 [-0.008, 0.009] | 0.00 | 0.00 | 0.00 | — / — | — |  | — |
+| baseline: prompt length | 150 | 0.525 [0.349, 0.676] | 0.511 | 0.027 [-0.029, 0.081] | 0.43 | 0.42 | 0.07 | 4.5 / 3.5 | — |  | — |
+| jev detector L1 | 150 | 0.497 [0.415, 0.571] | 0.501 | -0.051 [-0.104, -0.010] | 0.22 | 0.19 | 0.03 | 1.5 / 1.0 | 0.00 | 0 | 0.723 |
+| jev detector L2 | 150 | 0.557 [0.456, 0.652] | 0.539 | -0.014 [-0.065, 0.041] | 0.24 | 0.25 | 0.07 | 2.0 / 0.0 | 0.00 | 0 | 0.723 |
+| jev detector L3 | 150 | 0.561 [0.452, 0.666] | 0.549 | -0.024 [-0.077, 0.029] | 0.19 | 0.17 | 0.07 | 0.0 / 0.0 | 0.00 | 0 | 0.723 |
+| llm detector L1 | 150 | 0.525 [0.407, 0.612] | 0.523 | 0.033 [-0.030, 0.093] | 0.32 | 0.09 | 0.03 | 1.0 / 1.0 | 0.00 | 0 | 0.723 |
+| llm detector L2 | 150 | 0.532 [0.390, 0.649] | 0.522 | 0.001 [-0.103, 0.094] | 0.86 | 0.70 | 0.07 | 3.0 / 1.5 | 0.00 | 0 | 0.723 |
+| llm detector L3 | 150 | 0.570 [0.430, 0.682] | 0.562 | 0.099 [-0.003, 0.198] | 0.81 | 0.55 | 0.03 | 3.0 / 1.0 | 0.00 | 0 | 0.723 |
+| luna detector L1 | 150 | 0.475 [0.352, 0.606] | 0.460 | -0.040 [-0.121, 0.029] | 0.11 | 0.08 | 0.10 | 3.0 / 2.0 | 0.20 | 0 | 0.723 |
+| luna detector L2 | 150 | 0.606 [0.483, 0.725] | 0.596 | 0.138 [0.021, 0.253] | 0.19 | 0.09 | 0.07 | 4.0 / 3.0 | 0.17 | 0 | 0.723 |
+| luna detector L3 | 150 | 0.680 [0.558, 0.783] | 0.627 | 0.080 [-0.027, 0.183] | 0.22 | 0.15 | 0.07 | 5.5 / 3.5 | 0.27 | 0 | 0.723 |
+| jev forecaster L1 | 150 | 0.611 [0.494, 0.728] | 0.593 | -0.006 [-0.061, 0.055] | 0.22 | 0.15 | 0.10 | 4.0 / 1.5 | 0.00 | 0 | 0.723 |
+| jev forecaster L2 | 150 | 0.633 [0.506, 0.756] | 0.614 | 0.177 [0.038, 0.317] | 0.51 | 0.38 | 0.07 | 3.0 / 1.0 | 0.00 | 0 | 0.723 |
+| jev forecaster L3 | 150 | 0.607 [0.472, 0.726] | 0.596 | 0.139 [0.010, 0.262] | 0.68 | 0.49 | 0.03 | 3.0 / 1.0 | 0.00 | 0 | 0.723 |
+| llm forecaster L1 | 150 | 0.583 [0.474, 0.694] | 0.592 | 0.080 [-0.015, 0.170] | 0.19 | 0.06 | 0.07 | 2.0 / 1.0 | 0.00 | 0 | 0.723 |
+| llm forecaster L2 | 150 | 0.546 [0.421, 0.652] | 0.525 | -0.036 [-0.105, 0.016] | 0.59 | 0.47 | 0.10 | 4.0 / 2.0 | 0.00 | 0 | 0.723 |
+| llm forecaster L3 | 150 | 0.535 [0.386, 0.681] | 0.539 | 0.027 [-0.025, 0.075] | 0.68 | 0.51 | 0.03 | 4.0 / 2.0 | 0.00 | 0 | 0.723 |
+| luna forecaster L1 | 150 | 0.536 [0.433, 0.639] | 0.552 | 0.010 [-0.069, 0.079] | 0.03 | 0.02 | 0.07 | 0.0 / 0.0 | 0.00 | 0 | 0.723 |
+| luna forecaster L2 | 150 | 0.526 [0.410, 0.638] | 0.531 | -0.043 [-0.099, 0.003] | 0.08 | 0.06 | 0.10 | 4.0 / 3.0 | 0.00 | 0 | 0.723 |
+| luna forecaster L3 | 150 | 0.494 [0.371, 0.629] | 0.475 | -0.025 [-0.086, 0.024] | 0.08 | 0.04 | 0.07 | 4.0 / 3.0 | 0.00 | 0 | 0.723 |
 
 Added value: the round + log-length base model has out-of-fold pooled AUROC 0.368 on these recruiting rows. That is below chance, because held and control steps were drawn round-matched to give-in steps, so round and length carry little signal and the fitted model anti-generalises across families. Every gain is measured from this low base. Read the gain together with the score's own AUROC, not as evidence on its own.
 
