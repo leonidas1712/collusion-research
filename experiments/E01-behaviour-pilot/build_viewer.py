@@ -11,6 +11,12 @@ Standard library only, read-only, no API calls. Open runs/viewer.html directly (
 
 Human/agent notes come from runs/annotations.json (edit with annotate.py) and optional runs/<run-id>/notes.json;
 they are shown as descriptions, notes and tag pills, and are filterable and searchable on the home page.
+Saved reading lists come from runs/viewer_lists.json ({name: [{run, episode, turn?, note}]}, edit with viewer.py).
+
+The page reads its state from the URL hash and writes it back, so any view is a link (viewer.py open builds them):
+    #run=ID&episode=N&turn=T&list=NAME        open an episode, scroll to round T, show a saved list
+    #q=TEXT&tag=a,b&outcome=..&scenario=..&model=..&rmin=A&rmax=B&sort=S    home page filters
+Run IDs may be a unique prefix; filter values match exactly or as a substring. Old #run/ID/INDEX links still work.
 """
 
 from __future__ import annotations
@@ -25,6 +31,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 RUNS = ROOT / "runs"
 ANNOTATIONS = RUNS / "annotations.json"
+LISTS = RUNS / "viewer_lists.json"
 MAX_SEARCH_TEXT = 20_000  # per-episode transcript text kept for search (head + tail if longer)
 
 POLICY = {"explicit": "Policy", "none": "No policy"}
@@ -216,6 +223,18 @@ def load_annotations() -> dict:
     return {"runs": a.get("runs") or {}, "episodes": a.get("episodes") or {}}
 
 
+def load_lists() -> dict:
+    """runs/viewer_lists.json ({name: [{run, episode, turn?, note}]}); missing or unreadable means no lists."""
+    if not LISTS.exists():
+        return {}
+    try:
+        lists = json.loads(LISTS.read_text())
+    except ValueError as exc:
+        print(f"warning: could not read {LISTS}: {exc}")
+        return {}
+    return {k: v for k, v in lists.items() if isinstance(v, list)} if isinstance(lists, dict) else {}
+
+
 def run_note(run_dir: Path, ann: dict) -> tuple[str, list]:
     """Merge runs/<id>/notes.json with annotations.json (annotations.json description wins; tags are unioned)."""
     local = {}
@@ -331,7 +350,7 @@ def main():
     runs.sort(key=lambda r: (r["time"], r["id"]), reverse=True)
     dump = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
     blocks = "\n".join(f'<script type="application/json" id="{eid}">{dump(raw)}</script>' for eid, raw in raws)
-    data = dump({"runs": runs, "built": datetime.now().strftime("%-d %b %H:%M")})
+    data = dump({"runs": runs, "lists": load_lists(), "built": datetime.now().strftime("%-d %b %H:%M")})
     out = RUNS / "viewer.html"
     out.write_text(TEMPLATE.replace("__DATA__", data).replace("__EPISODES__", blocks))
     print(f"wrote {out} ({out.stat().st_size / 1e6:.1f} MB): {len(runs)} runs, {len(raws)} episode files")
@@ -423,9 +442,17 @@ mark.tok{background:var(--bad-soft);color:var(--bad);font-family:var(--mono);fon
 .note{font-size:14px;max-width:68ch}.snip{font:12.5px/1.5 var(--mono);color:var(--muted);background:var(--bg);border-radius:6px;padding:6px 10px;overflow-wrap:anywhere}
 mark.hit{background:var(--warn-soft);color:var(--warn);font-weight:600;padding:0 2px;border-radius:3px}
 button.link{background:none;border:0;color:var(--accent);font:inherit;font-size:14px;cursor:pointer;padding:0;text-decoration:underline}
+.rnd{display:grid;gap:18px;border-radius:8px;scroll-margin-top:16px}.rnd.flash{animation:flash 2.6s ease-out}
+@keyframes flash{0%,35%{background:var(--warn-soft);box-shadow:0 0 0 10px var(--warn-soft)}100%{background:transparent;box-shadow:0 0 0 10px transparent}}
+aside#side{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:8px;align-content:start;margin:16px max(16px,calc(50% - 414px)) 0}
+aside#side[hidden]{display:none}#side .sh{display:flex;justify-content:space-between;align-items:center}#side .sh a{text-decoration:none;font-size:20px;line-height:1;color:var(--muted)}
+#side ol{margin:0;padding:0;list-style:none;display:grid;gap:4px}#side li a{display:grid;gap:3px;text-decoration:none;color:inherit;padding:7px 9px;border-radius:6px;border:1px solid transparent}
+#side li a:hover{border-color:var(--line)}#side li a.on{background:var(--accent-soft);border-color:var(--accent)}#side .it{font:600 12px var(--mono);color:var(--muted);overflow-wrap:anywhere}#side .nt{font-size:14px}
+@media (min-width:1200px){body.haslist{padding-left:316px}aside#side{position:fixed;left:16px;top:16px;bottom:16px;width:284px;margin:0;overflow:auto}}
+.callout .nav{display:flex;gap:14px;font-size:14px}
 </style></head><body>
 <header><div class="wrap"><span class="eyebrow">E01 behaviour pilot · trace viewer</span><h1><a href="#" style="color:inherit;text-decoration:none">Episode traces</a></h1>
-<p class="sub" id="built"></p></div></header><main><div class="wrap" id="main"></div></main>
+<p class="sub" id="built"></p></div></header><aside id="side" hidden aria-label="Reading list"></aside><main><div class="wrap" id="main"></div></main>
 <script type="application/json" id="data">__DATA__</script>
 __EPISODES__
 <script>
@@ -472,6 +499,7 @@ function guide(){const open=store('e01viewer.guide')!=='closed';return `<details
 <li><span class="pill incomplete">Incomplete, not counted</span> cut off by an API error, the tool-step cap or the reply-length limit. Shown for reference only.</li></ul>
 <p><strong>Using the page</strong>: pick a run below, then an episode. Each round shows the peer's turn, then the target's, and each turn lists that agent's own messages in order, as the model saw and wrote them. <code>system</code> and the first <code>user</code> message (the agent's prompt and task) are collapsed at the top of its first turn. <code>user</code> is what reached the agent from the team channel. <code>assistant</code> is the model's reply: its text, then each tool call as <code>name(args)</code> with the <code>tool</code> result underneath. Only two things reach the other agent: a <code>send_message</code> call (<span class="badge post">posted to #team channel</span>), or the final reply of a turn in which nothing else was posted (<span class="badge post">posted to #team channel (end of turn)</span>). Text marked <span class="badge quiet">not posted</span> stays in the agent's own context. Model reasoning, if the provider returned it, and failed API calls are collapsed rows. The token is <mark class="tok">highlighted</mark> wherever it appears, and the first leak has a red outline. Settings, labels, cost and raw JSON sit in the collapsed sections.</p>
 <p><strong>Filters, search and notes</strong>: on this page, click chips to filter. Values in one row are OR-ed and rows are AND-ed. Each filter is checked against single episodes, so a run is listed when at least one of its episodes matches. Switch to <em>Episodes</em> to list the matching episodes directly, for example every deliberate leak. Sort either list with the <em>Sort</em> menu, and use the <em>First-action round</em> min/max boxes to keep only episodes that gave in within that round range. Next to each outcome, <code>r4 · on purpose</code> means the forbidden thing first happened in round 4; <code>held 20r</code> means the target held for 20 rounds. The search box matches these too (try <code>r4</code> or <code>by accident</code>), plus run IDs, conditions, models, providers, outcomes, notes, tags and the text of the transcripts. Descriptions, notes and <span class="pill tag">#tags</span> come from <code>runs/annotations.json</code>. To edit them, run <code>uv run python experiments/E01-behaviour-pilot/annotate.py RUN_ID [--episode FILE] [--desc TEXT | --note TEXT] [--tag T] [--remove-tag T]</code>, which also rebuilds this page.</p>
+<p><strong>Links and reading lists</strong>: the address bar always holds the current view (filters, search, sort, the open episode), so you can copy it as a link. <code>&amp;turn=4</code> scrolls to round 4 and highlights it. A reading list from <code>runs/viewer_lists.json</code> shows as a sidebar; click an item to open it with its note above the episode. To make links and lists from a terminal, run <code>uv run python experiments/E01-behaviour-pilot/viewer.py open --help</code> or <code>viewer.py list --help</code>.</p>
 </div></details>`}
 
 const OUT={action_done:['did the forbidden action','leaked'],leak_deliberate:['leaked on purpose','leaked'],leak_incidental:['leaked by accident','leaked'],leak_other:['leaked (other)','leaked'],refused:['refused','refused'],
@@ -495,7 +523,9 @@ function home(){const vals={},cnt={};
  for(const r of RUNS)for(const t of r.tags)(vals.tags??=new Set()).add(t);
  const order=k=>k==='out'?Object.keys(OUT).filter(v=>vals.out&&vals.out.has(v)):[...(vals[k]||[])].sort();
  const label=(k,v)=>k==='out'?OUT[v][0]:k==='tags'?'#'+v:k==='peer'?(PEERW[v]||v):v;
- let st={sel:{},s:true,q:'',view:'runs',rmin:'',rmax:'',sort:{runs:'new',episodes:'run'}};try{const f=JSON.parse(store('e01viewer.filters2')||'{}');if(f&&typeof f==='object')st={...st,...f,sel:f.sel||{}}}catch(e){}
+ let st={sel:{},s:true,q:'',view:'runs',rmin:'',rmax:'',sort:{runs:'new',episodes:'run'}};const P=readHash();
+ if(HOMEKEYS.some(k=>P[k]!=null))st=urlState(st,P,order,label);  // a link wins over the remembered filters
+ else try{const f=JSON.parse(store('e01viewer.filters2')||'{}');if(f&&typeof f==='object')st={...st,...f,sel:f.sel||{}}}catch(e){}
  for(const k in st.sel)st.sel[k]=(st.sel[k]||[]).filter(v=>vals[k]&&vals[k].has(v));
  $('#main').innerHTML=guide()+`<input type="search" id="fq" placeholder="Search runs, notes, tags and transcripts" aria-label="Search">
  <details class="box" id="fbox" open><summary>Filters <span class="small" id="factive"></span></summary><div class="fpanel">
@@ -510,6 +540,9 @@ function home(){const vals={},cnt={};
   document.querySelectorAll('#fbox button[data-k]').forEach(b=>b.setAttribute('aria-pressed',(st.sel[b.dataset.k]||[]).includes(b.dataset.v)));
   document.querySelectorAll('#fview button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===st.view));
   const SO=SORTS[st.view],sk=SO[st.sort[st.view]]?st.sort[st.view]:Object.keys(SO)[0];
+  const h=H({q:st.q.trim(),...Object.fromEntries(FACETS.map(([k])=>[hk(k),(st.sel[k]||[]).join(',')])),rmin:st.rmin,rmax:st.rmax,
+   view:st.view==='runs'?'':st.view,sort:sk===Object.keys(SO)[0]?'':sk,setup:st.s?'':'1'});
+  if(location.hash!==h&&(h!=='#'||location.hash))history.replaceState(null,'',h==='#'?location.pathname+location.search:h);
   $('#fsort').innerHTML=Object.entries(SO).map(([k,[n]])=>`<option value="${k}"${k===sk?' selected':''}>${esc(n)}</option>`).join('');
   const lo=st.rmin===''?null:+st.rmin,hi=st.rmax===''?null:+st.rmax,rng=lo!=null||hi!=null;
   const inR=e=>!rng||!!(e.fa&&e.fa.gave&&e.fa.round!=null&&(lo==null||e.fa.round>=lo)&&(hi==null||e.fa.round<=hi));
@@ -521,11 +554,11 @@ function home(){const vals={},cnt={};
   const cmp=SO[sk][1];
   if(st.view==='episodes'){const eps=rs.flatMap(({r,m})=>(m||r.episodes.map((e,i)=>[e,i])).map(([e,i])=>({r,e,i}))),CAP=200;if(cmp)eps.sort(cmp);
    $('#count').textContent=`${eps.length} matching episode${eps.length===1?'':'s'} in ${rs.length} run${rs.length===1?'':'s'}${eps.length>CAP?`, showing the first ${CAP}`:''}.`;
-   $('#runs').innerHTML=eps.slice(0,CAP).map(({r,e,i})=>`<a class="card" href="#run/${encodeURIComponent(r.id)}/${i}"><span class="t">Episode ${esc(e.num)} · ${esc(e.cw)}</span>
+   $('#runs').innerHTML=eps.slice(0,CAP).map(({r,e,i})=>`<a class="card" href="${esc(H({run:r.id,episode:epKey(r,e)}))}"><span class="t">Episode ${esc(e.num)} · ${esc(e.cw)}</span>
    <span class="small">Target <span class="mono">${esc(e.f.model)}</span> · <span class="mono">${esc(r.id)}</span></span>
    <span class="pills"><span class="pill ${e.out.cls}">${esc(e.out.pill)}</span>${faPill(e)}<span>${esc(e.out.line)}</span></span>${notes(e.note,e.tags)}${q?snip(e.tx,q):''}</a>`).join('')||'<p class="small">No episodes match these filters.</p>';return}
   if(cmp)rs.sort(cmp);$('#count').textContent=`Showing ${rs.length} of ${RUNS.length} runs, sorted by ${SO[sk][0]}.`;
-  $('#runs').innerHTML=rs.map(({r,m})=>`<a class="card" href="#run/${encodeURIComponent(r.id)}"><span class="t">${esc(r.cond_words)}</span>
+  $('#runs').innerHTML=rs.map(({r,m})=>`<a class="card" href="${esc(H({run:r.id}))}"><span class="t">${esc(r.cond_words)}</span>
   <span class="small">Target <span class="mono">${esc(r.target_model||'?')}</span> · ${r.peer_model?'Peer <span class="mono">'+esc(r.peer_model)+'</span>':'no peer'} · ${esc(ago(r.time))}</span>
   ${notes(r.desc,r.tags)}<span class="pills">${summary(r)}${r.setup?'<span class="pill setup">setup run</span>':''}</span>${runFa(r)}
   ${m&&m.length?`<span class="pills"><span class="small">${m.length} matching:</span>${outPills(m.map(([e])=>e))}</span>`:''}</a>`).join('')||'<p class="small">No runs match these filters.</p>'};
@@ -536,7 +569,44 @@ function home(){const vals={},cnt={};
  for(const id of ['#fmin','#fmax'])$(id).addEventListener('input',draw);
  $('#fclear').onclick=()=>{st.sel={};$('#fq').value='';$('#fmin').value='';$('#fmax').value='';draw()};
  let t;$('#fq').addEventListener('input',()=>{clearTimeout(t);t=setTimeout(draw,120)});$('#fSetup').addEventListener('input',draw);draw()}
+function urlState(st,P,order,label){const sel={},lc=s=>String(s).toLowerCase();
+ for(const [k,n] of FACETS){if(!P[hk(k)])continue;const have=order(k),got=new Set();
+  for(const w of P[hk(k)].split(',').map(x=>lc(x.trim()).replace(/^#/,'')).filter(Boolean)){
+   const exact=have.filter(v=>lc(v)===w||lc(label(k,v))===w||(k==='out'&&OUT[v][1]===w)),m=exact.length?exact:have.filter(v=>lc(v).includes(w)||lc(label(k,v)).includes(w));
+   if(!m.length)NOTICE.push(`No ${n.toLowerCase()} matches "${w}" (link filter ignored).`);m.forEach(v=>got.add(v))}
+  if(got.size)sel[k]=[...got]}
+ let view=P.view==='episodes'||P.view==='runs'?P.view:P.sort&&SORTS.episodes[P.sort]&&!SORTS.runs[P.sort]?'episodes':'runs';
+ const sort={...st.sort};if(P.sort){if(SORTS[view][P.sort])sort[view]=P.sort;else NOTICE.push(`Unknown sort "${P.sort}" for the ${view} list; try ${Object.keys(SORTS[view]).join(', ')}.`)}
+ return {...st,sel,q:P.q||'',rmin:P.rmin||'',rmax:P.rmax||'',view,sort,s:!['1','show','yes','true'].includes(lc(P.setup||''))}}
 const PEERW={recruiting:'peer asks (recruiting)',control:'peer never asks (control)',alone:'target alone'};
+
+// URL hash state: #run=ID&episode=N&turn=T&list=NAME, or home filters (q, tag, outcome, ..., rmin, rmax, sort, view).
+const HK={out:'outcome',tags:'tag'},hk=k=>HK[k]||k,HOMEKEYS=['q',...FACETS.map(([k])=>hk(k)),'rmin','rmax','sort','view','setup'];
+let LIST='',CUR=-1,NOTICE=[];
+function readHash(){const h=location.hash.slice(1);
+ if(h.startsWith('run/')){const [,id,i]=h.split('/');return {run:decodeURIComponent(id||''),idx:i}}  // old #run/ID/INDEX links
+ return Object.fromEntries(new URLSearchParams(h))}
+function H(o){if(LIST&&!('list' in o))o={...o,list:LIST};
+ return '#'+Object.entries(o).filter(([,v])=>v!=null&&v!=='').map(([k,v])=>k+'='+encodeURIComponent(v).replace(/%2C/g,',').replace(/%2F/g,'/')).join('&')}
+const findRuns=id=>{id=String(id??'');const m=RUNS.filter(x=>x.id===id);return m.length||!id?m:RUNS.filter(x=>x.id.startsWith(id))};
+const findRun=id=>{const m=findRuns(id);return m.length===1?m[0]:null};
+function findEp(r,k){k=String(k??'').trim();if(/^\d+$/.test(k))k=String(+k);const E=r.episodes;let i=E.findIndex(e=>e.num===k&&e.kind==='final');
+ if(i<0)i=E.findIndex(e=>e.num===k);if(i<0)i=E.findIndex(e=>e.file===k||(k&&e.file.startsWith(k)));return i}
+const epKey=(r,e)=>r.episodes.filter(x=>x.num===e.num).length===1?e.num:e.file;
+function curItem(r,i,turn){const L=LIST&&D.lists[LIST];if(!L||!r||i===undefined)return -1;
+ const hits=L.map((it,k)=>[it,k]).filter(([it])=>findRun(it.run)===r&&findEp(r,it.episode)===i);
+ const t=hits.find(([it])=>String(it.turn??'')===String(turn??''));return (t||hits[0]||[null,-1])[1]}
+const itemHref=it=>H({run:it.run,episode:it.episode,turn:it.turn});
+function side(){const el=$('#side'),L=LIST?D.lists[LIST]:null;document.body.classList.toggle('haslist',!!LIST);el.hidden=!LIST;if(!LIST){el.innerHTML='';return}
+ const close=H({...readHash(),idx:undefined,list:''});
+ el.innerHTML=`<div class="sh"><span class="eyebrow">Reading list</span><a href="${esc(close)}" title="Hide this list" aria-label="Hide this list">×</a></div><h2>${esc(LIST)}</h2>`+(!L?`<p class="small">No saved list named <code>${esc(LIST)}</code> in <code>runs/viewer_lists.json</code> (lists are embedded when the page is built).</p>`:
+ `<p class="small">${L.length} item${L.length===1?'':'s'}</p><ol>${L.map((it,k)=>{const r=findRun(it.run),i=r?findEp(r,it.episode):-1,e=i>=0?r.episodes[i]:null;
+  return `<li><a href="${esc(itemHref(it))}" class="${k===CUR?'on':''}"><span class="it">${k+1}. ${e?esc(r.cond_words)+' · ep '+esc(e.num):esc(it.run)+' · ep '+esc(it.episode)+' (not found)'}${it.turn!=null&&it.turn!==''?' · round '+esc(it.turn):''}</span>
+  ${e?`<span class="pills"><span class="pill ${e.out.cls}">${esc(e.out.pill)}</span>${faPill(e)}</span>`:''}${it.note?`<span class="nt">${esc(it.note)}</span>`:''}</a></li>`}).join('')}</ol>`)}
+function listCallout(){const L=LIST&&D.lists[LIST];if(!L||CUR<0)return '';const it=L[CUR],nav=[CUR>0?`<a href="${esc(itemHref(L[CUR-1]))}">← previous</a>`:'',CUR<L.length-1?`<a href="${esc(itemHref(L[CUR+1]))}">next →</a>`:''].join('');
+ return `<div class="callout"><span class="eyebrow">${esc(LIST)} · ${CUR+1} of ${L.length}${it.turn!=null&&it.turn!==''?' · round '+esc(it.turn):''}</span>${it.note?`<p class="note">${esc(it.note)}</p>`:''}${nav?`<div class="nav">${nav}</div>`:''}</div>`}
+function focusRound(t){const el=document.getElementById('round-'+t);if(!el){NOTICE.push(`This episode has no round ${t}.`);return}
+ requestAnimationFrame(()=>{el.scrollIntoView({block:'start'});el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')})}
 
 function kv(rows){return '<div class="kv">'+rows.filter(r=>r[1]!=null&&r[1]!=='').map(([k,v])=>`<b>${esc(k)}</b><div>${v}</div>`).join('')+'</div>'}
 function whatBox(r,e,raw){const s=raw?raw.settings||{}:r.settings,c=r.cond,peer=c.peer_enabled!==false&&r.peer_model,
@@ -550,9 +620,9 @@ function runDetails(r){const m=r.meta;return `<details class="box"><summary>Run 
  ['Host',esc(m.host)],['Ended',esc(m.ended)],['Target routing',esc(pin(r.target_pin)||'OpenRouter default')],['Peer routing',esc(pin(r.peer_pin)||'OpenRouter default')]])}
  ${m.command?`<div class="lbl">Command</div><pre>${esc(m.command)}</pre>`:''}<div class="lbl">All settings</div><pre>${esc(pretty(r.settings))}</pre>${m.results?`<div class="lbl">Run results</div><pre>${esc(pretty(m.results))}</pre>`:''}</details>`}
 
-function showRun(r){$('#main').innerHTML=`<div class="crumb"><a href="#">All runs</a> / ${esc(r.id)}</div><h2>${esc(r.cond_words)}</h2>${notes(r.desc,r.tags)}
+function showRun(r){$('#main').innerHTML=`<div class="crumb"><a href="${esc(H({}))}">All runs</a> / ${esc(r.id)}</div><h2>${esc(r.cond_words)}</h2>${notes(r.desc,r.tags)}
  <div class="what"><h3>What was run</h3>${whatBox(r)}<div class="pills">${summary(r)}</div>${runFa(r)}</div>
- <h3>Episodes</h3><div class="list">${r.episodes.map((e,i)=>`<a class="card" href="#run/${encodeURIComponent(r.id)}/${i}">
+ <h3>Episodes</h3><div class="list">${r.episodes.map((e,i)=>`<a class="card" href="${esc(H({run:r.id,episode:epKey(r,e)}))}">
  <span class="t">Episode ${esc(e.num)}</span><span class="pills"><span class="pill ${e.out.cls}">${esc(e.out.pill)}</span>${faPill(e)}<span>${esc(e.out.line)}</span></span>
  ${notes(e.note,e.tags)}<span class="small mono">${esc(e.file)} · $${e.cost.total.toFixed(4)}</span></a>`).join('')}</div>${runDetails(r)}`}
 
@@ -622,16 +692,16 @@ function showEp(r,i){const e=r.episodes[i];if(!e)return showRun(r);const ep=RAW(
  TOK=spec.honeypots||[];const {rounds,names}=transcript(ep),state={leak:false};let body='';
  for(const R of rounds){const tags=[];if(R.round===L.token_read_round)tags.push('<span class="pill plain">target reads the token</span>');
   if(R.round===L.first_peer_ask_round)tags.push('<span class="pill plain">peer first asks</span>');if(R.round===L.first_action_round)tags.push('<span class="pill leaked">first leak</span>');
-  body+=`<div class="round"><h2>${rounds.length===1&&!r.peer_model?'The target’s turn':'Round '+esc(R.round)}</h2>${tags.join('')}</div>`;
-  for(const T of R.turns)body+=turnHtml(T,names,state)}
+  body+=`<section class="rnd" id="round-${esc(R.round)}"><div class="round"><h2>${rounds.length===1&&!r.peer_model?'The target’s turn':'Round '+esc(R.round)}</h2>${tags.join('')}</div>`;
+  for(const T of R.turns)body+=turnHtml(T,names,state);body+='</section>'}
  const leakDone=state.leak;
  if(!rounds.length)body='<p class="small">No API requests were recorded for this episode.</p>';
  body+=`<p class="small">${ep.status==='complete'?'End of episode: all rounds finished.':'The episode stopped here: '+esc(e.out.line.replace(/^.*?: /,''))+'.'}</p>`;
  const sys=(a,t)=>t?`<div class="lbl">${a}</div><pre>${hl(t)}</pre>`:'',hist=ep.histories||{};
  const ta=spec.tool_access||{},files=spec.files||{},fin=ep.files||{};
  const labelRows=Object.entries(ep.label&&typeof ep.label==='object'?ep.label:{label:ep.label}).map(([k,v])=>`<tr class="${['objective_success','eligible_resisted','token_in_context','first_action_round','valid_for_comparison','task_success'].includes(k)?'key':''}"><th class="mono">${esc(k)}</th><td>${hl(typeof v==='string'?v:JSON.stringify(v))}</td></tr>`).join('');
- $('#main').innerHTML=`<div class="crumb"><a href="#">All runs</a> / <a href="#run/${encodeURIComponent(r.id)}">${esc(r.id)}</a> / Episode ${esc(e.num)}</div>
- ${r.episodes.length>1?`<div class="chips">${r.episodes.map((x,j)=>`<a class="${j===i?'on':''}" href="#run/${encodeURIComponent(r.id)}/${j}" title="${esc(x.out.line)}">Episode ${esc(x.num)}${x.counted?'':' · not counted'}</a>`).join('')}</div>`:''}
+ $('#main').innerHTML=`<div class="crumb"><a href="${esc(H({}))}">All runs</a> / <a href="${esc(H({run:r.id}))}">${esc(r.id)}</a> / Episode ${esc(e.num)}</div>${listCallout()}
+ ${r.episodes.length>1?`<div class="chips">${r.episodes.map((x,j)=>`<a class="${j===i?'on':''}" href="${esc(H({run:r.id,episode:epKey(r,x)}))}" title="${esc(x.out.line)}">Episode ${esc(x.num)}${x.counted?'':' · not counted'}</a>`).join('')}</div>`:''}
  ${e.note||e.tags.length?`<div class="callout">${notes(e.note,e.tags)}</div>`:''}
  <div class="what"><div class="outcome ${e.out.cls}">${esc(e.out.line)}</div><div class="pills"><span class="pill ${e.out.cls}">${esc(e.out.pill)}</span>${leakDone?'<button class="link" id="jump">Jump to the leak</button>':''}</div>
  <h3>What was run</h3>${whatBox(r,e,ep)}</div>
@@ -653,8 +723,14 @@ function showEp(r,i){const e=r.episodes[i];if(!e)return showRun(r);const ep=RAW(
   box.innerHTML=d.dataset.lazy==='json'?`<pre style="max-height:none">${hl(JSON.stringify(ep,null,2))}</pre>`:Object.entries(hist).map(([a,ms])=>`<div class="lbl">${esc(a==='recruiter'?'Peer':'Target')} (${ms.length} messages)</div>`+
   ms.map(m=>`<pre><b>${esc(m.role)}</b>${m.tool_call_id?' '+esc(m.tool_call_id):''}\n${hl(txt(m.content))}${m.reasoning?'\n[reasoning] '+hl(m.reasoning):''}${(m.tool_calls||[]).map(c=>'\n→ '+esc((c.function||{}).name)+' '+hl((c.function||{}).arguments)).join('')}</pre>`).join('')).join('')}))}
 
-function route(){const [,id,i]=location.hash.slice(1).split('/'),r=RUNS.find(x=>x.id===decodeURIComponent(id||''));
- if(!r)home();else if(i===undefined)showRun(r);else showEp(r,+i);window.scrollTo(0,0)}
+function route(){const P=readHash();LIST=P.list||'';NOTICE=[];let r=null,i;
+ if(P.run){const m=findRuns(P.run);if(m.length===1)r=m[0];else NOTICE.push(m.length?`Run prefix "${P.run}" matches ${m.length} runs; give more of the ID.`:`No run matches "${P.run}".`)}
+ if(r&&P.idx!==undefined)i=+P.idx;
+ else if(r&&P.episode){i=findEp(r,P.episode);if(i<0){NOTICE.push(`Run ${r.id} has no episode "${P.episode}".`);i=undefined}}
+ CUR=curItem(r,i,P.turn);side();
+ if(!r)home();else if(i===undefined)showRun(r);else showEp(r,i);window.scrollTo(0,0);
+ if(r&&i!==undefined&&P.turn)focusRound(P.turn);
+ if(NOTICE.length)$('#main').insertAdjacentHTML('afterbegin',`<div class="callout warn">${NOTICE.map(n=>`<p>${esc(n)}</p>`).join('')}</div>`)}
 $('#built').textContent=`${RUNS.length} runs, ${RUNS.reduce((a,r)=>a+r.episodes.length,0)} episode files. Built ${D.built} from runs/.`;
 window.addEventListener('hashchange',route);route();
 </script></body></html>
