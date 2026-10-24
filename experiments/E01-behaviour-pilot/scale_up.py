@@ -17,6 +17,7 @@ from types import SimpleNamespace
 from harness import Settings, run_episode
 from overnight_rules import get_overnight_scenario
 from overnight_sweep import PEER, TARGETS, fetch_prices, options
+from peer_tactics import TACTIC_IDS, apply_peer_tactic
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'src'))
@@ -43,6 +44,13 @@ class SpendCap:
         return response
 
 
+def scale_up_scenario(family, strength, condition, family_id, tactic=None):
+    scenario = get_overnight_scenario(family, strength, condition, family_id=family_id)
+    if tactic and condition != 'alone':
+        scenario = apply_peer_tactic(scenario, tactic)
+    return scenario
+
+
 async def main(a):
     from dotenv import load_dotenv
     from openai import AsyncOpenAI
@@ -55,20 +63,28 @@ async def main(a):
     load_dotenv(ROOT / '.env')
     client = AsyncOpenAI(api_key=os.environ['OPENROUTER_API_KEY'], base_url='https://openrouter.ai/api/v1',
                          max_retries=0, timeout=90)
-    parent = start_run(f'e01-scaleup-{a.family}-{a.strength}-{a.target}', experiment='E01',
-                       settings={'cap_usd': a.cap_usd, 'counts': {'recruiting': a.recruiting, 'control': a.control,
-                                 'alone': a.alone}, 'family_start': a.family_start, 'parallelism': a.parallelism},
-                       tags=['scale-up', a.strength], model=model)
+    tactic_suffix = f'-{a.tactic.lower()}' if a.tactic else ''
+    parent_settings = {'cap_usd': a.cap_usd, 'counts': {'recruiting': a.recruiting, 'control': a.control,
+                       'alone': a.alone}, 'family_start': a.family_start, 'parallelism': a.parallelism}
+    if a.tactic:
+        parent_settings['tactic_id'] = a.tactic
+    parent = start_run(f'e01-scaleup-{a.family}-{a.strength}-{a.target}{tactic_suffix}', experiment='E01',
+                       settings=parent_settings,
+                       tags=['scale-up', a.strength] + ([a.tactic.lower()] if a.tactic else []), model=model)
     budget = SpendCap(client, a.cap_usd, parent.dir / 'budget.json')
     gate = asyncio.Semaphore(a.parallelism)
     cells = []
     streams = sys.stdout, sys.stderr, sys.excepthook  # keep everything in the parent log
     for condition, count in (('recruiting', a.recruiting), ('control', a.control), ('alone', a.alone)):
         if count:
-            cell = start_run(f'e01-{a.family}-{a.strength}-{condition}-{a.target}-scaleup', experiment='E01',
-                             settings={**asdict(settings), 'scenario_family': a.family, 'strength': a.strength,
-                                       'condition': condition, 'target': a.target},
-                             parents=[parent.id], tags=['scale-up', a.strength, condition], model=model)
+            cell_settings = {**asdict(settings), 'scenario_family': a.family, 'strength': a.strength,
+                             'condition': condition, 'target': a.target}
+            if a.tactic and condition != 'alone':
+                cell_settings['tactic_id'] = a.tactic
+            cell = start_run(f'e01-{a.family}-{a.strength}-{condition}-{a.target}{tactic_suffix}-scaleup', experiment='E01',
+                             settings=cell_settings, parents=[parent.id],
+                             tags=['scale-up', a.strength, condition] + ([a.tactic.lower()] if a.tactic and condition != 'alone' else []),
+                             model=model)
             sys.stdout, sys.stderr, sys.excepthook = streams
             cells.append((condition, count, cell))
 
@@ -76,7 +92,8 @@ async def main(a):
         async with gate:
             if budget.spent >= budget.cap:
                 return None
-            scenario = get_overnight_scenario(a.family, a.strength, condition, family_id=str(a.family_start + index))
+            scenario = scale_up_scenario(
+                a.family, a.strength, condition, str(a.family_start + index), a.tactic)
             try:
                 ep = await run_episode(scenario, settings, budget, cell.dir / 'episodes', episode_id=f'episode-{index+1:04}')
             except Exception as exc:  # keep the other episodes going
@@ -99,7 +116,7 @@ async def main(a):
     print('SCALEUP_DONE', parent.id, f'${budget.spent:.4f}', flush=True)
 
 
-if __name__ == '__main__':
+def make_parser():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--family', default='deploy-token')
     p.add_argument('--strength', default='consequence_logged')
@@ -110,4 +127,10 @@ if __name__ == '__main__':
     p.add_argument('--family-start', type=int, default=2001)
     p.add_argument('--parallelism', type=int, default=4)
     p.add_argument('--cap-usd', type=float, default=3)
-    asyncio.run(main(p.parse_args()))
+    p.add_argument('--tactic', type=str.upper, choices=TACTIC_IDS,
+                   help='Append a Leo-approved peer tactic (PEER_TACTICS.md)')
+    return p
+
+
+if __name__ == '__main__':
+    asyncio.run(main(make_parser().parse_args()))
