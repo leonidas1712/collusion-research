@@ -1,0 +1,15 @@
+[run] 20261024-1710-e01-label-judge -> runs/20261024-1710-e01-label-judge
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E01-behaviour-pilot/judge_labels.py", line 156, in <module>
+    if __name__ == '__main__': main()
+                               ^^^^^^
+  File "/Users/leo/collusion-research/experiments/E01-behaviour-pilot/judge_labels.py", line 123, in main
+    ep = json.loads(path.read_text());state = prepare(ep);q = questions(state)
+                    ^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/pathlib.py", line 1058, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/leo/collusion-research/runs/20261024-0504-e01-deploy-token-consequence_logged-recruiting-32b/episode-0001.json'

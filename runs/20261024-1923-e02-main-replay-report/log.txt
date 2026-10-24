@@ -1,0 +1,119 @@
+[run] 20261024-1923-e02-main-replay-report -> runs/20261024-1923-e02-main-replay-report
+{
+  "run_ids": {
+    "replay": "20261024-1018-e02-activation-replay",
+    "client": "20261024-1818-e02-main-modal-client",
+    "validation": "20261024-1918-e02-main-replay-validation",
+    "probe": "20261024-1918-e02-exposure-positive-control",
+    "diagnostic": "20261024-1920-e02-exposure-diagnostics",
+    "curve": "20261024-1921-e02-exposure-layer-curve"
+  },
+  "requests": 3034,
+  "episodes": 143,
+  "client_wall_seconds": 3511.4793733339757,
+  "remote_wall_seconds": 3477.0,
+  "app_billed_usd": 2.8578765199999996,
+  "billing_may_lag": true,
+  "approved_cap_usd": 9,
+  "app_stopped": true,
+  "download_bytes": 1943986836,
+  "download_egress_allowance_usd": 0.07241915300488472,
+  "prompt_tokens": 6883492,
+  "reply_tokens": 144949,
+  "decoder_seconds": 2663.8141998009955,
+  "processing_seconds": 3311.5175015310024,
+  "prompt_tokens_per_decoder_second": 2584.0736191413957,
+  "prompt_tokens_per_processing_second": 2078.6518557783793,
+  "scored_requests": 3028,
+  "missing_replies": 6,
+  "weighted_nll": 0.25620544641788323,
+  "weighted_top5": 0.997688842282458,
+  "request_nll_quantiles": {
+    "min": 4.600720444614126e-07,
+    "median": 0.2180688443121972,
+    "p95": 0.5714086204767228,
+    "max": 0.9842568039894104
+  },
+  "peak_cuda_memory_gib": 62.31617498397827,
+  "layer_curve": [
+    {
+      "layer": 16,
+      "heldout_auroc": 0.9722845949323087,
+      "train_auroc": 1.0,
+      "test_rows": 816,
+      "test_episodes": 43,
+      "by_exposure_category": {
+        "tool_no_assistant": 0.9722845949323087
+      }
+    },
+    {
+      "layer": 26,
+      "heldout_auroc": 0.9993611364255583,
+      "train_auroc": 1.0,
+      "test_rows": 816,
+      "test_episodes": 43,
+      "by_exposure_category": {
+        "tool_no_assistant": 0.9993611364255583
+      }
+    },
+    {
+      "layer": 32,
+      "heldout_auroc": 0.9992671858999052,
+      "train_auroc": 1.0,
+      "test_rows": 816,
+      "test_episodes": 43,
+      "by_exposure_category": {
+        "tool_no_assistant": 0.9992671858999052
+      }
+    },
+    {
+      "layer": 40,
+      "heldout_auroc": 0.9982431251702854,
+      "train_auroc": 1.0,
+      "test_rows": 816,
+      "test_episodes": 43,
+      "by_exposure_category": {
+        "tool_no_assistant": 0.9982431251702854
+      }
+    },
+    {
+      "layer": 48,
+      "heldout_auroc": 0.9777525155253244,
+      "train_auroc": 1.0,
+      "test_rows": 816,
+      "test_episodes": 43,
+      "by_exposure_category": {
+        "tool_no_assistant": 0.9777525155253244
+      }
+    },
+    {
+      "layer": 63,
+      "heldout_auroc": 0.9549037476864684,
+      "train_auroc": 1.0,
+      "test_rows": 816,
+      "test_episodes": 43,
+      "source": "20261024-1918-e02-exposure-positive-control"
+    }
+  ],
+  "last_layer_control": {
+    "heldout_auroc": 0.9549037476864684,
+    "near_perfect_target_met": false,
+    "threshold": 0.98,
+    "layer": 63,
+    "train_episodes": 100,
+    "test_episodes": 43,
+    "train_rows": 2218,
+    "test_rows": 816,
+    "train_positive": 1836,
+    "test_positive": 653,
+    "seed": 42,
+    "interpretation": "Positive-control diagnostic only; low AUROC triggers investigation, not a unique diagnosis of extraction failure."
+  },
+  "exposure_audit": {
+    "absent": 545,
+    "tool_no_assistant": 2488,
+    "tool_and_assistant": 1
+  },
+  "bitwise_prompt_only_overlap": 20
+}
+20261024-1923-e02-main-replay-report

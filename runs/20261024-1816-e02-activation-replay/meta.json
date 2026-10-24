@@ -1,0 +1,76 @@
+{
+  "id": "20261024-1816-e02-activation-replay",
+  "experiment": "E02",
+  "name": "e02-activation-replay",
+  "tags": [
+    "wiring"
+  ],
+  "settings": {
+    "runs": [
+      "/Users/leo/collusion-research/runs/20261024-0650-e01-deploy-token-consequence_logged-recruiting-32b",
+      "/Users/leo/collusion-research/runs/20261024-1735-e01-deploy-token-consequence_logged-recruiting-32b-t5-scaleup"
+    ],
+    "manifest": "runs/20261024-1816-e02-fidelity-edge-input/steps.jsonl",
+    "model": "Qwen/Qwen3-32B",
+    "source_model": [
+      "qwen/qwen3-32b"
+    ],
+    "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+    "device": "cpu",
+    "dtype": "float32",
+    "thinking": "from-request",
+    "layers_path": null,
+    "layers": "all",
+    "request_order": "source",
+    "max_requests": null,
+    "output_root": null,
+    "local_files_only": true,
+    "reply_fidelity": true,
+    "fidelity_tokens": 64,
+    "precision": "bf16",
+    "max_episodes": null,
+    "max_requests_per_episode": null,
+    "max_tokens": 32768,
+    "cpu_threads": 4,
+    "tiny_random": true,
+    "allow_cross_model": false,
+    "seed": 0
+  },
+  "parents": [
+    "20261024-0650-e01-deploy-token-consequence_logged-recruiting-32b",
+    "20261024-1735-e01-deploy-token-consequence_logged-recruiting-32b-t5-scaleup",
+    "20261024-1816-e02-fidelity-edge-input"
+  ],
+  "model": "Qwen/Qwen3-32B",
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E02-activation-replay/replay.py --manifest runs/20261024-1816-e02-fidelity-edge-input/steps.jsonl --model Qwen/Qwen3-32B --revision 9216db5781bf21249d130ec9da846c4624c16137 --source-model qwen/qwen3-32b --tiny-random --device cpu --dtype float32 --local-files-only",
+  "git_commit": "2ab623b2b0ef46c46dc7f80d22f792fc0323dee6",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T18:16:38",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T18:16:39",
+  "results": {
+    "fidelity_statuses": {
+      "missing_response": 1,
+      "scored": 1
+    },
+    "scored_reply_tokens": 64,
+    "weighted_reply_nll": 11.925840377807617,
+    "weighted_top5_fraction": 0.0,
+    "model_load_seconds": 0.3693075836636126,
+    "peak_cuda_memory_bytes": null,
+    "episodes": 2,
+    "episodes_available": 14,
+    "requests": 2,
+    "first_step_requests": 0,
+    "token_ratio_n": 1,
+    "token_ratio_min": 1.0,
+    "token_ratio_median": 1.0,
+    "token_ratio_max": 1.0,
+    "normalizations": {
+      "argument_strings": 3
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "20261024-1818-e02-main-modal-client",
+  "experiment": "E02",
+  "name": "e02-main-modal-client",
+  "tags": [],
+  "settings": {
+    "approval": "Aboard #458",
+    "hard_cap_usd": 9,
+    "command": [
+      "modal",
+      "run",
+      "experiments/E02-activation-replay/modal_app.py::main",
+      "--manifest-path",
+      "runs/20261024-1803-e02-step-prefix-plan/steps.jsonl",
+      "--model",
+      "Qwen/Qwen3-32B",
+      "--revision",
+      "9216db5781bf21249d130ec9da846c4624c16137",
+      "--source-model",
+      "qwen/qwen3-32b",
+      "--precision",
+      "bf16",
+      "--gpu",
+      "a100",
+      "--layers",
+      "all",
+      "--fidelity-tokens",
+      "64"
+    ]
+  },
+  "parents": [
+    "20261024-1803-e02-step-prefix-plan",
+    "20261024-1814-e02-fidelity-plan"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 /tmp/e02_launch_approved.py",
+  "git_commit": "2ab623b2b0ef46c46dc7f80d22f792fc0323dee6",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T18:18:10",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T19:16:43",
+  "results": {
+    "client_wall_seconds": 3511.4793733339757,
+    "returncode": 0
+  }
+}

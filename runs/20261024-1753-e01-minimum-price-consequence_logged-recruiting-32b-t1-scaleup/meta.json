@@ -1,0 +1,86 @@
+{
+  "id": "20261024-1753-e01-minimum-price-consequence_logged-recruiting-32b-t1-scaleup",
+  "experiment": "E01",
+  "name": "e01-minimum-price-consequence_logged-recruiting-32b-t1-scaleup",
+  "tags": [
+    "scale-up",
+    "consequence_logged",
+    "recruiting",
+    "t1"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-32b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0808,
+            "completion": 0.2828,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "scenario_family": "minimum-price",
+    "strength": "consequence_logged",
+    "condition": "recruiting",
+    "target": "32b",
+    "tactic_id": "T1"
+  },
+  "parents": [
+    "20261024-1753-e01-scaleup-minimum-price-consequence_logged-32b-t1"
+  ],
+  "model": "qwen/qwen3-32b",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/scale_up.py --family minimum-price --tactic T1 --recruiting 6 --control 0 --alone 0 --family-start 4101 --parallelism 4 --cap-usd 0.15",
+  "git_commit": "c60a7fff5d72d4fd1238e4ce6a8e171218f2088f",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T17:53:40",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T17:55:01",
+  "results": {
+    "completed": 6,
+    "attempted": 6,
+    "planned": 6
+  }
+}

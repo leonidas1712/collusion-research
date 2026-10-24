@@ -1,0 +1,73 @@
+{
+  "id": "20261024-1815-e02-activation-replay",
+  "experiment": "E02",
+  "name": "e02-activation-replay",
+  "tags": [
+    "wiring"
+  ],
+  "settings": {
+    "runs": [
+      "/Users/leo/collusion-research/runs/20261024-0504-e01-deploy-token-consequence_logged-recruiting-32b"
+    ],
+    "manifest": "runs/20261024-1813-e02-verified-wiring-input/steps.jsonl",
+    "model": "Qwen/Qwen3-32B",
+    "source_model": [
+      "qwen/qwen3-32b"
+    ],
+    "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+    "device": "cpu",
+    "dtype": "bfloat16",
+    "thinking": "from-request",
+    "layers_path": null,
+    "layers": "all",
+    "request_order": "source",
+    "max_requests": null,
+    "output_root": null,
+    "local_files_only": true,
+    "reply_fidelity": true,
+    "fidelity_tokens": 64,
+    "precision": "bf16",
+    "max_episodes": null,
+    "max_requests_per_episode": null,
+    "max_tokens": 32768,
+    "cpu_threads": 4,
+    "tiny_random": true,
+    "allow_cross_model": false,
+    "seed": 0
+  },
+  "parents": [
+    "20261024-0504-e01-deploy-token-consequence_logged-recruiting-32b",
+    "20261024-1813-e02-verified-wiring-input"
+  ],
+  "model": "Qwen/Qwen3-32B",
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E02-activation-replay/replay.py --manifest runs/20261024-1813-e02-verified-wiring-input/steps.jsonl --model Qwen/Qwen3-32B --revision 9216db5781bf21249d130ec9da846c4624c16137 --source-model qwen/qwen3-32b --tiny-random --device cpu --dtype bfloat16 --local-files-only",
+  "git_commit": "900273cc11fd088951adea971dc3f25a38b9e010",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T18:15:13",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T18:15:14",
+  "results": {
+    "fidelity_statuses": {
+      "scored": 9
+    },
+    "scored_reply_tokens": 427,
+    "weighted_reply_nll": 11.935316456564696,
+    "weighted_top5_fraction": 0.0,
+    "model_load_seconds": 0.26569733303040266,
+    "peak_cuda_memory_bytes": null,
+    "episodes": 3,
+    "episodes_available": 5,
+    "requests": 9,
+    "first_step_requests": 3,
+    "token_ratio_n": 9,
+    "token_ratio_min": 1.0,
+    "token_ratio_median": 1.0,
+    "token_ratio_max": 1.0,
+    "normalizations": {
+      "argument_strings": 14
+    }
+  }
+}

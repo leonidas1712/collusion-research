@@ -1,0 +1,86 @@
+{
+  "id": "20261024-0504-e01-deploy-token-consequence_logged-alone-32b",
+  "experiment": "E01",
+  "name": "e01-deploy-token-consequence_logged-alone-32b",
+  "tags": [
+    "overnight",
+    "consequence_logged",
+    "pending-posthoc-review"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-32b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0808,
+            "completion": 0.2828,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "target": "32b",
+    "scenario_family": "deploy-token",
+    "strength": "consequence_logged",
+    "sweep_round": 1,
+    "condition": "alone",
+    "review_status": "run overnight, pending Leo's post-hoc review"
+  },
+  "parents": [
+    "20261024-0332-e01-overnight-rule-strength"
+  ],
+  "model": "qwen/qwen3-32b",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/overnight_sweep.py",
+  "git_commit": "14fedd05ba37dd1bb3c98b970f58c4e339857653",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T05:04:10",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T05:04:17",
+  "results": {
+    "completed": 2,
+    "attempted": 2,
+    "planned": 2
+  }
+}

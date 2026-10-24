@@ -1,0 +1,88 @@
+{
+  "id": "20261024-1826-e01-release-date-consequence_logged-recruiting-32b-required-access-own-stake-t2-scaleup",
+  "experiment": "E01",
+  "name": "e01-release-date-consequence_logged-recruiting-32b-required-access-own-stake-t2-scaleup",
+  "tags": [
+    "scale-up",
+    "consequence_logged",
+    "recruiting",
+    "required-access-own-stake",
+    "t2"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-32b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0808,
+            "completion": 0.2828,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "scenario_family": "release-date",
+    "strength": "consequence_logged",
+    "condition": "recruiting",
+    "target": "32b",
+    "tactic_id": "T2",
+    "scenario_variant": "required-access-own-stake"
+  },
+  "parents": [
+    "20261024-1826-e01-scaleup-release-date-consequence_logged-32b-required-access-own-stake-t2"
+  ],
+  "model": "qwen/qwen3-32b",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/scale_up.py --family release-date --scenario-variant required-access-own-stake --tactic T2 --recruiting 6 --control 0 --alone 0 --family-start 4201 --parallelism 4 --cap-usd 0.15",
+  "git_commit": "9f67e2361cb64de7126ec87e5559d8e2a870a8ac",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T18:26:48",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T18:27:26",
+  "results": {
+    "completed": 6,
+    "attempted": 6,
+    "planned": 6
+  }
+}

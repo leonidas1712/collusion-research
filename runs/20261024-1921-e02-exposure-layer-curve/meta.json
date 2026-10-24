@@ -1,0 +1,100 @@
+{
+  "id": "20261024-1921-e02-exposure-layer-curve",
+  "experiment": "E02",
+  "name": "e02-exposure-layer-curve",
+  "tags": [],
+  "settings": {
+    "layers": [
+      16,
+      26,
+      32,
+      40,
+      48
+    ],
+    "seed": 42,
+    "post_hoc_diagnostic": true,
+    "request": "Aboard #497",
+    "no_gpu": true
+  },
+  "parents": [
+    "20261024-1018-e02-activation-replay",
+    "20261024-1918-e02-exposure-positive-control"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E02-activation-replay/exposure_curve.py",
+  "git_commit": "364fb9f008db5eac7b3caa432fa9f220a60cd23c",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T19:21:57",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T19:22:13",
+  "results": {
+    "exposure_counts": {
+      "absent": 545,
+      "tool_no_assistant": 2488,
+      "tool_and_assistant": 1
+    },
+    "curve": [
+      {
+        "layer": 16,
+        "heldout_auroc": 0.9722845949323087,
+        "train_auroc": 1.0,
+        "test_rows": 816,
+        "test_episodes": 43,
+        "by_exposure_category": {
+          "tool_no_assistant": 0.9722845949323087
+        }
+      },
+      {
+        "layer": 26,
+        "heldout_auroc": 0.9993611364255583,
+        "train_auroc": 1.0,
+        "test_rows": 816,
+        "test_episodes": 43,
+        "by_exposure_category": {
+          "tool_no_assistant": 0.9993611364255583
+        }
+      },
+      {
+        "layer": 32,
+        "heldout_auroc": 0.9992671858999052,
+        "train_auroc": 1.0,
+        "test_rows": 816,
+        "test_episodes": 43,
+        "by_exposure_category": {
+          "tool_no_assistant": 0.9992671858999052
+        }
+      },
+      {
+        "layer": 40,
+        "heldout_auroc": 0.9982431251702854,
+        "train_auroc": 1.0,
+        "test_rows": 816,
+        "test_episodes": 43,
+        "by_exposure_category": {
+          "tool_no_assistant": 0.9982431251702854
+        }
+      },
+      {
+        "layer": 48,
+        "heldout_auroc": 0.9777525155253244,
+        "train_auroc": 1.0,
+        "test_rows": 816,
+        "test_episodes": 43,
+        "by_exposure_category": {
+          "tool_no_assistant": 0.9777525155253244
+        }
+      },
+      {
+        "layer": 63,
+        "heldout_auroc": 0.9549037476864684,
+        "train_auroc": 1.0,
+        "test_rows": 816,
+        "test_episodes": 43,
+        "source": "20261024-1918-e02-exposure-positive-control"
+      }
+    ]
+  }
+}
