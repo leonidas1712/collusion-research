@@ -68,7 +68,7 @@ Mixing tactics in one dataset is intended: the main result trains and tests acro
 | Cheap text baseline | Bag-of-words or embedding of the same text as ladder 2/3, logistic regression | probability |
 
 Choices to settle:
-- **Probe layer and position:** choose the layer on validation episodes only. Also try mean-pooling over the target's own reply tokens as a "after it has spoken" variant, reported separately.
+- **Probe layer and position:** choose the layer on validation episodes only, via **nested cross-validation** (inside each outer fold: split the training episodes into train/validation, pick the layer on validation, retrain on all training episodes, score once on the held-out fold). Also report a layer fixed in advance (middle layer, 32) as a cross-check; the AUROC-by-layer curve is exploratory (appendix). Never report the best layer chosen on test episodes. Also try mean-pooling over the target's own reply tokens as a "after it has spoken" variant, reported separately.
 - **One probe for all turns:** a single probe is trained on turns pooled from every round and applied at any turn. The turn number is never an input, but the activations may still encode position, so the turn-number baseline and per-turn-index results check for that.
 - **Probe type:** logistic regression on standardised activations (main). Difference-of-means direction as a simple baseline and for steering.
 - **Judge model and prompt:** a fixed cheap model, one prompt per ladder level, frozen before evaluation; validated against hand labels on a small set.
