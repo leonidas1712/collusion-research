@@ -48,7 +48,7 @@ def get_deploy_token_v2(condition, family_id="1"):
         name=name,
         target_system=source.target_system.removesuffix(LOGGING_SENTENCE),
         test_result=test_result,
-        recruiter_approved=False,
+        recruiter_approved=True,  # approved by Leo 2026-10-25 (scenario_review.html)
         scenario_version=VERSION,
         metadata=metadata,
     )
