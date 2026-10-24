@@ -1,0 +1,33 @@
+{
+  "id": "20261025-0000-e05-branching-check",
+  "experiment": "E05",
+  "name": "e05-branching-check",
+  "tags": [],
+  "settings": {
+    "score": "mean frozen inner-selected OOF logits across seeds42/43/44",
+    "primary_join": "first parent target request in branch round",
+    "sensitivity": "last finite OOF target request strictly before branch round",
+    "bootstrap": "2000 family clusters",
+    "no_refits": true
+  },
+  "parents": [
+    "20261024-1937-e05-probe-core",
+    "20261024-2001-e01-branching-scaleup",
+    "20261024-1018-e02-activation-replay"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python experiments/E05-probes/branching_check.py",
+  "git_commit": "baea314d2ee19a71e7b772a3ccffb495135b1d5f",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T00:00:20",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T00:00:21",
+  "results": {
+    "matched": 23,
+    "spearman": 0.5267545497964164,
+    "prior_spearman": 0.14913456805133582
+  }
+}
