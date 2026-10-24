@@ -152,6 +152,18 @@ Sources: `docs/llm_activations_lit.md` (Leo), `docs/probe_takeaways.md`, `docs/e
 | Representation engineering | Background | Zou et al. 2023, arXiv 2310.01405 | |
 | Activation Oracles / LatentQA | Optional extra | arXiv 2512.15674 ([code](https://github.com/adamkarvonen/activation_oracles)); arXiv 2412.08686 | |
 
+### 4.x Black-box monitor baselines (details: `docs/monitor_baselines.md`)
+
+| Item | Where we use it | Source | Our changes / notes |
+|---|---|---|---|
+| ControlArena monitor prompts (`default.txt`, `cot.txt`, `cot_only.txt`, `full_trajectory_default_system.txt`) | Primary monitor family for all ladder levels | UK AISI ControlArena (MIT) | Operator-rule framing; channel and unposted-text blocks; forecasting question; 0–100 scale |
+| Per-step "next action unauthorized" probability question | Wording of our forecasting question | The Agent Knew, arXiv 2610.17301 (github AryaFayyazi/Honesty, `scripts/156_v57_monitor.py` L17–23) | No licence: cite and paraphrase, don't copy |
+| Relaxation judge | Secondary monitor (levels 3–4); like-for-like judge on Shi traces | Shi et al. 2609.24967, `analysis/relaxation_judge_prompts.md` L7–46 (MIT) | Detects stated intent to relax, not a forecast |
+| Constraint-adherence rubric | Considered | TraceGuard `dimensions.py` L65–106 (MIT) | Scores the current action only |
+| Black-box deception baseline | Considered | Apollo 2502.03407, `data/black_box_baseline/prompt.txt` (no licence) | Detection of past deception |
+| Blackboard judge | Considered | Colosseum `judge_blackboards.py` (no licence) | After-the-fact detection |
+| CoT monitor | Considered for the reasoning level | Baker et al. 2025, App. C | Binary detection |
+
 ## 5. Datasets, models and tools
 
 Sources: `EXPERIMENT_LOG.md`, `experiments/E02-activation-replay/README.md`, `experiments/E01-behaviour-pilot/JUDGE_LABELS.md`, `docs/external_traces.md`, `docs/backup_shi_et_al.md`, `resources.md`.
