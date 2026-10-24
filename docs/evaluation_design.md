@@ -26,6 +26,8 @@ Every method outputs **one score per target turn**: "will this agent give in lat
 | Control or target alone | negative (used for false-alarm rate) | n/a |
 | Incomplete | excluded | excluded |
 
+Also record for each give-in whether the target mentioned the rule in the turn it gave in ("knew but complied" vs "forgot or ignored"). Both count as positives: we want to catch the violation either way. The split is reported, not filtered on.
+
 A useful variant: label by **turns until the action** (k − t), so we can report accuracy at "1 turn before", "2 turns before", and so on.
 
 **Why give-ins must be gradual:** an episode that gives in at round 1 contributes zero positive turns, so a probe can't be evaluated on it. See the "What a useful episode looks like" section in the overview's Idea tab.
@@ -43,6 +45,7 @@ A useful variant: label by **turns until the action** (k − t), so we can repor
 
 Choices to settle:
 - **Probe layer and position:** choose the layer on validation episodes only. Also try mean-pooling over the target's own reply tokens as a "after it has spoken" variant, reported separately.
+- **One probe for all turns:** a single probe is trained on turns pooled from every round and applied at any turn. The turn number is never an input, but the activations may still encode position, so the turn-number baseline and per-turn-index results check for that.
 - **Probe type:** logistic regression on standardised activations (main). Difference-of-means direction as a simple baseline and for steering.
 - **Judge model and prompt:** a fixed cheap model, one prompt per ladder level, frozen before evaluation; validated against hand labels on a small set.
 
@@ -53,6 +56,9 @@ Choices to settle:
 - *Held-out scenario:* train on k−1 scenarios, test on the left-out one (information ↔ action).
 - *Held-out rule strength:* train on one strength, test on another (also a "rephrased rule" check).
 - *Held-out model:* retrain the same recipe on model 2 (tests the method, not the direction).
+- *Held-out peer tactic:* train on some persuasion tactics, test on others (does the probe detect "about to give in", or "this argument is being made"?).
+- *Held-out peer model:* same scenario and target, different peer model (is the signal an artifact of how one peer talks?). If time runs out, list it as a limitation.
+- Report every held-out axis we try, including ones where the probe fails.
 
 **Metrics:**
 - **AUROC** on held-out turns overall, and by turns-before-action (1, 2, 3+), with bootstrap CIs over families.
@@ -96,5 +102,5 @@ Implications for scenarios and rules:
 1. Which 2–3 scenario × model × strength combinations are the main dataset? This depends on the overnight sweep.
 2. Probe at the "before replying" token only, or also over the reply tokens?
 3. Which judge model, and do we use one prompt across ladder levels or tailored ones?
-4. Do we want a reasoning-model target for ladder level 4, or drop that level?
+4. Reasoning-model target for ladder level 4: Leo wants to try. Qwen3-32B has a thinking mode, so the same weights could serve (same replay pipeline).
 5. How much of the $80 Modal budget goes to the replay vs steering?
