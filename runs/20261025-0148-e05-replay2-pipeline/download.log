@@ -1,0 +1,32 @@
+[run] 20261025-0318-e02-volume-download -> runs/20261025-0318-e02-volume-download
+Traceback (most recent call last):
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/download_volume.py", line 26, in main
+    records.append(dict(path=str(relative),size=entry.size,sha256=h,reused=True));return
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/download_volume.py", line 20, in one
+    async def one(entry):
+        ^^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/asyncio/locks.py", line 15, in __aenter__
+    await self.acquire()
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/asyncio/locks.py", line 387, in acquire
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/download_volume.py", line 31, in <module>
+    tmp.replace(target);records.append(dict(path=str(relative),size=size,sha256=h.hexdigest(),reused=False))
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt

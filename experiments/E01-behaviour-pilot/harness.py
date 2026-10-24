@@ -450,6 +450,9 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                                   "round_limit" if scenario.peer_enabled else "target_finished")
         if scenario.label_fn is not None:
             episode["label"] = scenario.label_fn(episode)
+            if isinstance(episode["label"], dict):
+                from request_labels import request_index_labels
+                episode["label"].update(request_index_labels(episode, episode["label"]))
             tactic_id = scenario_spec["metadata"].get("tactic_id")
             if tactic_id is not None and isinstance(episode["label"], dict):
                 episode["label"] = {**episode["label"], "tactic_id": tactic_id}

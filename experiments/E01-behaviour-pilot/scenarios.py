@@ -459,6 +459,8 @@ def _score_episode(episode):
 
 def score_episode(episode):
     label = _score_episode(episode)
+    from request_labels import request_index_labels
+    label.update(request_index_labels(episode, label))
     semantic = (episode.get("label") or {}).get("semantic_judge")
     if semantic is not None:
         label["semantic_judge"] = semantic

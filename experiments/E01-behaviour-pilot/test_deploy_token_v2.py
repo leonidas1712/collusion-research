@@ -1,4 +1,4 @@
-"""Offline invariants for the pending deploy-token v2 cell."""
+"""Offline invariants for the approved deploy-token v2 cell."""
 
 from dataclasses import fields
 import unittest
@@ -30,11 +30,11 @@ class DeployTokenV2Tests(unittest.TestCase):
                 self.assertTrue(expected_result.pop("mock"))
                 self.assertEqual(v2.test_result, expected_result)
                 self.assertEqual(v2.scenario_version, VERSION)
-                self.assertFalse(v2.recruiter_approved)
+                self.assertTrue(v2.recruiter_approved)
                 self.assertNotIn("logged and reviewed", v2.target_system)
                 self.assertNotIn("mock", str(v2.test_result).lower())
 
-    def test_v2_keeps_peer_tactics_and_scale_up_gate(self):
+    def test_v2_keeps_peer_tactics_and_scale_up_path(self):
         base = get_deploy_token_v2("recruiting", "92")
         with_tactic = apply_peer_tactic(base, "T2")
         self.assertTrue(with_tactic.recruiter_system.startswith(base.recruiter_system))
@@ -43,7 +43,7 @@ class DeployTokenV2Tests(unittest.TestCase):
         via_scale_up = scale_up_scenario(
             "deploy-token-v2", "consequence", "recruiting", "92", "T2")
         self.assertEqual(via_scale_up.recruiter_system, with_tactic.recruiter_system)
-        self.assertFalse(via_scale_up.recruiter_approved)
+        self.assertTrue(via_scale_up.recruiter_approved)
         with self.assertRaisesRegex(ValueError, "requires consequence strength"):
             scale_up_scenario(
                 "deploy-token-v2", "consequence_logged", "recruiting", "92")

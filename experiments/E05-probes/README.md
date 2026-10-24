@@ -54,12 +54,44 @@ The fit run's `rows.jsonl` has one row per original E02 index row, in the same o
 
 [Report and plot](../../runs/20261025-0000-e05-branching-check/report.md): all 34 recruiting branch points match replayed first target requests, but only 23 points from 20 families have finite eligible frozen OOF scores. The 11 excluded points lack token exposure (six also fail the original episode-validity filter). All 170 reruns are complete and their three-round outcomes match the summaries.
 
-Mean frozen OOF logit versus the fraction giving in over five reruns: Spearman **0.527**, family-bootstrap 95% CI **[0.178, 0.772]**. This is a parent-step association: branches restart before the peer speaks, whereas the saved target prompt includes the original current-round peer message; none of the 170 new target requests exactly matches it. The strictly earlier-score sensitivity gives **0.149 [-0.299, 0.550]**. Selection by parent outcome, repeated points, five-sample fractions and the timing mismatch limit interpretation. No refits or inference. Reproduce with `branching_check.py`; v2 work remains queued.
+Mean frozen OOF logit versus the fraction giving in over five reruns: Spearman **0.527**, family-bootstrap 95% CI **[0.178, 0.772]**. This is a parent-step association: branches restart before the peer speaks, whereas the saved target prompt includes the original current-round peer message; none of the 170 new target requests exactly matches it. The strictly earlier-score sensitivity gives **0.149 [-0.299, 0.550]**. Selection by parent outcome, repeated points, five-sample fractions and the timing mismatch limit interpretation. No refits or inference. Reproduce the original checkpoint analysis with `branching_check.py`; the clean shared-state replay is reported below.
 
-## Shared pooled-scenario scoring (APA-59, pending v2)
+## Shared pooled-scenario scoring (APA-59)
 
 Call `metrics.within_round(y, scores, rounds, weights, stratum_key=scenario_names)` for scenario×round AUROC, weighted by positive mass. `weights` is optional. Omit `stratum_key` for the legacy round-only metric. Keys must be hashable with one per row. Single-class strata are omitted and `positive_coverage` reports the retained positive mass; per-stratum details remain in `detail['rounds']`, with an added `stratum_key` field.
 
 `evaluate.ranking_summary(..., stratum_key=scenario_names)` and `score_bootstrap(..., stratum_key=scenario_names)` use the same strata for point estimates and family-bootstrap intervals. Pooled AUROC remains unstratified and must be labeled as a reference. E06 should pass the same scenario array to both point estimates and intervals.
 
-For pooled v2/spray results, the queued plan includes a scenario-only baseline using each scenario's **training-fold episode** give-in rate, and a logistic scenario+round baseline (one-hot scenario plus numeric round, preprocessing fitted on training data). The added-value base model includes scenario, round and prompt length; compare adding the probe score with paired family-bootstrap intervals. All meta-model training scores must be generated within the outer training families, so outer-test families cannot leak indirectly through a stacking feature. For leave-one-scenario-out, the unseen scenario-only rate falls back to the overall training-episode rate: no test labels, hence a constant score within the held-out scenario. Report that baseline alongside each held-out scenario result.
+For pooled v2/spray results, the replay2 recipe includes a scenario-only baseline using each scenario's **training-fold episode** give-in rate, and a logistic scenario+round baseline (one-hot scenario plus numeric round, preprocessing fitted on training data). The added-value base model includes scenario, round and prompt length; compare adding the probe score with paired family-bootstrap intervals. All meta-model training scores must be generated within the outer training families, so outer-test families cannot leak indirectly through a stacking feature. For leave-one-scenario-out, the unseen scenario-only rate falls back to the overall training-episode rate: no test labels, hence a constant score within the held-out scenario. Report that baseline alongside each held-out scenario result.
+
+## Replay2 CPU pipeline (APA-59)
+
+The frozen recipe is [REPLAY2_ANALYSIS_PLAN.md](REPLAY2_ANALYSIS_PLAN.md). Replay2 uses the completed-request window strictly after first read and strictly before first action, including file-only action boundaries. This differs from the original v1 headline above. All pooled ranking comparisons and bootstrap intervals stratify by scenario × round.
+
+After both E02 replay parts pass `verify_main.py`, run these CPU stages in order. Each command prints the run ID needed by the next command:
+
+```sh
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/replay2_data.py <benchmark-replay-id> <main-replay-id>
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/replay2_positive_control.py <data-id>
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/replay2_branching.py <data-id>
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/replay2_core.py <data-id> <positive-control-id>
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/replay2_report.py <data-id> <fits-id> <positive-control-id> <branching-id>
+```
+
+The positive-control stage tests fixed decoder layer 32 first and stops below 0.95 AUROC, then records the full 64-layer curve. The outcome runner requires a passed gate. It fits the v2-only, pooled, LOSO and deliberate-only analyses. The report reconstructs saved logistic, metadata and MLP scores and checks split isolation before evaluation. The MLP runs on CPU; no stage above launches a GPU or calls a model API. The feature cache needs about 7.9 GB of disk space.
+
+`replay2_pipeline.py` is the one-time continuation for the approved replay2 client. It waits for that specific client to finish and stop its app, downloads and verifies the main output, then runs the stages above. It stops on any failed stage. Do not start a duplicate while the original continuation is active.
+
+Replay2 predictions retain `[seed, data_row]` score arrays. Threshold arrays are `[seed, data_row, target_fpr]`, with `fprs = [0.01, 0.05, 0.10, 0.20]`. `threshold_<method>` applies to raw scores; `ema_threshold_<method>` applies to causal EMA maxima. Both use strict `>`. Each cutoff is calibrated from benign training-fold episode maxima. Use the data run's `rows.jsonl` for joins and verify request/prompt hashes. `replay2_evaluate.alarm_results` counts any alarm as one episode event; its denominator is episodes with eligible steps, not every episode in the original dataset.
+
+The pre-fit pooled split export for E06 is `runs/20261025-0240-e05-replay2-folds/`: `rows.jsonl` has manifest hashes and labels, `eligible.npy` selects the 4,184 eligible rows, and `folds.json` lists training, benign calibration and test rows/episodes/families for all 15 outer splits. It was generated without model fitting by `replay2_export_folds.py`, using the same `outer_cases` function as the probe fits. Score monitor predictions on test rows and calibrate cutoffs only on the matching calibration episodes.
+
+[Clean shared-state branching](../../runs/20261025-0340-e05-replay2-branching/report.md) now uses the 23 replayed states before the new peer message. Frozen v1 family-held-out probes give Spearman −0.032, with family-bootstrap 95% CI [−0.460, 0.401]. This does not reproduce the earlier after-peer association. The new checkpoint differs from the probe's original training inputs, and five reruns per state give noisy fractions; the result does not rule out all shared-state predictors. The replay2 exposure gate passed at every layer (minimum AUROC 0.9999908; fixed layer 32 = 1.000).
+
+## Replay2 final analysis
+
+[Final report, metrics and plots](../../runs/20261025-0536-e05-replay2-analysis/report.md) cover v2, pooled six-scenario CV, LOSO, MLP, cross-fitted added value, deliberate-only sensitivity, clean branching, and episode alarm trade-offs. Inner-selected logistic scenario × round AUROC is 0.632 [0.474, 0.757] on v2, 0.522 [0.450, 0.591] pooled, and 0.551 [0.499, 0.597] in LOSO. MLP and added-value comparisons do not show a clear improvement. At the 5% training-benign target, pooled raw logistic recall is 3.2% with held-out benign FPR 5.6% (control-only 8.2%).
+
+All 78 fold audits passed; pooled splits match the E06 export, and saved selected LR/metadata/MLP scores and LR/MLP cutoffs reconstruct within the recorded numerical tolerance (maximum score error 7.63e-6). All 18 tests pass. The [post-hoc baseline audit](../../runs/20261025-0533-e05-replay2-baseline-audit/report.md) explains below-chance training-prevalence CV baselines through cross-fold comparisons. Primary metrics are unchanged; no probe was refit or rescored under a new fold stratum. The final report flags this limitation and the below-chance v2 shuffled-label check.
+
+Fits: `20261025-0340-e05-replay2-fits`; frozen numerical analysis: `20261025-0531-e05-replay2-analysis`; final narrative/package: `20261025-0536-e05-replay2-analysis`. `replay2_finalize.py` copies the frozen numerical artifacts and plots with hash checks, then adds the summary and audit caveat without recomputation.

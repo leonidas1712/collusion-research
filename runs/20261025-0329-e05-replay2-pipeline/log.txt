@@ -1,0 +1,241 @@
+[run] 20261025-0329-e05-replay2-pipeline -> runs/20261025-0329-e05-replay2-pipeline
+START download
+[run] 20261025-0329-e02-volume-download -> runs/20261025-0329-e02-volume-download
+DOWNLOADED /Users/leo/collusion-research/runs/20261024-1727-e02-activation-replay 20261025-0329-e02-volume-download
+START verify
+[run] 20261025-0336-e02-main-replay-validation -> runs/20261025-0336-e02-main-replay-validation
+{
+  "requests": 6000,
+  "episodes": 290,
+  "manifest_hashes_match": true,
+  "artifact_bytes": 3701890066,
+  "statuses": {
+    "scored": 5978,
+    "missing_response": 22
+  },
+  "serialization": {
+    "hf_serialized_reply_including_template_terminator": 5978
+  },
+  "prompt_tokens": 13285649,
+  "reply_tokens": 275703,
+  "weighted_nll": 0.2486270873547674,
+  "weighted_top5": 0.9979253036782335,
+  "request_nll_quantiles": {
+    "min": 1.9924760376203006e-06,
+    "median": 0.20963636908614844,
+    "p95": 0.5456025744859988,
+    "max": 1.0583260014372051
+  },
+  "decoder_seconds": 4678.276508036007,
+  "processing_seconds": 6044.076897048006
+}
+20261025-0336-e02-main-replay-validation
+START data
+[run] 20261025-0337-e05-replay2-data -> runs/20261025-0337-e05-replay2-data
+{"rows": 6026, "real_episodes": 268, "eligible_rows": 4184, "eligible_episodes": 230, "shared_histories": 23, "excluded_episode_reasons": {"invalid": 36, "no_completed_step_in_strict_window": 2}}
+DATA_RUN 20261025-0337-e05-replay2-data
+START positive-control
+[run] 20261025-0338-e05-replay2-positive-control -> runs/20261025-0338-e05-replay2-positive-control
+EXPOSURE 32 1.0
+EXPOSURE 0 0.9999907940161105
+EXPOSURE 1 1.0
+EXPOSURE 2 1.0
+EXPOSURE 3 1.0
+EXPOSURE 4 1.0
+EXPOSURE 5 1.0
+EXPOSURE 6 1.0
+EXPOSURE 7 1.0
+EXPOSURE 8 1.0
+EXPOSURE 9 1.0
+EXPOSURE 10 1.0
+EXPOSURE 11 1.0
+EXPOSURE 12 1.0
+EXPOSURE 13 1.0
+EXPOSURE 14 1.0
+EXPOSURE 15 1.0
+EXPOSURE 16 1.0
+EXPOSURE 17 1.0
+EXPOSURE 18 1.0
+EXPOSURE 19 1.0
+EXPOSURE 20 1.0
+EXPOSURE 21 1.0
+EXPOSURE 22 1.0
+EXPOSURE 23 1.0
+EXPOSURE 24 1.0
+EXPOSURE 25 1.0
+EXPOSURE 26 1.0
+EXPOSURE 27 1.0
+EXPOSURE 28 1.0
+EXPOSURE 29 1.0
+EXPOSURE 30 1.0
+EXPOSURE 31 1.0
+EXPOSURE 33 1.0
+EXPOSURE 34 1.0
+EXPOSURE 35 1.0
+EXPOSURE 36 1.0
+EXPOSURE 37 1.0
+EXPOSURE 38 1.0
+EXPOSURE 39 1.0
+EXPOSURE 40 1.0
+EXPOSURE 41 1.0
+EXPOSURE 42 1.0
+EXPOSURE 43 1.0
+EXPOSURE 44 1.0
+EXPOSURE 45 1.0
+EXPOSURE 46 1.0
+EXPOSURE 47 1.0
+EXPOSURE 48 1.0
+EXPOSURE 49 1.0
+EXPOSURE 50 1.0
+EXPOSURE 51 1.0
+EXPOSURE 52 1.0
+EXPOSURE 53 1.0
+EXPOSURE 54 0.9999907940161105
+EXPOSURE 55 1.0
+EXPOSURE 56 0.9999907940161105
+EXPOSURE 57 0.9999907940161105
+EXPOSURE 58 1.0
+EXPOSURE 59 1.0
+EXPOSURE 60 1.0
+EXPOSURE 61 1.0
+EXPOSURE 62 1.0
+EXPOSURE 63 1.0
+CONTROL_RUN 20261025-0338-e05-replay2-positive-control
+START branching
+[run] 20261025-0340-e05-replay2-branching -> runs/20261025-0340-e05-replay2-branching
+BRANCH_RUN 20261025-0340-e05-replay2-branching
+START fits
+[run] 20261025-0340-e05-replay2-fits -> runs/20261025-0340-e05-replay2-fits
+FIT v2 42 0 layer 48 seconds 33.6
+FIT v2 42 1 layer 63 seconds 30.4
+FIT v2 42 2 layer 32 seconds 31.1
+FIT v2 42 3 layer 40 seconds 29.8
+FIT v2 42 4 layer 44 seconds 32.4
+FIT v2 43 0 layer 48 seconds 27.4
+FIT v2 43 1 layer 40 seconds 28.2
+FIT v2 43 2 layer 0 seconds 31.2
+FIT v2 43 3 layer 24 seconds 28.9
+FIT v2 43 4 layer 24 seconds 35.5
+FIT v2 44 0 layer 20 seconds 27.5
+FIT v2 44 1 layer 24 seconds 28.5
+FIT v2 44 2 layer 48 seconds 29.9
+FIT v2 44 3 layer 44 seconds 32.7
+FIT v2 44 4 layer 44 seconds 30.7
+FIT pooled 42 0 layer 4 seconds 177.9
+FIT pooled 42 1 layer 4 seconds 149.9
+FIT pooled 42 2 layer 8 seconds 166.7
+FIT pooled 42 3 layer 56 seconds 164.3
+FIT pooled 42 4 layer 36 seconds 169.7
+FIT pooled 43 0 layer 24 seconds 164.4
+FIT pooled 43 1 layer 24 seconds 159.3
+FIT pooled 43 2 layer 28 seconds 155.8
+FIT pooled 43 3 layer 4 seconds 166.9
+FIT pooled 43 4 layer 8 seconds 169.5
+FIT pooled 44 0 layer 40 seconds 183.3
+FIT pooled 44 1 layer 44 seconds 161.1
+FIT pooled 44 2 layer 12 seconds 165.1
+FIT pooled 44 3 layer 28 seconds 171.6
+FIT pooled 44 4 layer 48 seconds 178.8
+FIT loso 42 0 layer 8 seconds 148.4
+FIT loso 42 1 layer 20 seconds 168.1
+FIT loso 42 2 layer 28 seconds 156.9
+FIT loso 42 3 layer 12 seconds 167.7
+FIT loso 42 4 layer 8 seconds 124.3
+FIT loso 42 5 layer 8 seconds 157.2
+FIT loso 43 0 layer 12 seconds 123.4
+FIT loso 43 1 layer 24 seconds 157.2
+FIT loso 43 2 layer 8 seconds 150.9
+FIT loso 43 3 layer 16 seconds 175.8
+FIT loso 43 4 layer 0 seconds 139.1
+FIT loso 43 5 layer 8 seconds 158.3
+FIT loso 44 0 layer 63 seconds 127.5
+FIT loso 44 1 layer 52 seconds 151.9
+FIT loso 44 2 layer 12 seconds 137.0
+FIT loso 44 3 layer 24 seconds 160.2
+FIT loso 44 4 layer 8 seconds 128.3
+FIT loso 44 5 layer 8 seconds 140.5
+FIT deliberate_v2 42 0 layer 40 seconds 8.8
+FIT deliberate_v2 42 1 layer 4 seconds 8.5
+FIT deliberate_v2 42 2 layer 44 seconds 9.7
+FIT deliberate_v2 42 3 layer 32 seconds 8.4
+FIT deliberate_v2 42 4 layer 44 seconds 6.6
+FIT deliberate_v2 43 0 layer 44 seconds 3.9
+FIT deliberate_v2 43 1 layer 44 seconds 8.4
+FIT deliberate_v2 43 2 layer 48 seconds 9.6
+FIT deliberate_v2 43 3 layer 44 seconds 10.0
+FIT deliberate_v2 43 4 layer 4 seconds 9.8
+FIT deliberate_v2 44 0 layer 40 seconds 7.7
+FIT deliberate_v2 44 1 layer 4 seconds 8.8
+FIT deliberate_v2 44 2 layer 40 seconds 9.4
+FIT deliberate_v2 44 3 layer 4 seconds 9.0
+FIT deliberate_v2 44 4 layer 40 seconds 9.1
+FIT deliberate_pooled 42 0 layer 4 seconds 56.6
+FIT deliberate_pooled 42 1 layer 4 seconds 64.1
+FIT deliberate_pooled 42 2 layer 4 seconds 59.5
+FIT deliberate_pooled 42 3 layer 36 seconds 55.4
+FIT deliberate_pooled 42 4 layer 32 seconds 55.6
+FIT deliberate_pooled 43 0 layer 24 seconds 51.9
+FIT deliberate_pooled 43 1 layer 4 seconds 65.6
+FIT deliberate_pooled 43 2 layer 56 seconds 50.7
+FIT deliberate_pooled 43 3 layer 12 seconds 60.1
+FIT deliberate_pooled 43 4 layer 4 seconds 64.0
+FIT deliberate_pooled 44 0 layer 24 seconds 56.2
+FIT deliberate_pooled 44 1 layer 4 seconds 55.3
+FIT deliberate_pooled 44 2 layer 4 seconds 65.5
+FIT deliberate_pooled 44 3 layer 4 seconds 62.7
+FIT deliberate_pooled 44 4 layer 48 seconds 64.8
+REPLAY2_FITS 20261025-0340-e05-replay2-fits
+START report
+[run] 20261025-0531-e05-replay2-analysis -> runs/20261025-0531-e05-replay2-analysis
+EVALUATED v2 nested 0.6318380486185976
+EVALUATED v2 fixed32 0.6628594080928442
+EVALUATED v2 band26_30 0.6335992366873958
+EVALUATED v2 dom32 0.638385974938288
+EVALUATED v2 turn 0.5
+EVALUATED v2 length 0.49163218402859515
+EVALUATED v2 scenario_only 0.4458781149456781
+EVALUATED v2 scenario_round 0.3681660113478081
+EVALUATED v2 mlp 0.6351632267296343
+EVALUATED v2 metadata_base 0.3480953701693527
+EVALUATED v2 metadata_probe 0.514998203392279
+EVALUATED v2 shuffled32 0.3734890286077379
+EVALUATED pooled nested 0.5217275610016037
+EVALUATED pooled fixed32 0.5756451189655384
+EVALUATED pooled band26_30 0.5502362045386593
+EVALUATED pooled dom32 0.4570362999525041
+EVALUATED pooled turn 0.5
+EVALUATED pooled length 0.48442680958708534
+EVALUATED pooled scenario_only 0.316270479816811
+EVALUATED pooled scenario_round 0.29278857106594186
+EVALUATED pooled metadata_base 0.28004249451051555
+EVALUATED pooled metadata_probe 0.367508543692429
+EVALUATED pooled shuffled32 0.47171126586157275
+EVALUATED loso nested 0.5513994364538866
+EVALUATED loso fixed32 0.5469709656131073
+EVALUATED loso band26_30 0.5392938026372158
+EVALUATED loso dom32 0.4517300590121774
+EVALUATED loso turn 0.5
+EVALUATED loso length 0.48442680958708534
+EVALUATED loso scenario_only 0.5
+EVALUATED loso scenario_round 0.5
+EVALUATED loso mlp 0.5194701041198914
+EVALUATED loso metadata_base 0.48093138907698396
+EVALUATED loso metadata_probe 0.5440641037055624
+EVALUATED deliberate_v2 nested 0.661254264394369
+EVALUATED deliberate_v2 fixed32 0.5926692797018727
+EVALUATED deliberate_v2 band26_30 0.5659474940684669
+EVALUATED deliberate_v2 dom32 0.5970180907762296
+EVALUATED deliberate_v2 turn 0.5
+EVALUATED deliberate_v2 length 0.5339593604554437
+EVALUATED deliberate_v2 scenario_only 0.468582693600113
+EVALUATED deliberate_v2 scenario_round 0.3622575096333709
+EVALUATED deliberate_pooled nested 0.5879856233789755
+EVALUATED deliberate_pooled fixed32 0.547870179567776
+EVALUATED deliberate_pooled band26_30 0.5296059446720031
+EVALUATED deliberate_pooled dom32 0.5031530274914271
+EVALUATED deliberate_pooled turn 0.5
+EVALUATED deliberate_pooled length 0.49450717338568023
+EVALUATED deliberate_pooled scenario_only 0.321752717674026
+EVALUATED deliberate_pooled scenario_round 0.2900952355940995
+ANALYSIS_RUN 20261025-0531-e05-replay2-analysis
+PIPELINE_COMPLETE 20261025-0531-e05-replay2-analysis

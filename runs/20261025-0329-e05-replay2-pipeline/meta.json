@@ -1,0 +1,36 @@
+{
+  "id": "20261025-0329-e05-replay2-pipeline",
+  "experiment": "E05",
+  "name": "e05-replay2-pipeline",
+  "tags": [],
+  "settings": {
+    "no_gpu_launches": true,
+    "stop_on_any_stage_failure": true,
+    "approval": "Aboard #609 and #611; CPU continuation authorized",
+    "resumed_from": "20261025-0148-e05-replay2-pipeline",
+    "resume_reason": "increase read-only download concurrency; reuse atomic completed files"
+  },
+  "parents": [
+    "20261025-0126-e02-replay2-modal-client",
+    "20261025-0148-e05-replay2-pipeline"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python experiments/E05-probes/replay2_pipeline.py 20261025-0148-e05-replay2-pipeline",
+  "git_commit": "9d097c16bedee971b8587c6ac64d807fba7c3bb9",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T03:29:17",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T05:31:42",
+  "results": {
+    "download": "passed",
+    "verify": "passed",
+    "data": "20261025-0337-e05-replay2-data",
+    "positive-control": "20261025-0338-e05-replay2-positive-control",
+    "branching": "20261025-0340-e05-replay2-branching",
+    "fits": "20261025-0340-e05-replay2-fits",
+    "report": "20261025-0531-e05-replay2-analysis"
+  }
+}

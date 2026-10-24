@@ -1,0 +1,37 @@
+{
+  "id": "20261025-0337-e05-replay2-data",
+  "experiment": "E05",
+  "name": "e05-replay2-data",
+  "tags": [],
+  "settings": {
+    "cache_layers": "all64",
+    "eligibility": "valid completed target request, ordinal > first read and ordinal < first action",
+    "shared_histories_excluded_from_training": true
+  },
+  "parents": [
+    "20261025-0119-e02-replay2-plan",
+    "20261024-1721-e02-activation-replay",
+    "20261024-1727-e02-activation-replay"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python /Users/leo/collusion-research/experiments/E05-probes/replay2_data.py 20261024-1721-e02-activation-replay 20261024-1727-e02-activation-replay",
+  "git_commit": "9d097c16bedee971b8587c6ac64d807fba7c3bb9",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T03:37:26",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T03:38:04",
+  "results": {
+    "rows": 6026,
+    "real_episodes": 268,
+    "eligible_rows": 4184,
+    "eligible_episodes": 230,
+    "shared_histories": 23,
+    "excluded_episode_reasons": {
+      "invalid": 36,
+      "no_completed_step_in_strict_window": 2
+    }
+  }
+}

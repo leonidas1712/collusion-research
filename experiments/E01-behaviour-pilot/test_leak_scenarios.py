@@ -22,11 +22,11 @@ def successful_call(name, arguments, result, round_number=1):
 
 
 class LeakScenarioTests(unittest.TestCase):
-    def test_table_has_diverse_pending_rows(self):
+    def test_table_has_diverse_approved_rows(self):
         rows = load_spray_rows()
         self.assertGreaterEqual(len(rows), 10)
         self.assertLessEqual(len(rows), 15)
-        self.assertTrue(all(not candidate.approved for candidate in rows.values()))
+        self.assertTrue(all(candidate.approved for candidate in rows.values()))
         self.assertEqual({candidate.text_version for candidate in rows.values()},
                          {"spray-text-v3"})
         for candidate in rows.values():
@@ -45,7 +45,7 @@ class LeakScenarioTests(unittest.TestCase):
             secret = cells[0].honeypots[0]
             with self.subTest(row=candidate.id):
                 self.assertEqual([cell.files for cell in cells], [cells[0].files] * 3)
-                self.assertTrue(all(not cell.recruiter_approved for cell in cells))
+                self.assertTrue(all(cell.recruiter_approved for cell in cells))
                 self.assertTrue(all(candidate.private_path in cell.target_task for cell in cells))
                 self.assertTrue(all(secret not in cell.target_system + cell.target_task
                                     + cell.recruiter_system for cell in cells))
@@ -178,14 +178,14 @@ class LeakScenarioTests(unittest.TestCase):
         self.assertEqual(base.metadata["scenario_family"], "database-password")
         self.assertEqual(base.metadata["access"], "required")
         self.assertFalse(base.metadata["own_stake"])
-        self.assertFalse(base.recruiter_approved)
+        self.assertTrue(base.recruiter_approved)
         variant = get_overnight_scenario(
             "database-password", "consequence", "recruiting", "31")
         self.assertTrue(variant.target_system.endswith(
             RULE_VARIANTS["database-password"]["consequence"]))
         self.assertNotIn("logged", variant.target_system.lower())
         self.assertIn("reported to the operator", variant.target_system.lower())
-        self.assertFalse(variant.recruiter_approved)
+        self.assertTrue(variant.recruiter_approved)
         own_stake = get_overnight_scenario(
             "database-password", "consequence", "recruiting", "31", "own-stake")
         self.assertTrue(own_stake.metadata["own_stake"])
@@ -202,7 +202,7 @@ class LeakScenarioTests(unittest.TestCase):
         self.assertEqual(scenario.metadata["tactic_id"], "T2")
         self.assertEqual(set(scenario.metadata["tactic_slots"]), set(row().tactic_slots))
         self.assertNotRegex(scenario.recruiter_system, r"\{[^}]+\}")
-        self.assertFalse(scenario.recruiter_approved)
+        self.assertTrue(scenario.recruiter_approved)
         args = make_parser().parse_args(["--spray-row", "patient-contact-routing"])
         self.assertEqual(args.spray_row, "patient-contact-routing")
         own_stake = scale_up_scenario(
@@ -216,7 +216,7 @@ class LeakScenarioTests(unittest.TestCase):
         ])
         self.assertEqual(args.scenario_variant, "own-stake")
 
-    def test_review_contains_exact_prompts_files_and_pending_gate(self):
+    def test_review_contains_exact_prompts_files_and_metadata(self):
         rendered = render_review()
         self.assertEqual(
             Path(__file__).with_name("DATABASE_PASSWORD_REVIEW.md").read_text(), rendered)
@@ -227,7 +227,6 @@ class LeakScenarioTests(unittest.TestCase):
         self.assertNotIn("logged", rendered.lower())
         self.assertIn("reported to the operator", rendered.lower())
         self.assertIn("database-password-required-access-3", rendered)
-        self.assertIn("recruiter_approved=False", rendered)
         self.assertIn("## Recruiting opt-in own-stake variant", rendered)
         self.assertIn("goal_link: loose:", rendered)
 

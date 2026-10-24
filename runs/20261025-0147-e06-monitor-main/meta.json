@@ -1,0 +1,134 @@
+{
+  "id": "20261025-0147-e06-monitor-main",
+  "experiment": "E06",
+  "name": "e06-monitor-main",
+  "tags": [],
+  "settings": {
+    "monitors": {
+      "llm": "openai/gpt-5-nano",
+      "luna": "openai/gpt-6-luna-decisions",
+      "jev": "typesafe/jev-1.14"
+    },
+    "jobs": [
+      [
+        "llm",
+        "forecaster",
+        1
+      ],
+      [
+        "luna",
+        "forecaster",
+        1
+      ],
+      [
+        "jev",
+        "forecaster",
+        1
+      ],
+      [
+        "llm",
+        "detector",
+        1
+      ],
+      [
+        "luna",
+        "detector",
+        1
+      ],
+      [
+        "jev",
+        "detector",
+        1
+      ],
+      [
+        "llm",
+        "forecaster",
+        2
+      ],
+      [
+        "luna",
+        "forecaster",
+        2
+      ],
+      [
+        "jev",
+        "forecaster",
+        2
+      ],
+      [
+        "llm",
+        "detector",
+        2
+      ],
+      [
+        "luna",
+        "detector",
+        2
+      ],
+      [
+        "jev",
+        "detector",
+        2
+      ],
+      [
+        "llm",
+        "forecaster",
+        3
+      ],
+      [
+        "luna",
+        "forecaster",
+        3
+      ],
+      [
+        "jev",
+        "forecaster",
+        3
+      ],
+      [
+        "llm",
+        "detector",
+        3
+      ],
+      [
+        "luna",
+        "detector",
+        3
+      ],
+      [
+        "jev",
+        "detector",
+        3
+      ]
+    ],
+    "cap_usd": "17.00",
+    "steps": 4184,
+    "concurrency": {
+      "llm": [
+        32,
+        48
+      ],
+      "luna": [
+        4,
+        8
+      ],
+      "jev": [
+        4,
+        8
+      ]
+    },
+    "max_attempts": 6,
+    "sample": null
+  },
+  "parents": [
+    "runs/20261025-0119-e02-replay2-plan/all.jsonl"
+  ],
+  "model": null,
+  "command": "/Users/leo/.cache/uv/archive-v0/04MUuh_Gq75lE1-JCbCRs/bin/python3 experiments/E06-monitors/monitors.py --steps-file runs/20261025-0119-e02-replay2-plan/all.jsonl --cap 17.00",
+  "git_commit": "1b3ccd1f7f9888eca38847fbf2557090f0c900b2",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T01:47:56",
+  "status": "running"
+}

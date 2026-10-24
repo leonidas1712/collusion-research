@@ -1,0 +1,50 @@
+{
+  "id": "20261025-0340-e05-replay2-branching",
+  "experiment": "E05",
+  "name": "e05-replay2-branching",
+  "tags": [],
+  "settings": {
+    "checkpoint": "shared history before round-t peer",
+    "models": "frozen v1 family OOF; no refitting",
+    "bootstrap": "2000 family clusters"
+  },
+  "parents": [
+    "20261025-0337-e05-replay2-data",
+    "20261024-1937-e05-probe-core",
+    "20261024-2001-e01-branching-scaleup"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python /Users/leo/collusion-research/experiments/E05-probes/replay2_branching.py 20261025-0337-e05-replay2-data",
+  "git_commit": "9d097c16bedee971b8587c6ac64d807fba7c3bb9",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T03:40:14",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T03:40:15",
+  "results": {
+    "points": 23,
+    "episodes": 20,
+    "families": 20,
+    "spearman": -0.03207800142990997,
+    "by_seed": [
+      -0.16826881451829967,
+      0.15138565587097866,
+      -0.01688315864732104
+    ],
+    "family_bootstrap_ci95": [
+      -0.46044721278719536,
+      0.4008656926659128
+    ],
+    "bootstrap_reps": 2000,
+    "valid_bootstrap_reps": 2000,
+    "fraction_counts": {
+      "0.2": 3,
+      "0.0": 14,
+      "0.4": 3,
+      "1.0": 2,
+      "0.8": 1
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "20261025-0126-e02-main-replay-validation",
+  "experiment": "E02",
+  "name": "e02-main-replay-validation",
+  "tags": [],
+  "settings": {
+    "run": "runs/20261024-1721-e02-activation-replay",
+    "manifest": "runs/20261025-0119-e02-replay2-plan/benchmark.jsonl"
+  },
+  "parents": [
+    "20261024-1721-e02-activation-replay",
+    "20261025-0119-e02-replay2-plan"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E02-activation-replay/verify_main.py runs/20261024-1721-e02-activation-replay --manifest runs/20261025-0119-e02-replay2-plan/benchmark.jsonl",
+  "git_commit": "aa95ef6e225ba433b745c2541d45d65f7e66d727",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T01:26:13",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T01:26:14",
+  "results": {
+    "requests": 26,
+    "episodes": 24,
+    "manifest_hashes_match": true,
+    "artifact_bytes": 16045324,
+    "statuses": {
+      "scored": 25,
+      "missing_response": 1
+    },
+    "serialization": {
+      "hf_serialized_reply_including_template_terminator": 25
+    },
+    "prompt_tokens": 59171,
+    "reply_tokens": 1165,
+    "weighted_nll": 0.2845286560624582,
+    "weighted_top5": 0.9974248927038627,
+    "request_nll_quantiles": {
+      "min": 0.00035703860223293307,
+      "median": 0.2643012576633029,
+      "p95": 0.5833503571767654,
+      "max": 0.9036930629185268
+    },
+    "decoder_seconds": 23.381868594000004,
+    "processing_seconds": 29.018921516
+  }
+}

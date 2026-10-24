@@ -1,0 +1,14 @@
+[run] 20261025-0132-e02-replay2-cost-check -> runs/20261025-0132-e02-replay2-cost-check
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/check_replay2_cost.py", line 32, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--remote',required=True);p.add_argument('--app',required=True);main(p.parse_args())
+                                                                                                               ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E02-activation-replay/check_replay2_cost.py", line 16, in main
+    raw=read('index.jsonl');progress=json.loads(read('progress.json'));(run.dir/'index-snapshot.jsonl').write_text(raw);(run.dir/'progress.json').write_text(json.dumps(progress,indent=2))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/json/decoder.py", line 340, in decode
+    raise JSONDecodeError("Extra data", s, end)
+json.decoder.JSONDecodeError: Extra data: line 8 column 2 (char 206)

@@ -1,0 +1,74 @@
+{
+  "id": "20261025-0340-e05-replay2-fits",
+  "experiment": "E05",
+  "name": "e05-replay2-fits",
+  "tags": [],
+  "settings": {
+    "modes": [
+      "v2",
+      "pooled",
+      "loso",
+      "deliberate_v2",
+      "deliberate_pooled"
+    ],
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "candidate_layers": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60,
+      63
+    ],
+    "mlp": {
+      "hidden_units": 32,
+      "epochs": 80,
+      "batch_size": 256,
+      "learning_rate": 0.001,
+      "weight_decay": 0.01
+    },
+    "L2_C": 0.1,
+    "primary_metric": "within scenario x round",
+    "alarm_basis": "any alarm per pooled training control/alone episode",
+    "FPR_targets": [
+      0.01,
+      0.05,
+      0.1,
+      0.2
+    ],
+    "LOSO": "test scenario plus purged shared family IDs",
+    "stacking": "three family folds, layer selected again inside each stack-training fold"
+  },
+  "parents": [
+    "20261025-0337-e05-replay2-data",
+    "20261025-0338-e05-replay2-positive-control"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python /Users/leo/collusion-research/experiments/E05-probes/replay2_core.py 20261025-0337-e05-replay2-data 20261025-0338-e05-replay2-positive-control",
+  "git_commit": "9d097c16bedee971b8587c6ac64d807fba7c3bb9",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T03:40:17",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T05:31:09",
+  "results": {
+    "all_fits_complete": true
+  }
+}

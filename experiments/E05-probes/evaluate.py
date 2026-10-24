@@ -32,7 +32,8 @@ def score_bootstrap(y,s,rounds,codes,weights,*,stratum_key=None):
     total=PairStatistic(y,s,codes,weights.shape[1]);pooled,_=total.evaluate(weights)
     numerator=np.zeros(len(weights));denominator=np.zeros(len(weights))
     for _,_,m in stratum_masks(rounds,stratum_key):
-        values,p=PairStatistic(y[m],s[m],codes[m],weights.shape[1]).evaluate(weights)
+        present,local=np.unique(codes[m],return_inverse=True)
+        values,p=PairStatistic(y[m],s[m],local,len(present)).evaluate(weights[:,present])
         ok=np.isfinite(values);numerator[ok]+=values[ok]*p[ok];denominator[ok]+=p[ok]
     within=np.divide(numerator,denominator,out=np.full(len(weights),np.nan),where=denominator>0)
     return within,pooled

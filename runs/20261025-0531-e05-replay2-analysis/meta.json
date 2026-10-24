@@ -1,0 +1,33 @@
+{
+  "id": "20261025-0531-e05-replay2-analysis",
+  "experiment": "E05",
+  "name": "e05-replay2-analysis",
+  "tags": [],
+  "settings": {
+    "bootstrap_reps": 1000,
+    "primary": "positive-weighted scenario x round AUROC",
+    "alarm": "any alarm in eligible steps of an episode"
+  },
+  "parents": [
+    "20261025-0337-e05-replay2-data",
+    "20261025-0340-e05-replay2-fits",
+    "20261025-0338-e05-replay2-positive-control",
+    "20261025-0340-e05-replay2-branching",
+    "20261025-0339-e02-replay2-results"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python /Users/leo/collusion-research/experiments/E05-probes/replay2_report.py 20261025-0337-e05-replay2-data 20261025-0340-e05-replay2-fits 20261025-0338-e05-replay2-positive-control 20261025-0340-e05-replay2-branching",
+  "git_commit": "e81e64eee5f9844dc4c118624f8e63a52629e949",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T05:31:12",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T05:31:41",
+  "results": {
+    "validation_passed": true,
+    "positive_control_auc": 1.0,
+    "branch_spearman": -0.03207800142990997
+  }
+}
