@@ -90,8 +90,10 @@ def cmd_open(a) -> int:
         return 0
     if not VIEWER.exists():
         sys.exit(f"no {VIEWER}; run `viewer.py build` first")
-    # `open` with a file:// URL keeps the #fragment; a bare path would drop it.
-    return subprocess.call(["open", url])
+    # macOS `open` drops the #fragment of file:// URLs, so open a tiny redirect page instead.
+    jump = VIEWER.with_name("viewer_open.html")
+    jump.write_text(f'<!doctype html><meta charset="utf-8"><script>location.replace({json.dumps(url)})</script>')
+    return subprocess.call(["open", str(jump)])
 
 
 def cmd_list(a) -> int:
