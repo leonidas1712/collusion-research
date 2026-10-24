@@ -19,6 +19,7 @@ from overnight_rules import get_overnight_scenario
 from overnight_sweep import PEER, TARGETS, fetch_prices, options
 from peer_tactics import TACTIC_IDS, apply_peer_tactic
 from leak_scenarios import get_spray_scenario
+from deploy_token_v2 import get_deploy_token_v2
 from many_peer import prepare_many_peer_scenario, run_many_peer_episode
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -48,13 +49,20 @@ class SpendCap:
 
 def scale_up_scenario(family, strength, condition, family_id, tactic=None,
                       scenario_variant=None, spray_row=None, peers=1):
-    if spray_row:
-        if strength != 'consequence_logged':
-            raise ValueError('Scenario spray rows currently require consequence_logged strength')
-        if scenario_variant is not None:
-            raise ValueError('--scenario-variant cannot be combined with --spray-row')
+    if family == 'deploy-token-v2':
+        if strength != 'consequence':
+            raise ValueError('deploy-token-v2 requires consequence strength')
+        if spray_row or scenario_variant is not None:
+            raise ValueError('deploy-token-v2 cannot be combined with a spray row or scenario variant')
+        scenario = get_deploy_token_v2(condition, family_id)
+    elif spray_row:
+        if strength != 'consequence':
+            raise ValueError('Scenario spray rows require consequence strength')
+        if scenario_variant not in (None, 'own-stake'):
+            raise ValueError('Spray rows support only --scenario-variant own-stake')
         scenario = get_spray_scenario(
-            spray_row, condition, family_id=family_id, rule_strength=strength)
+            spray_row, condition, family_id=family_id, rule_strength=strength,
+            scenario_variant=scenario_variant)
     else:
         scenario = get_overnight_scenario(
             family, strength, condition, family_id=family_id,
@@ -74,7 +82,7 @@ async def main(a):
     preflight = scale_up_scenario(
         a.family, a.strength, selected_conditions[0], str(a.family_start), a.tactic,
         a.scenario_variant, a.spray_row, a.peers)
-    if (a.spray_row or a.family == 'database-password') and not preflight.recruiter_approved:
+    if (a.spray_row or a.family in {'database-password', 'deploy-token-v2'}) and not preflight.recruiter_approved:
         raise RuntimeError('This scenario is pending Leo review; set approved=true only after approval')
     if a.peers > 1 and preflight.peer_enabled and not preflight.recruiter_approved:
         raise RuntimeError('Many-to-one cells are pending Leo review; set MANY_PEER_APPROVED after approval')
@@ -189,7 +197,7 @@ def make_parser():
     p.add_argument('--target-reasoning', action='store_true', help='Run the target with reasoning (thinking mode) on')
     p.add_argument('--tactic', type=str.upper, choices=TACTIC_IDS,
                    help='Append a Leo-approved peer tactic (PEER_TACTICS.md)')
-    p.add_argument('--scenario-variant', choices=('required-access-own-stake',),
+    p.add_argument('--scenario-variant', choices=('required-access-own-stake', 'own-stake'),
                    help='Use a pending-review registered scenario variant')
     p.add_argument('--spray-row', help='Build a CSV-backed leak scenario row (pending rows are blocked)')
     p.add_argument('--peers', type=int, choices=(1, 2, 3), default=1,

@@ -5,6 +5,7 @@ from dataclasses import replace
 from scenarios import get_scenario
 from database_password import CONSEQUENCE as DATABASE_PASSWORD_CONSEQUENCE
 from database_password import RULE as DATABASE_PASSWORD_RULE
+from database_password import get_database_password_variant
 
 FAMILIES = ('front-door-sign', 'minimum-price', 'release-date', 'poster-approval', 'deploy-token')
 RULE_FAMILIES = FAMILIES + ('database-password',)
@@ -47,9 +48,12 @@ def base_scenario_name(family, condition, scenario_variant=None):
     if family not in RULE_FAMILIES or condition not in CONDITIONS:
         raise ValueError('Unknown overnight family or condition')
     if scenario_variant is not None:
-        if scenario_variant != 'required-access-own-stake' or family not in {'minimum-price', 'release-date'}:
+        database_own_stake = family == 'database-password' and scenario_variant == 'own-stake'
+        registered_own_stake = (scenario_variant == 'required-access-own-stake'
+                                and family in {'minimum-price', 'release-date'})
+        if not (database_own_stake or registered_own_stake):
             raise ValueError('Unknown scenario variant for overnight family')
-        if condition != 'alone':
+        if registered_own_stake and condition != 'alone':
             return family + '_explicit_' + condition + '_required-access_own-stake'
     if family == 'deploy-token':
         suffix = 'alone' if condition == 'alone' else 'related_' + condition
@@ -62,7 +66,14 @@ def base_scenario_name(family, condition, scenario_variant=None):
 def get_overnight_scenario(family, strength, condition, family_id='1', scenario_variant=None):
     if strength not in STRENGTHS:
         raise ValueError('Unknown overnight rule strength')
-    base = get_scenario(base_scenario_name(family, condition, scenario_variant), family_id)
+    if family == 'database-password' and strength != 'consequence':
+        raise ValueError('Database-password v3 is restricted to the unlogged consequence rule')
+    base_name = base_scenario_name(family, condition, scenario_variant)
+    if family == 'database-password' and scenario_variant == 'own-stake':
+        base = get_database_password_variant(
+            condition, family_id=family_id, scenario_variant=scenario_variant)
+    else:
+        base = get_scenario(base_name, family_id)
     rule = RULES[family]
     if not base.target_system.endswith(rule):
         raise ValueError('Base operator rule changed; review the overnight variant before using it')

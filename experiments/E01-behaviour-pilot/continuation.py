@@ -71,13 +71,16 @@ async def run_continuation(
         scenario: Scenario, settings: Settings, client, output_dir, actor_configs,
         *, episode_id="episode-0001", start_round=1, round_count=None,
         initial=None, scenario_spec=None, branch_meta=None, live_approved=False,
-        forced_continuation=False, semaphore=None):
+        forced_continuation=False, target_prefill=None, semaphore=None):
     """Run ordered actors from an explicit state without changing the one-peer runner."""
     round_count = settings.rounds if round_count is None else round_count
     if min(round_count, settings.max_tool_steps, settings.max_tokens, settings.parallelism) < 1:
         raise ValueError("rounds, tool steps, tokens and parallelism must be positive")
     if start_round < 1:
         raise ValueError("start_round must be positive")
+    if target_prefill is not None and (not isinstance(target_prefill, str)
+                                       or not target_prefill.strip()):
+        raise ValueError("target_prefill must be a non-empty string")
     if not episode_id or Path(episode_id).name != episode_id:
         raise ValueError("episode_id must be a filename stem")
     if not getattr(client, "is_fake", False) and not live_approved:
@@ -145,6 +148,12 @@ async def run_continuation(
         episode["state"] = env.state
     if branch_meta is not None:
         episode["branch"] = copy.deepcopy(branch_meta)
+    if target_prefill is not None:
+        episode["prefill"] = {
+            "target_round": start_round,
+            "prefix": target_prefill,
+            "applied": False,
+        }
     prefix_tool_count = len(episode["tool_log"])
     prefix_channel_count = len(episode["channel"])
 
@@ -156,6 +165,7 @@ async def run_continuation(
         raise ValueError("Continuation output already exists")
     semaphore = semaphore or asyncio.Semaphore(settings.parallelism)
     actor_map = {actor.actor_id: actor for actor in actor_configs}
+    target_prefill_used = False
 
     def record_publications(start, origin):
         if not scenario.metadata.get("publication_receipts"):
@@ -175,6 +185,7 @@ async def run_continuation(
             })
 
     async def request(actor_id, round_number):
+        nonlocal target_prefill_used
         actor = actor_map[actor_id]
         payload = {
             "model": actor.model,
@@ -182,6 +193,10 @@ async def run_continuation(
             "max_tokens": settings.max_tokens,
             "temperature": settings.temperature,
         }
+        applied_prefill = (target_prefill if actor_id == "target"
+                           and not target_prefill_used else None)
+        if applied_prefill is not None:
+            payload["messages"].append({"role": "assistant", "content": applied_prefill})
         actor_tools = [tool.schema for tool in tools
                        if tool.schema["function"]["name"] in actor.tool_names]
         if actor_tools:
@@ -218,7 +233,12 @@ async def run_continuation(
                                      if record["served_quantization"] else "not_reported"),
                 }
                 _save(partial_path, episode)
-                return response
+                if applied_prefill is not None:
+                    target_prefill_used = True
+                    episode["prefill"]["applied"] = True
+                    episode["prefill"]["request_index"] = len(episode["requests"]) - 1
+                    _save(partial_path, episode)
+                return response, applied_prefill
             except Exception as exc:
                 status = getattr(exc, "status_code", None)
                 record["error"] = {"type": type(exc).__name__, "status_code": status}
@@ -236,20 +256,20 @@ async def run_continuation(
                 await asyncio.sleep(delay)
 
     async def request_with_peer_retry(actor_id, round_number):
-        response = await request(actor_id, round_number)
+        response, applied_prefill = await request(actor_id, round_number)
         choices = response.get("choices") or []
         if actor_id == "target" or not choices or choices[0].get("finish_reason") != "length":
-            return response
+            return response, applied_prefill
         first_index = len(episode["requests"]) - 1
         episode["requests"][first_index]["length_retry_scheduled"] = True
         _save(partial_path, episode)
-        response = await request(actor_id, round_number)
+        response, retry_prefill = await request(actor_id, round_number)
         retry_index = len(episode["requests"]) - 1
         episode["requests"][first_index]["length_retry_request_index"] = retry_index
         episode["requests"][retry_index]["retry_of_request_index"] = first_index
         episode["requests"][retry_index]["retry_reason"] = "peer_finish_reason_length"
         _save(partial_path, episode)
-        return response
+        return response, retry_prefill
 
     try:
         _save(partial_path, episode)
@@ -267,7 +287,8 @@ async def run_continuation(
             for actor_id in actor_ids:
                 channel_start = len(env.channel)
                 for _step in range(settings.max_tool_steps):
-                    response = await request_with_peer_retry(actor_id, round_number)
+                    response, applied_prefill = await request_with_peer_retry(
+                        actor_id, round_number)
                     choices = response.get("choices") or []
                     if not choices:
                         raise EpisodeIncomplete("missing_choices")
@@ -279,6 +300,10 @@ async def run_continuation(
                                if key in ("role", "content", "tool_calls", "reasoning",
                                           "reasoning_details", "refusal") and value is not None}
                     message["role"] = "assistant"
+                    if applied_prefill is not None:
+                        continuation = message.get("content")
+                        message["content"] = applied_prefill + (
+                            continuation if isinstance(continuation, str) else "")
                     histories[actor_id].append(message)
                     calls = message.get("tool_calls") or []
                     if not calls:
