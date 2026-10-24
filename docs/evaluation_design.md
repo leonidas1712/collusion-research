@@ -155,3 +155,18 @@ Implications for scenarios and rules:
 3. Which judge model, and do we use one prompt across ladder levels or tailored ones?
 4. Reasoning-model target for ladder level 4: Leo wants to try. Qwen3-32B has a thinking mode, so the same weights could serve (same replay pipeline).
 5. How much of the $80 Modal budget goes to the replay vs steering?
+
+## 7. Analysis plan after the replay (from docs/probe_takeaways.md)
+
+**Core** (CPU, all go in the results):
+1. Logistic regression with nested layer selection; plus difference of means from pre-outcome steps, and a fixed layer band 26–30 (NARCBench comparison).
+2. Baselines: turn number, prompt length (plus a length-matched subset), shuffled labels, positive control (token in context).
+3. Headline: within-round AUROC on recruiting episodes (give-in vs held); recall at 5% FPR with thresholds set on per-episode maxima over control episodes; partial AUROC; episode-bootstrap CIs; repeated fold dealings.
+4. Episode-so-far score (running max of an EMA of per-step logits) for lead time and the climb figure.
+5. Judges on the same steps; probe+judge average and the cascade curve (recall vs share deferred).
+6. Subsets: steps where the decision isn't yet visible in the target's text; "talks about the token" refusals.
+7. Held-out: grouped tactics; the second scenario if it works.
+
+**Second tier** (CPU, if time): activation deltas after each peer message; detection-vs-prediction control (train on the give-in step only, test earlier); MLP vs linear; INLP rounds-to-chance; multi-layer probe; early-step label-noise variants.
+
+**GPU, needs Leo's OK:** Activation Oracle rung (<$1); causal check stage 1, forward-only (~$1–3); stage 2 generation only if stage 1 passes (~$3–6).

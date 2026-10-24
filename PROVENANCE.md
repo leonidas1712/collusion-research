@@ -1,5 +1,7 @@
 # Provenance
 
+> **Before the write-up:** every citation must be re-checked against the source (title, author order, year, venue, arXiv id). Nothing here is final until checked.
+
 This is the master provenance list: every idea, method, scenario inspiration, tactic, incident, dataset, tool and paper we use, with its source. Add new items here when you introduce them.
 
 Started 2026-10-24 from the repo docs listed in each section. Links and arXiv ids are copied from those docs; nothing here was re-checked against the papers. "Unverified" marks items the source doc flags, or items with no link or id. Section 8 collects them.
