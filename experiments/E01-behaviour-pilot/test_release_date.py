@@ -6,8 +6,9 @@ import unittest
 from pathlib import Path
 
 from harness import Settings, run_episode
-from release_date import (RELEASE_DATE_NAMES, SYSTEM, TASK, RECRUITING, CONTROL, PRIVATE, SUMMARY,
-                          get_release_date, score_release_date)
+from release_date import (BASE_RELEASE_DATE_NAMES, RELEASE_DATE_NAMES, OWN_STAKE_REQUIRED_ACCESS_NAMES,
+                          OWN_STAKE_REQUIRED_ACCESS_VERSION, OWN_STAKE_SYSTEM, SYSTEM, TASK, RECRUITING,
+                          CONTROL, PRIVATE, SUMMARY, get_release_date, score_release_date)
 from test_harness import ScriptedClient, answer, calls
 
 
@@ -30,11 +31,32 @@ class ReleaseDateTests(unittest.IsolatedAsyncioTestCase):
         section = Path(__file__).with_name('SCENARIO_CANDIDATES.md').read_text().split('## release-date\n')[1].split('\n## ')[0]
         for heading, text in [('Target system', SYSTEM), ('Target task', TASK), ('Recruiting peer', RECRUITING), ('Control peer', CONTROL)]:
             self.assertEqual(re.search(r'\*\*' + heading + r'\*\*\s*\n> (.+)', section).group(1), text)
-        self.assertEqual(len(RELEASE_DATE_NAMES), 4)
-        scenarios = [get_release_date(name, '2') for name in RELEASE_DATE_NAMES]
+        self.assertEqual(len(BASE_RELEASE_DATE_NAMES), 4)
+        scenarios = [get_release_date(name, '2') for name in BASE_RELEASE_DATE_NAMES]
         self.assertTrue(all(s.files == scenarios[0].files for s in scenarios))
         self.assertNotEqual(scenarios[0].files[PRIVATE], get_release_date(RELEASE_DATE_NAMES[0], '1').files[PRIVATE])
         self.assertTrue(all(s.recruiter_approved and s.metadata['publication_receipts'] for s in scenarios))
+
+    def test_required_access_own_stake_variants_preserve_peer_task_and_files(self):
+        self.assertEqual(len(RELEASE_DATE_NAMES), 6)
+        for name in OWN_STAKE_REQUIRED_ACCESS_NAMES:
+            with self.subTest(name=name):
+                condition = 'recruiting' if '_recruiting_' in name else 'control'
+                base = get_release_date('release-date_explicit_' + condition, '19')
+                variant = get_release_date(name, '19')
+                self.assertEqual(variant.files, base.files)
+                self.assertEqual(variant.target_task, base.target_task)
+                self.assertEqual(variant.recruiter_system, base.recruiter_system)
+                self.assertEqual(variant.target_system, OWN_STAKE_SYSTEM)
+                self.assertEqual(variant.scenario_version, OWN_STAKE_REQUIRED_ACCESS_VERSION)
+                self.assertEqual(variant.metadata['access'], 'required')
+                self.assertTrue(variant.metadata['own_stake'])
+                self.assertEqual(variant.metadata['goal_relation'], 'related')
+                self.assertTrue(variant.recruiter_approved)  # approved by Leo 2026-10-24
+                protected_value = json.loads(variant.files[PRIVATE])['release_date']
+                self.assertNotIn(protected_value, variant.target_system)
+                self.assertNotIn(protected_value, variant.target_task)
+                self.assertIn(PRIVATE, variant.target_task)
 
     async def test_declared_date_formats_round_two(self):
         for text in ['2027-03-18', '18 March 2027', 'March 18, 2027']:

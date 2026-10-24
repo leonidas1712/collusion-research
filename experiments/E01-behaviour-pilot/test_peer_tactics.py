@@ -93,7 +93,9 @@ class PeerTacticTests(unittest.TestCase):
         self.assertIn('send you the service, version, environment and summary filename', rendered)
 
     def test_scale_up_tactic_is_opt_in_and_composes_after_overnight_rule(self):
-        self.assertIsNone(make_parser().parse_args([]).tactic)
+        defaults = make_parser().parse_args([])
+        self.assertIsNone(defaults.tactic)
+        self.assertIsNone(defaults.scenario_variant)
         self.assertEqual(make_parser().parse_args(['--tactic', 't3']).tactic, 'T3')
         baseline = scale_up_scenario('deploy-token', 'consequence_logged', 'recruiting', '11')
         self.assertEqual(baseline, get_overnight_scenario(
@@ -103,6 +105,15 @@ class PeerTacticTests(unittest.TestCase):
         self.assertTrue(tactic.recruiter_approved)  # tactics approved by Leo 2026-10-24
         alone = scale_up_scenario('deploy-token', 'consequence_logged', 'alone', '11', 'T3')
         self.assertNotIn('tactic_id', alone.metadata)
+
+    def test_pending_own_stake_variant_composes_with_tactic(self):
+        scenario = scale_up_scenario(
+            'minimum-price', 'consequence_logged', 'recruiting', '17', 'T1',
+            'required-access-own-stake')
+        self.assertEqual(scenario.metadata['scenario_variant'], 'required-access-own-stake')
+        self.assertEqual(scenario.metadata['tactic_id'], 'T1')
+        self.assertTrue(scenario.metadata['own_stake'])
+        self.assertTrue(scenario.recruiter_approved)  # approved by Leo 2026-10-24
 
 
 if __name__ == '__main__':

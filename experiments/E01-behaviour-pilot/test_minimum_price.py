@@ -7,7 +7,9 @@ import tempfile
 import unittest
 
 from harness import Settings, run_episode
-from minimum_price import MINIMUM_PRICE_NAMES, RULE, get_minimum_price, score_minimum_price
+from minimum_price import (BASE_MINIMUM_PRICE_NAMES, MINIMUM_PRICE_NAMES, OWN_STAKE_REQUIRED_ACCESS_NAMES,
+                           OWN_STAKE_REQUIRED_ACCESS_VERSION, OWN_STAKE_SYSTEM, RULE, get_minimum_price,
+                           score_minimum_price)
 from minimum_price_draft import PRIVATE, TARGET_SYSTEM, TARGET_TASK, SUMMARY
 from test_harness import answer, calls
 from test_minimum_price_walkthroughs import PriceWalkthroughClient
@@ -35,7 +37,7 @@ class AloneClient(PriceWalkthroughClient):
 
 class MinimumPriceTests(unittest.IsolatedAsyncioTestCase):
     async def test_all_four_cells_finish_with_receipts_and_required_read(self):
-        for name in MINIMUM_PRICE_NAMES:
+        for name in BASE_MINIMUM_PRICE_NAMES:
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
                 scenario = get_minimum_price(name, "7")
                 deliberate = name.endswith("recruiting")
@@ -96,7 +98,7 @@ class MinimumPriceTests(unittest.IsolatedAsyncioTestCase):
     def test_approved_cells_exact_prompts_family_matching_and_locked_draft(self):
         from minimum_price_draft import make_minimum_price_draft
         self.assertFalse(make_minimum_price_draft().recruiter_approved)
-        cells = [get_minimum_price(name, "11") for name in MINIMUM_PRICE_NAMES]
+        cells = [get_minimum_price(name, "11") for name in BASE_MINIMUM_PRICE_NAMES]
         self.assertTrue(all(cell.recruiter_approved for cell in cells))
         self.assertTrue(all(cell.files == cells[0].files for cell in cells))
         self.assertEqual(cells[0].target_system, TARGET_SYSTEM)
@@ -109,6 +111,27 @@ class MinimumPriceTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotEqual(cells[0].files[PRIVATE], get_minimum_price(MINIMUM_PRICE_NAMES[0], "12").files[PRIVATE])
         with self.assertRaises(ValueError):
             get_minimum_price("minimum-price_none_control")
+
+    def test_required_access_own_stake_variants_preserve_peer_and_task(self):
+        self.assertEqual(len(MINIMUM_PRICE_NAMES), 6)
+        for name in OWN_STAKE_REQUIRED_ACCESS_NAMES:
+            with self.subTest(name=name):
+                condition = 'recruiting' if '_recruiting_' in name else 'control'
+                base = get_minimum_price('minimum-price_explicit_' + condition, '19')
+                variant = get_minimum_price(name, '19')
+                self.assertEqual(variant.files, base.files)
+                self.assertEqual(variant.target_task, base.target_task)
+                self.assertEqual(variant.recruiter_system, base.recruiter_system)
+                self.assertEqual(variant.target_system, OWN_STAKE_SYSTEM)
+                self.assertEqual(variant.scenario_version, OWN_STAKE_REQUIRED_ACCESS_VERSION)
+                self.assertEqual(variant.metadata['access'], 'required')
+                self.assertTrue(variant.metadata['own_stake'])
+                self.assertEqual(variant.metadata['scenario_variant'], 'required-access-own-stake')
+                self.assertTrue(variant.recruiter_approved)  # approved by Leo 2026-10-24
+                protected_value = str(json.loads(variant.files[PRIVATE])['minimum_price'])
+                self.assertNotIn(protected_value, variant.target_system)
+                self.assertNotIn(protected_value, variant.target_task)
+                self.assertIn(PRIVATE, variant.target_task)
 
     def test_generated_ten_cent_family_supports_short_decimal_spelling(self):
         from minimum_price_draft import _contains_amount
