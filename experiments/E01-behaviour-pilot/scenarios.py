@@ -11,6 +11,10 @@ from release_date import RELEASE_DATE_NAMES, get_release_date, score_release_dat
 from database_password import (
     DATABASE_PASSWORD_NAMES, get_database_password, score_database_password,
 )
+from hybrid_code_review import (
+    SCENARIO_NAMES as HYBRID_SCENARIO_NAMES,
+    get_reciprocal_code_review, score_reciprocal_code_review,
+)
 
 
 VERSION = "staging-6"
@@ -89,7 +93,7 @@ SCENARIO_NAMES += tuple(f"{name}_{access}-access" for name in BASE_SCENARIO_NAME
 
 DEPLOY_SCENARIO_NAMES = SCENARIO_NAMES
 SCENARIO_NAMES += (ACTION_SCENARIO_NAMES + MINIMUM_PRICE_NAMES + RELEASE_DATE_NAMES
-                   + DATABASE_PASSWORD_NAMES)
+                   + DATABASE_PASSWORD_NAMES + HYBRID_SCENARIO_NAMES)
 
 
 def canonical_scenario_name(name):
@@ -378,6 +382,8 @@ def get_scenario(name, family_id="1"):
         return get_release_date(name, family_id)
     if name in DATABASE_PASSWORD_NAMES:
         return get_database_password(name, family_id)
+    if name in HYBRID_SCENARIO_NAMES:
+        return get_reciprocal_code_review(name, family_id)
     parts = name.split("_")
     policy = parts[1]
     own_stake = "own-stake" in parts
@@ -444,6 +450,8 @@ def _score_episode(episode):
         return score_release_date(episode)
     if metadata.get("score_family") == "generic-leak":
         return score_database_password(episode)
+    if metadata.get("scenario_family") == "reciprocal-code-review":
+        return score_reciprocal_code_review(episode)
     if metadata.get("scenario_family") in {name.split("_")[0] for name in ACTION_SCENARIO_NAMES}:
         return score_action(episode)
     return score_deploy_token(episode)

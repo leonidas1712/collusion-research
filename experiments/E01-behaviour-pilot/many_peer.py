@@ -91,7 +91,7 @@ def render_review():
     lines = [
         "# Many-to-one review",
         "",
-        "Pending Leo review. `MANY_PEER_APPROVED=False`, so non-fake runs are blocked before requests.",
+        "Approved by Leo on 2026-10-24. `MANY_PEER_APPROVED=True`.",
         "",
         "The existing one-peer scenario and `run_episode` path are unchanged. With `--peers 2` or",
         "`--peers 3`, peers speak in numbered order before the target each round. Every message is",
@@ -109,10 +109,10 @@ def render_review():
                 scenario.metadata["peer_prompts"]), 1):
             lines.extend([f"### Peer {index}: {name}", "", "```text", prompt, "```", ""])
     lines.extend([
-        "## Approval switch",
+        "## Approval status",
         "",
-        "After Leo approves this wording, change `MANY_PEER_APPROVED` to `True`. Until then,",
-        "`scale_up.py --peers 2|3` fails during preflight before the API client is created.",
+        "The two- and three-peer cells are enabled. To retire approval, set",
+        "`MANY_PEER_APPROVED=False`; non-fake continuation runs will then stop before requests.",
         "",
     ])
     return "\n".join(lines)

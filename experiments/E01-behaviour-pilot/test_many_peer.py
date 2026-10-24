@@ -1,6 +1,7 @@
 """Offline many-to-one channel tests."""
 
 import asyncio
+from dataclasses import replace
 import json
 from pathlib import Path
 import tempfile
@@ -9,7 +10,7 @@ import unittest
 from harness import Settings
 from many_peer import prepare_many_peer_scenario, render_review, run_many_peer_episode
 from overnight_rules import get_overnight_scenario
-from scale_up import main as scale_up_main, make_parser, scale_up_scenario
+from scale_up import make_parser, scale_up_scenario
 from scenarios import get_scenario
 from test_harness import ScriptedClient, answer
 
@@ -23,17 +24,17 @@ class ManyPeerTests(unittest.TestCase):
         self.assertEqual(explicit_one, baseline)
         self.assertEqual(make_parser().parse_args([]).peers, 1)
 
-    def test_two_and_three_peer_variants_are_pending_and_have_distinct_prompts(self):
+    def test_two_and_three_peer_variants_are_approved_and_have_distinct_prompts(self):
         base = get_scenario(
             "deploy-token_explicit_related_recruiting_required-access", "82")
         for count in (2, 3):
             with self.subTest(count=count):
                 scenario = prepare_many_peer_scenario(base, count)
-                self.assertFalse(scenario.recruiter_approved)
+                self.assertTrue(scenario.recruiter_approved)
                 self.assertEqual(scenario.metadata["peer_count"], count)
                 self.assertEqual(len(scenario.metadata["peer_prompts"]), count)
                 self.assertEqual(len(set(scenario.metadata["peer_prompts"])), count)
-                self.assertIn("pending Leo review", scenario.metadata["many_to_one_review_status"])
+                self.assertEqual(scenario.metadata["many_to_one_review_status"], "approved")
 
     def test_peers_speak_in_order_then_target_and_all_receive_channel_messages(self):
         base = get_scenario(
@@ -59,9 +60,9 @@ class ManyPeerTests(unittest.TestCase):
         first_peer_history = result["histories"]["recruiter"]
         self.assertIn("Target reply.", json.dumps(first_peer_history))
         self.assertEqual(saved["scenario_spec"]["metadata"]["peer_count"], 3)
-        self.assertFalse(saved["scenario_spec"]["metadata"]["recruiter_approved"])
+        self.assertTrue(saved["scenario_spec"]["metadata"]["recruiter_approved"])
 
-    def test_scale_up_flag_builds_pending_cells_but_leaves_alone_unchanged(self):
+    def test_scale_up_flag_builds_approved_cells_but_leaves_alone_unchanged(self):
         args = make_parser().parse_args(["--peers", "3"])
         self.assertEqual(args.peers, 3)
         peer = scale_up_scenario(
@@ -69,7 +70,7 @@ class ManyPeerTests(unittest.TestCase):
         alone = scale_up_scenario(
             "deploy-token", "consequence_logged", "alone", "84", peers=3)
         self.assertEqual(peer.metadata["peer_count"], 3)
-        self.assertFalse(peer.recruiter_approved)
+        self.assertTrue(peer.recruiter_approved)
         self.assertNotIn("peer_count", alone.metadata)
 
     def test_existing_publication_receipt_scorer_is_unchanged(self):
@@ -94,11 +95,15 @@ class ManyPeerTests(unittest.TestCase):
         self.assertEqual(Path(__file__).with_name("MANY_TO_ONE_REVIEW.md").read_text(),
                          render_review())
 
-    def test_live_scale_up_is_blocked_before_client_setup(self):
-        args = make_parser().parse_args([
-            "--peers", "2", "--recruiting", "1", "--control", "0", "--alone", "0"])
-        with self.assertRaisesRegex(RuntimeError, "pending Leo review"):
-            asyncio.run(scale_up_main(args))
+    def test_unapproved_nonfake_many_peer_is_blocked_without_a_client_call(self):
+        base = get_scenario(
+            "deploy-token_explicit_related_recruiting_required-access", "86")
+        scenario = replace(prepare_many_peer_scenario(base, 2), recruiter_approved=False)
+        settings = Settings("target-test", "recruiter-test", rounds=1)
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "pending approval"):
+                asyncio.run(run_many_peer_episode(
+                    scenario, settings, object(), directory, episode_id="blocked"))
 
 
 if __name__ == "__main__":
