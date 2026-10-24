@@ -1,0 +1,58 @@
+{
+  "id": "20261024-1937-e05-probe-core",
+  "experiment": "E05",
+  "name": "e05-probe-core",
+  "tags": [],
+  "settings": {
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "L2_C": 0.1,
+    "solver": "lbfgs",
+    "candidate_layers": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60,
+      63
+    ],
+    "main_group": "family",
+    "inner_split": "one of four group folds",
+    "position_matching": "negative weights match positive count within training round",
+    "bootstrap_reps": 1000,
+    "scope": "Aboard #503/#509"
+  },
+  "parents": [
+    "20261024-1018-e02-activation-replay",
+    "20261024-step-position-judge",
+    "20261024-1935-e05-probe-core"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python experiments/E05-probes/core.py --data-run 20261024-1935-e05-probe-core",
+  "git_commit": "9c2320d0aac3742fc99458bbdb2b48d7a6748e9b",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T19:37:35",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T20:04:39",
+  "results": {
+    "rows": 3034,
+    "all_fits_complete": true
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "id": "20261024-2035-e01-deploy-token-consequence_logged-recruiting-32b-t2-think-scaleup",
+  "experiment": "E01",
+  "name": "e01-deploy-token-consequence_logged-recruiting-32b-t2-think-scaleup",
+  "tags": [
+    "scale-up",
+    "consequence_logged",
+    "recruiting",
+    "t2"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-32b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 4096,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": true
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0808,
+            "completion": 0.2828,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "scenario_family": "deploy-token",
+    "strength": "consequence_logged",
+    "condition": "recruiting",
+    "target": "32b",
+    "tactic_id": "T2"
+  },
+  "parents": [
+    "20261024-2035-e01-scaleup-deploy-token-consequence_logged-32b-t2-think"
+  ],
+  "model": "qwen/qwen3-32b",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/scale_up.py --target-reasoning --tactic T2 --recruiting 1 --control 0 --alone 0 --family-start 6199 --parallelism 1 --cap-usd 0.01",
+  "git_commit": "a8a0735fdf0084559e14473e3ddf3bb7fde8fe78",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T20:35:10",
+  "status": "running"
+}

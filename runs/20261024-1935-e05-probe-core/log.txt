@@ -1,0 +1,15 @@
+[run] 20261024-1935-e05-probe-core -> runs/20261024-1935-e05-probe-core
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E05-probes/core.py", line 145, in <module>
+    if __name__=='__main__':main(argparse.ArgumentParser().parse_args())
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E05-probes/core.py", line 138, in main
+    out=run.dir/name;out.mkdir();run_cv(rows,x,out,variant,unit,exploratory=exploratory,auxiliary=auxiliary)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E05-probes/core.py", line 59, in run_cv
+    model=fit_logistic(x[fit,fmap[layer]],y[fit],rounds[fit],seed)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E05-probes/models.py", line 16, in fit_logistic
+    if any(issubclass(w.category,ConvergenceWarning) for w in caught):raise RuntimeError('Logistic convergence failure')
+                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Logistic convergence failure

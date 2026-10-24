@@ -1,0 +1,40 @@
+{
+  "id": "20261024-2011-e05-text-baselines",
+  "experiment": "E05",
+  "name": "e05-text-baselines",
+  "tags": [],
+  "settings": {
+    "C_candidates": [
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "tfidf": "word unigrams, lowercase, min_df1, sublinear TF, L2 norm",
+    "splits": "exact saved main outer and inner folds",
+    "bootstrap_reps": 1000,
+    "target_only": "complete prior rendered assistant spans including tool-call text",
+    "target_prose": "same spans with tool-call blocks and empty think tags removed"
+  },
+  "parents": [
+    "20261024-1937-e05-probe-core",
+    "20261024-2007-e05-probe-core",
+    "20261024-1018-e02-activation-replay"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python experiments/E05-probes/text_baseline.py",
+  "git_commit": "d7903d8d9f4ef5bca7e4ed96e5beb9987ebe5ceb",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T20:11:52",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T20:12:35",
+  "results": {
+    "probe": 0.6577777850247086,
+    "full_prompt": 0.48024572122884207,
+    "target_only": 0.48379999121274303,
+    "target_prose": 0.48828291133255447
+  }
+}

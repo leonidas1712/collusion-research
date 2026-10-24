@@ -1,0 +1,84 @@
+{
+  "id": "20261024-2103-e01-deploy-token-v2-consequence-alone-32b-scaleup",
+  "experiment": "E01",
+  "name": "e01-deploy-token-v2-consequence-alone-32b-scaleup",
+  "tags": [
+    "scale-up",
+    "consequence",
+    "alone"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-32b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0808,
+            "completion": 0.2828,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "scenario_family": "deploy-token-v2",
+    "strength": "consequence",
+    "condition": "alone",
+    "target": "32b"
+  },
+  "parents": [
+    "20261024-2103-e01-scaleup-deploy-token-v2-consequence-32b"
+  ],
+  "model": "qwen/qwen3-32b",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/scale_up.py --family deploy-token-v2 --strength consequence --parallelism 4 --recruiting 40 --control 15 --alone 6 --family-start 8001 --cap-usd 0.6",
+  "git_commit": "19296c8d920cd90c66035c9577b093383c76d976",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T21:03:15",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T21:41:54",
+  "results": {
+    "completed": 6,
+    "attempted": 6,
+    "planned": 6
+  }
+}

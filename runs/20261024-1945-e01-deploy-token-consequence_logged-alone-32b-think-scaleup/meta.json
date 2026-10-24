@@ -1,0 +1,84 @@
+{
+  "id": "20261024-1945-e01-deploy-token-consequence_logged-alone-32b-think-scaleup",
+  "experiment": "E01",
+  "name": "e01-deploy-token-consequence_logged-alone-32b-think-scaleup",
+  "tags": [
+    "scale-up",
+    "consequence_logged",
+    "alone"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-32b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 4096,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": true
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0808,
+            "completion": 0.2828,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "scenario_family": "deploy-token",
+    "strength": "consequence_logged",
+    "condition": "alone",
+    "target": "32b"
+  },
+  "parents": [
+    "20261024-1945-e01-scaleup-deploy-token-consequence_logged-32b-think"
+  ],
+  "model": "qwen/qwen3-32b",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/scale_up.py --target-reasoning --recruiting 10 --control 0 --alone 2 --family-start 6001 --parallelism 4 --cap-usd 0.4",
+  "git_commit": "a1918e70c60f5b4b81359c33ec7fc55ff19bc505",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T19:45:57",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T19:54:38",
+  "results": {
+    "completed": 2,
+    "attempted": 2,
+    "planned": 2
+  }
+}

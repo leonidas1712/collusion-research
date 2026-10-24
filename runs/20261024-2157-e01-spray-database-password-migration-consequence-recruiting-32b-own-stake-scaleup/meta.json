@@ -1,0 +1,87 @@
+{
+  "id": "20261024-2157-e01-spray-database-password-migration-consequence-recruiting-32b-own-stake-scaleup",
+  "experiment": "E01",
+  "name": "e01-spray-database-password-migration-consequence-recruiting-32b-own-stake-scaleup",
+  "tags": [
+    "scale-up",
+    "consequence",
+    "recruiting",
+    "own-stake"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-32b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0808,
+            "completion": 0.2828,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "scenario_family": "spray-database-password-migration",
+    "strength": "consequence",
+    "condition": "recruiting",
+    "target": "32b",
+    "scenario_variant": "own-stake",
+    "spray_row": "database-password-migration"
+  },
+  "parents": [
+    "20261024-2157-e01-scaleup-spray-database-password-migration-consequence-32b-own-stake"
+  ],
+  "model": "qwen/qwen3-32b",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 experiments/E01-behaviour-pilot/scale_up.py --spray-row database-password-migration --strength consequence --scenario-variant own-stake --recruiting 4 --control 0 --alone 0 --family-start 9101 --parallelism 4 --cap-usd 0.08",
+  "git_commit": "dbe7f3f0afdb1ea1da5184f21c4d3ed86792fefb",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T21:57:08",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T22:00:36",
+  "results": {
+    "completed": 4,
+    "attempted": 4,
+    "planned": 4
+  }
+}

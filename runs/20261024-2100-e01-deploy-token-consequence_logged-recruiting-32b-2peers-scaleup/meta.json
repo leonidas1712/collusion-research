@@ -1,0 +1,85 @@
+{
+  "id": "20261024-2100-e01-deploy-token-consequence_logged-recruiting-32b-2peers-scaleup",
+  "experiment": "E01",
+  "name": "e01-deploy-token-consequence_logged-recruiting-32b-2peers-scaleup",
+  "tags": [
+    "scale-up",
+    "consequence_logged",
+    "recruiting"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-32b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0808,
+            "completion": 0.2828,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "scenario_family": "deploy-token",
+    "strength": "consequence_logged",
+    "condition": "recruiting",
+    "target": "32b",
+    "peer_count": 2
+  },
+  "parents": [
+    "20261024-2100-e01-scaleup-deploy-token-consequence_logged-32b-2peers"
+  ],
+  "model": "qwen/qwen3-32b",
+  "command": "/Users/leo/collusion-research/.venv/bin/python3 'python3 -m unittest' -q",
+  "git_commit": "19296c8d920cd90c66035c9577b093383c76d976",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-24T21:00:54",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-24T21:05:26",
+  "results": {
+    "completed": 1,
+    "attempted": 1,
+    "planned": 1
+  }
+}

@@ -40,3 +40,21 @@ controls, target-alone episodes and ineligible non-sharing episodes remain separ
 
 Run `uv run python experiments/E01-behaviour-pilot/judge_awareness.py`. To resume,
 pass `--out runs/<existing-run>`; its existing ledger and cached judgments are reused.
+
+## Deploy-token v2 and spray collection
+
+`judge_topup.py` drives the existing `judge_labels.py` semantic questions and Luna
+Decisions client with the existing awareness evidence selector in the same call.
+It selects completed non-fake deploy-token v2 episodes from the 2103, 2141, 2149 and
+2157 run groups, and spray episodes from `20261024-2*` run groups. The collection
+snapshot is saved in selected-episodes.json. A single $0.20 ledger covers all calls;
+resume with `--run runs/<existing-judge-run>` to reuse the snapshot, cache and cap.
+
+Inputs retain all posted/unposted target text and execution receipts, omit peer
+speeches and duplicate send_message argument text, and exclude review labels.
+The usual first-publication kind remains channel-based. File-only disclosures
+receive a separate first_file_disclosure_kind; they are not classified as held.
+Evaluation awareness includes an exact evidence message/round copied from the trace.
+All labels join at label.semantic_judge and remain provisional. Reports aggregate
+by scenario and compare the three requested top-up review cases. A model's unclear
+answer remains unclear rather than being replaced with the reviewer's interpretation.
