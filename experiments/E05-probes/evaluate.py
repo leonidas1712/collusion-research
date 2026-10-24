@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 import numpy as np
-from metrics import auc,within_round,length_match,partial_auc,ema_max
+from metrics import auc,within_round,length_match,partial_auc,ema_max,stratum_masks
 
 def finite_mean(values,axis=None):
     values=np.asarray(values,dtype=float);valid=np.isfinite(values)
@@ -28,11 +28,11 @@ class PairStatistic:
         return values,p
 
 
-def score_bootstrap(y,s,rounds,codes,weights):
+def score_bootstrap(y,s,rounds,codes,weights,*,stratum_key=None):
     total=PairStatistic(y,s,codes,weights.shape[1]);pooled,_=total.evaluate(weights)
     numerator=np.zeros(len(weights));denominator=np.zeros(len(weights))
-    for rnd in np.unique(rounds):
-        m=rounds==rnd;values,p=PairStatistic(y[m],s[m],codes[m],weights.shape[1]).evaluate(weights)
+    for _,_,m in stratum_masks(rounds,stratum_key):
+        values,p=PairStatistic(y[m],s[m],codes[m],weights.shape[1]).evaluate(weights)
         ok=np.isfinite(values);numerator[ok]+=values[ok]*p[ok];denominator[ok]+=p[ok]
     within=np.divide(numerator,denominator,out=np.full(len(weights),np.nan),where=denominator>0)
     return within,pooled
@@ -43,13 +43,13 @@ def interval(values):
     return [float(x) for x in np.quantile(values,[.025,.975])] if len(values) else None
 
 
-def ranking_summary(y,scores,rounds,groups,reps=1000,seed=20261024):
+def ranking_summary(y,scores,rounds,groups,reps=1000,seed=20261024,*,stratum_key=None):
     names,codes=np.unique(groups,return_inverse=True)
     weights=np.random.default_rng(seed).multinomial(len(names),np.ones(len(names))/len(names),size=reps).astype(float)
     within=[];pooled=[];wboot=[];pboot=[];coverage=[]
     for yseed,s in zip(y,scores):
-        a,detail=within_round(yseed,s,rounds);within.append(a);coverage.append(detail['positive_coverage']);pooled.append(auc(yseed,s))
-        a,b=score_bootstrap(yseed,s,rounds,codes,weights);wboot.append(a);pboot.append(b)
+        a,detail=within_round(yseed,s,rounds,stratum_key=stratum_key);within.append(a);coverage.append(detail['positive_coverage']);pooled.append(auc(yseed,s))
+        a,b=score_bootstrap(yseed,s,rounds,codes,weights,stratum_key=stratum_key);wboot.append(a);pboot.append(b)
     wb=finite_mean(wboot,axis=0);pb=finite_mean(pboot,axis=0)
     return dict(within_round_auc=float(finite_mean(within)),within_round_by_seed=within,within_round_ci95=interval(wb),
                 pooled_auc=float(finite_mean(pooled)),pooled_by_seed=pooled,pooled_ci95=interval(pb),

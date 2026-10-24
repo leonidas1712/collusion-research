@@ -13,12 +13,38 @@ def auc(y,s,w=None):
     return float((pos*(np.cumsum(neg)-neg*.5)).sum()/(pos.sum()*neg.sum()))
 
 
-def within_round(y,s,rounds,w=None):
+def stratum_masks(rounds,stratum_key=None):
+    """Yield round masks, optionally intersected with one categorical key per row."""
+    rounds=np.asarray(rounds)
+    if stratum_key is None:
+        for rnd in np.unique(rounds):yield rnd,None,rounds==rnd
+        return
+    keys=list(stratum_key)
+    if len(keys)!=len(rounds):raise ValueError('stratum_key must have one value per row')
+    groups={}
+    for i,(rnd,key) in enumerate(zip(rounds,keys)):
+        try:groups.setdefault((rnd,key),[]).append(i)
+        except TypeError as exc:raise ValueError('stratum_key values must be hashable') from exc
+    for (rnd,key),indices in groups.items():
+        mask=np.zeros(len(rounds),dtype=bool);mask[indices]=True
+        yield rnd,key,mask
+
+
+def within_round(y,s,rounds,w=None,*,stratum_key=None):
+    """Positive-weighted AUROC within round, or within stratum_key × round.
+
+    Pass scenario names as stratum_key for pooled scenarios. Single-class strata
+    are omitted; positive_coverage reports the retained positive weight.
+    """
     y=np.asarray(y);s=np.asarray(s);rounds=np.asarray(rounds);w=np.ones(len(y)) if w is None else np.asarray(w)
     numerator=denominator=0.;detail=[]
-    for rnd in np.unique(rounds):
-        m=rounds==rnd;score=auc(y[m],s[m],w[m]);n=float((w[m]*y[m]).sum())
-        if np.isfinite(score):numerator+=n*score;denominator+=n;detail.append({'round':int(rnd),'auc':score,'positive_weight':n})
+    for rnd,key,m in stratum_masks(rounds,stratum_key):
+        score=auc(y[m],s[m],w[m]);n=float((w[m]*y[m]).sum())
+        if np.isfinite(score):
+            numerator+=n*score;denominator+=n
+            item={'round':int(rnd),'auc':score,'positive_weight':n}
+            if stratum_key is not None:item['stratum_key']=key
+            detail.append(item)
     return (numerator/denominator if denominator else float('nan')),dict(rounds=detail,positive_coverage=denominator/float((w*y).sum()) if (w*y).sum() else None)
 
 

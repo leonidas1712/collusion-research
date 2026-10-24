@@ -82,11 +82,15 @@ def score_metrics(table, row_ids, scores, fpr=.05):
     lengths = np.array([r['n_tokens'] for r in rows], dtype=float)
     out = {'rows': int(len(ids)), 'missing': int((~keep).sum()), 'recruiting_rows': int(rec.sum()),
            'positive_rows': int(y[rec].sum())}
-    wr, detail = within_round(y[rec], s[rec], rounds[rec])
+    # Pooled scenarios: compare only within scenario x round (base rates differ by scenario).
+    scen = np.array([r.get('scenario', '') for r in rows])
+    strata = scen[rec] if len(set(scen[rec])) > 1 else None
+    wr, detail = within_round(y[rec], s[rec], rounds[rec], stratum_key=strata)
     out['within_round_auc'] = wr
     out['within_round_positive_coverage'] = detail['positive_coverage']
     out['pooled_auc'] = auc(y[rec], s[rec])
-    summary, _, _ = ranking_summary(np.array([y[rec]]), np.array([s[rec]]), rounds[rec], fam[rec], reps=REPS)
+    summary, _, _ = ranking_summary(np.array([y[rec]]), np.array([s[rec]]), rounds[rec], fam[rec], reps=REPS,
+                                    stratum_key=strata)
     out['within_round_family_ci95'] = summary['within_round_ci95']
     out['pooled_family_ci95'] = summary['pooled_ci95']
     out['all_negatives_pooled_auc'] = auc(y, s)
