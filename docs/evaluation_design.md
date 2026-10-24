@@ -96,6 +96,19 @@ Choices to settle:
 - **Train position-matched:** keep negative turns only from rounds where positives occur (e.g. 1–6), or reweight negatives to match the positives' round distribution.
 - **Turn-number-only baseline:** report it on the naive pooled AUROC to show how large the shortcut is; under within-round scoring it is 0.5 by construction.
 
+**Ladder of evidence (what we can claim, weakest to strongest).**
+
+| Level | What it is | What it shows |
+|---|---|---|
+| 0 | Accuracy on the training data | Nothing alone (a 5,120-weight probe can memorise ~3,000 rows) |
+| 1 | Cross-validation split by episode (5 folds) | Works on unseen episodes from the same setup: **minimum we report** |
+| 2 | Held-out tactic or rule wording | Not just recognising one peer style |
+| 3 | Held-out scenario, peer model or target model | A general signal |
+
+Level 1 always comes with: shuffled labels (~0.5), the turn-number baseline, and the positive control (a probe for "token in context" ~1.0). If levels 2–3 fail, we report: works within one setup (level 1) with the per-step curve; doesn't transfer to X; what that suggests (e.g. the probe partly learns peer style). A clear negative transfer result is a legitimate finding.
+
+**Does the score climb towards the give-in?** The probe isn't trained to climb (all pre-action steps share label 1), so a rise is emergent. Figure: mean probe score vs steps before the action for give-in episodes, against held episodes at the same rounds; the claim is "rises above held episodes at the same rounds", since accumulated peer pressure alone could make any curve rise. Optional variant: regress steps-until-act.
+
 **Shortcut checks** (from claude-2's list):
 - policy-control episodes (rule present, no ask) should score low;
 - rephrased rule;
