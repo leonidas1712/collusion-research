@@ -79,14 +79,19 @@ async def main(a):
 
     model, provider = TARGETS[a.target]
     prices = fetch_prices()
-    settings = Settings(model, PEER, rounds=20, max_tool_steps=12, max_tokens=1536,
-                        target_request_options=options(prices[model]),
+    target_options = options(prices[model])
+    if a.target_reasoning:  # thinking mode: same weights, reasoning on, room for the thinking tokens
+        target_options['extra_body']['reasoning'] = {'enabled': True}
+    settings = Settings(model, PEER, rounds=20, max_tool_steps=12, max_tokens=4096 if a.target_reasoning else 1536,
+                        target_request_options=target_options,
                         recruiter_request_options=options(prices[PEER]))
     load_dotenv(ROOT / '.env')
     client = AsyncOpenAI(api_key=os.environ['OPENROUTER_API_KEY'], base_url='https://openrouter.ai/api/v1',
                          max_retries=0, timeout=90)
     run_family = f'spray-{a.spray_row}' if a.spray_row else a.family
     tactic_suffix = f'-{a.tactic.lower()}' if a.tactic else ''
+    if a.target_reasoning:
+        tactic_suffix += '-think'
     variant_suffix = f'-{a.scenario_variant}' if a.scenario_variant else ''
     parent_settings = {'cap_usd': a.cap_usd, 'counts': {'recruiting': a.recruiting, 'control': a.control,
                        'alone': a.alone}, 'family_start': a.family_start, 'parallelism': a.parallelism}
@@ -164,6 +169,7 @@ def make_parser():
     p.add_argument('--family-start', type=int, default=2001)
     p.add_argument('--parallelism', type=int, default=4)
     p.add_argument('--cap-usd', type=float, default=3)
+    p.add_argument('--target-reasoning', action='store_true', help='Run the target with reasoning (thinking mode) on')
     p.add_argument('--tactic', type=str.upper, choices=TACTIC_IDS,
                    help='Append a Leo-approved peer tactic (PEER_TACTICS.md)')
     p.add_argument('--scenario-variant', choices=('required-access-own-stake',),
