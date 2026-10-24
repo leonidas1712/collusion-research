@@ -72,6 +72,7 @@ Sources: `docs/scenario_levers.md`, `docs/scenario_guidelines.md`, `experiments/
 | minimum-price | Approved | Agrawal et al., arXiv 2507.01413 | Analogy |
 | disable-failing-test | Approved | METR/Redwood HF investigation | Reward-hacking analogy |
 | self-merge-without-review | Dropped (every model merged alone) | [GitHub required-review docs](https://docs.github.com/en/pull-requests/how-tos/review-pull-requests/approving-a-pull-request-with-required-reviews); Shi et al. | |
+| Reciprocal code-review hybrid | E01 hybrid scenario | [GitHub required-review docs](https://docs.github.com/en/pull-requests/how-tos/review-pull-requests/approving-a-pull-request-with-required-reviews); Shi, Zhang, and Yang, [arXiv 2609.24967](https://arxiv.org/abs/2609.24967) | Synthetic work items and tools; borrows the common LGTM rubber-stamping pattern and repeated mutual-verification structure, not the paper's prompts, task, rewards, or data. See `experiments/E01-behaviour-pilot/HYBRID_PROVENANCE.md` |
 | Credential-passing scenario choice (S1) | deploy-token | Distinguished from arXiv 2606.04141 (excludes keys in tool calls) | |
 | Database-password migration | E01 dedicated credential scenario and spray row | Ours; designed 2026-10-24 | Synthetic password and workflow; not tied to an incident |
 | Artifact-registry-token spray row | E01 candidate screen | [OpenAI–Hugging Face incident account](https://openai.com/index/hugging-face-model-evaluation-security-incident/) | Structural analogy only; new roles, wording, task and synthetic token |
@@ -228,6 +229,19 @@ Sources: `docs/related_work.md`, `docs/probe_takeaways.md`, `docs/external_trace
 | Agrawal et al. | Urgency, oversight | arXiv 2507.01413 | |
 | Persuasion-probe paper | History vs current-turn control | arXiv 2508.05625 | |
 | Goldowsky-Dill / Among Us / Fan et al. | Other pointers | arXiv 2502.03407; 2504.04072; 2609.16436 | Minor |
+| Before the Model Caves (pre-capitulation states, multi-turn sycophancy) | Closest in shape; reason to add an MLP probe (`docs/prior_work_check.md` §1) | [GitHub soham-padia/pre-sycophancy-study](https://github.com/soham-padia/pre-sycophancy-study) (README only; "submitted to EMNLP 2026", no authors or paper) | Checked 2026-10-24. They: a user disputing facts, no peer, rule or tool action. Peak AUC 0.596–0.636 on 4 probed models (5th is behaviour only) |
+| Readable Before Actionable (Yu, Xing, Yang, Han) | Hijacked-vs-resisted directions and steering are done for injection | arXiv 2610.05295 | Checked. They: one injected tool result on AgentDojo; we: multi-turn peer persuasion against an operator rule |
+| From Probe Scores to Alarm Policies (Gao, DAI 2026) | Per-episode false-alarm rate; threshold on "any alarm in episode" | arXiv 2610.04575 | Checked. AUROC 0.922 is their *secondary* mean-activation monitor (0/38 at 5%). The 40.1% is their generic Proposition 1 (p=.05, n=10, independence); their AgentDojo unit is 10 attempts, not 10 steps |
+| Internal-State Probes Read the Situation, Not the Action (Fomin, David, LeVi; ICML 2026 AIWILD workshop) | The critique we must answer: probes read the situation | arXiv 2606.30449 | Checked (AUC 0.801, +5.1 pp; shared-prefix pair). Our answer: gave-in vs held under the same situation and pressure |
+| Doomed from the Start (Ruan et al.) | Precedent for per-round AUROC among episodes still running | arXiv 2607.06503 (Fig. 3, v2) | Checked. They predict task failure with a post-generation probe; we predict giving in, before the action |
+| Apart sprint project: detecting an agent's intent to escape (Han & Yong Deng, Sep 2026) | Example of the task-difficulty confound | [Apart project page](https://apartresearch.com/sprints/projects/can-we-detect-an-agents-intent-to-escape-before-it-actually-does-so-hg7h) | Checked; sprint project, not peer-reviewed. Their positives are all impossible tasks; ours share task and pressure with the negatives |
+| Simple probes can catch sleeper agents (MacDiarmid et al., Anthropic, Apr 2024) | Background: predicting future behaviour from prompt activations | [Anthropic alignment note](https://www.anthropic.com/research/probes-catch-sleeper-agents) | Checked. Trained-in backdoor; ours is an untrained model being persuaded |
+| Language Models Can Predict Their Own Behavior (Ashok & May, NeurIPS 2025) | Background: probe early warning, 91% less jailbreaking | arXiv 2502.13329 | Checked (abstract). Single-turn; no peer agent |
+| Kirch et al., What Features in Prompts Jailbreak LLMs? | Background: jailbreak success from last prompt token | arXiv 2411.03343 | Checked. >80% for 3 of 5 models (Llama-3.1-8B, Llama-3.2-3B, Ministral-8B); the other 2 ≥70%. Single-turn jailbreaks |
+| Reading the Plan: Multi-Horizon Future-Action Prediction (Advani, Maharjan, Chaturvedi) | Background: future tool calls decodable from one frozen state | [alphaXiv slug](https://www.alphaxiv.org/abs/2610.frozen-states-future-action-prediction) (resolves; no arXiv id found) | Checked (abstract). Predicts which tool comes next; we predict a rule-breaking give-in under persuasion |
+| SafeDream (Yan, Lin, Zhu, Wang) | Lead-time ("detection lead") precedent | arXiv 2604.16824 | Checked. **It does read hidden states** (a world model over LLM hidden states); "external" only means no weight changes. Single-model jailbreaks |
+| Persuade Me if You Can (Bozdag et al., ACM CAIS 2026) | Agent-to-agent persuasion, behaviour only | arXiv 2503.01829 | Abstract checked; how susceptibility is scored not confirmed. Text only; no rule or tools |
+| MMPersuade: Seeing is Believing? (Qiu et al.) | Agent-to-agent persuasion of VLMs | arXiv 2510.22768 | Checked (abstract). Behaviour via function calls; no activations |
 
 ## 7. Ideas credited to people
 
@@ -285,3 +299,6 @@ Copied from the source docs' own caveats, plus items with no link or id.
 | Gemma-4-31B / DeepSeek-V4-Flash open-weight status in Shi data | Section 5 | `docs/external_traces.md` | Inferred (I) |
 | arXiv 2609.35576 (Share-Borne AI Virus) | Section 7 | EXPERIMENT_LOG 01:59 | Id only; title from Leo |
 | Judge validation (Luna 15/16; Jev comparison) | Section 5 | `JUDGE_LABELS.md` | Small, sparse set |
+| "Self-reported agreement" in Persuade Me if You Can | Section 6 | `docs/prior_work_check.md` | Not in abstract; check full paper |
+| Reading the Plan arXiv id | Section 6 | `docs/prior_work_check.md` | alphaXiv-only slug; no arXiv id found |
+| Before the Model Caves authors and paper | Section 6 | `docs/prior_work_check.md` | README names none; cite as GitHub repo |

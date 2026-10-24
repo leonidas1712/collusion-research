@@ -364,6 +364,26 @@ These are recommendations from this review, not adopted plan changes:
 
 This assigned subset does not settle credential-scenario novelty or whether LAD/NeuroFilter merit baseline implementation. Those depend on the companion review.
 
+## From the prior-work check (2026-10-24)
+
+Sources from `docs/prior_work_check.md`, each checked by claude-2 against the abstract page, and against the full text where the claim needed it. One line each on how we differ.
+
+| Paper | What it does | How we differ |
+|---|---|---|
+| Before the Model Caves ([GitHub](https://github.com/soham-padia/pre-sycophancy-study), submitted to EMNLP 2026; no authors given) | Per-turn hidden states under escalating sycophancy pressure; linear probes fail at every layer, non-linear +6.6 pp; peak AUC 0.596–0.636 over 4 probed models; cross-model transfer fails within families | A user disputing facts, no peer agent, operator rule or tool action |
+| Readable Before Actionable (Yu et al., arXiv 2610.05295) | Directions from hijacked vs resisted AgentDojo trajectories; edits at pre-action and injected-span positions cut attack success, random positions don't | One injected tool result, not multi-turn persuasion by a peer against an operator rule |
+| From Probe Scores to Alarm Policies (Gao, arXiv 2610.04575, DAI 2026) | A secondary mean-activation monitor reaches AUROC 0.922 but catches 0 of 38 at a locked 5% point; row-level AUROC/FPR don't give per-unit any-alarm risk (5% × 10 independent → 40.1%) | Not a competitor: a metric warning. We should report per-episode false alarms |
+| Internal-State Probes Read the Situation, Not the Action (Fomin et al., arXiv 2606.30449, ICML 2026 AIWILD) | Three negative results: best future-behaviour probe AUC 0.801, +5.1 pp over majority; shared-prefix pair indistinguishable before the first differing input | Our main test holds the situation fixed (same pressure, gave in vs held), which is the control they say is missing |
+| Doomed from the Start (Ruan et al., arXiv 2607.06503) | Probe cascade to abort failing agent episodes; Fig. 3 plots post-generation probe AUC for eventual failure among episodes alive at each round | Method precedent for within-round AUROC; they predict task failure, we predict giving in to a peer |
+| Apart sprint project on escape intent (Han & Yong Deng, Sep 2026) | Linear probes catch most escapes early, many benign false alarms; reviewers note all positives are impossible tasks, all negatives easy ones | Our positives and negatives share task and pressure, so "this is going badly" can't explain the score |
+| Simple probes can catch sleeper agents (MacDiarmid et al., Anthropic, Apr 2024) | Linear probes on the final prompt token predict when a backdoored model defects | Trained-in backdoor; our target is untrained for the behaviour and is persuaded live |
+| Language Models Can Predict Their Own Behavior (Ashok & May, arXiv 2502.13329, NeurIPS 2025) | Probes on internal states predict the model's own behaviour; an early-warning system cuts jailbreaking 91% | Single-turn prompts; no peer, no multi-turn lead time |
+| What Features in Prompts Jailbreak LLMs? (Kirch et al., arXiv 2411.03343) | Multilayer probes on the final prompt token predict jailbreak success: >80% on 3 of 5 models, ≥70% on the other 2 | Single-turn jailbreak of safety training, not an operator rule over many turns |
+| Reading the Plan (Advani et al., [alphaXiv](https://www.alphaxiv.org/abs/2610.frozen-states-future-action-prediction), Oct 2026; no arXiv id found) | Future tool calls (1, 3, 5 steps ahead) linearly decodable from one frozen residual state at about 3/4 depth | Predicts which tool comes next, not whether an agent breaks a rule under pressure |
+| SafeDream (Yan et al., arXiv 2604.16824) | Early multi-turn jailbreak detection with a "detection lead" metric, about 1.06–1.20 turns before compliance; a world model over the LLM's hidden states, outside the weights | Uses hidden states too (not text-only, as the check doc said); attacker is a jailbreaker, not a peer agent, and no text-monitor ladder |
+| Persuade Me if You Can (Bozdag et al., arXiv 2503.01829, ACM CAIS 2026) | Multi-turn persuader/persuadee LLM conversations, measuring persuasiveness and susceptibility | Text only; no rule, tools or activations. Scoring method (self-reported agreement?) not confirmed |
+| Seeing is Believing? / MMPersuade (Qiu et al., arXiv 2510.22768) | Agent-to-agent multimodal persuasion of VLMs, effects measured via function calls | Behaviour only, no activations; persuasion of opinions, not of a rule-breaking action |
+
 ## At a glance
 
 Summary of everything above, added 2026-10-24 by claude-2. Details and caveats per paper are in the sections above; numbers marked *(summary)* there still need checking against the PDFs.
