@@ -6,12 +6,15 @@
     uv run python experiments/E01-behaviour-pilot/viewer.py list add best 20261024-0312 3 --turn 4 --note "gives in after 3 refusals"
     uv run python experiments/E01-behaviour-pilot/viewer.py list show best
     uv run python experiments/E01-behaviour-pilot/viewer.py list clear best
+    uv run python experiments/E01-behaviour-pilot/viewer.py labels import ~/Downloads/human_labels_2026-10-24.json
     uv run python experiments/E01-behaviour-pilot/viewer.py build
 
 `open` builds a file://.../runs/viewer.html#... link (the page reads its state from the hash) and opens it with
 macOS `open`. `open --list NAME` with no --run starts at the list's first item. Run IDs may be a unique prefix.
 Lists live in runs/viewer_lists.json ({name: [{run, episode, turn?, note}]}) and are embedded when the page is
-built, so `list add/clear` rebuild it (skip with --no-build). Standard library only.
+built, so `list add/clear` rebuild it (skip with --no-build). `labels import` merges a hand-label export from the
+page ("Export labels") into runs/human_labels.json, one record per (run, episode, turn_index), newest `updated` wins,
+then rebuilds so the labels show as filled in. Standard library only.
 """
 
 from __future__ import annotations
@@ -29,6 +32,7 @@ HERE = Path(__file__).resolve().parent
 RUNS = HERE.parents[1] / "runs"
 VIEWER = RUNS / "viewer.html"
 LISTS = RUNS / "viewer_lists.json"
+HUMAN_LABELS = RUNS / "human_labels.json"
 
 
 def resolve_run(prefix: str) -> str:
@@ -55,12 +59,16 @@ def load_lists() -> dict:
     return json.loads(LISTS.read_text()) if LISTS.exists() else {}
 
 
-def save_lists(lists: dict) -> None:
-    fd, tmp = tempfile.mkstemp(dir=RUNS, prefix=".viewer_lists-", suffix=".json")
+def save_json(obj, path: Path) -> None:
+    fd, tmp = tempfile.mkstemp(dir=RUNS, prefix=f".{path.stem}-", suffix=".json")
     with os.fdopen(fd, "w") as f:
-        json.dump(lists, f, indent=2, ensure_ascii=False)
+        json.dump(obj, f, indent=2, ensure_ascii=False)
         f.write("\n")
-    os.replace(tmp, LISTS)
+    os.replace(tmp, path)
+
+
+def save_lists(lists: dict) -> None:
+    save_json(lists, LISTS)
 
 
 def build() -> int:
@@ -123,6 +131,36 @@ def cmd_list(a) -> int:
     return 0 if a.no_build else build()
 
 
+def cmd_labels(a) -> int:
+    """Merge an exported labels file into runs/human_labels.json; the newer `updated` wins per (run, episode, turn_index)."""
+    data = json.loads(Path(a.file).expanduser().read_text())
+    incoming = data.get("labels") if isinstance(data, dict) else data
+    if not isinstance(incoming, list):
+        sys.exit(f"{a.file}: expected {{labels: [...]}} or a list of labels")
+    key = lambda x: (x.get("run"), x.get("episode"), x.get("turn_index"))
+    have = json.loads(HUMAN_LABELS.read_text()).get("labels", []) if HUMAN_LABELS.exists() else []
+    merged = {key(x): x for x in have}
+    added = updated = older = bad = 0
+    for x in incoming:
+        if not isinstance(x, dict) or not x.get("run") or not x.get("episode"):
+            bad += 1
+            continue
+        old = merged.get(key(x))
+        if old is None:
+            added += 1
+        elif (x.get("updated") or "") >= (old.get("updated") or ""):
+            updated += old != x
+        else:
+            older += 1
+            continue
+        merged[key(x)] = x
+    out = sorted(merged.values(), key=lambda x: (x["run"], x["episode"], x.get("turn_index") is None, x.get("turn_index") or 0))
+    save_json({"labels": out}, HUMAN_LABELS)
+    print(f"{HUMAN_LABELS}: {len(out)} labels ({added} new, {updated} updated, {older} older than stored and skipped"
+          + (f", {bad} without run/episode skipped" if bad else "") + ")")
+    return 0 if a.no_build else build()
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -160,6 +198,13 @@ def main() -> int:
     for p in (add, clear):
         p.add_argument("--no-build", action="store_true", help="skip rebuilding runs/viewer.html")
     ls.set_defaults(fn=cmd_list)
+
+    lb = sub.add_parser("labels", help="hand labels exported from the page")
+    lbsub = lb.add_subparsers(dest="action", required=True)
+    imp = lbsub.add_parser("import", help="merge an export into runs/human_labels.json and rebuild")
+    imp.add_argument("file", help="human_labels_<date>.json downloaded from the page")
+    imp.add_argument("--no-build", action="store_true", help="skip rebuilding runs/viewer.html")
+    lb.set_defaults(fn=cmd_labels)
 
     sub.add_parser("build", help="rebuild runs/viewer.html").set_defaults(fn=lambda a: build())
     a = ap.parse_args()
