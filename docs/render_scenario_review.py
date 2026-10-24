@@ -80,18 +80,18 @@ def main() -> None:
         sections.append(scenario_html(rid, f"{rid}" + (f" · {kind}" if kind else ""), cells))
         nav.append((rid, rid))
     links = "\n".join(f'<li><a href="#{i}">{esc(t)}</a></li>' for i, t in nav)
-    page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"><title>Scenario Text Review</title>
+    page = f"""<title>Scenario Text Review</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <style>
 :root {{ --bg:#f7f7f5; --surface:#fff; --fg:#1d1d1b; --muted:#66655f; --line:#e2e0da; --accent:#2f6f6a;
   --del:#f6d6d2; --ins:#d4ecd9; --mono: ui-monospace, SFMono-Regular, Menlo, monospace; }}
 @media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{ --bg:#141616; --surface:#1d2020;
-  --fg:#e8e6e1; --muted:#a3a19a; --line:#2e3231; --accent:#7cc0b8; --del:#5a2a26; --ins:#1f4a2c; }} }}
+  --fg:#e8e6e1; --muted:#a3a19a; --line:#2e3231; --accent:#7cc0b8; --del:#5a2a26; --ins:#1f4a2c; color-scheme: dark; }} }}
 :root[data-theme="dark"] {{ --bg:#141616; --surface:#1d2020; --fg:#e8e6e1; --muted:#a3a19a; --line:#2e3231;
-  --accent:#7cc0b8; --del:#5a2a26; --ins:#1f4a2c; }}
+  --accent:#7cc0b8; --del:#5a2a26; --ins:#1f4a2c; color-scheme: dark; }}
 body {{ margin:0; background:var(--bg); color:var(--fg); font: 15px/1.55 system-ui, sans-serif; }}
-.wrap {{ max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }}
-h1 {{ font-size: 24px; margin: 0 0 6px; }} h2 {{ font-size: 20px; margin: 36px 0 4px; color: var(--accent); }}
+.wrap {{ max-width: 900px; margin: 0 auto; padding-block: 24px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }}
+h1, h2 {{ text-wrap: balance; }} h1 {{ font-size: 24px; margin: 0 0 6px; }} h2 {{ font-size: 20px; margin: 36px 0 4px; color: var(--accent); }}
 h4 {{ margin: 18px 0 6px; font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }}
 .text {{ background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; white-space: pre-wrap; }}
 pre {{ background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px; overflow-x: auto;
@@ -102,13 +102,13 @@ del {{ background: var(--del); text-decoration: line-through; }} ins {{ backgrou
   padding: 8px 12px; border-radius: 4px; }}
 ul.files {{ list-style: none; padding: 0; margin: 0; }} ul.files li {{ margin-bottom: 8px; }}
 nav ul {{ columns: 2; padding-left: 18px; }} section {{ border-top: 1px solid var(--line); }}
-</style></head><body><div class="wrap">
+</style><div class="wrap">
 <h1>Scenario text review</h1>
 <p class="small">Exactly what the target and peer models will read, rendered from the scenario code (family id "review";
 real runs use different secret values). The target never sees the peer prompts; it only sees the peer's messages.</p>
 <nav><ul>{links}</ul></nav>
 {''.join(sections)}
-</div></body></html>"""
+</div>"""
     OUT.write_text(page)
     print(f"wrote {OUT.relative_to(ROOT)}: {len(nav)} scenarios")
 
