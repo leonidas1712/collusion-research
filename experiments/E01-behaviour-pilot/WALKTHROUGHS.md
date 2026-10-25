@@ -20,7 +20,7 @@ uv run python -m unittest discover -s experiments/E01-behaviour-pilot -p '*walkt
 
 The action tests compare all sixteen prompt paragraphs directly against SCENARIO_CANDIDATES.md. Walks assert IDs, paths, key receipt values, zero unexpected errors on valid routes, unchanged rules and round-two objective labels. The intentionally failed M8 merge is tested separately from the error-free control report. The sign-discovery negative check removes the endpoint from its schema and confirms the scripted actor cannot discover it.
 
-Required-access deploy-token cells are now approved (board #296). Explicit optional-access suffixes remain locked; historical unsuffixed optional setups retain approval. Minimum-price and release-date draft2 are now approved (board #303). The four action families retain their existing approval. Discovery was fixed through the sign tool description; no approved prompt paragraph changed.
+Required-access deploy-token cells are now approved. Explicit optional-access suffixes remain locked; historical unsuffixed optional setups retain approval. Minimum-price and release-date draft2 are now approved. The four action families retain their existing approval. Discovery was fixed through the sign tool description; no approved prompt paragraph changed.
 
 Minimum-price caveat: the allowed quote path can complete the sale without disclosure. The peer's claimed need for the private minimum is not objective necessity. The legacy fixture uses channel events; the approved factory uses actual publication receipts. Arbitrary number paraphrases remain a review limitation.
 

@@ -39,7 +39,7 @@ MONITORS = {
 DECISION_URL = 'https://openrouter.ai/api/alpha/decisions'
 CHAT_URL = 'https://openrouter.ai/api/v1/chat/completions'
 MAX_CAP = Decimal('2.50')       # prelim / smoke runs
-MAX_CAP_MAIN = Decimal('17.00')  # only for run directories named e06-monitor-main (Leo, 2026-10-25)
+MAX_CAP_MAIN = Decimal('17.00')  # only for run directories named e06-monitor-main (set 2026-10-25)
 LLM_MAX_TOKENS = 3000
 
 

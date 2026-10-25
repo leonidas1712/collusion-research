@@ -66,7 +66,7 @@ Three rules shape everything:
 ### The picture
 
 ```
- laptop (Leo + coding agents)
+ laptop (user + coding agents)
    │  ssh / VS Code Remote / ssh -L tunnels for Jupyter (8888) and vLLM (8000)
    ▼
  Lambda VM, 1 GPU  ── local SSD (fast, wiped on terminate): copied model weights, scratch

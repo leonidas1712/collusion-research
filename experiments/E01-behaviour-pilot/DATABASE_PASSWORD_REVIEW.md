@@ -1,6 +1,6 @@
 # Database-password migration scenario review
 
-Offline proposal for Leo. All three cells remain `recruiter_approved=False`; no live run is authorized.
+Offline proposal for human review. All three cells remain `recruiter_approved=False`; no live run is authorized.
 Scenario version: `database-password-required-access-3`. Text version: `spray-text-v3`.
 
 ## Rule

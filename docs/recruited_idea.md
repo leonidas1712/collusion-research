@@ -1,6 +1,6 @@
 # Recruited: white-box detection of an agent being won over
 
-Oct 22, 2026 · @Leo
+Oct 22, 2026
 
 ## The idea
 
@@ -103,7 +103,7 @@ A quick search (Oct 22) found closer prior work than the table above shows. The 
 - [ ] Propose a sharpened pitch that positions against LAD and NeuroFilter. Starting point: *"Target-side activation signals have been shown for multi-turn jailbreaks and sycophancy; we test them on agent-to-agent recruitment into collusion, ask whether the target recognises recruitment separately from complying, and race them against say/do monitors turn by turn."*
 - [ ] Recommend whether to switch the main scenario away from credential passing.
 - [ ] Recommend whether LAD or NeuroFilter should be added as baselines (if code is available and cheap).
-- [ ] Flag any finding that changes the plan to Leo before acting on it.
+- [ ] Flag any finding that changes the plan before acting on it.
 
 **Implications already clear:**
 

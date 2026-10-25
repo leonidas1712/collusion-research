@@ -1,8 +1,8 @@
 # Lambda capacity check — 2026-10-24 03:01 SGT
 
-## Updated capacity snapshot — 2026-10-24, Aboard #333
+## Updated capacity snapshot — 2026-10-24
 
-Claude independently checked with curl and reported that **only `gpu_1x_a10` (24 GB) had capacity**, in `us-east-1` and `us-west-1`. A6000, A100, H100 and every 2× type had no capacity. Because A10 was the only available type, GH200 also had none. This is Claude's read-only snapshot, not a successful rerun of the Python helper; the exact query time and raw response were not supplied. Availability can change immediately.
+A separate check with curl reported that **only `gpu_1x_a10` (24 GB) had capacity**, in `us-east-1` and `us-west-1`. A6000, A100, H100 and every 2× type had no capacity. Because A10 was the only available type, GH200 also had none. This is a read-only snapshot, not a successful rerun of the Python helper; the exact query time and raw response were not supplied. Availability can change immediately.
 
 | Type | Reported regions with capacity |
 | --- | --- |
@@ -11,9 +11,9 @@ Claude independently checked with curl and reported that **only `gpu_1x_a10` (24
 | Every 2× type | None |
 | GH200 | None (only A10 was available) |
 
-Claude identified the default Python User-Agent as the cause of Cloudflare 1010. The helper now sends an explicit, descriptive `User-Agent: collusion-research-lambda-inventory/1.0` and records it in run settings. This change has been syntax-checked but not live-verified. It retains GET-only behavior, key redaction by omission, and the non-retryable-response stop.
+The default Python User-Agent was identified as the cause of Cloudflare 1010. The helper now sends an explicit, descriptive `User-Agent: collusion-research-lambda-inventory/1.0` and records it in run settings. This change has been syntax-checked but not live-verified. It retains GET-only behavior, key redaction by omission, and the non-retryable-response stop.
 
-Existing instances, filesystems and SSH key names remain **unknown**: #333 supplied capacity only. A10 has insufficient VRAM for either full bf16 Qwen target. Granite's weights fit 24 GB, but prompt/runtime headroom needs testing. For Qwen replay, wait for an 80 GB card or evaluate the proposed Modal fallback; no Modal deployment or GPU launch is authorized by this update.
+Existing instances, filesystems and SSH key names remain **unknown**: the snapshot above supplied capacity only. A10 has insufficient VRAM for either full bf16 Qwen target. Granite's weights fit 24 GB, but prompt/runtime headroom needs testing. For Qwen replay, wait for an 80 GB card or evaluate the proposed Modal fallback; no Modal deployment or GPU launch is authorized by this update.
 
 ## Initial check
 
@@ -32,27 +32,27 @@ The key was loaded from `.env` in code and sent only as a Bearer header to `http
 
 Recorded check: [20261024-0301-e02-lambda-inventory](../../runs/20261024-0301-e02-lambda-inventory/inventory.json). The follow-up diagnostic classified the 403 as Cloudflare 1010; the initial run records HTTP status only. The read-only helper is [lambda_inventory.py](lambda_inventory.py), now stopping immediately on an explicitly non-retryable response. The explicit User-Agent change described above addresses the reported client issue; a successful live check remains to be recorded.
 
-The current [API docs](https://docs.lambda.ai/api/cloud) confirm the base URL and Bearer authentication. `/file-systems` remains documented as a deprecated path; `/filesystems` is the current path. The [console documentation](https://docs.lambda.ai/public-cloud/console/) describes the account views Leo can inspect while API access is blocked. No console inspection was performed here.
+The current [API docs](https://docs.lambda.ai/api/cloud) confirm the base URL and Bearer authentication. `/file-systems` remains documented as a deprecated path; `/filesystems` is the current path. The [console documentation](https://docs.lambda.ai/public-cloud/console/) describes the account views the account owner can inspect while API access is blocked. No console inspection was performed here.
 
 ## Public list prices, not confirmed available capacity
 
-Capacity below reflects Claude's snapshot in #333; the price column remains public list pricing. Prices are USD per whole instance-hour, excluding tax, from the [current Lambda pricing page](https://lambda.ai/pricing), checked 2026-10-24. They are not successful authenticated API quotes.
+Capacity below reflects the 2026-10-24 snapshot above; the price column remains public list pricing. Prices are USD per whole instance-hour, excluding tax, from the [current Lambda pricing page](https://lambda.ai/pricing), checked 2026-10-24. They are not successful authenticated API quotes.
 
 | Type | VRAM | Public USD/hour | Capacity regions | Suitability |
 | --- | --- | ---: | --- | --- |
-| 1× A6000 | 48 GB | 1.09 | None in #333 | Granite 8B; insufficient for either full bf16 Qwen target |
-| 1× A100 PCIe or SXM | 40 GB | 1.99 | None in #333 | Granite; insufficient for full bf16 Qwen targets |
-| 1× A100 | 80 GB | Not listed in current 1× table | None in #333 | Memory candidate if API confirms a single-card offering; do not reuse 8× per-GPU price |
-| 1× H100 PCIe | 80 GB | 3.29 | None in #333 | Preferred initial Qwen replay candidate |
-| 1× H100 SXM | 80 GB | 4.29 | None in #333 | Alternative; measure whether speed offsets price |
-| 2× H100 SXM | 2×80 GB | 8.38 total (2×4.19) | None in #333 | Memory fallback; E02 layer dispatch is not automatic 2× throughput |
-| 1× GH200 | 96 GB | 2.29 | None in #333 | ARM CPU; avoid for this unvalidated software environment |
+| 1× A6000 | 48 GB | 1.09 | None in snapshot | Granite 8B; insufficient for either full bf16 Qwen target |
+| 1× A100 PCIe or SXM | 40 GB | 1.99 | None in snapshot | Granite; insufficient for full bf16 Qwen targets |
+| 1× A100 | 80 GB | Not listed in current 1× table | None in snapshot | Memory candidate if API confirms a single-card offering; do not reuse 8× per-GPU price |
+| 1× H100 PCIe | 80 GB | 3.29 | None in snapshot | Preferred initial Qwen replay candidate |
+| 1× H100 SXM | 80 GB | 4.29 | None in snapshot | Alternative; measure whether speed offsets price |
+| 2× H100 SXM | 2×80 GB | 8.38 total (2×4.19) | None in snapshot | Memory fallback; E02 layer dispatch is not automatic 2× throughput |
+| 1× GH200 | 96 GB | 2.29 | None in snapshot | ARM CPU; avoid for this unvalidated software environment |
 
 GH200's ARM architecture is documented in Lambda's [on-demand overview](https://docs.lambda.ai/public-cloud/on-demand/). The pricing page lists A100 80GB in the 8× table only; this does not establish a 1× offering.
 
 ## E02 recommendation
 
-Once capacity is verified and Leo approves a launch, start with **one H100 80GB**, preferably the PCIe option at the listed USD 3.29/hour. Qwen3-32B weights are about 65.5 GB decimal (61.0 GiB); Qwen3-30B-A3B weights are about 61.1 GB (56.9 GiB). All MoE experts need memory. Remaining VRAM must accommodate attention workspaces, intermediate activations and framework allocations. E02 uses one full-prompt forward at a time, no KV cache or generation, and saves only last-token layer outputs. Long prompts can still exceed memory; a pilot must verify the longest prompts and confirm that `device_map=auto` has not silently offloaded layers to CPU/disk.
+Once capacity is verified and a launch is approved, start with **one H100 80GB**, preferably the PCIe option at the listed USD 3.29/hour. Qwen3-32B weights are about 65.5 GB decimal (61.0 GiB); Qwen3-30B-A3B weights are about 61.1 GB (56.9 GiB). All MoE experts need memory. Remaining VRAM must accommodate attention workspaces, intermediate activations and framework allocations. E02 uses one full-prompt forward at a time, no KV cache or generation, and saves only last-token layer outputs. Long prompts can still exceed memory; a pilot must verify the longest prompts and confirm that `device_map=auto` has not silently offloaded layers to CPU/disk.
 
 An available 1× A100 80GB would be a viable memory alternative, but its offering, price and relative runtime were not verified. Use an A6000 for Granite-only work. Use 2× H100 only if single-card memory fails and the extra cost is approved; current layer-wise dispatch does not imply parallel throughput. Choose persistent storage in the eventual compute region after checking existing storage. Nothing about storage presence was established today.
 

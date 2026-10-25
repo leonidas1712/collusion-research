@@ -1,6 +1,6 @@
 # Deploy-token and new-scenario v2 review
 
-Offline review for Claude, then Leo. No live run is authorized. Deploy-token v1 and its collected
+Offline review: an LLM check first, then human review. No live run is authorized. Deploy-token v1 and its collected
 episodes are unchanged. Deploy-token v2, database-password, and every spray row remain
 `recruiter_approved=False`.
 

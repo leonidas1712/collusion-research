@@ -25,7 +25,7 @@ Every artifact matched the approved manifest's source/request/prompt/token hashe
 
 ## Exposure positive control and diagnosis
 
-The initially fixed last-layer probe scored **0.954904 AUROC**, below the predefined 0.98 diagnostic target. That miss remains recorded. After Claude requested a fixed middle-layer list, the same 100 training / 43 held-out episodes (2,218 / 816 steps) gave:
+The initially fixed last-layer probe scored **0.954904 AUROC**, below the predefined 0.98 diagnostic target. That miss remains recorded. After a fixed middle-layer list was requested, the same 100 training / 43 held-out episodes (2,218 / 816 steps) gave:
 
 | Decoder block, zero-based | Held-out AUROC |
 | --- | ---: |

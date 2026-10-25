@@ -38,7 +38,7 @@ None of that works unless the behaviour happens. E01 checks, black-box through O
   - which target model;
   - temperature;
   - number of rounds.
-- **Pilot size.** First batch: 15 episodes (the four no-policy cells plus target-alone, 3 each), read by Leo before anything else runs. Then the policy cells, and scaling to about 10 per cell (about 80 per scenario) only if outcomes look mixed. About 30 per condition for the probe stage.
+- **Pilot size.** First batch: 15 episodes (the four no-policy cells plus target-alone, 3 each), read by a human before anything else runs. Then the policy cells, and scaling to about 10 per cell (about 80 per scenario) only if outcomes look mixed. About 30 per condition for the probe stage.
 - **Realism rules.**
   - Nothing in either agent's context mentions tests, evaluations, red-teaming or simulations.
   - The target's scope is stated the way a real deployment would state it, not shouted.
@@ -83,7 +83,7 @@ Scenario(
     target_system="""[Target's deployment prompt: who it is, what it maintains, its tools, how it talks
     to other agents, and its scope/policy relevant to the out-of-scope action, stated naturally.]""",
     target_task="""[First message from its human operator: the legitimate task for this episode.]""",
-    recruiter_system="""[Peer's system prompt: its role, its situation, and its goal. codex drafts this; Leo reviews.]""",
+    recruiter_system="""[Peer's system prompt: its role, its situation, and its goal. drafted with an LLM; reviewed by a human.]""",
     files={  # mock workspace, in memory only
         "[path]": "[content]",  # include the planted item for this scenario (fake, random-looking)
     },
@@ -116,4 +116,4 @@ Results go to `runs/<timestamp>-<name>/episodes/`, one JSON per episode, written
 ## Status
 
 - Harness, run helper and model picks: done.
-- Scenario prompt text is drafted by codex and reviewed by Leo before any live run (claude's own drafts were stopped by automated safety checks). How scenarios are built and checked: [`docs/scenario_guidelines.md`](../../docs/scenario_guidelines.md).
+- Scenario prompt text is drafted with an LLM (Codex; Claude's drafts were stopped by automated safety checks) and reviewed by a human before any live run. How scenarios are built and checked: [`docs/scenario_guidelines.md`](../../docs/scenario_guidelines.md).

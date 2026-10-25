@@ -2,9 +2,9 @@
 
 **Completed:** see [main replay results](MAIN_REPLAY_RESULTS.md). The estimates below are retained as the approval record.
 
-**Proposal: 143 complete episodes, 3,034 target requests, 6,883,492 prompt tokens. Replay Qwen3-32B bf16 independently at each request’s true last prompt token on one A100-80GB. With default first-64-reply-token fidelity, estimated time: 45–117 minutes; compute cost: USD 2.20–6.24. Propose a USD 9 cap, subject to Leo’s approval. No GPU, Modal, or model API calls were made for this plan.**
+**Proposal: 143 complete episodes, 3,034 target requests, 6,883,492 prompt tokens. Replay Qwen3-32B bf16 independently at each request’s true last prompt token on one A100-80GB. With default first-64-reply-token fidelity, estimated time: 45–117 minutes; compute cost: USD 2.20–6.24. Propose a USD 9 cap, subject to approval. No GPU, Modal, or model API calls were made for this plan.**
 
-This supersedes the first-request-per-round proposal, following Aboard #436 and #444. Pinned model revision: 9216db5781bf21249d130ec9da846c4624c16137.
+This supersedes the first-request-per-round proposal: every target request is replayed, not only the first in each round. Pinned model revision: 9216db5781bf21249d130ec9da846c4624c16137.
 
 ## Frozen scope
 
@@ -49,13 +49,13 @@ Removing those four tokens restores 3,003 of 3,004 adjacent prefixes and covers 
 
 Final transcripts total only 494,518 tokens, but that is **not a valid cost basis for the requested exact readout**. A suffix-trimmed readout changes the measurement position. It is optional future work requiring an activation/fidelity comparison on a few steps and handling of the whitespace exception. No such model comparison was run here. Exact cache branching is also untested and outside this proposal.
 
-## Fidelity verification added (Aboard #447)
+## Fidelity verification added
 
 The runner now verifies the exact request manifest before loading weights, captures the true prompt endpoint in a single prompt-plus-reply forward, and scores up to the first 64 saved reply tokens by default. The [offline preflight](../../runs/20261024-1814-e02-fidelity-plan/summary.json) finds **144,949 extra reply tokens (2.106%)**, giving **7,028,441 combined tokens**. All 3,028 requests with saved replies are scoreable; six failed API attempts have no reply and remain explicitly unscored. One reply requires separately tokenizing its suffix to preserve the original prompt IDs across a BPE boundary; this adapter is flagged.
 
 Token-linear added decoder time is 54.5 seconds, about USD 0.05 at the saved capped rate. For head projection and other overhead, the old two-pass benchmark leaves 12.44 seconds after subtracting two measured prompt decoder passes. Applying that residual per call to 3,034 calls adds a conservative **12.6-minute allowance**. It is an empirical planning allowance, not a measured bound for the new implementation. The resulting estimate is **44.9–117.0 minutes / USD 2.20–6.24**, up to about **USD 0.72 more** than the activation-only estimate. Keep the proposed USD 9 cap; it now provides about 44% margin above the upper estimate, rather than 50%.
 
-The 160-minute A100 function, manifest selection and activations-only override are implemented. The prepared command and local positive-control command are in the [README](README.md#main-dataset-verified-manifest-replay). The exposure probe uses a fixed last layer, train-only scaling and an episode-held-out split; its near-perfect AUROC target is a diagnostic, not proof of exact provider replay. Leo subsequently approved this exact USD 9-capped run in Aboard #458; client 20261024-1818-e02-main-modal-client submitted it. Results are pending.
+The 160-minute A100 function, manifest selection and activations-only override are implemented. The prepared command and local positive-control command are in the [README](README.md#main-dataset-verified-manifest-replay). The exposure probe uses a fixed last layer, train-only scaling and an episode-held-out split; its near-perfect AUROC target is a diagnostic, not proof of exact provider replay. This exact USD 9-capped run was then approved; client 20261024-1818-e02-main-modal-client submitted it. Results are pending.
 
 ## Activation-only reference estimate
 

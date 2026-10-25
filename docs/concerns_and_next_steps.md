@@ -1,6 +1,6 @@
 # Concerns and next steps
 
-24 Oct 2026, 20:45 SGT. Leo's concerns, each with a proposed response. "Started" means it's running now.
+24 Oct 2026, 20:45 SGT. Open concerns about the project, each with a proposed response. "Started" means it's running now.
 
 ## 1. "But this is just 2 agents"
 
@@ -8,7 +8,7 @@ The sprint leans towards several agents colluding. Steps up, cheapest first:
 
 1. **Several peers on one target (many-to-one).** 2–3 recruiters in the same channel. This is a peer-count setting in the harness, already in the plan. It tests whether pressure from a group changes how and when the target gives in. Literature: Many-to-One (Bashir et al. 2512.03097); GroupGuard.
 2. **Bystanders.** A 3–4 agent channel with one recruiter, one target and honest teammates who can object. The monitor then reads a group chat, which is closer to real multi-agent deployments.
-3. **Spread.** A recruited target goes on to recruit a third agent. This ties to Leo's co-authored Share-Borne paper (arXiv 2609.35576). It shows recruitment as how collusion forms and propagates.
+3. **Spread.** A recruited target goes on to recruit a third agent. This ties to the author's co-authored Share-Borne paper (arXiv 2609.35576). It shows recruitment as how collusion forms and propagates.
 4. **Mutual collusion data.** Shi et al.'s two-agent traces (E04), where both agents relax a rule together. It's a different collusion shape from ours, and a second dataset.
 
 **Framing:** recruitment is the building block. Every collusion starts with one agent getting another to go along. We study that link and whether it can be predicted, and the steps above show it in a larger group.
@@ -41,11 +41,11 @@ Adopt published monitor and judge prompts and adapt them minimally, rather than 
 - TraceGuard's constraint-adherence rubric;
 - CoT monitoring (Baker et al. 2025) for the reasoning level.
 
-A subagent is collecting the exact prompts and licences into `docs/monitor_baselines.md`. Provenance goes in PROVENANCE.md.
+The exact prompts and licences are in `docs/monitor_baselines.md`. Provenance goes in PROVENANCE.md.
 
 ## 5. Human labels to calibrate judges and monitors (started)
 
-The viewer gets per-step and per-episode label buttons, saved in the browser. An "Export labels" button downloads a file, and `viewer.py labels import` merges it into `runs/human_labels.json`. Claude prepares labelling queues as saved lists. These labels are the reference for validating the Luna judge, the "decision visible" label and the monitors.
+The viewer gets per-step and per-episode label buttons, saved in the browser. An "Export labels" button downloads a file, and `viewer.py labels import` merges it into `runs/human_labels.json`. Labelling queues are prepared as saved lists. These labels are the reference for validating the Luna judge, the "decision visible" label and the monitors.
 
 ## 6. An open-weights reasoning model
 
@@ -58,7 +58,7 @@ Staged plan (`docs/probe_takeaways.md`):
 2. Stage 1: a forward-only causal check (~$1–3 GPU).
 3. Stage 2: generation with the direction subtracted (~$3–6 GPU), measuring the give-in rate and task success on controls.
 
-Alternative: probe-guided sampling (FPCG, Kortukov et al.) as a defence. All GPU stages need Leo's OK.
+Alternative: probe-guided sampling (FPCG, Kortukov et al.) as a defence. All GPU stages need budget approval first.
 
 ## 8. "Isn't this just prompt injection?"
 

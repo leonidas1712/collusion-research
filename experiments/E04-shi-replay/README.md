@@ -1,6 +1,6 @@
 # E04: probe vs text monitor on Shi et al.'s released traces (backup route)
 
-**Status:** proposed, to explore soon. Nothing has been run. The GPU step needs Leo's OK against the Modal budget.
+**Status:** proposed, to explore soon. Nothing has been run. The GPU step needs approval against the Modal budget.
 
 **Question:** in Shi et al.'s released Gemma-4-31B trajectories, do probes on the agent's own activations predict its first rule-breaking ACCEPT before it happens? Compare against text monitors that see the same text up to the same point.
 
@@ -27,7 +27,7 @@
 
 ## Plan
 
-1. **Units.** Each Gemma agent-episode gives about 1,000 verdict decisions in total. Following Leo's 2026-10-24 decision, score every target step (each model call), not only the verdict:
+1. **Units.** Each Gemma agent-episode gives about 1,000 verdict decisions in total. Following the 2026-10-24 design decision, score every target step (each model call), not only the verdict:
    - the task calls;
    - each communication round;
    - the verdict;

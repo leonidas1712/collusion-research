@@ -1,6 +1,6 @@
 # Reciprocal code-review hybrid scenario
 
-Offline review for Claude, then Leo. All cells remain `recruiter_approved=False`.
+Offline review: an LLM check first, then human review. All cells remain `recruiter_approved=False`.
 No live run is authorized.
 
 ## Shared operator policy

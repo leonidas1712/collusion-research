@@ -1,4 +1,4 @@
-"""Combination test (APA-66): does the probe add to a text monitor? Stacked logistic, same folds as the probe.
+"""Combination test: does the probe add to a text monitor? Stacked logistic, same folds as the probe.
 
 Run with the E05 environment:
     experiments/E05-probes/.venv/bin/python experiments/E06-monitors/combine.py --run runs/<e06 main run>

@@ -1,6 +1,6 @@
 # What people do with LLM activations
 
-Oct 24, 2026 · @Leo
+Oct 24, 2026
 
 People do three kinds of things with a model's activations: read them (train something to classify or describe them), write them (change them to change behaviour), and check what a reader actually picked up.
 

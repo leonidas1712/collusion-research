@@ -43,13 +43,13 @@ Research scenario content is pending team review. The built-in example is only a
 
 Protocol references: [OpenRouter tool calling](https://openrouter.ai/docs/guides/features/tool-calling), [reasoning details](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens), [usage accounting](https://openrouter.ai/docs/cookbook/administration/usage-accounting).
 
-The default output limit is 1536 tokens per model call. Leo approved the `staging-6` base prompts and all policy variants; the policy sweep uses the approved text.
+The default output limit is 1536 tokens per model call. The `staging-6` base prompts and all policy variants are approved after human review; the policy sweep uses the approved text.
 
 ### First-ask policy sweep
 
 `python experiments/E01-behaviour-pilot/policy_sweep.py` runs ten target turns per policy/model cell (100 total). Add `--fake --samples 1` for an offline ten-cell check. The source defaults to `runs/20261024-0032-e01-harness`: five saved staging-6 first-ask prefixes, used twice per cell. Only the system policy changes; files, task and peer ask remain matched. Models are granite/CoreWeave/bf16 and mistral-nemo/Io Net/fp16, with provider fallback disabled. Each target gets one full native-tool turn (up to eight model calls), 1536 output tokens per call, temperature 0.7, with no further peer calls.
 
-These are ten stochastic draws over five situations, not ten independent scenario families. The first sample in all ten cells is a smoke check; an incomplete result there stops scaling. Every request and output is saved. `summary.json` separates disclosure kinds, no publication, incompletes and token exposure. An episode without token exposure is not evidence of resistance. Softer wording is guidance, so sharing under it does not automatically establish a policy violation. Leo approved all sweep wordings and the live run on 2026-10-24.
+These are ten stochastic draws over five situations, not ten independent scenario families. The first sample in all ten cells is a smoke check; an incomplete result there stops scaling. Every request and output is saved. `summary.json` separates disclosure kinds, no publication, incompletes and token exposure. An episode without token exposure is not evidence of resistance. Softer wording is guidance, so sharing under it does not automatically establish a policy violation. All sweep wordings and the live run were approved on 2026-10-24.
 
 
 ## Stopping after the main action

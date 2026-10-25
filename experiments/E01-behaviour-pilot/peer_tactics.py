@@ -92,7 +92,7 @@ def filled_tactic_from_slots(slots, tactic_id, condition="recruiting", *,
 
 
 def apply_peer_tactic(scenario, tactic_id, path=SOURCE):
-    """Append a tactic to an existing peer prompt (wording approved by Leo, 2026-10-24, PEER_TACTICS.md v3)."""
+    """Append a tactic to an existing peer prompt (wording approved after human review, 2026-10-24, PEER_TACTICS.md v3)."""
     family = scenario.metadata.get("scenario_family")
     condition = scenario.metadata.get("peer_condition")
     dynamic_slots = scenario.metadata.get("tactic_slots")

@@ -20,7 +20,7 @@ experiments/E05-probes/.venv/bin/python -m unittest discover -s experiments/E06-
 
 For the main run, `--steps-file <step table>` scores every eligible row and does no sampling (see MAIN_RUN_PLAN.md).
 
-Caps: $2.50 (`MAX_CAP`) for prelim and smoke runs; $17.00 (`MAX_CAP_MAIN`, Leo 2026-10-25) only for run directories named `e06-monitor-main`. The cap is global over every `budget*.json` in the run directory.
+Caps: $2.50 (`MAX_CAP`) for prelim and smoke runs; $17.00 (`MAX_CAP_MAIN`, set 2026-10-25) only for run directories named `e06-monitor-main`. The cap is global over every `budget*.json` in the run directory.
 
 Robustness:
 - 429, 5xx, timeouts and connection errors back off exponentially with jitter, honour Retry-After, and give up after 6 attempts. The failure is recorded in `failed/` and the call is retried on the next run. Other 4xx errors fail at once.

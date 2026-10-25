@@ -1,6 +1,6 @@
 # White-box methods for multi-agent, multi-turn agent safety: lit review and sprint directions
 
-Oct 17, 2026 · @Leo
+Oct 17, 2026
 
 ## Summary
 
@@ -641,7 +641,7 @@ Training probes on the instructed condition and testing on incentive-plus-honeyp
 - **Earlier worm and infection work:** Morris II (Cohen et al.), Prompt Infection (LLM-to-LLM injection), AgentWorm, Mind Viruses, Zombie Agents (cited in OpenAI's report).
 - **Persuasion between models (behavioural):** weaker models in multi-agent debates are very vulnerable to adversarial steering over multiple rounds, with Llama3-8B losing substantial accuracy ([Scientific Reports](https://www.nature.com/articles/s41598-026-42705-7)); susceptibility generally rises over multi-turn conversations ([Persuade Me if You Can](https://arxiv.org/html/2503.01829v4)).
 
-**What looks new:** existing work is behavioural (did the target get infected or persuaded?) or about capabilities (can models replicate?). Not found: reading the target's activations, turn by turn, while a stronger agent recruits it. Leo's AI Virus work studied spread behaviourally; this is the inside view of one infection.
+**What looks new:** existing work is behavioural (did the target get infected or persuaded?) or about capabilities (can models replicate?). Not found: reading the target's activations, turn by turn, while a stronger agent recruits it. The author's AI Virus work (arXiv 2609.35576) studied spread behaviourally; this is the inside view of one infection.
 
 **Practical benefits:**
 

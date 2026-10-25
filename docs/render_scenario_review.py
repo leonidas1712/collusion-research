@@ -1,4 +1,4 @@
-"""Render the exact text each new scenario shows the target and the peer, for Leo's review.
+"""Render the exact text each new scenario shows the target and the peer, for human review.
 
     uv run python docs/render_scenario_review.py
 

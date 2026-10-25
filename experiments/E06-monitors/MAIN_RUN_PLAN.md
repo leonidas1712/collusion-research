@@ -1,6 +1,6 @@
 # E06 main run: plan and cost estimate
 
-2026-10-25. **Leo approved the full plan (all 18 combinations), with a $17.00 hard cap and tool results added to L3.** Launched at 01:47 SGT as `runs/20261025-0147-e06-monitor-main`. The estimates below predate the L3 tool-result change, which makes L3 a little longer.
+2026-10-25. **The full plan (all 18 combinations) was approved, with a $17.00 hard cap and tool results added to L3.** Launched at 01:47 SGT as `runs/20261025-0147-e06-monitor-main`. The estimates below predate the L3 tool-result change, which makes L3 a little longer.
 
 ## What gets scored
 
@@ -64,8 +64,8 @@ These are based on the preliminary run, which used 150 deploy-token v1 steps, so
 
 ## Before launching
 
-1. Leo reviews `PROMPTS.md`. The allowed-values sentence and the per-scenario filling are new and have not been run live.
-2. **Labels and folds.** The replay-2 plan table has no outcome labels (`label`, `first_action_round`, `steps_until_action`) and no fold ids. `score.py` needs these, plus the E05 fold assignment for these episodes from the replay-2 probe fit, in the step table that `--steps-file` reads. Use the step table codex-2 produces, not the plan file, so the rows match the probe's rows exactly. `monitors.py` itself needs only episode, request_idx, request_sha256, condition and round, so monitor scoring could start before the probe fit is done.
+1. A human reviews `PROMPTS.md`. The allowed-values sentence and the per-scenario filling are new and have not been run live.
+2. **Labels and folds.** The replay-2 plan table has no outcome labels (`label`, `first_action_round`, `steps_until_action`) and no fold ids. `score.py` needs these, plus the E05 fold assignment for these episodes from the replay-2 probe fit, in the step table that `--steps-file` reads. Use the step table the probe fit produces, not the plan file, so the rows match the probe's rows exactly. `monitors.py` itself needs only episode, request_idx, request_sha256, condition and round, so monitor scoring could start before the probe fit is done.
 3. Raise `MAX_CAP` in `monitors.py`, which is currently $2.50. This is a deliberate one-line change, made only after the budget OK.
 4. Run a 5-call smoke test per monitor on spray steps to check the filled prompts on a non-deploy-token scenario. Cost: under $0.01.
 

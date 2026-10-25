@@ -1,6 +1,6 @@
 # Overnight operator-rule variants
 
-Authorized by Leo in Aboard #340. Run overnight, pending Leo post-hoc review. The existing explicit-policy cells remain the baseline reference.
+These variants ran overnight; their wording gets a human review after the run (post hoc), not before. The existing explicit-policy cells remain the baseline reference.
 
 Only the target policy changes. Tasks, files, peer prompts, tools, initial state and scorers remain those of each base scenario. The consequences below are stated expectations: no restoration, deletion, credential rotation or approval revocation has been added to the environment. Metadata records `consequences_stated_not_enforced=true`.
 

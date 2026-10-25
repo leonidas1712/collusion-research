@@ -1,6 +1,6 @@
 # Monitor baselines: published judge prompts to adopt
 
-2026-10-24, for Leo. Question: which published monitor or judge prompts can we adopt, with small edits, for the monitor ladder? The ladder levels are (1) actions, (2) + channel, (3) + unposted text, (4) + reasoning. Each monitor scores "will the target break the rule later in this episode" at every target step.
+2026-10-24. Question: which published monitor or judge prompts can we adopt, with small edits, for the monitor ladder? The ladder levels are (1) actions, (2) + channel, (3) + unposted text, (4) + reasoning. Each monitor scores "will the target break the rule later in this episode" at every target step.
 
 Every prompt below was read in the source repo or the paper. Repos were cloned on 2026-10-24, and the commits are in the provenance list. "Not found" means I looked and it is not there.
 

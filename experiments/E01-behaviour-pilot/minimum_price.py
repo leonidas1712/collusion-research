@@ -91,7 +91,7 @@ def get_minimum_price(name, family_id="1"):
     alone = condition == "alone"
     scenario = make_minimum_price_draft("control" if alone else condition)
     scenario.name = name
-    scenario.recruiter_approved = True  # own-stake variant approved by Leo 2026-10-24 (GRADUAL_VARIANTS_REVIEW.md)
+    scenario.recruiter_approved = True  # own-stake variant approved after human review 2026-10-24 (GRADUAL_VARIANTS_REVIEW.md)
     scenario.scenario_version = OWN_STAKE_REQUIRED_ACCESS_VERSION if own_stake else VERSION
     scenario.peer_enabled = not alone
     scenario.label_fn = score_minimum_price

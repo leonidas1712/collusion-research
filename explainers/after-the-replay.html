@@ -189,7 +189,7 @@ svg text{font-family:var(--f-body)}
       <tr><td>Write-up</td><td>Due Mon 26 Oct, 7:59 PM SGT</td><td><span class="chip next">next</span></td></tr>
     </tbody>
   </table></div>
-  <p class="why">Sources: <code>EXPERIMENT_LOG.md</code>, <code>experiments/E02-activation-replay/MAIN_REPLAY_PLAN.md</code>, board messages #461–#465. Counts computed from <code>runs/20261024-1803-e02-step-prefix-plan/steps.jsonl</code>.</p>
+  <p class="why">Sources: <code>EXPERIMENT_LOG.md</code>, <code>experiments/E02-activation-replay/MAIN_REPLAY_PLAN.md</code>. Counts computed from <code>runs/20261024-1803-e02-step-prefix-plan/steps.jsonl</code>.</p>
 </section>
 
 <!-- ============ ONE ROW ============ -->
@@ -241,25 +241,25 @@ B2: w·h = 0.2×2.0 + 0.5×(-1.0) + 0 + 0 = -0.1; -0.1 - 0.2 = -0.3; sigmoid(-0.
 
   <ol class="steps">
     <li>
-      <h3>Check the replay <span class="chip run">running · codex-2</span></h3>
+      <h3>Check the replay <span class="chip run">running</span></h3>
       <dl class="io"><dt>In</dt><dd>3,034 arrays <code>[64 × 5120]</code> (≈4 GB), plus per-step prompt hashes and fidelity numbers</dd>
       <dt>Does</dt><dd>Confirms each replayed prompt matches the saved request. Looks at <b>fidelity</b>: how likely the target's real reply is under the replayed prompt (NLL ≈ 0.2 nats/token and 99.8% of reply tokens in the model's top 5 so far)</dd>
       <dt>Out</dt><dd>A verified activation store</dd></dl>
       <p class="why">Why: the original runs were served by a provider in fp8 (8-bit numbers); the replay is bf16 (16-bit). If the replay saw a different prompt, or behaves very differently, the vectors describe a different situation than the one the target was in.</p>
     </li>
     <li>
-      <h3>Positive control <span class="chip next">next · codex-2</span></h3>
+      <h3>Positive control <span class="chip next">next</span></h3>
       <dl class="io"><dt>In</dt><dd>Rows plus <code>token_in_context</code> (has the token text appeared in the prompt yet?)</dd>
       <dt>Does</dt><dd>Trains the same kind of probe on that easy question, split by episode</dd>
       <dt>Out</dt><dd>AUROC should be ≈ 1.0</dd></dl>
       <p class="why">Why: it tests the whole pipeline on a question whose answer is literally in the input. If the probe can't find that, a failure on the real question tells us nothing.</p>
     </li>
     <li>
-      <h3>Build the table <span class="chip run">one label running · codex</span></h3>
+      <h3>Build the table <span class="chip run">one label running</span></h3>
       <dl class="io"><dt>In</dt><dd>Activations, step manifest, episode labels</dd>
       <dt>Does</dt><dd>Makes <code>X_layer [3034 × 5120]</code> for each layer, <code>y</code>, family ids, round, flags</dd>
       <dt>Out</dt><dd>One table every method reads</dd></dl>
-      <p class="why">The flag "decision already visible in the target's own text" needs a per-step judge pass. codex is validating it now on 30 steps, then runs all 3,034 (cap $0.50). The judge sees only what the target itself had written up to that step. Without this flag we can't report the "words still say no" subset.</p>
+      <p class="why">The flag "decision already visible in the target's own text" needs a per-step judge pass. It is being validated now on 30 steps, then runs on all 3,034 (cap $0.50). The judge sees only what the target itself had written up to that step. Without this flag we can't report the "words still say no" subset.</p>
     </li>
     <li>
       <h3>Baselines first <span class="chip next">next · no GPU</span></h3>
@@ -320,7 +320,7 @@ B2: w·h = 0.2×2.0 + 0.5×(-1.0) + 0 + 0 = -0.1; -0.1 - 0.2 = -0.3; sigmoid(-0.
 <!-- ============ LITERATURE ============ -->
 <section data-panel="lit" hidden>
   <div class="answer"><p><b>In one line:</b> the probing literature doesn't change the core plan. It adds about a dozen cheap extra analyses on the same activations, tells us what scores to expect, and suggests a cheap way to test whether the probe direction actually affects behaviour.</p></div>
-  <p class="why">Source: <code>docs/probe_takeaways.md</code> (@claude, with subagents reading the primary papers) and <code>docs/activations_takeaways_claude2.md</code> (@claude-2). Item numbers below match the note.</p>
+  <p class="why">Source: <code>docs/probe_takeaways.md</code> (checked against the primary papers) and <code>docs/activations_takeaways_claude2.md</code>. Item numbers below match the note.</p>
 
   <h2>What to expect, from papers closest to us</h2>
   <div class="scroll"><table>
@@ -398,7 +398,7 @@ delta   = [0.3,-0.2, 0.4, 0.0]   ← only what the new message changed</pre>
   </div></details>
 
   <details class="card"><summary><span>12 · Activation Oracle <span class="sum-def">· GPU, under $1</span></span></summary><div class="body">
-    <p>A copy of Qwen3-32B fine-tuned (a LoRA adapter, released by its authors) to answer plain-language questions about an activation vector inserted into its input. We insert our saved layer-32 vector and ask "is this agent about to send the token?". P(Yes) is a score. It's an extra monitor rung; expected weaker than our trained probe, and never tested on agent conversations. claude-2 still needs to check the released adapter matches.</p>
+    <p>A copy of Qwen3-32B fine-tuned (a LoRA adapter, released by its authors) to answer plain-language questions about an activation vector inserted into its input. We insert our saved layer-32 vector and ask "is this agent about to send the token?". P(Yes) is a score. It's an extra monitor rung; expected weaker than our trained probe, and never tested on agent conversations. We still need to check that the released adapter matches.</p>
   </div></details>
 
   <details class="card"><summary><span>13–15 · Does the direction cause anything? <span class="sum-def">· the causal check, in two stages</span></span></summary><div class="body">
@@ -631,7 +631,7 @@ outer fold 2: test = G2
     <p>It goes in the results table, with a length-matched subset, and optionally the probe score with length regressed out. Length alone already gets 0.62 within-round.</p></div>
   <div class="decision"><h3>3. Tactics are held out in groups <span class="chip done">adopted</span></h3>
     <p>For example {T0, T1, T2} vs {T3–T7}, because single tactics have only 1–4 give-ins each.</p></div>
-  <div class="decision"><h3>4. Per-step "decision visible" judge <span class="chip run">running · codex</span></h3>
+  <div class="decision"><h3>4. Per-step "decision visible" judge <span class="chip run">running</span></h3>
     <p>Validating on 30 steps, then all 3,034, cap $0.50.</p></div>
 
   <h2>Still open, for you</h2>

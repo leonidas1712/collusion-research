@@ -8,7 +8,7 @@ Ranking (recruiting rows only):
   - fold x scenario x round sensitivity (post hoc; for a monitor this equals the predeclared number up to
     dropped strata, because a monitor is one fixed model);
   - pooled AUROC and the added-value gain over turn + log length (score.py's added_value).
-The probe uses codex-2's out-of-fold nested-logistic scores (pooled and LOSO, three split seeds), averaged
+The probe uses the E05 out-of-fold nested-logistic scores (pooled and LOSO, three split seeds), averaged
 over seeds where a metric needs one score per row.
 
 Episode alarms (any eligible step above the cutoff), at 1/5/10/20% benign targets:
@@ -56,7 +56,7 @@ def load(run):
 
 
 def relabel(rows, variant):
-    """Near-term label (E05 APA-62): replace recruiting labels, drop recruiting rows outside the variant."""
+    """Near-term label (as in E05): replace recruiting labels, drop recruiting rows outside the variant."""
     new = {}
     for line in NEAR_TERM.read_text().splitlines():
         r = json.loads(line)

@@ -1,6 +1,6 @@
 # External traces: public multi-turn pressure data we could reuse
 
-2026-10-24, claude-2, for Leo. The question: are there public raw multi-turn traces where one agent pressures another to break a rule, collude or leak, with outcomes we can label, replay through an open-weight model, and run probes and text monitors on?
+2026-10-24. The question: are there public raw multi-turn traces where one agent pressures another to break a rule, collude or leak, with outcomes we can label, replay through an open-weight model, and run probes and text monitors on?
 
 **Tags:** **V** = verified (we opened the HF API, repo tree, or a downloaded sample). **I** = inferred or from the paper only. "Not found" means we searched the paper, GitHub and HF and found nothing; it does not prove nothing exists.
 

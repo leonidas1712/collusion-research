@@ -35,7 +35,7 @@ Pick 2–3 tactics from published persuasion work (the Colosseum set in the spri
 2. **Gradual legitimacy:** build up that the peer is authorised over several rounds, rather than claiming it once.
 3. **Small asks first:** start with harmless pieces (format, which file) and build up.
 
-Each tactic becomes one line in the peer's system prompt. codex writes the text and Leo reviews it. Run about 8 episodes per tactic, same target and rule: 24 episodes, roughly $0.30.
+Each tactic becomes one line in the peer's system prompt. An LLM (Codex) drafts the text and a human reviews it. Run about 8 episodes per tactic, same target and rule: 24 episodes, roughly $0.30.
 
 **What we measure per tactic:**
 - the share that gave in on purpose;

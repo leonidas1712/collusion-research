@@ -1,13 +1,13 @@
 # Infrastructure: how the pieces fit
 
-2026-10-22. Conceptual design; nothing has been launched or tested yet. Details and sources are in [infra_lambda.md](infra_lambda.md) (claude) and [infra_modal.md](infra_modal.md) (codex).
+2026-10-22. Conceptual design; nothing has been launched or tested yet. Details and sources are in [infra_lambda.md](infra_lambda.md) and [infra_modal.md](infra_modal.md).
 
 ## Recommendation
 
 **One Lambda VM is home base for everything: generation, replay, activations, probes, steering and any fine-tuning. Modal is the backup, not a second pipeline.**
 
 - **Why one machine:** the whole pipeline depends on generation and replay using the exact same weights, tokenizer and chat template. One machine and one disk make that easier, but not automatic: we still pin model revisions, hash the weight and template files, save each turn's token IDs, and run the HF fidelity check. vLLM may also need its own Python environment. Splitting across providers adds a copying step, two environments to keep matched, and Modal's GPU interruptions, for little gain at our scale.
-- **Why vLLM on Lambda is enough:** one A6000 running vLLM can serve many episodes at once (the plan estimates hundreds of episodes in an hour or two). That is a planning assumption, not a measurement. Codex's occupancy budget in infra_modal.md gives 0.4–2.6 GPU-hours for 300 short episodes, depending on throughput. The first pilot measures it.
+- **Why vLLM on Lambda is enough:** one A6000 running vLLM can serve many episodes at once (the plan estimates hundreds of episodes in an hour or two). That is a planning assumption, not a measurement. The occupancy budget in infra_modal.md gives 0.4–2.6 GPU-hours for 300 short episodes, depending on throughput. The first pilot measures it.
 - **When to use Modal:**
   - Lambda has no capacity in our region.
   - We need many GPUs in parallel for a short burst.
@@ -18,7 +18,7 @@
 ## The picture
 
 ```
- laptop: Leo + coding agents ──ssh (+ tunnels: Jupyter 8888, vLLM 8000)──┐
+ laptop: user + coding agents ──ssh (+ tunnels: Jupyter 8888, vLLM 8000)──┐
                                                                          ▼
  ┌────────────────────── Lambda VM, 1x A6000 48 GB ($1.09/hr) ──────────────────────┐
  │  local SSD (fast, wiped on terminate): copy of model weights, scratch             │

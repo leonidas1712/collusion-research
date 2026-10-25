@@ -1,6 +1,6 @@
 # Approved Modal benchmark — 2026-10-24
 
-**50/50 deploy-token requests replayed and scored on one NVIDIA A100 80GB PCIe, Qwen3-32B bf16, with all weights loaded offline from the cache Volume.** All apps are stopped. Leo approved the CPU prefetch and this single GPU benchmark in Aboard #371 with a USD 2 combined cap. No full replay or FP8 run was performed.
+**50/50 deploy-token requests replayed and scored on one NVIDIA A100 80GB PCIe, Qwen3-32B bf16, with all weights loaded offline from the cache Volume.** All apps are stopped. The CPU prefetch and this single GPU benchmark ran under a USD 2 combined cap. No full replay or FP8 run was performed.
 
 | Measurement | Observed result |
 | --- | ---: |

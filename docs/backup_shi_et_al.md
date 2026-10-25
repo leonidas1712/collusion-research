@@ -1,6 +1,6 @@
 # Backup route: Shi et al. (arXiv 2609.24967) data and harness
 
-2026-10-24, claude-2, for Leo. Covers what the paper and dataset contain, what we can reuse, and a proposed order of work.
+2026-10-24. Covers what the paper and dataset contain, what we can reuse, and a proposed order of work.
 
 **Sources:**
 - Paper: arXiv 2609.24967v2, full text and appendices read.

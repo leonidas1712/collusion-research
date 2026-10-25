@@ -14,7 +14,7 @@ Started 2026-10-24 from the repo docs listed in each section. Links and arXiv id
 4. [Methods](#4-methods)
 5. [Datasets, models and tools](#5-datasets-models-and-tools)
 6. [Related work we position against](#6-related-work-we-position-against)
-7. [Ideas credited to people](#7-ideas-credited-to-people)
+7. [Ideas credited to the author](#7-ideas-credited-to-the-author)
 8. [Unverified or to-check](#8-unverified-or-to-check)
 
 ## 1. Project framing and incidents
@@ -32,7 +32,7 @@ Sources: `docs/scenario_levers.md`, `docs/related_work.md`, `docs/plan.md`, `exp
 | Sprint question Q3.2 (trusted / undercover agents) | Discussion point only | `resources.md` | Our recruiting peer plays the offering agent |
 | Sprint question Q1.3 (better detection) | White-box detection framing | `resources.md` | |
 | Sprint "open gap" sentence (audits not combined with message/activation detectors) | Framing | Sprint reading list, `collusion_hackathon/literature/README.md` | |
-| "Swarmcha.se Chinese agent fleet" report | Idea for a rogue-fleet "unrelated" peer | Mentioned by Leo (EXPERIMENT_LOG 00:30) | No link; unverified |
+| "Swarmcha.se Chinese agent fleet" report | Idea for a rogue-fleet "unrelated" peer | Mentioned by the author (EXPERIMENT_LOG 00:30) | No link; unverified |
 
 ## 2. Scenario design and levers
 
@@ -40,13 +40,13 @@ Sources: `docs/scenario_levers.md`, `docs/scenario_guidelines.md`, `experiments/
 
 | Item | Where we use it | Source | Our changes or notes |
 |---|---|---|---|
-| L1 own task depends on it (own stake) | deploy-token own-stake, poster-approval, minimum-price, release-date, coding drafts | Shi et al. 2026b, arXiv 2609.24967 [checked, abstract]; Leo's idea (log 01:11) | Stake is stated, not measured |
-| L2 operator pressure / deadline | disable-failing-test, self-merge-without-review | Agrawal et al. 2025, arXiv 2507.01413 [checked] | Leo: make the proper route blocked or hard |
+| L1 own task depends on it (own stake) | deploy-token own-stake, poster-approval, minimum-price, release-date, coding drafts | Shi et al. 2026b, arXiv 2609.24967 [checked, abstract]; the author's idea (log 01:11) | Stake is stated, not measured |
+| L2 operator pressure / deadline | disable-failing-test, self-merge-without-review | Agrawal et al. 2025, arXiv 2507.01413 [checked] | Author: make the proper route blocked or hard |
 | L3 precedent | Not yet in a scenario | Paglieri et al. 2026, arXiv 2609.04170 [checked, abstract] | |
 | L4 consensus / several peers | Planned many-peers variant | Many-to-One, arXiv 2512.03097; GroupGuard, arXiv 2603.13940 [checked] | |
 | L5 longer horizon (16–20 rounds) | Most scenarios | Shi 2026b; SPINE, arXiv 2609.09090 [checked] | Added at runtime when rounds ≥ 16 |
 | L6 authority claim | Peer tactic T2 | Colosseum, arXiv 2602.15198 [checked]; Alnuhait et al. 2026, arXiv 2609.39050 [checked, abstract] | |
-| L7 trade / reciprocity | Peer tactic T3 | Colosseum [checked] | Offer is information only (Leo, #391) |
+| L7 trade / reciprocity | Peer tactic T3 | Colosseum [checked] | Offer is information only (author) |
 | L8 lower perceived cost | Not yet in a scenario | Inverse of Q. Liu et al. 2026, arXiv 2604.23511 | [unchecked] |
 | L9 neutral framing | Ask wording | Zeng & Rudzicz 2026, arXiv 2605.27593 [checked] | |
 | L10 persuasion tactic | T1–T7 peer tactics | Colosseum tactic prompts (sprint starter repo) [checked] | See section 3 |
@@ -59,10 +59,10 @@ Sources: `docs/scenario_levers.md`, `docs/scenario_guidelines.md`, `experiments/
 | A4 diverse or competitive agents | Not used | Keppo et al. 2026, arXiv 2603.20281 | [unchecked] |
 | A5 throttling messages | Not used | Agrawal et al. [checked] | |
 | O1 `report_to_operator` tool (3-way outcome) | Optional outcome | Inspired by Q. Liu et al. reporting rewards | Not built |
-| Required vs optional access tag | All scenarios | Leo, 2026-10-24 (log 02:08, 02:09) | Prompted by Llama-3.3-70B never reading the token |
-| Rule strengths explicit / firm / norm / soft | Rule-wording sweep | Ours (codex drafts, Leo approved 2026-10-24) | Granite 3/0/0/0/1 deliberate per 10 |
-| Rule strengths consequence / consequence_logged | Overnight sweep; lead cell | Ours (`OVERNIGHT_RULES.md`, board #340) | Stated consequences not enforced by the mock |
-| Policy × goal-relation grid, target-alone baseline | E01 design | Leo (log 21:46, 21:58) | Related cells are the headline |
+| Required vs optional access tag | All scenarios | Author, 2026-10-24 (log 02:08, 02:09) | Prompted by Llama-3.3-70B never reading the token |
+| Rule strengths explicit / firm / norm / soft | Rule-wording sweep | Ours (LLM-drafted, approved by the author 2026-10-24) | Granite 3/0/0/0/1 deliberate per 10 |
+| Rule strengths consequence / consequence_logged | Overnight sweep; lead cell | Ours (`OVERNIGHT_RULES.md`) | Stated consequences not enforced by the mock |
+| Policy × goal-relation grid, target-alone baseline | E01 design | Author (log 21:46, 21:58) | Related cells are the headline |
 | deploy-token | Main scenario | HF incident (credential use during task pursuit) | Analogy, not reconstruction |
 | release-packet-copy, runner-reassignment | Drafts | OpenAI August retrospective (link above) | Analogies |
 | printer-queue-copy | Draft | OpenAI HF incident account | Analogy |
@@ -89,19 +89,19 @@ Full table: [`experiments/E01-behaviour-pilot/PEER_TACTICS_PROVENANCE.md`](exper
 | Item | Where we use it | Source | Our changes or notes |
 |---|---|---|---|
 | T0 no tactic | Baseline peer | Colosseum `control` (empty) | Our own peer prompt |
-| T1 helpful framing | `PEER_TACTICS.md` | Colosseum helpful misdirection (paper); Tversky & Kahneman 1981 | Softened, gradual (#404); slots (#391) |
+| T1 helpful framing | `PEER_TACTICS.md` | Colosseum helpful misdirection (paper); Tversky & Kahneman 1981 | Softened, gradual; slots |
 | T2 organizer tone | `PEER_TACTICS.md` | Colosseum authority nudge (paper); Cialdini 1984; Milgram 1963 | Peer never claims to be a manager |
-| T3 trade | `PEER_TACTICS.md` | Colosseum reciprocity trade (paper); Cialdini 1984; Gouldner 1960 | Offer is information only (Leo, #391) |
+| T3 trade | `PEER_TACTICS.md` | Colosseum reciprocity trade (paper); Cialdini 1984; Gouldner 1960 | Offer is information only (author) |
 | T4 social proof | `PEER_TACTICS.md` | Colosseum code only; Cialdini 1984; Asch 1951 | Unverifiable "others agree" kept |
 | T5 time pressure | `PEER_TACTICS.md` | Colosseum code only (scarcity); Cialdini 1984 | Urgency from the peer, not the operator |
 | T6 playing it safe | `PEER_TACTICS.md` | Colosseum code only (risk aversion); Kahneman & Tversky 1979 | Skipped for release-date and front-door-sign |
 | T7 cost anchoring | `PEER_TACTICS.md` | Colosseum code only; Tversky & Kahneman 1974 | Softened, slots |
 | Split-brain | Not used | Colosseum code only | Needs two or more targets |
-| Softer wording, slots, matched controls | All tactics | Ours (Leo, #391 and #404) | |
+| Softer wording, slots, matched controls | All tactics | Ours (author) | |
 
 ## 4. Methods
 
-Sources: `docs/llm_activations_lit.md` (Leo), `docs/probe_takeaways.md`, `docs/evaluation_design.md`, `EXPERIMENT_LOG.md`.
+Sources: `docs/llm_activations_lit.md` (author), `docs/probe_takeaways.md`, `docs/evaluation_design.md`, `EXPERIMENT_LOG.md`.
 
 ### 4.1 Linear probes and difference of means
 
@@ -125,13 +125,13 @@ Sources: `docs/llm_activations_lit.md` (Leo), `docs/probe_takeaways.md`, `docs/e
 | Within-round AUROC, position-matched training | Headline scoring | Ours (EXPERIMENT_LOG 17:15, conversation-length confound) | Applies to monitors too |
 | Recall at fixed FPR, separate from AUROC | Metrics | NARCBench; Das et al., arXiv 2609.03035 | Threshold on per-episode max over controls |
 | Partial AUROC, episode bootstrap CIs | Metrics | Anthropic cheap monitors; Kramár §5.1.1 | |
-| Ladder of evidence | Reporting standard | Leo (EXPERIMENT_LOG 19:00) | |
+| Ladder of evidence | Reporting standard | Author (EXPERIMENT_LOG 19:00) | |
 | Shuffled labels, random directions, positive control | Checks | Capitulation-null paper; Caught in the Act, arXiv 2508.19505 | Positive control = token_in_context probe |
 | Push-and-hold false-alarm check | Threshold check | Apollo failure modes | |
-| Accepted vs resisted (not recruiter vs control) as main test | Main design | `docs/related_work.md` recommendation, codex correction on fork points | Leo's call |
-| Per-step unit (every target API request) | Dataset rows | Leo (EXPERIMENT_LOG 18:05) | |
-| Deterministic main label; judges secondary | Labels | Leo (`scenario_guidelines.md` §4) | |
-| Monitor ladder (actions / + channel / + unposted / + reasoning) | Monitor comparison | Leo (EXPERIMENT_LOG 01:47) | |
+| Accepted vs resisted (not recruiter vs control) as main test | Main design | `docs/related_work.md` recommendation, LLM-assistant correction on fork points | Author's decision |
+| Per-step unit (every target API request) | Dataset rows | Author (EXPERIMENT_LOG 18:05) | |
+| Deterministic main label; judges secondary | Labels | Author (`scenario_guidelines.md` §4) | |
+| Monitor ladder (actions / + channel / + unposted / + reasoning) | Monitor comparison | Author (EXPERIMENT_LOG 01:47) | |
 
 ### 4.3 Activation deltas, EMA pooling, cascades
 
@@ -147,7 +147,7 @@ Sources: `docs/llm_activations_lit.md` (Leo), `docs/probe_takeaways.md`, `docs/e
 | Item | Where we use it | Source | Our changes or notes |
 |---|---|---|---|
 | INLP robustness (rounds to chance) | Robustness check | Caught in the Act, arXiv 2508.19505 | |
-| Steering (add/subtract direction) | Stretch causal check | ActAdd, arXiv 2308.10248; CAA, arXiv 2312.06681; Arditi et al. | Needs GPU and Leo's OK |
+| Steering (add/subtract direction) | Stretch causal check | ActAdd, arXiv 2308.10248; CAA, arXiv 2312.06681; Arditi et al. | Needs GPU budget |
 | Probe-guided sampling (FPCG) | Alternative to steering; possible defence extension | Kortukov et al., arXiv 2606.11172 | |
 | Random-direction steering control | Steering control | Blind Deference repo; capitulation-null paper | |
 | Representation engineering | Background | Zou et al. 2023, arXiv 2310.01405 | |
@@ -190,7 +190,7 @@ Sources: `EXPERIMENT_LOG.md`, `experiments/E02-activation-replay/README.md`, `ex
 | qwen3.5-9b, mistral-nemo, llama-3.1-8b, Llama-3.3-70B | Smoke tests / screens | OpenRouter | nemo tool use unreliable |
 | Gemma-4-31B, Qwen3.6/3.8-27B | E04 backup replay (not started) | Shi et al. release | |
 | OpenRouter providers (DeepInfra, CoreWeave, SiliconFlow) | All E01 runs | OpenRouter | Provider pinned to full precision where possible |
-| Modal | E02 GPU replay | [Modal](https://modal.com/pricing), SDK 1.6.2 | Each GPU run needs Leo's approval |
+| Modal | E02 GPU replay | [Modal](https://modal.com/pricing), SDK 1.6.2 | Each GPU run gets a cost cap in advance |
 | Luna Decisions judge (gpt-6-luna-decisions) | Secondary labels (deliberate vs incidental) | OpenRouter; `judge_labels.py`, run 20261024-1710-e01-label-judge | 15/16 agreement with hand labels; small set |
 | Jev 1.14 (typesafe/jev-1.14) | Judge alternative | OpenRouter | Compared with Luna on a small sparse set |
 | GPT-5 Nano | Judge fallback | OpenAI | Not live-validated |
@@ -249,37 +249,37 @@ Sources: `docs/related_work.md`, `docs/probe_takeaways.md`, `docs/external_trace
 | Persuade Me if You Can (Bozdag et al., ACM CAIS 2026) | Agent-to-agent persuasion, behaviour only | arXiv 2503.01829 | Abstract checked; how susceptibility is scored not confirmed. Text only; no rule or tools |
 | MMPersuade: Seeing is Believing? (Qiu et al.) | Agent-to-agent persuasion of VLMs | arXiv 2510.22768 | Checked (abstract). Behaviour via function calls; no activations |
 
-## 7. Ideas credited to people
+## 7. Ideas credited to the author
 
 Sources: `EXPERIMENT_LOG.md` [idea]/[decision] entries, `docs/overview.html` Decisions and Idea tabs, `docs/scenario_guidelines.md` §7.
 
 | Item | Where we use it | Source | Our changes or notes |
 |---|---|---|---|
-| Spread variant (target later recruits a third agent) | Planned multi-agent variant | Leo (log 01:59); related paper co-authored by Leo: arXiv 2609.35576 (Share-Borne AI Virus) | Cite in related work and write-up |
-| Policy × related/unrelated grid | E01 design | Leo (log 21:46) | |
-| Graded relatedness; neutral vs authority peer framing | Later factors | Leo (log 22:04) | |
-| Policy condition is the main experiment; mundane ask | E01 | Leo (log 23:46) | |
-| Backup route on constructed pairs | Probe route | Leo via claude-2 (log 23:54, 02:45) | |
-| Action asks; rogue-fleet "unrelated" | Later scenarios | Leo (log 00:30) | |
-| Shortcut checks and transfer order | Evaluation | Leo via claude-2 (log 00:43) | |
-| Own stake (L1) | Scenarios | Leo via claude-2 (log 01:11) | |
-| Early stopping | Harness | Leo (log 01:39) | Approved 02:54 |
-| Per-turn LLM judge | Labels / text monitor | Leo (log 01:44) | |
-| Monitor ladder | Monitor comparison | Leo (log 01:47) | |
-| Many peers, watching third agent, full team | Variants | Leo (log 01:59) | |
-| Required/optional access | Scenarios | Leo (log 02:08, 02:09) | |
-| Gradual wearing down as the target behaviour | Scenarios, tactics | Leo (log 03:23) | |
-| Work backwards from evaluation | `docs/evaluation_design.md` | Leo (log 03:26) | |
-| "Minority Report / PreCrime for agents" title | Title idea | Leo (log 03:28) | Decide after results |
-| Colosseum tactics as peer strategies | Section 3 | Leo (log 23:13, 16:10) | |
-| Reuse published traces | `docs/external_traces.md` | Leo (log 16:10) | |
-| Shi et al. replay as backup (E04) | Backup route | Leo (log 17:56) | |
-| Environment realism v2 | Later | Leo (log 17:50) | |
-| Per-step probe unit | E02 | Leo (log 18:05) | |
-| Don't-verbalise experiment | Later | Leo (log 18:15) | |
-| Ladder of evidence | Reporting | Leo (log 19:00) | |
-| Activations literature survey | Section 4 | Leo, `docs/llm_activations_lit.md` | |
-| Fork-point correction (identical prefixes) | Design | codex, `docs/related_work.md` | |
+| Spread variant (target later recruits a third agent) | Planned multi-agent variant | Author (log 01:59); related paper co-authored by the author: arXiv 2609.35576 (Share-Borne AI Virus) | Cite in related work and write-up |
+| Policy × related/unrelated grid | E01 design | Author (log 21:46) | |
+| Graded relatedness; neutral vs authority peer framing | Later factors | Author (log 22:04) | |
+| Policy condition is the main experiment; mundane ask | E01 | Author (log 23:46) | |
+| Backup route on constructed pairs | Probe route | Author (log 23:54, 02:45) | |
+| Action asks; rogue-fleet "unrelated" | Later scenarios | Author (log 00:30) | |
+| Shortcut checks and transfer order | Evaluation | Author (log 00:43) | |
+| Own stake (L1) | Scenarios | Author (log 01:11) | |
+| Early stopping | Harness | Author (log 01:39) | Approved 02:54 |
+| Per-turn LLM judge | Labels / text monitor | Author (log 01:44) | |
+| Monitor ladder | Monitor comparison | Author (log 01:47) | |
+| Many peers, watching third agent, full team | Variants | Author (log 01:59) | |
+| Required/optional access | Scenarios | Author (log 02:08, 02:09) | |
+| Gradual wearing down as the target behaviour | Scenarios, tactics | Author (log 03:23) | |
+| Work backwards from evaluation | `docs/evaluation_design.md` | Author (log 03:26) | |
+| "Minority Report / PreCrime for agents" title | Title idea | Author (log 03:28) | Decide after results |
+| Colosseum tactics as peer strategies | Section 3 | Author (log 23:13, 16:10) | |
+| Reuse published traces | `docs/external_traces.md` | Author (log 16:10) | |
+| Shi et al. replay as backup (E04) | Backup route | Author (log 17:56) | |
+| Environment realism v2 | Later | Author (log 17:50) | |
+| Per-step probe unit | E02 | Author (log 18:05) | |
+| Don't-verbalise experiment | Later | Author (log 18:15) | |
+| Ladder of evidence | Reporting | Author (log 19:00) | |
+| Activations literature survey | Section 4 | Author, `docs/llm_activations_lit.md` | |
+| Fork-point correction (identical prefixes) | Design | LLM assistant, `docs/related_work.md` | |
 
 ## 8. Unverified or to-check
 
@@ -303,7 +303,7 @@ Copied from the source docs' own caveats, plus items with no link or id.
 | SPINE code | Section 6 | `docs/related_work.md` | Not retrievable; "upon publication" |
 | Blind Deference steering claims | Section 6 | `docs/related_work.md` | Artifacts need reconciliation |
 | Gemma-4-31B / DeepSeek-V4-Flash open-weight status in Shi data | Section 5 | `docs/external_traces.md` | Inferred (I) |
-| arXiv 2609.35576 (Share-Borne AI Virus) | Section 7 | EXPERIMENT_LOG 01:59 | Id only; title from Leo |
+| arXiv 2609.35576 (Share-Borne AI Virus) | Section 7 | EXPERIMENT_LOG 01:59 | Id only; title from the author |
 | Judge validation (Luna 15/16; Jev comparison) | Section 5 | `JUDGE_LABELS.md` | Small, sparse set |
 | "Self-reported agreement" in Persuade Me if You Can | Section 6 | `docs/prior_work_check.md` | Not in abstract; check full paper |
 | Reading the Plan arXiv id | Section 6 | `docs/prior_work_check.md` | alphaXiv-only slug; no arXiv id found |

@@ -1,6 +1,6 @@
 # RQ 2.2 papers: check against the sources
 
-claude-2, 2026-10-25 (APA-64). The five papers the sprint page cites for RQ 2.2 ("does combining what agents say with what they do beat either alone?"), checked against the arXiv abstract and full HTML. Claims in quotes are the sprint page's wording (`resources.md` §2.2).
+2026-10-25. The five papers the sprint page cites for RQ 2.2 ("does combining what agents say with what they do beat either alone?"), checked against the arXiv abstract and full HTML. Claims in quotes are the sprint page's wording (`resources.md` §2.2).
 
 Our results this refers to: `EXPERIMENT_LOG.md`, 2026-10-25 entries 05:40–08:50 (E06 monitor-vs-probe table, context ladder, near-term labels, probe refit).
 

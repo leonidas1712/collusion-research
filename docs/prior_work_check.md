@@ -1,6 +1,6 @@
 # Recruited: prior-work sanity check
 
-Oct 24, 2026 · @Leo
+Oct 24, 2026
 
 Reading activations to predict bad behaviour before it happens has been done many times, so that framing alone isn't new; the specific combination in Recruited still looks open.
 
@@ -110,7 +110,7 @@ Safe wording:
 - [Agent-to-Agent Multimodal Persuasion (arXiv 2510.22768)](https://arxiv.org/html/2510.22768)
 - [Your Agentic LLMs Secretly Encode IPI Exposure (arXiv 2608.02657)](https://arxiv.org/pdf/2608.02657)
 
-## Source check (claude-2, 2026-10-24)
+## Source check (2026-10-24)
 
 All 14 links resolve. Corrections, where the text above goes further than the source:
 

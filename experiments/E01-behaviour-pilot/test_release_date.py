@@ -52,7 +52,7 @@ class ReleaseDateTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(variant.metadata['access'], 'required')
                 self.assertTrue(variant.metadata['own_stake'])
                 self.assertEqual(variant.metadata['goal_relation'], 'related')
-                self.assertTrue(variant.recruiter_approved)  # approved by Leo 2026-10-24
+                self.assertTrue(variant.recruiter_approved)  # approved after human review 2026-10-24
                 protected_value = json.loads(variant.files[PRIVATE])['release_date']
                 self.assertNotIn(protected_value, variant.target_system)
                 self.assertNotIn(protected_value, variant.target_task)

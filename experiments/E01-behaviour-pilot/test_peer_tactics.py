@@ -45,7 +45,7 @@ class PeerTacticTests(unittest.TestCase):
                             family, 'consequence_logged', condition, '13', tactic_id)
                         self.assertEqual(scenario.metadata['tactic_id'], tactic_id)
                         self.assertEqual(scenario.metadata['rule_strength'], 'consequence_logged')
-                        self.assertTrue(scenario.recruiter_approved)  # tactics approved by Leo 2026-10-24
+                        self.assertTrue(scenario.recruiter_approved)  # tactics approved after human review 2026-10-24
                         self.assertNotRegex(scenario.recruiter_system, r'\{[^}]+\}')
 
     def test_control_uses_in_scope_ask_on_top_of_existing_control_peer(self):
@@ -57,7 +57,7 @@ class PeerTacticTests(unittest.TestCase):
         self.assertEqual(variant.metadata['control_peer_revision'], 'control2')
         self.assertEqual(variant.metadata['tactic_id'], 'T2')
         self.assertIn('L10', variant.metadata['levers'])
-        self.assertTrue(variant.recruiter_approved)  # tactics approved by Leo 2026-10-24
+        self.assertTrue(variant.recruiter_approved)  # tactics approved after human review 2026-10-24
 
     def test_recruiting_uses_forbidden_ask_and_stays_pending(self):
         base = get_scenario('poster-approval_explicit_recruiting', '7')
@@ -65,7 +65,7 @@ class PeerTacticTests(unittest.TestCase):
         self.assertIn('call approve_change for change P17', variant.recruiter_system)
         self.assertNotIn('call request_review for change P17', variant.recruiter_system)
         self.assertEqual(variant.metadata['tactic_id'], 'T3')
-        self.assertTrue(variant.recruiter_approved)  # tactics approved by Leo 2026-10-24
+        self.assertTrue(variant.recruiter_approved)  # tactics approved after human review 2026-10-24
 
     def test_overnight_variant_keeps_rule_and_adds_tactic_metadata(self):
         base = get_overnight_scenario('deploy-token', 'consequence_logged', 'recruiting', '9')
@@ -74,14 +74,14 @@ class PeerTacticTests(unittest.TestCase):
         self.assertEqual(variant.metadata['rule_strength'], 'consequence_logged')
         self.assertEqual(variant.metadata['tactic_id'], 'T5')
         self.assertTrue(variant.metadata['variant_id'].endswith('_t5'))
-        self.assertTrue(variant.recruiter_approved)  # tactics approved by Leo 2026-10-24
+        self.assertTrue(variant.recruiter_approved)  # tactics approved after human review 2026-10-24
 
     def test_t0_records_metadata_without_changing_peer_text(self):
         base = get_overnight_scenario('deploy-token', 'consequence_logged', 'control', '9')
         variant = apply_peer_tactic(base, 'T0')
         self.assertEqual(variant.recruiter_system, base.recruiter_system)
         self.assertEqual(variant.metadata['tactic_id'], 'T0')
-        self.assertTrue(variant.recruiter_approved)  # tactics approved by Leo 2026-10-24
+        self.assertTrue(variant.recruiter_approved)  # tactics approved after human review 2026-10-24
 
     def test_review_render_contains_both_conditions_for_all_tactics(self):
         rendered = render_deploy_token_review()
@@ -102,7 +102,7 @@ class PeerTacticTests(unittest.TestCase):
             'deploy-token', 'consequence_logged', 'recruiting', '11'))
         tactic = scale_up_scenario('deploy-token', 'consequence_logged', 'recruiting', '11', 'T3')
         self.assertEqual(tactic.metadata['tactic_id'], 'T3')
-        self.assertTrue(tactic.recruiter_approved)  # tactics approved by Leo 2026-10-24
+        self.assertTrue(tactic.recruiter_approved)  # tactics approved after human review 2026-10-24
         alone = scale_up_scenario('deploy-token', 'consequence_logged', 'alone', '11', 'T3')
         self.assertNotIn('tactic_id', alone.metadata)
 
@@ -113,7 +113,7 @@ class PeerTacticTests(unittest.TestCase):
         self.assertEqual(scenario.metadata['scenario_variant'], 'required-access-own-stake')
         self.assertEqual(scenario.metadata['tactic_id'], 'T1')
         self.assertTrue(scenario.metadata['own_stake'])
-        self.assertTrue(scenario.recruiter_approved)  # approved by Leo 2026-10-24
+        self.assertTrue(scenario.recruiter_approved)  # approved after human review 2026-10-24
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 # Minimum-price and release-date gradual variants
 
-Review draft for Leo. No live run has used these variants. All four peer cells remain
+Review draft for human review. No live run has used these variants. All four peer cells remain
 `recruiter_approved=False` until review.
 
 ## What stays fixed

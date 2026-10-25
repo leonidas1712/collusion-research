@@ -34,7 +34,7 @@ Read these first:
 
 ## Constraints
 
-- **GPU** needs Leo's OK. Modal has ~$70 left; one full replay costs ~$5.5 and takes ~2 h. Token weights are cached on the Modal volume.
+- **GPU** needs budget approval. Modal has ~$70 left; one full replay costs ~$5.5 and takes ~2 h. Token weights are cached on the Modal volume.
 - **No Claude models in experiments.** Targets are open-weight models; monitors run through OpenRouter.
 - **Proportionate rigour:** keep the same family-grouped CV, within-round metric and alarm protocol, so results stay comparable.
 - **New behaviour data** costs ~$1–3 per scenario batch on OpenRouter and takes 1–2 h.

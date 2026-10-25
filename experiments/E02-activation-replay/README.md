@@ -34,7 +34,7 @@ Source-target identity is checked. Cross-model replay requires `--allow-cross-mo
 
 ## Fresh Lambda setup
 
-Launch and billing approval remain Leo's responsibility. Follow [infra.md](../../docs/infra.md) for persistent storage. Once a GPU box already exists:
+Launch and billing approval rest with the account owner. Follow [infra.md](../../docs/infra.md) for persistent storage. Once a GPU box already exists:
 
 ```bash
 # Run in a terminal on the approved machine.
@@ -105,7 +105,7 @@ Two initial implementation failures (`20261024-0216-e02-activation-replay`, `...
 
 ## Modal: CPU prefetch → GPU benchmark → full replay
 
-`modal_app.py` uses Modal **1.6.2**. The initial local checks below were followed by the approved CPU prefetch and GPU benchmark in [MODAL_BENCHMARK.md](MODAL_BENCHMARK.md). Leo requires explicit approval for each GPU run; the separate CPU download also requires approval from Leo/Claude. Authentication alone is not launch approval.
+`modal_app.py` uses Modal **1.6.2**. The initial local checks below were followed by the approved CPU prefetch and GPU benchmark in [MODAL_BENCHMARK.md](MODAL_BENCHMARK.md). Each GPU run requires explicit approval; the separate CPU download also requires approval. Authentication alone is not launch approval.
 
 The image pins torch 2.14.1, transformers 5.20.2, accelerate 1.15.0, safetensors 0.8.0, numpy 2.4.6 and huggingface-hub 2.3.0, matching the CPU environment. Linux image construction, CUDA execution and FP8 kernels remain untested. Only E02 source and `src/collusion` are mounted. Selected run folders are sent as complete, non-fake episode JSON via the function argument; `.env`, partial files and unrelated run folders are excluded. API-call upload is suitable for the small pilot; larger corpora may need an input Volume later.
 
@@ -121,7 +121,7 @@ modal run experiments/E02-activation-replay/modal_app.py::prefetch \
   --revision 9216db5781bf21249d130ec9da846c4624c16137
 ```
 
-After prefetch completes and **Leo approves the GPU benchmark**:
+After prefetch completes and **the GPU benchmark is approved**:
 
 ```bash
 modal run experiments/E02-activation-replay/modal_app.py::main \
@@ -183,7 +183,7 @@ CPU float32 test runs retain their explicit dtype and random/cross-model labels;
 
 The [main plan](MAIN_REPLAY_PLAN.md) freezes 143 episodes / 3,034 requests, including the input that produces the first forbidden action. `--manifest` checks source episode, request, rendered prompt, token-ID hashes, token count, round and step before loading model weights. Missing, duplicate or changed inputs fail. The output copies the exact manifest and stores `manifest_verified=true`, request-specific exposure and action flags. Manifest mode rejects request limits and reordering locally; Modal derives its input run IDs from the manifest and ignores its benchmark selection defaults. It also verifies source episode hashes before submitting remote work.
 
-Leo approved this exact run with a USD 9 hard cap in Aboard #458. The command submitted by client 20261024-1818-e02-main-modal-client is:
+This exact run was approved with a USD 9 hard cap. The command submitted by client 20261024-1818-e02-main-modal-client is:
 
 ```bash
 modal run experiments/E02-activation-replay/modal_app.py::main \

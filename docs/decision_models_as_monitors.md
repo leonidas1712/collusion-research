@@ -1,13 +1,13 @@
 # Decision models as safety monitors: what exists
 
-2026-10-24, for Leo. Question: what are the OpenRouter "decision models" (`openai/gpt-6-luna-decisions`, `typesafe/jev-1.14`)? What literature uses classifier-style models as monitors or as replacements for LLM judges? Has anyone used decision models as agent monitors?
+2026-10-24. Question: what are the OpenRouter "decision models" (`openai/gpt-6-luna-decisions`, `typesafe/jev-1.14`)? What literature uses classifier-style models as monitors or as replacements for LLM judges? Has anyone used decision models as agent monitors?
 
 **How things were checked.** OpenRouter facts come from the live API on 2026-10-24. arXiv IDs, titles and dates were checked with the arXiv API. Everything else comes from the page linked next to it. **[unverified]** means the claim comes from a secondary source (a news article or the community awesome-list) and I did not read the primary source.
 
 ## Summary
 
 - **Decision models are now a product category of their own.** They are not text generators. You send a `state` (text, JSON or images) plus typed questions. The model returns a probability distribution over your fixed options in one call, with no rationale. Input is billed and output is free. OpenRouter lists 30 of them from about 17 makers (Jev, Luna Decisions, Perplexity Decider, Liquid d1, Cloudflare Clef, Microsoft-Decision-1 and others).
-- **Leo is right that Jev came first.** Jev opened in early access on 2026-09-15, and `typesafe/jev-1.13` was on OpenRouter on 2026-09-18. OpenAI previewed its Decisions API at DevDay on 2026-09-29, and `openai/gpt-6-luna-decisions` appeared on OpenRouter on 2026-10-06. Jev 1.14 followed on 2026-10-14.
+- **Jev came first.** Jev opened in early access on 2026-09-15, and `typesafe/jev-1.13` was on OpenRouter on 2026-09-18. OpenAI previewed its Decisions API at DevDay on 2026-09-29, and `openai/gpt-6-luna-decisions` appeared on OpenRouter on 2026-10-06. Jev 1.14 followed on 2026-10-14.
 - **There are no logprobs and no sampling parameters.** On OpenRouter, `supported_parameters` is empty for both models. The output is per-option probabilities plus a "confidence" value. That is enough for AUROC with no extra work.
 - **Using decision models as monitors and judges is already an active area, so the general idea is not new.** Within six weeks there have been: a zero-shot alignment-failure detector (median AUROC 0.886, 63x cheaper than LLM judges), two judge-replacement papers with cascades, tool-call gating cookbooks, prompt-injection attacks on Jev, and a GitHub project that uses Jev as a black-box **collusion** monitor on NARCBench.
 - **What I did not find:** anyone using a decision model to **forecast** a later rule violation at each step, scoring **lead time**, or comparing decision models with LLM judges **and** white-box probes in a multi-turn recruitment setting. That combination looks novel. "Cheap decision-model monitor" on its own does not.

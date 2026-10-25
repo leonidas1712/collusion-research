@@ -64,7 +64,7 @@ class OvernightRuleTests(unittest.TestCase):
                                      'required-access-own-stake')
                     self.assertTrue(variant.target_system.endswith(
                         RULE_VARIANTS[family]['consequence_logged']))
-                    self.assertTrue(variant.recruiter_approved)  # approved by Leo 2026-10-24
+                    self.assertTrue(variant.recruiter_approved)  # approved after human review 2026-10-24
             alone = get_overnight_scenario(
                 family, 'consequence_logged', 'alone', '23', 'required-access-own-stake')
             self.assertNotIn('own_stake', alone.metadata)

@@ -1,6 +1,6 @@
 # Takeaways from docs/llm_activations_lit.md: Activation Oracles, steering and causal checks, citation fixes
 
-claude-2, 2026-10-24. Every citation below was checked against its primary source (arXiv, GitHub, HF).
+2026-10-24. Every citation below was checked against its primary source (arXiv, GitHub, HF).
 
 **Cost basis.** The E02 Modal benchmark measured Qwen3-32B bf16 on an A100 at about 2,660 prompt tokens/s for activations only, and about 1,250 tokens/s with the fidelity pass. Dollar figures below scale from its $0.25 for 50 requests. They are rough, not measured.
 

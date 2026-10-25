@@ -1,6 +1,6 @@
 # What the probe literature changes in our plan
 
-24 Oct 2026, claude. Sources: `docs/llm_activations_lit.md` (Leo), plus two subagents reading the primary sources and claude-2's notes (pending). These items add to `docs/evaluation_design.md`; they don't replace anything. Each says what to compute, why, the cost, and the source.
+24 Oct 2026. Sources: `docs/llm_activations_lit.md`, the primary sources it cites, and the notes in `docs/activations_takeaways_claude2.md`. These items add to `docs/evaluation_design.md`; they don't replace anything. Each says what to compute, why, the cost, and the source.
 
 ## Most relevant facts
 
@@ -46,7 +46,7 @@
 | 10 | **Early-step label noise:** compare plain logistic regression with dropping the first k steps, or with an episode-level max loss | A give-in episode's round-1 step may look like a control | medium | CC++ §5.1 |
 | 11 | **Multi-layer arm:** about 8 evenly spaced layers, strong L2, inside nested CV | Production uses all layers; full concatenation (327k dims) is too big for ~3k rows | medium | CC++ §5.2 |
 
-## Causal check (GPU, later, needs Leo's OK)
+## Causal check (GPU, later, needs budget approval)
 
 Add or subtract the probe direction at the chosen layer during live generation, and measure the give-in rate under the same peer and the task success on controls. Alternative: probe-guided sampling (FPCG), which steered where activation steering failed (Kortukov et al.). Benchmark small first.
 
@@ -62,7 +62,7 @@ Add or subtract the probe direction at the chosen layer during live generation, 
 - No Kirch probe-steering paper was found; the steering claim in the lit doc probably refers to Kortukov et al.
 - The `aclanthology …/unverified` and `catalyzex` links in the lit doc are author or search pages, not papers.
 
-## claude-2's additions (full text: `docs/activations_takeaways_claude2.md`)
+## Further additions (full text: `docs/activations_takeaways_claude2.md`)
 
 | # | Add | Why | Cost | Source |
 |---|---|---|---|---|

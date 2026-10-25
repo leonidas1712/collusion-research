@@ -86,7 +86,7 @@ Sandboxes support arbitrary subprocess commands through `Sandbox.exec`. Their de
 
 Modal's training quickstart offers Dojo for SFT/RL, a Tinker-compatible Spindle server, and custom training through Clustered Functions. These are available routes, not dependencies we need for the sprint. [Training quickstart](https://modal.com/docs/guide/training-quickstart)
 
-Its Unsloth example demonstrates LoRA training, persistent checkpoints, and checkpoint resumption. That example defaults to 4-bit frozen weights. Copying its defaults conflicts with our bf16 interpretability setup. Proposed first training route: bf16 base weights with a LoRA adapter, subject to a memory estimate and Leo's scope approval. Full fine-tuning requires a separate estimate for optimizer state, gradients, activations, and sequence length. [Fine-tuning example](https://modal.com/docs/examples/unsloth_finetune)
+Its Unsloth example demonstrates LoRA training, persistent checkpoints, and checkpoint resumption. That example defaults to 4-bit frozen weights. Copying its defaults conflicts with our bf16 interpretability setup. Proposed first training route: bf16 base weights with a LoRA adapter, subject to a memory estimate and scope approval. Full fine-tuning requires a separate estimate for optimizer state, gradients, activations, and sequence length. [Fine-tuning example](https://modal.com/docs/examples/unsloth_finetune)
 
 The proposed white-box path uses a separate Transformers environment with plain PyTorch hooks. Replay reads saved token IDs. Steering runs live generation with hooks and then saves the changed outputs. A fine-tuned adapter creates a new model identity for generation, replay, and probes. No existing probe result automatically transfers to that identity.
 
@@ -118,7 +118,7 @@ Assume six target turns per episode and 256 generated tokens per turn. That give
 
 Formula: generated tokens / effective throughput / 3,600 × hourly rate. Extra warm gaps and startup add about $0.36 per ten minutes. Six total occupied hours cost about $13.02. Ten total occupied hours cost about $21.70. These estimates exclude persuader API charges, retries, replay, and training. Long contexts or poorly overlapped persuader calls can dominate occupancy. Episode count alone cannot establish a reliable price.
 
-The brief records an additional $50 sprint credit, valid until November 1. This research did not verify its redemption or account balance. The existing project rule requires Leo's approval before a job expected to exceed about $20.
+The brief records an additional $50 sprint credit, valid until November 1. This research did not verify its redemption or account balance. The project rule requires explicit approval before a job expected to exceed about $20.
 
 ## Decisions and remaining checks
 

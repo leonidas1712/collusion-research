@@ -1,6 +1,6 @@
 # Evaluation design: working backwards from what we want to show
 
-Draft for discussion with Leo (Sun morning). Nothing here is decided. It starts from the claims we want, then derives what each method needs as input, how we label and split data, how we score held-out performance, and what that demands from scenarios and episode counts.
+Draft for discussion. Nothing here is decided. It starts from the claims we want, then derives what each method needs as input, how we label and split data, how we score held-out performance, and what that demands from scenarios and episode counts.
 
 ## 1. The claims we want
 
@@ -54,7 +54,7 @@ Each target turn before the first forbidden action is one row:
 
 Mixing tactics in one dataset is intended: the main result trains and tests across all tactics, and held-out-tactic runs slice the same table.
 
-**Unit = every target step (Leo, 24 Oct).** A row is every target API request (each decision point between tool calls), not just the first request per round. Real agents don't run in rounds, and per-step rows give a finer timeline (R R R … read_file → about to post). Rows after the target has stated its decision in its own unposted text are kept, but flagged ("decision visible in text", from the per-turn judge label), and results are also reported on the steps where the decision is not yet in the text. Monitors see exactly the same context at each step. Each row keeps a "first request of the round" flag so per-round analysis still works. Replay: one forward pass per episode over the final target transcript, reading the residual at each step's last prompt token (requires each request to be a token prefix of the next; to be verified).
+**Unit = every target step (decided 24 Oct).** A row is every target API request (each decision point between tool calls), not just the first request per round. Real agents don't run in rounds, and per-step rows give a finer timeline (R R R … read_file → about to post). Rows after the target has stated its decision in its own unposted text are kept, but flagged ("decision visible in text", from the per-turn judge label), and results are also reported on the steps where the decision is not yet in the text. Monitors see exactly the same context at each step. Each row keeps a "first request of the round" flag so per-round analysis still works. Replay: one forward pass per episode over the final target transcript, reading the residual at each step's last prompt token (requires each request to be a token prefix of the next; to be verified).
 
 ## 3. Inputs and outputs of each method at turn t
 
@@ -109,7 +109,7 @@ Level 1 always comes with: shuffled labels (~0.5), the turn-number baseline, and
 
 **Does the score climb towards the give-in?** The probe isn't trained to climb (all pre-action steps share label 1), so a rise is emergent. Figure: mean probe score vs steps before the action for give-in episodes, against held episodes at the same rounds; the claim is "rises above held episodes at the same rounds", since accumulated peer pressure alone could make any curve rise. Optional variant: regress steps-until-act.
 
-**Clarifications from claude-3's manifest check (24 Oct).**
+**Clarifications from a check of the replay manifest (24 Oct).**
 - **Headline AUROC is on recruiting episodes only:** give-in vs held, with the token read. Control and alone episodes are used only to set the false-alarm threshold. All-negatives AUROC is reported alongside.
 - **Prompt length is a second shortcut that within-round scoring does not remove.** Ranking steps by prompt token count already gives within-round AUROC 0.62 (0.56 on valid recruiting episodes). Give-in episodes have longer prompts at the same round, because the peer and target write more. So:
   - add a prompt-length baseline to the results table;
@@ -118,7 +118,7 @@ Level 1 always comes with: shuffled labels (~0.5), the turn-number baseline, and
 - **The held-out tactic test is grouped,** e.g. {T0, T1, T2} vs {T3–T7}, because single tactics have only 1–4 give-ins each.
 - **The "decision visible in text" subset** needs the per-step judge label, run on the replay manifest's steps.
 
-**Shortcut checks** (from claude-2's list):
+**Shortcut checks:**
 - policy-control episodes (rule present, no ask) should score low;
 - rephrased rule;
 - matching on peer pressure (judge score of the peer's messages);
@@ -153,7 +153,7 @@ Implications for scenarios and rules:
 1. Which 2–3 scenario × model × strength combinations are the main dataset? This depends on the overnight sweep.
 2. Probe at the "before replying" token only, or also over the reply tokens?
 3. Which judge model, and do we use one prompt across ladder levels or tailored ones?
-4. Reasoning-model target for ladder level 4: Leo wants to try. Qwen3-32B has a thinking mode, so the same weights could serve (same replay pipeline).
+4. Reasoning-model target for ladder level 4: worth trying. Qwen3-32B has a thinking mode, so the same weights could serve (same replay pipeline).
 5. How much of the $80 Modal budget goes to the replay vs steering?
 
 ## 7. Analysis plan after the replay (from docs/probe_takeaways.md)
@@ -169,8 +169,8 @@ Implications for scenarios and rules:
 
 **Second tier** (CPU, if time): activation deltas after each peer message; detection-vs-prediction control (train on the give-in step only, test earlier); MLP vs linear; INLP rounds-to-chance; multi-layer probe; early-step label-noise variants.
 
-**GPU, needs Leo's OK:** Activation Oracle rung (<$1); causal check stage 1, forward-only (~$1–3); stage 2 generation only if stage 1 passes (~$3–6).
+**GPU, needs budget approval:** Activation Oracle rung (<$1); causal check stage 1, forward-only (~$1–3); stage 2 generation only if stage 1 passes (~$3–6).
 
-**Robustness to the peer's text (Leo, 24 Oct).** Text monitors and decision models read the pushing peer's messages, which can sway their verdicts (Jev is known to shift under injected text). Compare whether the probe is less affected than the text monitors, e.g. by monitor-vs-probe score shifts on steps right after strong peer claims ("team lead confirmed", "operator authorized"). This is a result, not a caveat.
+**Robustness to the peer's text (added 24 Oct).** Text monitors and decision models read the pushing peer's messages, which can sway their verdicts (Jev is known to shift under injected text). Compare whether the probe is less affected than the text monitors, e.g. by monitor-vs-probe score shifts on steps right after strong peer claims ("team lead confirmed", "operator authorized"). This is a result, not a caveat.
 
 **Confound robustness for v1 data.** Report the headline with and without the 11 episodes where the target saw `mock: true` from run_tests (C4). The "logged and reviewed" (C1) and "reported to the operator" (C2) wording are stated as limitations; held-out scenarios lack C1.

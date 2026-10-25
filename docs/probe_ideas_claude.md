@@ -1,6 +1,6 @@
-# Probe ideas for Monday (claude)
+# Probe ideas for Monday (Claude's answer)
 
-25 Oct 2026. Answer to `docs/probe_ideas_brief.md`. Written without reading the codex answer.
+25 Oct 2026. Answer to `docs/probe_ideas_brief.md`. Written by Claude without reading the Codex answer (`docs/probe_ideas_codex.md`).
 
 **Terms.** *Residual stream*: the model's internal vector at a token after each layer. *Probe*: a small classifier trained on those vectors. *AUROC*: the chance that a random give-in step scores above a random held step (0.5 = coin flip). *Within-round AUROC*: the same, but only comparing steps from the same scenario and round. *LOSO*: leave one scenario out (train on five scenarios, test on the sixth). *Family*: an episode plus its branches, always kept on one side of a split.
 
@@ -59,7 +59,7 @@ I used the 23 branching states (`runs/20261025-0340-e05-replay2-branching/points
 - **What:** re-run the replay and save, for about 6 layers, the mean vector and the last-token vector over three spans: the latest peer message, the target's previous reply, and the tool results. Then train an *attention probe*, which learns how much weight each token gets instead of using only the last token.
 - **Why here:** the single last-token vector is a bottleneck. Production probe work finds last-token pooling clearly worse than attention or softmax pooling.
 - **Source:** McKenzie et al. ([arXiv 2506.10805](https://arxiv.org/abs/2506.10805)); Kramár et al., *Building Production-Ready Probes for Gemini* ([arXiv 2601.11516](https://arxiv.org/abs/2601.11516)).
-- **Cost:** GPU, needs Leo's OK. About $6 and 2 h of compute plus about 2 h of code; fits the $70 budget.
+- **Cost:** GPU, needs budget approval. About $6 and 2 h of compute plus about 2 h of code; fits the $70 budget.
 - **Success:** LOSO within-round AUROC ≥ 0.62 with added value > 0.
 - **If it fails:** the null is robust to token choice, closing a likely reviewer objection.
 

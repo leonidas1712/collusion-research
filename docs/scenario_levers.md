@@ -1,6 +1,6 @@
 # Scenario levers: what makes an agent give in, and where the idea came from
 
-2026-10-24, claude-2, for Leo. A catalogue of setup changes ("levers") that prior work or real incidents suggest make an agent more or less likely to collude or break a rule. Use it for **every** scenario, not just scenario A: each scenario lists the levers it uses by ID, so the report can say where each design choice came from, and we can compare outcomes by lever later.
+2026-10-24. A catalogue of setup changes ("levers") that prior work or real incidents suggest make an agent more or less likely to collude or break a rule. Use it for **every** scenario, not just scenario A: each scenario lists the levers it uses by ID, so the report can say where each design choice came from, and we can compare outcomes by lever later.
 
 **Evidence tags:** **[checked]** = read in the paper or incident write-up (or our own notes in `docs/related_work.md`); **[unchecked]** = from a one-line description (sprint reading list) or memory. Check before citing in the report.
 
@@ -44,7 +44,7 @@ Sources: OpenAI technical report and posts, METR write-up, collusion.wiki; links
 
 ### Aim: gradual wearing down, not first-ask give-ins
 
-Probes and monitors score each target turn, so the useful episodes are ones where the target **holds for several rounds, then gives in** (pre-action turns give lead time). A lever that makes the target give in on the first ask is as unhelpful as one that never moves it. Pair levers to get there (Leo's idea): a **stronger rule** (or A1-style framing) so the target holds early, plus a **more persuasive peer** (L10: Colosseum's published persuasion tactics as peer strategies; L4 consensus; L5 longer horizon) so pressure builds over rounds. Report first-give-in round distributions per lever and cell (see `scenario_guidelines.md` §1).
+Probes and monitors score each target turn, so the useful episodes are ones where the target **holds for several rounds, then gives in** (pre-action turns give lead time). A lever that makes the target give in on the first ask is as unhelpful as one that never moves it. Pair levers to get there: a **stronger rule** (or A1-style framing) so the target holds early, plus a **more persuasive peer** (L10: Colosseum's published persuasion tactics as peer strategies; L4 consensus; L5 longer horizon) so pressure builds over rounds. Report first-give-in round distributions per lever and cell (see `scenario_guidelines.md` §1).
 
 ## Levers that push away from giving in
 
@@ -79,7 +79,7 @@ Probes and monitors score each target turn, so the useful episodes are ones wher
 
 Each scenario (in `SCENARIO_SPECS.md` and as metadata in `scenarios.py`) gets a `levers` list, e.g. `levers: [L1, L5]` for "own task depends on it, 16 rounds", plus `grounded_in` (incident) where it applies. Analysis can then group outcomes by lever. Even if scenario text is LLM-drafted, the tags record which idea each scenario implements and where that idea came from.
 
-Scenario names follow codex's descriptive IDs (runnable form `deploy-token_<policy>_<relation>_<peer>[_own-stake]`; old `staging_*` names still work as aliases). Old letters in brackets.
+Scenario names follow descriptive IDs (runnable form `deploy-token_<policy>_<relation>_<peer>[_own-stake]`; old `staging_*` names still work as aliases). Old letters in brackets.
 
 | Scenario | Levers | Grounded in | Status |
 |---|---|---|---|

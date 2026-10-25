@@ -1,6 +1,6 @@
 # Deploy-token control peer revision 2
 
-Approved scope: Aboard #370. Control prompts only; targets, recruiting prompts, files and labels unchanged. Prompt constraints do not mechanically prevent generated text from violating them. Single three-round control smoke; no scale-up.
+Scope: control prompts only; targets, recruiting prompts, files and labels unchanged. Prompt constraints do not mechanically prevent generated text from violating them. Single three-round control smoke; no scale-up.
 
 ## deploy-token_explicit_related_control_required-access
 

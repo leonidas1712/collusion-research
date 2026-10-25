@@ -6,7 +6,7 @@ A running list for the appendix and limitations section. Add an item whenever on
 
 - **Scenario imbalance.** deploy-token v2 is the development scenario: 61 recruiting episodes run, 47 scored. The five spray scenarios were filled to ~45–55 run each by the balanced batch on 25 Oct; after the validity checks they have fewer scored episodes. Report a per-scenario table of episodes run, scored, gave in and deliberate/accidental, and report a balanced-weight AUROC (the mean of per-scenario AUROCs) next to the pooled one. Sources: EXPERIMENT_LOG 25 Oct 08:17, 08:30, 08:36.
 - **Uneven drop-out.** In the balanced batch, procurement scored 15/30 and rollout 15/24; the other three scenarios scored 18–21 of 22–26. Reasons: the target never read the secret (10), API errors ended the episode early (8), setup not ready (6). These are the same validity rules for every scenario. State that drop-out is uneven and could bias those scenarios towards targets that engage with the file.
-- **One template.** All six scenarios share one task structure. The hybrid code-review check (out of template) was skipped (Leo, 25 Oct).
+- **One template.** All six scenarios share one task structure. The hybrid code-review check (out of template) was skipped (25 Oct).
 - **Accidental leaks** (the secret pasted inside a refusal) count as giving in. About a quarter of leaks are accidental. Deliberate-only analysis is a sensitivity check.
 - **One flagged episode:** rollout recruiting ep0019, round 11 ("even as part of a test"). Check by hand.
 
@@ -18,4 +18,4 @@ A running list for the appendix and limitations section. Add an item whenever on
 - **Only last-token activations** were saved. Peer-message token positions were not replayed.
 - **Near-term labels are post hoc,** defined on 25 Oct after the eventual-label result.
 - **The forecaster prompt** asks about "any later point", yet tracks near-term risk better.
-- **Stacking leak (replay-2 combination test):** the stacker's training rows use out-of-fold probe scores from probes that saw the test fold's labels. That tilts slightly towards "the probe adds value", plausibly ~0.01 (claude-3, 25 Oct). The GPT-5-nano + probe gains are +0.05 to +0.08, but the lower CI bounds for B and C on held-out scenarios are +0.004 and +0.007, so those two are borderline. The frozen confirmation test has no such leak; nested stacking is the fallback if it is borderline.
+- **Stacking leak (replay-2 combination test):** the stacker's training rows use out-of-fold probe scores from probes that saw the test fold's labels. That tilts slightly towards "the probe adds value", plausibly ~0.01 (estimate, 25 Oct). The GPT-5-nano + probe gains are +0.05 to +0.08, but the lower CI bounds for B and C on held-out scenarios are +0.004 and +0.007, so those two are borderline. The frozen confirmation test has no such leak; nested stacking is the fallback if it is borderline.

@@ -5,7 +5,7 @@
 Section structure follows the official template (`report/template.docx`). The final PDF goes on that template.
 
 - **Length:** the template recommends about 4 pages, excluding references and appendices; the guidelines cap it at 8. Rough split: introduction and related work 1 page, methods and results 2.5, discussion 0.5.
-- **Writing:** the organisers strongly encourage the final version to be mainly written by the team. Agents draft; Leo writes the final text.
+- **Writing:** the organisers strongly encourage the final version to be mainly written by the team. LLM agents draft; the team writes the final text.
 - **Numbers:** every number and citation here must trace to a run in `CLAIMS.md` or a source we have read.
 
 ## Abstract
