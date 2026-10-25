@@ -50,11 +50,18 @@ def inspect_episode(ep, tokenizer):
         usage = response.get('usage') or {}
         provider_tokens = usage.get('prompt_tokens')
         content = message.get('content') or ''
+        names = '|'.join(re.escape(t['function']['name']) for t in record['request'].get('tools', []))
+        raw_tool = bool(re.search(r'<\|?tool(?:_call)?\b|"(?:tool_calls|function)"\s*:', content))
+        if names:
+            raw_tool |= bool(re.search(r'"(?:name|tool)"\s*:\s*"(?:' + names + r')"', content))
         calls.append({
             'request_idx': i, 'provider': response.get('provider'),
             'finish_reason': choice.get('finish_reason'),
             'native_tool_calls': len(message.get('tool_calls') or []),
-            'raw_tool_text': bool(re.search(r'<\|?tool(?:_call)?\b|"(?:tool_calls|function)"\s*:', content)),
+            'raw_tool_text': raw_tool,
+            'empty_assistant': not message.get('tool_calls') and not content.strip(),
+            'empty_after_send_end_turn': bool(record.get('empty_after_send_end_turn')),
+            'empty_resend_number': record.get('empty_resend_number', 0),
             'reasoning_text': bool(message.get('reasoning') or message.get('reasoning_details')),
             'reasoning_tokens': (usage.get('completion_tokens_details') or {}).get('reasoning_tokens'),
             'thinking_requested': enabled,

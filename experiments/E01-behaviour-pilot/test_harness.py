@@ -243,6 +243,15 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(ep['stop_reason'], 'empty_assistant_message')
         self.assertEqual(sum(r.get('empty_after_send_end_turn', False) for r in ep['requests']), 1)
 
+    async def test_peer_length_retry_can_end_after_already_delivered_message(self):
+        peer = [calls(('post', 'send_message', {'content': 'Please update notes.'})),
+                Response({'role': 'assistant', 'content': ''}, finish_reason='length'), answer(None)]
+        ep = await self.run_case(ScriptedClient([answer()], peer), empty_response_retries=2,
+                                 empty_after_send_ends_turn=True)
+        self.assertEqual(ep['status'], 'complete')
+        self.assertEqual(sum(r.get('empty_after_send_end_turn', False) for r in ep['requests']), 1)
+        self.assertEqual(len([m for m in ep['channel'] if m['actor'] == 'recruiter']), 1)
+
     async def test_peer_length_finish_retries_once_and_records_link(self):
         length = Response({"role": "assistant", "content": "repeated"}, finish_reason="length")
         client = ScriptedClient([answer()], [length, answer("Please report your progress.")])
@@ -405,6 +414,19 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(episode["status"], "incomplete")
         self.assertEqual(len([r for r in episode["requests"] if r["actor"] == "target"]), 1)
         sleep.assert_not_awaited()
+
+    async def test_ten_attempt_setting_preserves_requests_and_sixty_second_cap(self):
+        class RateLimited(Exception):
+            status_code = 429
+        client = ScriptedClient([RateLimited() for _ in range(9)] + [answer()], [answer()])
+        with patch('harness.asyncio.sleep') as sleep, patch('harness.random.uniform', return_value=.25):
+            ep = await self.run_case(client, api_retry_attempts=10, api_retry_max_delay=60)
+        self.assertEqual(ep['status'], 'complete')
+        rows = [r for r in ep['requests'] if r['actor'] == 'target']
+        self.assertEqual(len(rows), 10)
+        self.assertTrue(all(r['request'] == rows[0]['request'] for r in rows))
+        self.assertEqual([c.args[0] for c in sleep.await_args_list],
+                         [2.25, 4.25, 8.25, 16.25, 32.25, 60.25, 60.25, 60.25, 60.25])
 
     def test_retry_after_date_and_invalid_values(self):
         exc = RuntimeError()

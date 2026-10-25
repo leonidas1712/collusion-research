@@ -64,6 +64,8 @@ class Settings:
     early_stop: bool = True
     empty_response_retries: int = 0
     empty_after_send_ends_turn: bool = False
+    api_retry_attempts: int = 6
+    api_retry_max_delay: float = 30
 
 
 @dataclass
@@ -146,8 +148,8 @@ class EpisodeIncomplete(Exception):
     pass
 
 
-def _retry_delay(exc, attempt):
-    delay = min(30, 2 * 2 ** attempt) + random.uniform(0, 1)
+def _retry_delay(exc, attempt, max_delay=30):
+    delay = min(max_delay, 2 * 2 ** attempt) + random.uniform(0, 1)
     headers = getattr(getattr(exc, "response", None), "headers", {}) or {}
     raw = headers.get("retry-after") or headers.get("Retry-After")
     if raw is not None:
@@ -190,6 +192,8 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         raise ValueError("rounds, tool steps, tokens and parallelism must be positive")
     if settings.empty_response_retries not in (0, 1, 2):
         raise ValueError("empty_response_retries must be 0, 1 or 2")
+    if not 1 <= settings.api_retry_attempts <= 10 or not 0 < settings.api_retry_max_delay <= 60:
+        raise ValueError("API retries must be 1–10 attempts with a backoff cap at most 60 seconds")
     if not episode_id or Path(episode_id).name != episode_id:
         raise ValueError("episode_id must be a filename stem")
     if not getattr(client, "is_fake", False) and not scenario.recruiter_approved:
@@ -243,14 +247,14 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         existing = json.loads(final_path.read_text())
         if existing.get("status") != "complete":
             raise ValueError("final episode file is not complete")
-        if ({"empty_response_retries": 0, "empty_after_send_ends_turn": False, **existing.get("settings", {})} != asdict(settings) or not _same_scenario_spec(existing.get("scenario_spec"), scenario_spec)
+        if ({"empty_response_retries": 0, "empty_after_send_ends_turn": False, "api_retry_attempts": 6, "api_retry_max_delay": 30, **existing.get("settings", {})} != asdict(settings) or not _same_scenario_spec(existing.get("scenario_spec"), scenario_spec)
                 or existing.get("fake") != bool(getattr(client, "is_fake", False))):
             raise ValueError("existing episode settings or scenario differ; use a new output directory")
         return existing
     if partial_path.exists():
         # Keep the failed attempt when restarting the episode from its initial state.
         previous = json.loads(partial_path.read_text())
-        if ({"empty_response_retries": 0, "empty_after_send_ends_turn": False, **previous.get("settings", {})} != asdict(settings) or not _same_scenario_spec(previous.get("scenario_spec"), scenario_spec)
+        if ({"empty_response_retries": 0, "empty_after_send_ends_turn": False, "api_retry_attempts": 6, "api_retry_max_delay": 30, **previous.get("settings", {})} != asdict(settings) or not _same_scenario_spec(previous.get("scenario_spec"), scenario_spec)
                 or previous.get("fake") != bool(getattr(client, "is_fake", False))):
             raise ValueError("partial episode settings or scenario differ")
         attempt = 1
@@ -316,7 +320,7 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         payload.update(options)
         wire_body = {key: copy.deepcopy(value) for key, value in payload.items() if key != "extra_body"}
         wire_body.update(extra_body)
-        for attempt in range(6):
+        for attempt in range(settings.api_retry_attempts):
             record = {"actor": actor, "round": round_number, "attempt": attempt + 1,
                       "request": copy.deepcopy(payload), "request_body": copy.deepcopy(wire_body),
                       "requested_routing": copy.deepcopy(extra_body.get("provider")),
@@ -345,9 +349,9 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                 _save(partial_path, episode)
                 transient = status in (408, 409, 429) or isinstance(status, int) and 500 <= status < 600
                 transient = transient or type(exc).__name__ in ("APIConnectionError", "APITimeoutError")
-                if not transient or attempt == 5:
+                if not transient or attempt == settings.api_retry_attempts - 1:
                     raise EpisodeIncomplete(f"api_error:{type(exc).__name__}") from exc
-                delay, retry_after = _retry_delay(exc, attempt)
+                delay, retry_after = _retry_delay(exc, attempt, settings.api_retry_max_delay)
                 record["retry_delay_seconds"] = delay
                 record["retry_after"] = retry_after
                 _save(partial_path, episode)
@@ -391,11 +395,12 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         first_index = len(episode["requests"]) - 1
         episode["requests"][first_index]["length_retry_scheduled"] = True
         _save(partial_path, episode)
-        response = await request(actor, round_number)
+        response = await request_with_empty_retry(actor, round_number)
         retry_index = len(episode["requests"]) - 1
         episode["requests"][first_index]["length_retry_request_index"] = retry_index
-        episode["requests"][retry_index]["retry_of_request_index"] = first_index
-        episode["requests"][retry_index]["retry_reason"] = "recruiter_finish_reason_length"
+        episode["requests"][retry_index].setdefault("retry_of_request_index", first_index)
+        episode["requests"][retry_index].setdefault("retry_reason", "recruiter_finish_reason_length")
+        episode["requests"][retry_index]["length_retry_of_request_index"] = first_index
         _save(partial_path, episode)
         return response
 
@@ -553,7 +558,9 @@ async def _main(args):
                         args.max_tool_steps, args.max_tokens, args.temperature, args.parallelism,
                         early_stop=not getattr(args, "no_early_stop", False),
                         empty_response_retries=getattr(args, "empty_response_retries", 0),
-                        empty_after_send_ends_turn=getattr(args, "empty_after_send_ends_turn", False))
+                        empty_after_send_ends_turn=getattr(args, "empty_after_send_ends_turn", False),
+                        api_retry_attempts=getattr(args, "api_retry_attempts", 6),
+                        api_retry_max_delay=getattr(args, "api_retry_max_delay", 30))
     for actor in ("target", "recruiter"):
         provider = getattr(args, f"{actor}_provider", None)
         quantization = getattr(args, f"{actor}_quantization", None)
@@ -629,6 +636,8 @@ if __name__ == "__main__":
                         help="Maximum exact-payload resends for an empty stop response")
     parser.add_argument("--empty-after-send-ends-turn", action="store_true",
                         help="Accept an empty stop after this actor already delivered a message this turn")
+    parser.add_argument("--api-retry-attempts", type=int, default=6)
+    parser.add_argument("--api-retry-max-delay", type=float, default=30)
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--target-reasoning", action="store_true")
     parser.add_argument("--recruiter-reasoning", action="store_true")

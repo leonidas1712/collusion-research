@@ -6,11 +6,28 @@ from pathlib import Path
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
-from gemma_screen import ConcurrentBudget, validate_gate
+from gemma_screen import ConcurrentBudget, validate_gate, pooled_target_price, pool_options
 
 
 class ScreenTests(unittest.IsolatedAsyncioTestCase):
+    async def test_pool_excludes_fp4_unknown_and_toolless_routes(self):
+        endpoints = [{'provider_name': name, 'quantization': 'bf16' if name in ('Novita', 'Crusoe') else 'fp8',
+                      'supported_parameters': ['tools'], 'context_length': 100,
+                      'pricing': {'prompt': '.01', 'completion': '.02'}}
+                     for name in ('Crusoe', 'Novita', 'Parasail', 'DeepInfra')]
+        endpoints += [{**endpoints[0], 'quantization': q} for q in ('fp4', 'unknown')]
+        endpoints.append({**endpoints[-1], 'quantization': 'fp8', 'supported_parameters': []})
+        with patch('gemma_screen.fetch', return_value={'data': {'endpoints': endpoints}}):
+            price = pooled_target_price()
+        self.assertEqual(len(price['endpoints']), 4)
+        route = pool_options(price)['extra_body']['provider']
+        self.assertEqual(set(route['only']), {'Crusoe', 'Novita', 'Parasail', 'DeepInfra'})
+        self.assertEqual(route['quantizations'], ['bf16', 'fp8'])
+        self.assertTrue(route['allow_fallbacks'])
+        self.assertTrue(route['require_parameters'])
+
     async def test_reservations_settle_without_losing_concurrent_cost(self):
         async def create(**payload):
             await asyncio.sleep(.001)

@@ -38,7 +38,10 @@ class ConcurrentBudget:
     async def create(self, **payload):
         price = self.prices[payload['model']]
         route = payload['extra_body']['provider']
-        if route['order'] != [price['provider']] or route['allow_fallbacks']:
+        if price.get('routing'):
+            if any(route.get(key) != value for key, value in price['routing'].items()):
+                raise ValueError('Request must use its priced provider pool')
+        elif route['order'] != [price['provider']] or route['allow_fallbacks']:
             raise ValueError('Request must use its priced provider')
         reserve = (Decimal(str(price['context_length'])) * Decimal(price['prompt_cap']) +
                    Decimal(str(payload['max_tokens'])) * Decimal(price['completion_cap'])) * Decimal('1.10')
@@ -93,6 +96,29 @@ def price_for(model, provider, precision):
             'prompt_cap': str(Decimal(p['prompt']) * Decimal('1.01')),
             'completion_cap': str(Decimal(p['completion']) * Decimal('1.01')),
             'endpoint': endpoint, 'snapshot': snapshot}
+
+
+def pooled_target_price():
+    snapshot = fetch(f'https://openrouter.ai/api/v1/models/{MODEL}/endpoints')
+    names = ['DeepInfra', 'Parasail', 'Novita', 'Crusoe']
+    endpoints = [e for e in snapshot['data']['endpoints'] if e['provider_name'] in names
+                 and e['quantization'] in ('bf16', 'fp8') and 'tools' in e['supported_parameters']]
+    if {e['provider_name'] for e in endpoints} != set(names):
+        raise ValueError('An allowed provider has no advertised bf16/fp8 tool endpoint')
+    if any(Decimal(str(e['pricing'].get('request', 0))) != 0 for e in endpoints):
+        raise ValueError('Unexpected per-request fee')
+    return {'provider': 'bf16-fp8-tool-pool', 'context_length': max(e['context_length'] for e in endpoints),
+            'prompt_cap': str(max(Decimal(e['pricing']['prompt']) for e in endpoints) * Decimal('1.01')),
+            'completion_cap': str(max(Decimal(e['pricing']['completion']) for e in endpoints) * Decimal('1.01')),
+            'routing': {'order': names, 'only': names, 'allow_fallbacks': True,
+                        'quantizations': ['bf16', 'fp8'], 'require_parameters': True},
+            'endpoints': endpoints, 'snapshot': snapshot}
+
+
+def pool_options(price):
+    result = options(price)
+    result['extra_body']['provider'].update(price['routing'])
+    return result
 
 
 def validate_gate(path):
