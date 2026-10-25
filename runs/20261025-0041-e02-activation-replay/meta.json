@@ -1,0 +1,88 @@
+{
+  "id": "20261025-0041-e02-activation-replay",
+  "experiment": "E02",
+  "name": "e02-activation-replay",
+  "tags": [
+    "replay"
+  ],
+  "settings": {
+    "runs": [
+      "/tmp/tmpo2lo67t9/20261025-0817-e01-spray-dispatch-integration-code-consequence-control-32b-scaleup",
+      "/tmp/tmpo2lo67t9/20261025-0817-e01-spray-dispatch-integration-code-consequence-recruiting-32b-scaleup",
+      "/tmp/tmpo2lo67t9/20261025-0817-e01-spray-handoff-exception-note-consequence-recruiting-32b-scaleup",
+      "/tmp/tmpo2lo67t9/20261025-0817-e01-spray-procurement-reserve-price-consequence-recruiting-32b-scaleup",
+      "/tmp/tmpo2lo67t9/20261025-0817-e01-spray-service-capacity-figure-consequence-control-32b-scaleup",
+      "/tmp/tmpo2lo67t9/20261025-0817-e01-spray-service-capacity-figure-consequence-recruiting-32b-scaleup",
+      "/tmp/tmpo2lo67t9/20261025-0817-e01-spray-service-rollout-threshold-consequence-control-32b-scaleup",
+      "/tmp/tmpo2lo67t9/20261025-0817-e01-spray-service-rollout-threshold-consequence-recruiting-32b-scaleup"
+    ],
+    "manifest": "/tmp/tmpo2lo67t9/selection.jsonl",
+    "model": "Qwen/Qwen3-32B",
+    "source_model": [
+      "qwen/qwen3-32b"
+    ],
+    "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+    "device": "auto",
+    "dtype": "bfloat16",
+    "thinking": "from-request",
+    "layers_path": null,
+    "layers": "all",
+    "request_order": "source",
+    "max_requests": null,
+    "output_root": "/outputs/runs",
+    "local_files_only": true,
+    "reply_fidelity": true,
+    "fidelity_tokens": 64,
+    "precision": "bf16",
+    "max_episodes": null,
+    "max_requests_per_episode": null,
+    "max_tokens": 32768,
+    "max_wall_seconds": null,
+    "cpu_threads": 4,
+    "tiny_random": false,
+    "allow_cross_model": false,
+    "seed": 0
+  },
+  "parents": [
+    "20261025-0817-e01-spray-dispatch-integration-code-consequence-control-32b-scaleup",
+    "20261025-0817-e01-spray-dispatch-integration-code-consequence-recruiting-32b-scaleup",
+    "20261025-0817-e01-spray-handoff-exception-note-consequence-recruiting-32b-scaleup",
+    "20261025-0817-e01-spray-procurement-reserve-price-consequence-recruiting-32b-scaleup",
+    "20261025-0817-e01-spray-service-capacity-figure-consequence-control-32b-scaleup",
+    "20261025-0817-e01-spray-service-capacity-figure-consequence-recruiting-32b-scaleup",
+    "20261025-0817-e01-spray-service-rollout-threshold-consequence-control-32b-scaleup",
+    "20261025-0817-e01-spray-service-rollout-threshold-consequence-recruiting-32b-scaleup",
+    "tmpo2lo67t9"
+  ],
+  "model": "Qwen/Qwen3-32B",
+  "command": "/usr/local/bin/python /pkg/modal/_container_entrypoint.py",
+  "git_commit": null,
+  "dirty": false,
+  "host": "modal",
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "started": "2026-10-25T00:41:29",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T00:42:35",
+  "results": {
+    "fidelity_statuses": {
+      "scored": 25
+    },
+    "scored_reply_tokens": 1300,
+    "weighted_reply_nll": 0.2668888091538191,
+    "weighted_top5_fraction": 0.9969230769230769,
+    "model_load_seconds": 34.980037068,
+    "peak_cuda_memory_bytes": 66843644416,
+    "episodes": 20,
+    "episodes_available": 20,
+    "requests": 25,
+    "first_step_requests": 17,
+    "token_ratio_n": 25,
+    "token_ratio_min": 0.9975798644724104,
+    "token_ratio_median": 1.0,
+    "token_ratio_max": 1.0,
+    "normalizations": {
+      "argument_strings": 148
+    }
+  }
+}

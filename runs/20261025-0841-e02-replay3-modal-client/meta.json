@@ -1,0 +1,56 @@
+{
+  "id": "20261025-0841-e02-replay3-modal-client",
+  "experiment": "E02",
+  "name": "e02-replay3-modal-client",
+  "tags": [],
+  "settings": {
+    "approval": "Aboard #698: Leo approval relayed by Claude",
+    "total_approved_usd": 4,
+    "phase_ceiling_usd": 0.35,
+    "watchdog_max_resource_rate_per_second": 0.0009,
+    "command": [
+      "modal",
+      "run",
+      "experiments/E02-activation-replay/modal_app.py::main",
+      "--manifest-path",
+      "runs/20261025-0838-e02-replay3-plan/benchmark.jsonl",
+      "--model",
+      "Qwen/Qwen3-32B",
+      "--revision",
+      "9216db5781bf21249d130ec9da846c4624c16137",
+      "--source-model",
+      "qwen/qwen3-32b",
+      "--precision",
+      "bf16",
+      "--gpu",
+      "a100-benchmark",
+      "--layers",
+      "all",
+      "--fidelity-tokens",
+      "64"
+    ]
+  },
+  "parents": [
+    "20261025-0838-e02-replay3-plan"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/.venv/bin/python experiments/E02-activation-replay/modal_budget_client3.py --manifest runs/20261025-0838-e02-replay3-plan/benchmark.jsonl --gpu a100-benchmark --phase-ceiling 0.35",
+  "git_commit": "b8b684be61c3e4152909fa84ae815b53ecea150b",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T08:41:05",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T08:42:52",
+  "results": {
+    "app_id": "ap-iZuuf2GbdLgV4nRxevYrS5",
+    "remote_path": "runs/20261025-0041-e02-activation-replay",
+    "app_stopped": true,
+    "client_wall_seconds": 105.50199849996716,
+    "conservative_compute_upper_usd": 0.09495179864997044,
+    "billed_so_far_usd": 0.03599646,
+    "billing_may_lag": true,
+    "error": null
+  }
+}

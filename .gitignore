@@ -38,3 +38,19 @@ learn/
 # All-data OOF exports are regenerated from local saved fit artifacts.
 runs/*-e05-all-data-main*/probe_scores.csv
 runs/*-e05-all-data-main*/split_plan.json
+
+# Large or regenerable run outputs: kept on disk (and the Modal volume), not in git.
+runs/*/prompts/
+runs/*/tokenizer/
+runs/*/model_config/
+runs/*/activations/
+runs/*/cache/
+runs/*/index.jsonl
+runs/*/input_manifest.json
+runs/*/selection_manifest.jsonl
+runs/*/download-index.jsonl
+runs/*/index-snapshot.jsonl
+runs/*/sampling_plan.json
+runs/*/*-alarms.json
+runs/*/probe_scores.csv
+runs/viewer_monitors/

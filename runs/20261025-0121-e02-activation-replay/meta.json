@@ -1,0 +1,92 @@
+{
+  "id": "20261025-0121-e02-activation-replay",
+  "experiment": "E02",
+  "name": "e02-activation-replay",
+  "tags": [
+    "replay"
+  ],
+  "settings": {
+    "runs": [
+      "/tmp/tmp1n0ouzdt/20261025-0817-e01-spray-dispatch-integration-code-consequence-control-32b-scaleup",
+      "/tmp/tmp1n0ouzdt/20261025-0817-e01-spray-dispatch-integration-code-consequence-recruiting-32b-scaleup",
+      "/tmp/tmp1n0ouzdt/20261025-0817-e01-spray-handoff-exception-note-consequence-control-32b-scaleup",
+      "/tmp/tmp1n0ouzdt/20261025-0817-e01-spray-handoff-exception-note-consequence-recruiting-32b-scaleup",
+      "/tmp/tmp1n0ouzdt/20261025-0817-e01-spray-procurement-reserve-price-consequence-control-32b-scaleup",
+      "/tmp/tmp1n0ouzdt/20261025-0817-e01-spray-procurement-reserve-price-consequence-recruiting-32b-scaleup",
+      "/tmp/tmp1n0ouzdt/20261025-0817-e01-spray-service-capacity-figure-consequence-control-32b-scaleup",
+      "/tmp/tmp1n0ouzdt/20261025-0817-e01-spray-service-capacity-figure-consequence-recruiting-32b-scaleup",
+      "/tmp/tmp1n0ouzdt/20261025-0817-e01-spray-service-rollout-threshold-consequence-control-32b-scaleup",
+      "/tmp/tmp1n0ouzdt/20261025-0817-e01-spray-service-rollout-threshold-consequence-recruiting-32b-scaleup"
+    ],
+    "manifest": "/tmp/tmp1n0ouzdt/selection.jsonl",
+    "model": "Qwen/Qwen3-32B",
+    "source_model": [
+      "qwen/qwen3-32b"
+    ],
+    "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+    "device": "auto",
+    "dtype": "bfloat16",
+    "thinking": "from-request",
+    "layers_path": null,
+    "layers": "all",
+    "request_order": "source",
+    "max_requests": null,
+    "output_root": "/outputs/runs",
+    "local_files_only": true,
+    "reply_fidelity": true,
+    "fidelity_tokens": 64,
+    "precision": "bf16",
+    "max_episodes": null,
+    "max_requests_per_episode": null,
+    "max_tokens": 32768,
+    "max_wall_seconds": 9000.0,
+    "cpu_threads": 4,
+    "tiny_random": false,
+    "allow_cross_model": false,
+    "seed": 0
+  },
+  "parents": [
+    "20261025-0817-e01-spray-dispatch-integration-code-consequence-control-32b-scaleup",
+    "20261025-0817-e01-spray-dispatch-integration-code-consequence-recruiting-32b-scaleup",
+    "20261025-0817-e01-spray-handoff-exception-note-consequence-control-32b-scaleup",
+    "20261025-0817-e01-spray-handoff-exception-note-consequence-recruiting-32b-scaleup",
+    "20261025-0817-e01-spray-procurement-reserve-price-consequence-control-32b-scaleup",
+    "20261025-0817-e01-spray-procurement-reserve-price-consequence-recruiting-32b-scaleup",
+    "20261025-0817-e01-spray-service-capacity-figure-consequence-control-32b-scaleup",
+    "20261025-0817-e01-spray-service-capacity-figure-consequence-recruiting-32b-scaleup",
+    "20261025-0817-e01-spray-service-rollout-threshold-consequence-control-32b-scaleup",
+    "20261025-0817-e01-spray-service-rollout-threshold-consequence-recruiting-32b-scaleup",
+    "tmp1n0ouzdt"
+  ],
+  "model": "Qwen/Qwen3-32B",
+  "command": "/usr/local/bin/python /pkg/modal/_container_entrypoint.py",
+  "git_commit": null,
+  "dirty": false,
+  "host": "modal",
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "started": "2026-10-25T01:21:46",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T02:20:06",
+  "results": {
+    "fidelity_statuses": {
+      "scored": 3087
+    },
+    "scored_reply_tokens": 151665,
+    "weighted_reply_nll": 0.22647480080065707,
+    "weighted_top5_fraction": 0.9981933867405136,
+    "model_load_seconds": 23.784765294000003,
+    "peak_cuda_memory_bytes": 66820270592,
+    "episodes": 129,
+    "episodes_available": 129,
+    "requests": 3087,
+    "first_step_requests": 2141,
+    "token_ratio_n": 3087,
+    "token_ratio_min": 0.9955542382928275,
+    "token_ratio_median": 1.0,
+    "token_ratio_max": 1.0,
+    "normalizations": {
+      "argument_strings": 17314
+    }
+  }
+}
