@@ -24,6 +24,7 @@ Fixes to the arXiv exports: Bashir et al. author "The Anh han" → "The Anh Han"
 | `rose2026` | Rose et al. (2026) | Detecting Multi-Agent Collusion Through Multi-Agent Interpretability | 2604.01151 |
 | `ruan2026` | Ruan et al. (2026) | Doomed from the Start: Early Abort of LLM Agent Episodes via a Recall-Controlled | 2607.06503 |
 | `shi2026` | Shi et al. (2026) | When Agents Lie: Premeditation, Persistence, and Exploitation in Repeated Games | 2607.05132 |
+| `shi2026emergent` | Shi et al. (2026) | Emergent Collusion in Long-Horizon LLM Agent Interaction (Shi, Zhang & Yang) | 2609.24967 |
 | `tang2026` | Tang et al. (2026) | SPINE: Measuring LLM Sycophancy under Sustained Multi-Turn Pressure | 2609.09090 |
 | `tao2026` | Tao et al. (2026) | GroupGuard: A Framework for Modeling and Defending Collusive Attacks in Multi-Ag | 2603.13940 |
 | `yang2025qwen3` | Yang et al. (2025) | Qwen3 Technical Report | 2505.09388 |
