@@ -42,8 +42,9 @@ def arrow(ax, a, b, both=False, color=INK):
 
 
 def level_marker(ax, x, y, i):
-    ax.plot([x], [y], marker="o", markersize=7.5, mfc=LEVEL[i], mec="white", mew=0.6, zorder=5)
-    ax.text(x, y, str(i + 1), ha="center", va="center", fontsize=5.8, color="white", weight="bold", zorder=6)
+    # Access levels are labelled L1-L3 (not 1-3) so they do not read as steps in a workflow.
+    ax.text(x, y, f"L{i + 1}", ha="center", va="center", fontsize=5.4, color="white", weight="bold", zorder=6,
+            bbox=dict(boxstyle="round,pad=0.18,rounding_size=0.35", fc=LEVEL[i], ec="white", lw=0.6))
 
 
 def panel_setup(ax, label="a"):
