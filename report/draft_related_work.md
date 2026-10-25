@@ -1,0 +1,20 @@
+# 2. Related Work (draft)
+
+*Draft prose for Section 2, written from `docs/report_plan_outline.md` §3, with the novelty points from its §1. No results in this section — only how the setup and framing differ from prior work. Citations use arXiv identifiers and name only papers verified against their source; any still needing a check are flagged at the end. Vocabulary follows §6 of the plan. Written 25 Oct 2026.*
+
+## 2. Related Work
+
+**Probes for agent behaviour.** Prior work probes a tool-using agent's activations to flag that it is under attack (Dong et al., 2608.02657; Yu et al., 2610.05295), to predict a reasoning model's next behaviour (Kortukov et al., 2606.11172), or to read agents instructed to collude (NARCBench, 2604.01151); Fomin et al. (2606.30449) warn such probes may read the *situation*, not the action. *We differ:* the pressure is a peer agent persuading over several turns, and we predict the give-in before it happens with the situation held fixed — gave in versus held under the same pressure, the control Fomin et al. find missing.
+
+**Text monitors, and what agents say versus do.** Monitors of words and actions gain from a joint view (Radev et al., 2605.29178) but can worsen with more context (Arike et al., "less-is-more", 2601.21112); the say–do link is weak (Colosseum, 2602.15198), a planned deviation surfaces in private text only in the most deceptive settings (Shi et al., 2607.05132), and TraceGuard (2604.03968) scores actions multi-dimensionally. *We differ:* all detect an attempt under way; we ask which recruited target gives in, scoring a probe and monitors on the same steps, at three access levels and two questions (detect now versus forecast later). No prior work combines a probe with a text monitor.
+
+**Collusion and persuasion between agents.** Agents coordinate against the party they serve — accepting a secret, unfair arrangement (Voluntary Collusion, 2605.27593), persuaded by peers (GroupGuard, 2603.13940), and caving under sustained pressure, though how firmly a target refuses does not predict it (SPINE, 2609.09090) — all studied from text and outcomes. *We differ:* none reads the activations of the agent being recruited, nor predicts an individual give-in before it happens.
+
+**Early warning and alarms.** Ruan et al. (Doomed from the Start, 2607.06503) predict eventual task failure from a per-round probe AUROC among episodes still running; Gao (2610.04575) turns probe scores into alarm policies and shows why a per-step false-alarm rate understates how often a whole episode raises a false alarm. *We differ:* we adopt the within-round metric and per-episode alarm accounting, but forecast a peer-induced rule violation before the target acts, not task failure.
+
+**What is new here:** we separate *eventual* from *imminent* give-in and show only the imminent case is predictable; hold the situation fixed, with a direct check that the probe is not merely a pressure detector; score probe and monitors on identical steps while varying what a monitor sees and is asked; run a combination test of the two, not done before; and, where a second target model admits it, apply the same pipeline unchanged to a different model family and route to giving in.
+
+> Citations to verify before submission:
+> - **NARCBench (Rose et al., 2604.01151):** only the abstract has been checked (`PROVENANCE.md`). Confirm the "instructed-to-collude, no tools, scored once per episode" characterisation against the full text, or drop that clause.
+> - **Many-to-One (2512.03097):** listed for this section in the outline but not yet verified against its source; omitted above until it is checked.
+> - No prior-work numbers are quoted: several headline figures (the sprint page's TraceGuard "0%→>70%" and the "more than 90% of deviations" reading of Shi et al.) are misquotes per `docs/rq22_papers_check.md`, and Voluntary Collusion's acceptance rate and Dong et al.'s per-model AUROCs are *(summary)* in our notes. All other cited papers are marked checked in `PROVENANCE.md` / `docs/rq22_papers_check.md`.
