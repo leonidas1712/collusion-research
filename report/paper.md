@@ -120,8 +120,8 @@ For the near-term label, asking Jev to forecast beats asking it to detect (0.650
 
 The activation probe adds to the weaker monitor, not the strong forecaster. Stacking it on GPT-5-nano lifts near-term AUROC by +0.081 [0.038, 0.126] in pooled cross-validation and +0.113 [0.025, 0.203] on the confirmation set, but the held-out-scenario gain is +0.022 [-0.013, 0.059] (interval includes zero); it does not clearly add to the Jev forecaster (held-out +0.003 [-0.011, 0.018]). Figure 2 plots the combined rows, and Table 2 (Appendix E) gives the full gains. This agrees with the closest precedent, where a combined monitor gave no clear gain over a strong forecaster [@gao2026], and extends it with a gain over a weaker judge.
 
-### 4.6 Does it transfer to a second target?
-**[TODO — conditional on the gpt-oss run.]** Only if the second-target pipeline produces a result; otherwise one sentence in 4.1 or Discussion plus an appendix.
+### 4.6 Transfer to a second target
+**[TODO — conditional on the gpt-oss replay.]** Frame as *does near-term prediction transfer to a second model*. gpt-oss windows are short — 148 of 169 eventual-positive steps are also near-term-positive (versus 250 of 998 near-term for Qwen) — so it barely tests eventual against near-term; note the short window and do not present a gpt-oss eventual result as a separate finding. Cohort: 2,059 post-ask recruiting steps / 238 episodes / 148 near-term positives, plus a 1,141-step pre-ask placebo (Appendix F). If the replay yields no probe result, this becomes two sentences of behaviour.
 
 ---
 
