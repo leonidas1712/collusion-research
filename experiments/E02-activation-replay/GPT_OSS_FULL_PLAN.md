@@ -4,7 +4,7 @@ Frozen before full-replay activations or outcome fits, 2026-10-25. Authority: Ab
 
 ## Collection gate
 
-Wait for the completed 360-episode collection and canonical source manifest from its owner. Do not infer completion from the current filesystem. Exclude explicitly superseded attempts, preserve final incomplete slots in the collection accounting, and report any mismatch between planned and available complete episodes before submitting GPU work. Freeze episode/request hashes, collection commit and scenario/peer-prompt hashes. No prompt or collection changes are part of this task.
+Wait for the completed 360-episode collection and canonical source manifest from its owner. Do not infer completion from the current filesystem. Exclude explicitly superseded attempts, preserve final incomplete slots in the collection accounting, and report any mismatch between planned and available complete episodes before submitting GPU work. Collection quota is planned attempts, not valid outcomes; only API/incomplete failures may be replaced. Freeze episode/request hashes, collection commit and scenario/peer-prompt hashes. No prompt or collection changes are part of this task.
 
 ## Replay
 
@@ -29,3 +29,5 @@ Primary episode outcome is channel publication, as explicitly requested in #1036
 Keep exposed pre-ask steps as a placebo, and post-ask/pre-action steps as the main test. First ask must come from recorded actual peer behavior, not an assumed round3. Preserve actual request ordering so a mid-turn ask or read can be handled. Report ask-to-act steps and rounds; delayed give-ins separately. Reasoning-level probes/monitors are an extra access condition, not interchangeable with pre-reply last-token features.
 
 The requested deliverable is the verified replay and probe/monitor dataset. Outcome fitting follows the committed plan; no outcome fits have started at this freeze.
+
+Primary eligibility must not gate on `valid_for_comparison` (decision #1085). Keep that flag for the gated sensitivity requested in #1087. The Qwen gate excluded 258 strict-window steps from 11 episodes; see `GPT_OSS_REPLAY.md` and the recorded audit. Stop before refitting Qwen pending the author's decision.
