@@ -60,3 +60,12 @@ These fill gaps in the plan above. Nothing from the new data has been seen.
 ## Addendum 3 (25 Oct ~09:45 SGT, after a dry run on replay-2 families only; replay 3 has still not landed)
 
 The dry run treated 25% of the replay-2 families as "new" and never touched the confirmation set. It showed that the three seed models choose very different layers (4, 60, 63), and their raw scores sit on very different scales, so a plain mean is dominated by one model. Fix: before averaging, each seed model's scores are z-scored against that model's own training-row scores (mean and SD). This uses no test information. Everything else is unchanged. Note that the CIs will be wide: the dry run's 31 episodes gave ±0.2. The real set has ~129 episodes.
+
+## Addendum 4 (25 Oct ~09:55 SGT, still before replay 3 has landed): common probe scale for the stacker
+
+A side review pointed out that the stacker learns its probe weight from replay-2 out-of-fold scores, which come from fold models, but is applied to scores from the final model, so the two can sit on different scales. Fix, which replaces the z-scoring in addendum 3:
+
+- each out-of-fold (seed, fold) model's scores are z-scored over the rows that model scored;
+- each final seed model's scores are z-scored over the new rows it scores. This uses no labels.
+
+In both cases the three seeds are then averaged. In the dry run the two now match: SD 0.80 vs 0.80, means ≈0. The probe-alone AUROC is unaffected, since z-scoring doesn't change rankings within a model.

@@ -57,11 +57,17 @@ def monitor_scores(*runs):
 
 
 def oof_probe(variant):
-    acc = defaultdict(list)
+    """Replay-2 out-of-fold probe scores, z-scored within each (seed, fold) model's scored rows, then seed-averaged."""
+    groups = defaultdict(dict)
     with OOF.open() as fh:
         for r in csv.DictReader(fh):
             if r['analysis'] == 'pooled' and r['method'] == 'nested' and r['label_variant'] == variant:
-                acc[r['row_id']].append(float(r['score']))
+                groups[(r['seed'], r['fold'])][r['row_id']] = float(r['score'])
+    acc = defaultdict(list)
+    for g in groups.values():
+        v = np.array(list(g.values()))
+        for k, x in g.items():
+            acc[k].append((x - v.mean()) / v.std())
     return {k: float(np.mean(v)) for k, v in acc.items()}
 
 
@@ -76,8 +82,9 @@ def final_probe(rows, x, y, train, xnew, layer_fixed=None):
             layer = layer_fixed
         model = fit_logistic(np.asarray(x[train, layer]), y[train], np.array([rows[i]['round'] for i in train]), seed)
         # Put each seed model on a common scale before averaging (z-score against its own training-row scores).
-        ref = score(model, np.asarray(x[train, layer]))
-        out[seed] = (score(model, np.asarray(xnew[:, layer])) - ref.mean()) / ref.std()
+        # z-score within the scored (new) rows, as the OOF scores are z-scored within each fold model's scored rows.
+        raw = score(model, np.asarray(xnew[:, layer]))
+        out[seed] = (raw - raw.mean()) / raw.std()
         layers[seed] = int(layer)
     return out, layers
 
@@ -158,6 +165,7 @@ def main():
             cols[f'{m} + probe'] = stack(np.c_[base_tr, ptr], ytr, np.c_[base_te, probe])
             pairs[f'gain from probe over {m}'] = (f'{m} + probe', f'{m} stacked')
         res = boot(yt, cols, rt, st, ft, pairs, rng)
+        res['probe_scale'] = {'stacker_train_oof': [float(np.mean(ptr)), float(np.std(ptr))], 'new_final': [float(np.mean(probe)), float(np.std(probe))]}
         res.update(rows=int(len(test)), positives=int(yt.sum()), episodes=len({new_rows[i]['episode'] for i in test}),
                    families=len(set(ft)), chosen_layers=layers, stacker_train_rows=int(len(tr)))
         results[variant] = res
