@@ -107,7 +107,8 @@ def backfill_run(run_dir, postprocess_commit):
             "episode_id": episode_id,
             "family_id": str(int(settings["family_start"]) + ordinal - 1),
             "episode_file": None, "episode_sha256": None,
-            "selected": False, "exclusion_reason": "no_record_after_exception",
+            "selected": False,
+            "exclusion_reason": "scheduled_not_attempted_after_smoke_failure",
         })
     write_json(run_dir / "records.json", records)
     current_summary = read_json(run_dir / "summary.json") if (run_dir / "summary.json").exists() else {}
