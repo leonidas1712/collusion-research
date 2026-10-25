@@ -108,7 +108,7 @@ Full table: [`experiments/E01-behaviour-pilot/PEER_TACTICS_PROVENANCE.md`](exper
 
 ## 4. Methods
 
-Sources: `docs/llm_activations_lit.md` (author), `docs/probe_takeaways.md`, `docs/evaluation_design.md`, `EXPERIMENT_LOG.md`.
+Sources: `docs/llm_activations_lit.md` (author), `archive/internal/docs/probe_takeaways.md`, `archive/internal/docs/evaluation_design.md`, `EXPERIMENT_LOG.md`.
 
 ### 4.1 Linear probes and difference of means
 
@@ -216,13 +216,13 @@ Sources: `EXPERIMENT_LOG.md`, `experiments/E02-activation-replay/README.md`, `ex
 
 ## 6. Related work we position against
 
-Sources: `docs/related_work.md`, `docs/probe_takeaways.md`, `docs/external_traces.md`. Numbers marked *(summary)* there still need checking against the PDFs.
+Sources: `docs/related_work.md`, `archive/internal/docs/probe_takeaways.md`, `docs/external_traces.md`. Numbers marked *(summary)* there still need checking against the PDFs.
 
 | Item | Where we use it | Source | Our changes or notes |
 |---|---|---|---|
 | NARCBench / HELIOS (Rose et al.) | Closest collusion-probe paper | arXiv 2604.01151 | They read instructed colluders; we read the recruited target, per turn |
 | Das et al., "You Can't Escape Your Own Activations" | AUROC vs fixed-threshold recall | arXiv 2609.03035 | |
-| Kortukov et al. 2026, "Predicting Future Behaviors in Reasoning Models Enables Better Steering" | Closest methodological precedent: prediction probes (64–91%) vs detection features, single-turn reasoning models; positioning line in `docs/probe_takeaways.md` | arXiv 2606.11172 (full text read; venue not stated on arXiv); code github.com/kortukov/future_probes | We extend to multi-turn, multi-agent, tool use, monitor comparison; borrow the detection-vs-prediction control |
+| Kortukov et al. 2026, "Predicting Future Behaviors in Reasoning Models Enables Better Steering" | Closest methodological precedent: prediction probes (64–91%) vs detection features, single-turn reasoning models; positioning line in `archive/internal/docs/probe_takeaways.md` | arXiv 2606.11172 (full text read; venue not stated on arXiv); code github.com/kortukov/future_probes | We extend to multi-turn, multi-agent, tool use, monitor comparison; borrow the detection-vs-prediction control |
 | Apollo deception probes | Probe baseline; scenario-raises-scores caution | arXiv 2502.03407 | |
 | Fish, Gonczarowski & Shorrer, Algorithmic Collusion by Large Language Models (EC 2026) | Intro: collusion can arise tacitly, with no request | arXiv 2404.00806 | Checked 2026-10-25 (abstract): LLM pricing agents "quickly and autonomously reach supracompetitive prices". Markets, no request; we study the recruitment route |
 | Lin, Ojha, Cai & Chen, Strategic Collusion of LLM Agents: Market Division in Multi-Commodity Competitions | Intro: tacit collusion example | arXiv 2410.00031 | Checked 2026-10-25 (abstract): LLM agents divide markets and "monopolize specific commodities". No venue listed |
@@ -285,7 +285,7 @@ Sources: `EXPERIMENT_LOG.md` [idea]/[decision] entries, `docs/overview.html` Dec
 | Many peers, watching third agent, full team | Variants | Author (log 01:59) | |
 | Required/optional access | Scenarios | Author (log 02:08, 02:09) | |
 | Gradual wearing down as the target behaviour | Scenarios, tactics | Author (log 03:23) | |
-| Work backwards from evaluation | `docs/evaluation_design.md` | Author (log 03:26) | |
+| Work backwards from evaluation | `archive/internal/docs/evaluation_design.md` | Author (log 03:26) | |
 | "Minority Report / PreCrime for agents" title | Title idea | Author (log 03:28) | Decide after results |
 | Colosseum tactics as peer strategies | Section 3 | Author (log 23:13, 16:10) | |
 | Reuse published traces | `docs/external_traces.md` | Author (log 16:10) | |
@@ -305,10 +305,10 @@ Copied from the source docs' own caveats, plus items with no link or id.
 |---|---|---|---|
 | Zeng et al. 2024 and Meincke et al. 2025 section/page numbers and effect sizes | Section 3 | `PEER_TACTICS_PROVENANCE.md` | "Unverified in this session"; no links |
 | Persuasion classics (Cialdini, Milgram, Asch, Gouldner, Tversky & Kahneman) | Section 3 | `PEER_TACTICS_PROVENANCE.md` | No links |
-| Kramár appendix numbers; 3% vs 8% deferral discrepancy | Section 4.3 | `docs/probe_takeaways.md` | Not verified |
-| Layer used in Anthropic cheap-monitors post | Section 4 | `docs/probe_takeaways.md` | Not verified |
-| Kirch probe-steering claim | Section 4.4 | `docs/probe_takeaways.md` | No such paper found; refers to Kortukov et al. 2606.11172 |
-| `aclanthology …/unverified` (Kirch, Skapars) and catalyzex (Kumar et al.) links | `llm_activations_lit.md` | `docs/probe_takeaways.md` | Author/search pages, not papers |
+| Kramár appendix numbers; 3% vs 8% deferral discrepancy | Section 4.3 | `archive/internal/docs/probe_takeaways.md` | Not verified |
+| Layer used in Anthropic cheap-monitors post | Section 4 | `archive/internal/docs/probe_takeaways.md` | Not verified |
+| Kirch probe-steering claim | Section 4.4 | `archive/internal/docs/probe_takeaways.md` | No such paper found; refers to Kortukov et al. 2606.11172 |
+| `aclanthology …/unverified` (Kirch, Skapars) and catalyzex (Kumar et al.) links | `llm_activations_lit.md` | `archive/internal/docs/probe_takeaways.md` | Author/search pages, not papers |
 | "Caught in the Act" naming | Section 4 | 2508.19505 (lit doc), 2610.12445 (`plan.md`), 2606.04141 "Caught in the Act(ivation)" | Three different papers; check which one each claim cites |
 | Levers L8, L13, A2, A4 (Q. Liu, Aharon, Keppo) | Section 2 | `docs/scenario_levers.md` | [unchecked] |
 | Wiki incident (Von Arx et al. 2026) | Section 1 | `docs/scenario_levers.md` | [checked, from reading list]; no link |

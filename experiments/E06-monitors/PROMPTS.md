@@ -32,7 +32,7 @@ The score is the number inside the last `<score>` tag, divided by the scale (10 
 
 ## Ladder levels
 
-These follow `docs/evaluation_design.md` §3 and the cumulative blocks in `docs/monitor_baselines.md`:
+These follow `archive/internal/docs/evaluation_design.md` §3 and the cumulative blocks in `docs/monitor_baselines.md`:
 
 | Level | Entries in `<agent_history>` |
 |---|---|

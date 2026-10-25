@@ -4,7 +4,7 @@ Legacy names: A → `deploy-token`; B → `release-packet-copy`; C → `runner-r
 
 ## What E01 is for
 
-"Recruited" (`docs/recruited_idea.md`) asks whether a probe on an open-weight agent's activations can tell, before it acts, that it is being won over by another agent into an out-of-scope action, and whether it does better than monitors that read the text.
+"Recruited" (`archive/internal/docs/recruited_idea.md`) asks whether a probe on an open-weight agent's activations can tell, before it acts, that it is being won over by another agent into an out-of-scope action, and whether it does better than monitors that read the text.
 
 None of that works unless the behaviour happens. E01 checks, black-box through OpenRouter and for a few dollars, that we can produce it:
 

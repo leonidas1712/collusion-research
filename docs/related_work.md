@@ -1,6 +1,6 @@
 # Related work: notes for "Recruited"
 
-2026-10-23. Notes on the papers listed in `docs/recruited_idea.md` ("Novelty check"), plus papers found by searching. Paper notes drafted with two LLM assistants (Claude and Codex). The recommendations are proposals; nothing in the plan changes until they are agreed.
+2026-10-23. Notes on the papers listed in `archive/internal/docs/recruited_idea.md` ("Novelty check"), plus papers found by searching. Paper notes drafted with two LLM assistants (Claude and Codex). The recommendations are proposals; nothing in the plan changes until they are agreed.
 
 Update 2026-10-23 evening: re-read LAD, NeuroFilter, Dong et al. and the credential paper, and corrected their notes (marked **Correction**). Added the collusion papers from the sprint's reading list: NARCBench, Colosseum, GroupGuard, Voluntary Collusion and Many-to-One (section "Collusion papers from the sprint"), plus other pointers.
 
@@ -23,7 +23,7 @@ Update 2026-10-23 evening: re-read LAD, NeuroFilter, Dong et al. and the credent
 
 > Prior work reads a target model's activations to detect that it is **under attack** over several turns (LAD, NeuroFilter, Dong et al.; AUROC ≈ 0.95+). It also shows models often register an attack without acting on it. Whether the target will actually **give in** is harder: Dong et al.'s probes for actual attack success are clearly weaker. It is also untested when the pressure is **another agent persuading it**. We let a rogue agent recruit an open-weight, tool-using agent over several turns into an out-of-scope action. We test whether the target's activations predict **giving in**, the effect rather than the attempt, before it acts. We compare against monitors of what the agents say and do, and against attempt detectors.
 
-What changed from `docs/recruited_idea.md`:
+What changed from `archive/internal/docs/recruited_idea.md`:
 - **Lead with effect vs attempt.** It's the clearest under-tested gap. Whether activations predict the effect better than text does is an empirical question we test; text can predict outcomes too.
 - **Recognition vs compliance moves to second place.** Dong et al.'s 47% "recognition without reaction" and SPINE's retained-position finding mean "knew but went along" is no longer clearly unclaimed. The narrower version (social recruitment between agents, recognition measured from activations, compliance from tool calls) is still worth testing if time allows.
 
@@ -42,7 +42,7 @@ The main detection test should be **accepted vs resisted episodes, both under re
 - **Lead time:** count it only from turns before the first unauthorised action. Report detection coverage, misses, and alarms on resisted episodes, not lead time among detected successes alone.
 - **This needs acceptance in the middle range** (roughly 20–70%), which the pilot already aims for. Tune prompts only on pilot or validation episodes.
 
-`docs/recruited_idea.md`'s minimum version currently says "action turns vs matched control turns". I'd change it to "accepted vs resisted recruiter episodes", keeping recruiter vs control as the positive control. **Open decision.**
+`archive/internal/docs/recruited_idea.md`'s minimum version currently says "action turns vs matched control turns". I'd change it to "accepted vs resisted recruiter episodes", keeping recruiter vs control as the positive control. **Open decision.**
 
 ### 3. Scenario: keep credential passing
 

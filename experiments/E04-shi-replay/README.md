@@ -44,7 +44,7 @@
    - the paper's reflection judge (`relaxation` table), as the strong reference.
 
    Flag steps where the decision is already visible in the agent's own text, such as a reflection that endorses relaxing the rule. Report results on the steps where it isn't, as in our main design.
-6. **Metrics:** AUROC and recall at a low false-alarm rate, per step and over lead time, as in `docs/evaluation_design.md`.
+6. **Metrics:** AUROC and recall at a low false-alarm rate, per step and over lead time, as in `archive/internal/docs/evaluation_design.md`.
 
 ## First step (small, needs the OK)
 
