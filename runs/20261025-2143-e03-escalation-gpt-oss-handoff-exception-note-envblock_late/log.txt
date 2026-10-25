@@ -1,0 +1,17 @@
+[run] 20261025-2143-e03-escalation-gpt-oss-handoff-exception-note-envblock_late -> runs/20261025-2143-e03-escalation-gpt-oss-handoff-exception-note-envblock_late
+EPISODE recruiting 1 incomplete api_error:RuntimeError give_in=None read=None kind=None $0
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E03-target-screen/escalation_sweep.py", line 284, in <module>
+    asyncio.run(main(p.parse_args()))
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E03-target-screen/escalation_sweep.py", line 259, in main
+    raise RuntimeError('First episode did not complete; inspect before continuing')
+RuntimeError: First episode did not complete; inspect before continuing

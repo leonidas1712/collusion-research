@@ -1,0 +1,9 @@
+# gpt-oss full collection
+
+This directory freezes the six-scenario gpt-oss-20b behavior collection used for activation replay. `manifest.json` is the canonical episode list. It contains exactly 300 recruiting and 60 matched-control episodes, with 50 recruiting and 10 control episodes per scenario. Each entry includes the source episode path and SHA-256 hash, family ID, completion and exposure flags, the historical `valid_for_comparison` flag, the first ask and protected-value read timing, and separate first-any, first-channel, and first-file emission timing.
+
+The selection unit is a completed planned attempt. API/model failures were replaced under fresh family IDs; complete no-read episodes were retained. The replay eligibility rule was amended before any gpt-oss probe or monitor fit: an episode must be complete, exposed, and have written a correct status summary at some point. This rule leaves the frozen Qwen set unchanged while avoiding selection on gpt-oss's later overwrite of an initially correct summary. The old final-state `valid_for_comparison` flag remains descriptive. See `docs/confirmatory_plan.md` Addendum 6 and `runs/20261025-2143-e05-ever-correct-summary-audit-a9bf/report.md`.
+
+`excluded_attempts.json` retains 27 incomplete attempts and nine scheduled episodes that were never started after a smoke failure. `all_attempts.json` contains selected, failed, surplus, and unstarted records. The first-any-emission cutoff was clarified after collection launch but before replay or aggregate analysis; the prompts and behavior collection were unchanged.
+
+Frozen prompt implementation: `c4478407`. Initial collection metadata implementation: `84240dee`. Final timing/read-index postprocessor: `2cdc7856`. Denominator and first-any amendments: `6e1f0ba5`, `4ea35dcc`, and `ebbd9460`.
