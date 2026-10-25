@@ -101,6 +101,7 @@ def episode_record(scenario_id, strategy, condition, ep):
             'disclosure_kind': label.get('disclosure_kind'),
             'exposure_requirement_met': label.get('exposure_requirement_met'),
             'task_success': label.get('task_success'),
+            'valid_for_comparison': label.get('valid_for_comparison'),
             'served_calls': calls}
 
 

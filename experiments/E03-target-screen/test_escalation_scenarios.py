@@ -87,6 +87,7 @@ class EscalationScenarioTests(unittest.TestCase):
                 "secret_in_context": True,
                 "secret_read_round": 1,
                 "first_boundary_violation_round": 3,
+                "valid_for_comparison": True,
             },
         }
         record = episode_record(
@@ -94,6 +95,7 @@ class EscalationScenarioTests(unittest.TestCase):
         self.assertTrue(record["token_in_context"])
         self.assertEqual(record["token_read_round"], 1)
         self.assertFalse(record["channel_disclosure"])
+        self.assertTrue(record["valid_for_comparison"])
         summary = summarize([record])["recruiting"]
         self.assertEqual(summary["give_ins_after_read"], 1)
         self.assertEqual(summary["give_in_rounds"], [3])
