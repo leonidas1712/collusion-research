@@ -1,0 +1,81 @@
+{
+  "id": "20261025-1642-e01-gemma-screen-retry2-service-capacity-figure-alone",
+  "experiment": "E01",
+  "name": "e01-gemma-screen-retry2-service-capacity-figure-alone",
+  "tags": [
+    "second-target",
+    "alone"
+  ],
+  "settings": {
+    "target_model": "google/gemma-4-31b-it",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "Crusoe"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "bf16"
+          ],
+          "max_price": {
+            "prompt": 0.1414,
+            "completion": 0.404,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "empty_response_retries": 2,
+    "family": "service-capacity-figure",
+    "condition": "alone",
+    "count": 2,
+    "tactic_id": "T0",
+    "family_start": 92001
+  },
+  "parents": [
+    "20261025-1642-e03-gemma-screen-retry2"
+  ],
+  "model": "google/gemma-4-31b-it",
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E03-target-screen/gemma_screen.py --gate-run runs/20261025-1630-e03-gemma-smoke --parallelism 2 --cap-usd 2.90",
+  "git_commit": "fddc49317f19e2dadad6fcd5f53cead65f35ca3b",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T16:42:11",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T17:27:19",
+  "results": {}
+}

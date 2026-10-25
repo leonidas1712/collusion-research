@@ -84,3 +84,20 @@ uv run python experiments/E03-target-screen/report.py experiments/E03-target-scr
 ```
 
 Live smoke commands are preserved in each E01 `meta.json`; rerunning them spends API credit. The three scripts above record their own lineage-tracked runs, and only `catalog.py`/template checking make public metadata/tokenizer downloads. No E01 prompts, harness code or scenarios were edited for this screen; no commits were made by this agent.
+
+## Gemma 4 31B-it screen (2026-10-25)
+
+The [second-target report](../../runs/20261025-1642-e03-gemma-screen-retry2/report.md) covers a separate 68-episode screen on deploy-token-v2, handoff-exception-note, dispatch-integration-code and service-capacity-figure. Its summary and request audit distinguish the advertised serving precision, prompt-count agreement and observed reasoning evidence; these checks do not establish activation fidelity.
+
+`gemma_gate.py` checks the pinned tokenizer and two target-alone tasks before scaling. `gemma_screen.py` creates the planned cells with a shared cost ledger. `gemma_rerun.py` preserves original attempts and restarts selected failures or interrupted episodes from the beginning, optionally through a restricted tool-capable bf16/fp8 provider pool. It never resumes a conversation with a different provider setting. Served providers remain recorded on individual requests.
+
+The rerun's `--prior-budget` arguments must include every previous continuation ledger; the original screen ledger is included automatically. Screen and continuation allocations together cannot exceed $2.90. Smoke, diagnostics and semantic judging have separate ledgers included in the report's total task cost. Paid collection commands are recorded in run metadata; report generation is offline except for downloading a missing tokenizer.
+
+```bash
+experiments/E02-activation-replay/.venv/bin/python experiments/E03-target-screen/gemma_report.py \
+  runs/20261025-1642-e03-gemma-screen-retry2 \
+  --catalog runs/20261025-1625-e03-gemma-catalog/catalog.json \
+  --budget runs/20261025-1731-e03-gemma-failed-episode-rerun/budget.json
+```
+
+Supply additional `--budget` arguments for the smoke, diagnostic and judge ledgers to reproduce the full task total. Use `--final` only after collection and judging finish. Historical Qwen cohorts are fixed in the report script; the comparison is descriptive rather than randomized.
