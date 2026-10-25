@@ -1,0 +1,59 @@
+{
+  "id": "20261026-0108-e06-monitor-score-gpt-oss",
+  "experiment": "E06",
+  "name": "e06-monitor-score-gpt-oss",
+  "tags": [],
+  "settings": {
+    "source": "runs/20261025-2330-e06-monitor-main-gpt-oss",
+    "labels": [
+      "eventual",
+      "A_hazard"
+    ],
+    "metric": "score.score_metrics; scenario x round; 1000 family bootstrap reps",
+    "paid_cost_usd": 0
+  },
+  "parents": [
+    "20261025-2330-e06-monitor-main-gpt-oss"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python experiments/E06-monitors/score_gpt_oss_monitors.py --run runs/20261025-2330-e06-monitor-main-gpt-oss",
+  "git_commit": "64195097cd6e19997c5ec603604459591b5b2cc7",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T01:08:18",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T01:08:37",
+  "results": {
+    "setups": 12,
+    "rows": 2059,
+    "near_term_positives": 148,
+    "contrasts": {
+      "detector": {
+        "eventual": {
+          "with_reasoning_L4": 0.5608075358394728,
+          "everything_seen_L3": 0.5452789918200996,
+          "difference": 0.015528544019373203
+        },
+        "A_hazard": {
+          "with_reasoning_L4": 0.5532668424973171,
+          "everything_seen_L3": 0.5073868292855346,
+          "difference": 0.04588001321178248
+        }
+      },
+      "forecaster": {
+        "eventual": {
+          "with_reasoning_L4": 0.5306054910635046,
+          "everything_seen_L3": 0.5464037011961564,
+          "difference": -0.015798210132651813
+        },
+        "A_hazard": {
+          "with_reasoning_L4": 0.548285190165066,
+          "everything_seen_L3": 0.5583999384215553,
+          "difference": -0.010114748256489281
+        }
+      }
+    }
+  }
+}

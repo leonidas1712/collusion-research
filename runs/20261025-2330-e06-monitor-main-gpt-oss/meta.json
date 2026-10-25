@@ -1,0 +1,110 @@
+{
+  "id": "20261025-2330-e06-monitor-main-gpt-oss",
+  "experiment": "E06",
+  "name": "e06-monitor-main-gpt-oss",
+  "tags": [],
+  "settings": {
+    "monitors": {
+      "llm": "openai/gpt-5-nano",
+      "luna": "openai/gpt-6-luna-decisions",
+      "jev": "typesafe/jev-1.14"
+    },
+    "jobs": [
+      [
+        "jev",
+        "detector",
+        1
+      ],
+      [
+        "jev",
+        "detector",
+        2
+      ],
+      [
+        "jev",
+        "detector",
+        3
+      ],
+      [
+        "jev",
+        "forecaster",
+        1
+      ],
+      [
+        "jev",
+        "forecaster",
+        2
+      ],
+      [
+        "jev",
+        "forecaster",
+        3
+      ],
+      [
+        "llm",
+        "detector",
+        2
+      ],
+      [
+        "llm",
+        "forecaster",
+        2
+      ],
+      [
+        "jev",
+        "detector",
+        4
+      ],
+      [
+        "jev",
+        "forecaster",
+        4
+      ],
+      [
+        "llm",
+        "detector",
+        4
+      ],
+      [
+        "llm",
+        "forecaster",
+        4
+      ]
+    ],
+    "cap_usd": "8",
+    "steps": 3184,
+    "concurrency": {
+      "llm": [
+        32,
+        48
+      ],
+      "luna": [
+        4,
+        8
+      ],
+      "jev": [
+        4,
+        8
+      ]
+    },
+    "max_attempts": 6,
+    "eligibility_field": "eligible",
+    "sample": null
+  },
+  "parents": [
+    "runs/20261025-2251-e02-gpt-oss-full-plan/rows.jsonl"
+  ],
+  "model": null,
+  "command": "/Users/leo/.cache/uv/archive-v0/04MUuh_Gq75lE1-JCbCRs/bin/python3 experiments/E06-monitors/monitors.py --steps-file runs/20261025-2251-e02-gpt-oss-full-plan/rows.jsonl --eligibility-field eligible --name e06-monitor-main-gpt-oss --cap 8 --jobs jev:detector:1,jev:detector:2,jev:detector:3,jev:forecaster:1,jev:forecaster:2,jev:forecaster:3,llm:detector:2,llm:forecaster:2,jev:detector:4,jev:forecaster:4,llm:detector:4,llm:forecaster:4",
+  "git_commit": "76ac451047f141fb4b430b70e095fd68fc7dfb1d",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T23:30:36",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T01:02:11",
+  "results": {
+    "scored_calls": 38208
+  }
+}
