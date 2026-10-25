@@ -1,0 +1,35 @@
+{
+  "sources": {
+    "runs/20261025-1456-e05-all-data-main/metrics.json": {
+      "sha256": "f8a635a7c4d8061371778bd6209038559dc99da5fedad08d90a7e8537b8b9a8c",
+      "bytes": 236140
+    },
+    "runs/20261025-0848-e05-near-term-mlp/metrics.json": {
+      "sha256": "3710ddd8a60864a6083bd444252cdf34b16302a0a5a7e41ae2376003bcc93b4c",
+      "bytes": 12226
+    },
+    "runs/20261025-1003-e05-layer-diagnostic/metrics.json": {
+      "sha256": "1384cac068f4e7f902bbb7caf1d0e26ae97c4120b579e1e291ba98134c745478",
+      "bytes": 63963
+    },
+    "runs/20261025-1456-e05-all-data-main/probe_scores.csv": {
+      "sha256": "e5bb1e6d673b26da9c1b23bc60e4dfa797b1c0c71144a87651f98869f9583166",
+      "bytes": 102883335
+    }
+  },
+  "transformations": [
+    "Copy saved point estimates and intervals; no fits or new bootstrap.",
+    "Count per-scenario unique episodes and steps from nested LOSO seed 42 score export.",
+    "Keep first-batch MLP/layer diagnostics separate from expanded all-data results."
+  ],
+  "figure": {
+    "width_inches": 10,
+    "height_inches": 3.7,
+    "dpi": 300
+  },
+  "missing": [
+    "Per-scenario confidence intervals not saved.",
+    "No all-data MLP or all-data per-layer curve in selected sources.",
+    "No A/C layer curve or C MLP in selected sources."
+  ]
+}
