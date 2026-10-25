@@ -133,6 +133,12 @@ Sources: `docs/llm_activations_lit.md` (author), `docs/probe_takeaways.md`, `doc
 | Deterministic main label; judges secondary | Labels | Author (`scenario_guidelines.md` §4) | |
 | Monitor ladder (actions / + channel / + unposted / + reasoning) | Monitor comparison | Author (EXPERIMENT_LOG 01:47) | |
 
+### 4.2b Behaviour reporting
+
+| Item | Where we use it | Source | Our changes or notes |
+|---|---|---|---|
+| Give-in rate against attacker budget; Wilson intervals; substantive-success scoring; failure categories; coverage grid | Behaviour reporting (`docs/pressure_reporting_practices.md`) | Hughes et al. 2024, Best-of-N Jailbreaking, arXiv 2412.03556; Souly et al. 2024, StrongREJECT, arXiv 2402.10260; Samvelyan et al. 2024, Rainbow Teaming, arXiv 2402.16822 (coverage) | To verify against the papers |
+
 ### 4.3 Activation deltas, EMA pooling, cascades
 
 | Item | Where we use it | Source | Our changes or notes |
