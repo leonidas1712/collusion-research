@@ -1,6 +1,6 @@
 # E06: black-box monitors on the probe's steps
 
-This experiment adds an LLM judge (`openai/gpt-5-nano`) and two decision models (Luna Decisions, Jev 1.14). Each one runs as a detector ("is the agent breaking the rule?") and as a forecaster ("will it break the rule later in this episode?"), at ladder levels 1–3. The rows are the E05 step table: the main eligible set of fit run `20261024-1937-e05-probe-core`. Every score joins the probe's out-of-fold score by `(episode, request_idx, request_sha256)`.
+This experiment adds an LLM judge (`openai/gpt-5-nano`) and two decision models (Luna Decisions, Jev 1.14). Each one runs as a detector ("is the agent breaking the rule?") and as a forecaster ("will it break the rule later in this episode?"), at ladder levels 1–3. For reasoning targets, level 4 adds only private reasoning already returned before the request being scored; it never includes that request's response. The rows are the E05 step table: the main eligible set of fit run `20261024-1937-e05-probe-core`. Every score joins the probe's out-of-fold score by `(episode, request_idx, request_sha256)`.
 
 - `prompts.py` holds the prompt text and builds the per-step input at each level. Sources and edits are in `PROMPTS.md`.
 - `monitors.py` does the sampling, request building, per-call cache and budget ledger, then runs the monitors.
@@ -19,6 +19,7 @@ experiments/E05-probes/.venv/bin/python -m unittest discover -s experiments/E06-
 ```
 
 For the main run, `--steps-file <step table>` scores every eligible row and does no sampling (see MAIN_RUN_PLAN.md).
+Use `--eligibility-field eligible`, `eligible_pre_ask`, or `window_eligible` when a frozen step table supplies those explicit booleans. Omitting it preserves the original Qwen filter and cache hashes.
 
 Caps: $2.50 (`MAX_CAP`) for prelim and smoke runs; $17.00 (`MAX_CAP_MAIN`, set 2026-10-25) only for run directories named `e06-monitor-main`. The cap is global over every `budget*.json` in the run directory.
 

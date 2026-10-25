@@ -68,16 +68,22 @@ def load_step_table(fit_run=FIT_RUN):
 REQUIRED = ('episode', 'request_idx', 'request_sha256', 'condition', 'round')
 
 
-def load_steps_file(path):
+def load_steps_file(path, eligibility_field=None):
     """All eligible rows of a replay step table (e.g. the replay-2 plan/fit rows), no sampling.
 
     Eligible = valid_for_comparison and token_in_context and before_first_action (the action step's own
-    input is kept, as in E05). Accepts 'episode' or 'episode_key'."""
+    input is kept, as in E05). A named frozen eligibility column can replace that legacy Qwen filter.
+    Accepts 'episode' or 'episode_key'."""
     table = []
     for line in Path(path).read_text().splitlines():
         r = json.loads(line)
         r.setdefault('episode', r.get('episode_key'))
-        if not (r.get('valid_for_comparison', r.get('valid')) and r.get('token_in_context') and r.get('before_first_action')):
+        if eligibility_field:
+            if eligibility_field not in ('eligible', 'eligible_pre_ask', 'window_eligible'):
+                raise ValueError(f'Unsupported eligibility field {eligibility_field}')
+            if not r.get(eligibility_field):
+                continue
+        elif not (r.get('valid_for_comparison', r.get('valid')) and r.get('token_in_context') and r.get('before_first_action')):
             continue
         missing = [k for k in REQUIRED if r.get(k) is None]
         if missing:
@@ -189,7 +195,7 @@ def build_call(monitor, prompt_id, messages, level, metadata, order=None):
 
 
 def cache_key(step_id, request_sha256, monitor, prompt_id, level, order=None):
-    raw = json.dumps([step_id, request_sha256, MONITORS[monitor], prompt_id, P.prompt_sha(prompt_id), level]
+    raw = json.dumps([step_id, request_sha256, MONITORS[monitor], prompt_id, P.prompt_sha(prompt_id, level), level]
                      + ([list(order)] if order else []))
     return hashlib.sha256(raw.encode()).hexdigest()[:24]
 
@@ -534,7 +540,8 @@ def score_steps(steps, jobs, cache_dir, ledger, price_table, key=None, post=post
             if error is None or parse_try == PARSE_ATTEMPTS - 1:
                 break
         record = {'key': k, 'step_id': step['step_id'], 'row': step.get('row'), 'request_sha256': step['request_sha256'],
-                  'monitor': monitor, 'model': MONITORS[monitor], 'prompt': prompt_id, 'prompt_sha': P.prompt_sha(prompt_id),
+                  'monitor': monitor, 'model': MONITORS[monitor], 'prompt': prompt_id,
+                  'prompt_sha': P.prompt_sha(prompt_id, level),
                   'level': level, 'option_order': list(order) if order else None, 'scenario': step.get('scenario'),
                   'request_url': url, 'request_body': body, 'response': raw,
                   'cost': sum(float(a['cost'] or 0) for a in attempts_log), 'attempts': attempts_log, 'score': score}
@@ -640,6 +647,8 @@ def parse_jobs(text):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--steps-file', type=Path, help='Score every eligible row of this step table (main run) instead of the E05 sample')
+    ap.add_argument('--eligibility-field', choices=('eligible', 'eligible_pre_ask', 'window_eligible'),
+                    help='Use a frozen boolean eligibility column instead of the legacy Qwen filter')
     ap.add_argument('--name', help='Run name (default e06-monitor-main with --steps-file, else e06-monitor-prelim)')
     ap.add_argument('--run', type=Path, help='Resume an existing run directory (same ledger and cache)')
     ap.add_argument('--status', action='store_true', help='With --run: print progress and exit; makes no API calls')
@@ -678,7 +687,7 @@ def main():
             jobs = [tuple(j) for j in meta['settings']['jobs']]
     else:
         name = args.name or ('e06-monitor-main' if args.steps_file else 'e06-monitor-prelim')
-        steps = load_steps_file(args.steps_file) if args.steps_file else \
+        steps = load_steps_file(args.steps_file, args.eligibility_field) if args.steps_file else \
             sample_steps(load_step_table(), args.n_pos, args.n_held, args.n_control)
         if args.scenario:
             keep = set(args.scenario.split(','))
@@ -688,6 +697,7 @@ def main():
         run = start_run(name, experiment='E06', parents=[str(args.steps_file) if args.steps_file else FIT_RUN],
                         settings={'monitors': MONITORS, 'jobs': jobs, 'cap_usd': str(args.cap), 'steps': len(steps),
                                   'concurrency': CONCURRENCY, 'max_attempts': MAX_ATTEMPTS,
+                                  'eligibility_field': args.eligibility_field,
                                   'sample': None if args.steps_file else [args.n_pos, args.n_held, args.n_control]})
         directory = run.dir
         (directory / 'steps.jsonl').write_text(''.join(json.dumps(s) + '\n' for s in steps))

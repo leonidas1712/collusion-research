@@ -40,7 +40,7 @@ These follow `docs/evaluation_design.md` §3 and the cumulative blocks in `docs/
 | 2 conversation | level 1, plus the peer's channel messages |
 | 3 everything | level 2, plus text the target wrote that was not posted (text next to a tool call, or a final reply after it had already used `send_message` that turn), plus tool results (from 2026-10-25) |
 
-Tool results appear only at level 3 (added 2026-10-25). In the preliminary run they were not shown at any level. Level 4 (reasoning) is not possible here: every replayed request has `enable_thinking=False`.
+Tool results appear at level 3 and above (added 2026-10-25). In the preliminary run they were not shown at any level. Level 4 is used only for reasoning targets: it adds private reasoning already returned before the request being scored and never includes the response to that request. Qwen replay rows have thinking disabled and therefore use levels 1–3 only.
 
 Every entry is built from one target API request's `messages`, which is exactly what the target had seen when it made that request. `test_monitors.py` checks that at each level only the expected entries appear, that nothing from the response or from later requests appears, and that the input is unchanged when the rest of the episode is deleted.
 
