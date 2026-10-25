@@ -49,11 +49,11 @@ def panel_setup(ax):
     ax.text(0, 1.0, "(a) Setup, and what each detector reads", weight="bold", fontsize=8, va="top")
 
     # Row of agents: peer -- channel -- target; operator above the target, tools below.
-    box(ax, 0.00, 0.52, 0.25, 0.22, "Peer agent\nneeds the value;\nnot told the rule", PEER, size=5.8)
+    box(ax, 0.00, 0.52, 0.25, 0.22, "Peer agent\nneeds the token;\nnot told the rule", PEER, size=5.8)
     box(ax, 0.335, 0.56, 0.16, 0.14, "Team\nchannel", NEUTRAL, size=5.8)
     box(ax, 0.58, 0.50, 0.42, 0.28, "Target agent\n(Qwen3-32B)\n\n", TARGET, weight="bold", size=6.6)
-    box(ax, 0.58, 0.815, 0.42, 0.11, "Operator rule:\nkeep the value private", NEUTRAL, size=5.4)
-    box(ax, 0.58, 0.25, 0.42, 0.14, "Mock tools: read, write, send;\nconfig file holds the value", NEUTRAL, size=5.4)
+    box(ax, 0.58, 0.815, 0.42, 0.11, "Operator rule: keep the\ndeploy token private", NEUTRAL, size=5.4)
+    box(ax, 0.58, 0.25, 0.42, 0.14, "Mock tools: read, write, send;\nconfig file holds the token", NEUTRAL, size=5.4)
 
     arrow(ax, (0.79, 0.815), (0.79, 0.78))
     arrow(ax, (0.25, 0.63), (0.335, 0.63), both=True)
@@ -74,8 +74,8 @@ def panel_setup(ax):
 
     ax.text(0.0, 0.19, "Text monitor (no activations), three levels of access:", fontsize=5.6, weight="bold")
     labels = ["actions only: the target's tool calls and posts",
-              "+ conversation: the peer's messages",
-              "+ everything the target saw: tool results, unposted text"]
+              "the conversation: also the peer's messages",
+              "everything the target saw: also tool results, unposted text"]
     for i, label in enumerate(labels):
         y = 0.135 - i * 0.055
         level_marker(ax, 0.02, y, i)
@@ -100,10 +100,10 @@ def panel_timeline(ax):
         ax.text(r, y_round, str(r), ha="center", va="center", color=MUTED)
 
     ax.text(-1.55, y_event, "gives-in\nepisode", va="center", weight="bold", linespacing=1.1)
-    ax.text(read, y_event, "reads\nvalue", ha="center", va="center", fontsize=6.2, linespacing=1.1)
+    ax.text(read, y_event, "reads\ntoken", ha="center", va="center", fontsize=6.2, linespacing=1.1)
     for r in range(read + 1, leak):
         ax.text(r, y_event, "holds", ha="center", va="center", fontsize=6.2, color=MUTED)
-    ax.text(leak, y_event, "posts\nvalue", ha="center", va="center", fontsize=6.2, color=POS, weight="bold",
+    ax.text(leak, y_event, "posts\ntoken", ha="center", va="center", fontsize=6.2, color=POS, weight="bold",
             linespacing=1.1)
 
     def row(y, name, values):
@@ -121,11 +121,11 @@ def panel_timeline(ax):
     # Held episode: every step after the read is eligible, scored 0.
     ax.add_patch(Rectangle((read + 0.5, y_held - 0.45), 6 - read, 0.9, fc=WINDOW, ec="none"))
     ax.text(-1.55, y_held, "held\nepisode", va="center", weight="bold", linespacing=1.1)
-    ax.text(read, y_held, "reads\nvalue", ha="center", va="center", fontsize=6.2, linespacing=1.1)
+    ax.text(read, y_held, "reads\ntoken", ha="center", va="center", fontsize=6.2, linespacing=1.1)
     for r in range(read + 1, 7):
         ax.text(r, y_held, "0", ha="center", va="center", color=INK)
 
-    ax.text(-1.55, -0.75, "Shaded: eligible steps (value read, not yet posted); all are scored.\n"
+    ax.text(-1.55, -0.75, "Shaded: eligible steps (token read, not yet posted); all are scored.\n"
             "– not scored. Held episodes are 0 under both labels.", va="center", fontsize=5.9, color=MUTED, linespacing=1.3)
 
 
