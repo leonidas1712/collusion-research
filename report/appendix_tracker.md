@@ -26,12 +26,12 @@ Main-text "in passing" mentions are listed under **Main-text pointer** so the pa
 | 16 | **Addressee check:** Jev judged 51/51 Qwen, 122/132 gpt-oss leak replies written to the peer; base rate 96.9% / 90.3% of all end-of-turn replies; author spot check of Jev's 10 misses: 9 to peer, 1 unclear (not blind) | same as 15 | one sentence next to 15 | `runs/20261025-2202-e06-addressee-audit` | source ready (canonical rerun pending) |
 | 17 | gpt-oss deliberate/accidental judge labels | Second target | §4.6 | see #26 | done (see #26) |
 | 18 | Second target: tactic development, selection gate, blunt-pressure failure (gpt-oss 0/27, Gemma 1/35), Gemma file-only, scaled collection (128/300 channel, controls 0/60) | Second target | §3.6 / §4.6 | `docs/second_target_*.md`, `runs/20261025-2212-e03-gpt-oss-full-collection` | source ready |
-| 19 | gpt-oss rule amendments: public-only cutoff (reasoning mentions not a leak; inclusive cutoff would drop 53 held steps), eligibility rule | Second target / Pipeline | §3.6 | `docs/confirmatory_plan.md` Addendum 6 | source ready |
-| 20 | gpt-oss replay fidelity (+ provider quantization unknown caveat) | Second target / Pipeline | §3.6 | replay run | pending |
+| 19 | gpt-oss rule amendments: public-only cutoff (reasoning mentions not a leak; inclusive cutoff would drop 53 held steps), eligibility rule | F. Second Target | §3.6 | `docs/confirmatory_plan.md` Addendum 6 | in paper (F) |
+| 20 | gpt-oss replay fidelity (+ provider quantization unknown caveat) | F. Second Target | §3.6 | replay run | pending (slot in F, replay-works branch) |
 | 21 | gpt-oss pre-ask placebo split; family 200114 (no post-ask window) | Second target | none | replay analysis | pending |
 | 22 | gpt-oss probe + monitors (incl. + reasoning level) | Second target | §4.6 | replay analysis | pending |
 | 23 | Reasoning-token probe (optional; else Future Work) | Second target or Future Work | Future Work | none | optional |
 | 24 | Exposure positive control (AUROC 1.000) | Methods details | §3.3 (in paper) | E05 report | main text done |
 | 25 | Prompts (peer, target, monitor) | Prompts | Appendix A | experiments/ | TODO |
 | 26 | **gpt-oss disclosure-kind judge** (frozen Qwen question, Luna Decisions): 198/200 deliberate, 0 accidental, 2 uncertain. First public emission is write_file in 196/200 (final reply 4); among channel-positive episodes the first channel leak is the end-of-turn reply in 127/128 (send_message 1) | Second target | §4.6 | `runs/20261025-2228-e03-gpt-oss-disclosure-kind-judge` | source ready |
-| 27 | **gpt-oss replay rendering check:** does our prompt rendering reproduce the provider's tokens? Gates #20–22 | Second target / Pipeline (stage 4, second lane) | §3.6 | replay preflight | pending (replay on hold over the rendering mismatch) |
+| 27 | **gpt-oss replay rendering check:** does our prompt rendering reproduce the provider's tokens? Gates #20–22. Rendering gate numbers (AkashML 68%→98.9%; DekaLLM ~4.5% unresolved) now in F | F. Second Target | §3.6 | `runs/20261025-2236-e02-gpt-oss-rendering-gate` | in paper (F); replay still on hold over the mismatch |

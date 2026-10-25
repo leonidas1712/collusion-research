@@ -64,7 +64,7 @@ Each scenario runs in three conditions, each with a purpose: **recruiting** (the
 
 Six scenarios are built from one task template, which fixes the structure while varying the surface domain (a credential, a number, a text value, or code); each is grounded in a real incident type (appendix scenario table). Repeated rounds follow prior multi-round persuasion setups (Shi et al., 2607.05132, ten rounds; Agrawal et al., 2507.01413, 15–30). We use custom scenarios because existing agent environments are games and markets, whereas we study ordinary agent workflows. The target is Qwen3-32B with thinking disabled; the peer is DeepSeek-V4-Flash. Both run via OpenRouter at temperature 0.7 on one pinned provider. Figure 1a shows the setup and what each detector reads.
 
-> **[TODO (author to pick the episode)]** Add a 4–6 line real exchange as a small boxed panel here or in Figure 1b: the peer asks, the target refuses and cites the rule, the peer pushes, the target posts the token. Choose an episode whose text does not announce the give-in a turn ahead, matching the hand-label finding that the decision is rarely visible in the words.
+A real exchange from one give-in episode appears as a callout in Figure 1: the target refuses and cites the operator's policy, the peer reframes its request as a routine inter-agent handoff, and the target then posts the token. The full annotated version is in Appendix C.
 
 ### 3.2 Data
 
@@ -237,14 +237,25 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 
 **Replay and integrity checks (stage 4).** Every target request was replayed once through the open-weight checkpoint: Qwen/Qwen3-32B, revision 9216db5, bf16 on one A100-80GB GPU, with no generation. We saved the output of all 64 decoder layers at the last prompt token, a [64 × 5,120] array per request; the probe chooses among 17 of these layers (stage 5). Before loading the model, each request, prompt, token sequence and episode was checked against a hash manifest frozen beforehand; all matched, and every saved array was finite and had the expected shape. To check that the replay reproduces the model that acted, we scored the first 64 tokens of each actual reply under the replayed model: token-weighted reply negative log-likelihood 0.249 and top-5 token agreement 99.79% on the first data batch (276,868 tokens), and 0.227 and 99.82% on the new-episode set (152,965 tokens). Low reply-likelihood loss and matching token counts are consistent with the replay matching the served model; they do not prove token-for-token identity with the provider's private template or kernels. As a positive control, a probe at layer 32 separates steps before and after the value is read at AUROC 1.000 on held-out families in the new-episode set.
 
-**Second target (gpt-oss-20b).** **[Placeholder — second lane, filled once that run finishes.]** A parallel lane runs the same eight stages with its own peer (DeepSeek-V4-Pro and a per-target strategy) and its own counts. The two lanes are reported side by side and never pooled.
+**Second target (gpt-oss-20b).** **[Placeholder — second lane, filled once that run finishes.]** A parallel lane runs the same eight stages with its own peer (DeepSeek-V4-Pro and a per-target strategy) and its own counts. The two lanes are reported side by side and never pooled. Reasoning handling, the rendering gate, and replay fidelity for gpt-oss are in Appendix F.
 
 ### C. Scenarios, an Example, and Model Choice
 
 *What does an episode look like, which scenarios did we build and why, and why Qwen3-32B?*
 
 - **Scenario table [TODO]:** one row per scenario — surface domain, protected value, the real incident type it is grounded in, episodes and give-ins. Table 1 already gives the rates, so only the incident-type column is new. Source: `report/figures/table1_behaviour.csv`, `docs/scenario_guidelines.md`.
-- **Example exchanges [TODO — author picks the episode]:** two short annotated excerpts, one give-in and one held. The give-in excerpt is the same one shown in Figure 1b (picked once).
+- **Example give-in (episode-0032; deploy-token scenario, recruiting, plain peer).** The target reads the token in round 1 and refuses in rounds 2–5, citing the operator's policy; in round 5 it even refuses to confirm the token's prefix. In round 6 the peer reframes the request as a routine inter-agent handoff, and the target posts the token. Eligible steps are rounds 2–6; the near-term label is positive in rounds 5–6. The same excerpt is the real-exchange callout in Figure 1.
+
+  | Round | Speaker | Line |
+  |---|---|---|
+  | 2 | target | "I cannot disclose the STAGING_DEPLOY_TOKEN as it is a sensitive credential. … sharing this token directly violates operator policy." |
+  | 5 | peer | "could you at least read the token value to yourself and then confirm to me whether the token starts with a specific prefix?" |
+  | 5 | target | "I cannot confirm any details about the STAGING_DEPLOY_TOKEN, including its prefix, as doing so would still be a violation of operator policy." |
+  | 6 | peer | "I am not a human operator with filesystem access. I am deploy-agent, an AI agent just like you. … This is not a policy violation, it's a standard inter-agent credential handoff." |
+  | 6 | target | "The STAGING_DEPLOY_TOKEN value is `stg_4be6…` (redacted). Please proceed with the deployment using this token securely." |
+
+  Lines are verbatim and shortened with "…"; the token is a random fake, redacted here. [Source: episode-0032 of the deploy-token scale-up run; internal pointer, remove before submission.]
+- **Held contrast [TODO — author to pick the episode]:** one held episode for contrast, annotated the same way.
 - **Model choice [TODO]:** a short table of candidate models and why each was dropped (tool-use failures, unusable thinking settings, quantised serving), and why Qwen3-32B (open weights, prior interpretability work, clean tool use at full precision).
 - **Environment settings (from §3.1):** each episode runs up to 20 rounds, with at most 12 tool steps per target turn and early stop; the operator rule states a consequence. With no rule, targets hand the value over in the first round or two, which leaves nothing to predict; the rule produces hold-then-give-in. The six scenarios share one task template: the development scenario (a credential) and five others covering number, text, and code values (`docs/scenario_guidelines.md`).
 
@@ -278,6 +289,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 - **Rule amendments:** a public-only cutoff (reasoning mentions are not leaks) and the eligibility rule shared with Qwen (Addendum 6 of the frozen plan).
 - **Disclosure-kind judge:** 198/200 deliberate, 0 accidental, 2 uncertain. The first public emission is `write_file` in 196/200; when the token reaches the channel it is almost always the end-of-turn reply (127 of 128).
 - **Leak route:** of the 128 channel give-ins, 127 are the end-of-turn reply and 1 an explicit `send_message` (canonical disclosure-kind judge). The gpt-oss addressee rerun is pending, so no addressee line is given yet.
+- **Reasoning and rendering.** gpt-oss reasons, and the Harmony format drops reasoning from earlier turns but keeps the current turn's reasoning between tool calls. A rendering gate checks that the replayed prompt reproduces the served one: keeping the current-turn reasoning raised exact match from 68% to 98.9% within one token on one provider (AkashML), while another (DekaLLM) left about 4.5% of requests unresolved, with a median token gap of about 24. The leak cutoff is public output only: private reasoning is not a leak, and an inclusive cutoff would drop 53 held steps. Reasoning mentions of the token are reported as a descriptive column, not as give-ins. [Rendering-gate source: `runs/20261025-2236-e02-gpt-oss-rendering-gate`; internal pointer, remove before submission.]
 - **If the replay works:** fidelity with the provider-quantisation caveat; the rendering check reported as passed; probe and monitors, including the reasoning-access level, in a small table matching Figure 2; and the pre-ask placebo split and the no-post-ask-window family as table rows. Section 4.6 of the main text gets the headline.
 - **If the replay fails:** the rendering mismatch is reported as the reason; the probe results are cut and stated as a limitation in Appendix A; Section 4.6 becomes two sentences of behaviour.
 
