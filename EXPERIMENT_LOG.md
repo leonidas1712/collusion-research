@@ -585,3 +585,16 @@ All paired CIs include 0, including the fold-stratified ones. Logistic stays the
 - Claude subagent: trace viewer gets a per-step monitor panel (real inputs and outputs, toggled per monitor family), loaded lazily from a sidecar.
 - Claude subagent: overview gets the confirmation result and a cross-validation explainer, plus a placeholder for the all-data numbers.
 - APA-70 (replay 3) closed.
+
+### 2026-10-25 ~13:55 SGT — Repo hygiene; viewer monitor panel done; write-up rules from the organisers' help desk
+- **Git:** the small run outputs are committed: reports, metrics, meta, logs, episodes, judgments, labels, rows. The following are no longer tracked: prompts, monitor caches, tokenizers, model configs, diff patches, alarm dumps and probe score exports. Those stay on disk or the Modal volume and are regenerable (`.gitignore`). A new ignored folder, `private/`, holds personal reference notes. Older history still contains the untracked files, so purge or squash before going public.
+- **Viewer (Claude subagent, fa4907ec):** a per-step monitor panel, switched on and off from a pinned bar, with filters by family, role and level.
+  - Each call shows its exact input and output, model, prompt hash and cost.
+  - The panel loads lazily from the sidecar `runs/viewer_monitors/` (188 MB, ignored).
+  - All 93,072 calls were checked against the cache. GPT-5-nano's encrypted reasoning blob is shown as a length marker only.
+- **Organiser answers that affect the write-up:**
+  - The LaTeX, font and spacing can be changed, but the template's section structure and order must stay.
+  - 8 pages including the title and abstract; references, appendices and the LLM-usage statement don't count.
+  - Judges score only work done during the sprint. Mark what existed before it: the first commit is 23 Oct 00:50 SGT, and the log timestamps draw the line.
+  - The project defines "collusion" itself, so write a definition paragraph.
+  - Methodology is scored, not scale; state what the sample can and can't show.
