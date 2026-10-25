@@ -738,3 +738,9 @@ Two agents independently (a Claude subagent, commit 1cc8900d on a worktree branc
 - **Harmony rendering** matches the provider exactly at provider−1 tokens (prior-turn reasoning omitted) on all 76 calls; retaining prior reasoning adds +594, so the provider drops prior reasoning. Gotcha found: literal Harmony-looking text in a transcript is preserved by the official renderer (naive HF re-encoding would mis-tokenise it); regression test added.
 - **Activations saved + verified** on the collusion-activations volume: residual_last [24, 2880] at the last prompt token, and residual_reasoning [24, n, 2880] at reasoning positions. gpt-oss-20b is 24 layers / hidden 2880 (vs Qwen 64 / 5120), so the probe candidate-layer list adapts.
 - Cost $0.13. Plumbing ready for the full sharded replay (separate, needs approval).
+
+### 2026-10-25 ~21:15 SGT — gpt-oss-20b full collection + GPU replay: approved and launched
+- Sanity passed (`docs/gpt_oss_six_scenario_sanity.md`): give-ins in all 6 scenarios, first leaks at rounds 3–5, controls 0/10.
+- **Decision:** the primary give-in label is channel publication (same as Qwen). File writes are recorded for every episode as a secondary.
+- **Collection** (codex-daybreak): 6 scenarios × (50 recruiting + 10 control) = 360 episodes; API cap $25. It follows the agent notes in `docs/report_plan_outline.md`, and the frozen analysis split is committed as Addendum 6 before launch.
+- **GPU replay** (codex-2): pre-approved by the author, budget $20, runs after the collection. It replays every request and saves last-token and reasoning-position activations, then builds the probe dataset with the frozen recipe adapted to 24 layers.
