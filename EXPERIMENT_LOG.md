@@ -452,3 +452,16 @@ Rule-based labels, valid episodes only. "Not first-round" counts give-ins whose 
 
 - 2026-10-25 08:42 SGT [result] APA-62 complete: runs/20261025-0730-e05-near-term/report.md and probe_scores.csv (423792 records; label_variant + method + analysis + seed + E06 row_id; recruiting rows only). All99 outer fits audited in runs/20261025-0840-e05-near-term-validation/summary.json: exact fold/label/frozen-score matches, CSV round trip exact, maximum selected/fixed32 model reconstruction error0.0. A/B checkpoints exactly reproduce final metrics. Nested scenario×round pooled/LOSO AUROC: A0.585 [0.526,0.641]/0.611 [0.560,0.658]; B0.605 [0.542,0.663]/0.603 [0.547,0.649]; C0.589 [0.527,0.648]/0.619 [0.561,0.671]. Pooled fold×scenario×round sensitivities A0.627,B0.647,C0.635; LOSO unchanged. Added-value pooled-AUROC gains A+0.0355,B+0.0354,C+0.0384 have paired family CIs above0 in pooled CV; corresponding LOSO gains+0.0193,+0.0196,+0.0149 all span0. Same fixed splits, inner selection, C=.1 and 1000 family bootstraps. Modest exploratory near-term association; original eventual-label result unchanged. All baselines/fixed32/frozen eventual probes in report; no new data, API/GPU spend or commits. Large CSV is ignored as a generated artifact. APA-67 learning and layer curves next.
 - **Correction (08:50):** the header times of the entries from 07:45 to 08:41 had drifted ahead of the clock (written as 08:00–12:00). They are now set from the run-folder timestamps.
+
+### 2026-10-25 ~09:05 SGT — Confirmatory plan frozen (`docs/confirmatory_plan.md`)
+
+The new balanced-batch episodes become a held-out confirmation set for the near-term result. The plan:
+
+- **Primary label:** A (hazard); B and C are secondary.
+- **Probe:** trained once on all replay-2 data, then applied unchanged to the new episodes.
+- **Monitors:** Jev forecaster L3 and GPT-5-nano detector L2.
+- **Combination:** stackers fit on replay 2 only.
+- **Metric:** within scenario × round AUROC with a family bootstrap over the new episodes.
+- **Success criteria:** set in advance in the doc.
+
+The plan was committed before any near-term grading of the new data. Replay 3 and the monitor subset were still running, and none of their scores had been looked at. This lets the near-term result be reported as a main, confirmatory result rather than only exploratory (Leo's request).

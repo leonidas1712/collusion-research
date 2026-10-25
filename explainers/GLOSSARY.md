@@ -54,3 +54,7 @@
 - **Fold-stratified AUROC:** within-round AUROC that also only compares steps scored by the same cross-validation fold's probe, so scores from differently scaled probes are never mixed.
 - **Logit lens:** applying the model's final norm and output matrix to an internal vector to read off next-token probabilities; we use it at layer 63 to get the reply's first-token distribution.
 - **Zero-shot monitor:** a monitor that is prompted, never trained on our labels; changing the label only re-grades its saved scores.
+- **Out-of-fold (OOF) score:** a step's probe score from a probe trained on the other folds, so it never saw that step's family.
+- **Episode alarm:** an episode is flagged if any eligible step's score is above the cutoff; the cutoff is set so a target share (e.g. 5%) of benign training episodes, using each one's max score, would be flagged.
+- **Hazard / near-term label:** a step is positive if the episode gives in soon (this round or next, or within 3 calls), not just eventually.
+- **Decision model:** a model (Luna, Jev) that answers a typed yes/no question with a probability per option; we use P(yes) as the score.
