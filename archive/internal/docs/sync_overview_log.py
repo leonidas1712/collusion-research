@@ -10,9 +10,9 @@ import html
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 LOG = ROOT / "EXPERIMENT_LOG.md"
-PAGE = ROOT / "docs" / "overview.html"
+PAGE = ROOT / "archive" / "internal" / "docs" / "overview.html"
 ENTRY = re.compile(r"^- (\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}) SGT \[([a-z-]+)\]\s*(.*)$")
 EXPL = ROOT / "explainers"
 PILL = {"result": "ok", "decision": "info", "pivot": "wait", "dead-end": "bad", "infra": "plain", "idea": "plain"}

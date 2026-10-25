@@ -21,7 +21,7 @@ from docx.shared import Inches, Pt, RGBColor
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TEMPLATE = ROOT / "report" / "template.docx"
-DEFAULT_METHODS = ROOT / "report" / "draft_methods.md"
+DEFAULT_METHODS = ROOT / "archive" / "internal" / "report" / "draft_methods.md"
 DEFAULT_FIGURE = ROOT / "runs" / "20261025-1850-e03-behaviour-summary" / "cumulative_give_in.png"
 DEFAULT_OUTPUT = ROOT / "report" / "build" / "methods_layout_test.docx"
 
