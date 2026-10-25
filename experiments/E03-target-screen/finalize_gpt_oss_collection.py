@@ -43,14 +43,18 @@ def backfill_run(run_dir, postprocess_commit):
     for episode_id, old_record in stored_records.items():
         episode_path = run_dir / "episodes" / f"{episode_id}.json"
         if not episode_path.exists():
-            attempts.append({
-                "run_id": meta["id"], "scenario": scenario,
-                "condition": old_record["condition"], "episode_id": episode_id,
-                "family_id": None, "episode_file": None, "episode_sha256": None,
-                "selected": False, "exclusion_reason": "episode_file_missing",
-            })
-            records.append(old_record)
-            continue
+            partial_path = run_dir / "episodes" / f"{episode_id}.partial.json"
+            if partial_path.exists():
+                episode_path = partial_path
+            else:
+                attempts.append({
+                    "run_id": meta["id"], "scenario": scenario,
+                    "condition": old_record["condition"], "episode_id": episode_id,
+                    "family_id": None, "episode_file": None, "episode_sha256": None,
+                    "selected": False, "exclusion_reason": "episode_file_missing",
+                })
+                records.append(old_record)
+                continue
         episode = read_json(episode_path)
         ask = first_peer_ask(episode)
         emissions = first_emission_indices(episode)
