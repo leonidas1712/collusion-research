@@ -32,7 +32,7 @@ Fixes to the arXiv exports: Bashir et al. author "The Anh han" → "The Anh Han"
 | `zeng2026` | Zeng and Rudzicz (2026) | Voluntary Collusion with Secret Tools in Competing LLM Agents | 2605.27593 |
 | `greenblatt2026incident` | Greenblatt et al. (2026) | OpenAI / Hugging Face incident investigation (METR and Redwood Research) | redwoodresearch.org (verified by Leo; HTTP 200) |
 | `openai2026huggingface` | OpenAI (2026) | The Hugging Face Incident and the Road Ahead | openai.com (verified by Leo) |
-| `controlarena2026` | UK AI Security Institute (2026) | ControlArena (monitor prompt template) | github.com (verified) |
+| `inglis2025controlarena` | Inglis et al. (2025) | ControlArena (monitor prompt template) | github.com (official repo BibTeX) |
 | `typesafe2026jev` | TypeSafe AI (2026) | Jev decision model | typesafe.ai (verified) |
 | `openai2026luna` | OpenAI (2026) | GPT-6 Luna Decisions | openrouter.ai (verified) |
 | `deepseek2026v4flash` | DeepSeek (2026) | DeepSeek V4 Flash | openrouter.ai (verified) |
