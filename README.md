@@ -172,6 +172,8 @@ Transcripts, labels, monitor scores, metrics and reports are in `runs/`.
 | [`explainers/`](explainers/) | Plain-language explainers of the methods |
 | [`archive/internal/`](archive/internal/) | Working notes from the sprint, kept for the record |
 | [`src/collusion/`](src/collusion/) | Shared helper that creates run folders |
+| [`PROVENANCE.md`](PROVENANCE.md) | Where each idea, paper, scenario inspiration and peer tactic came from, collected as the work went on. It is a working list; the paper's reference list is the checked version |
+| [`EXPERIMENT_LOG.md`](EXPERIMENT_LOG.md) | A dated journal of results, decisions and dead ends, each pointing to its run folders |
 
 Each experiment folder has its own `README.md` with more detail.
 
