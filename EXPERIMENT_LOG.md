@@ -598,3 +598,11 @@ All paired CIs include 0, including the fold-stratified ones. Logistic stays the
   - Judges score only work done during the sprint. Mark what existed before it: the first commit is 23 Oct 00:50 SGT, and the log timestamps draw the line.
   - The project defines "collusion" itself, so write a definition paragraph.
   - Methodology is scored, not scale; state what the sample can and can't show.
+
+### 2026-10-25 ~14:35 SGT — Appendix (exploratory): shared misses, and whether peer text sways monitors
+`runs/20261025-1431-e06-appendix-errors/` (`experiments/E06-monitors/appendix_errors.py`). Replay-2 probe source only: 2,910 near-term A steps, 152 episodes (63 give-ins).
+- **Episode catches** at a 5% false-alarm threshold on the held-episode maximum: probe 4/63, Jev F L3 7/63, GPT-5-nano 0/63, Luna 1/63. Alarms are weak, which matches earlier findings.
+- **Shared misses:** probe and Jev both miss 0.841, against 0.832 if their misses were independent. The excess is +0.009 [−0.010, 0.041], so their errors are no more shared than chance.
+- **Step-score correlation** within scenario × round: probe–Jev 0.22, probe–nano 0.12, Jev–nano 0.17. The correlations are low, so the probe carries partly different information, which fits the combination gains.
+- **Authority/approval claims:** only 13 tagged steps, so no conclusion is possible. Luna on tactic T2 shows a nominal +0.17 [0.02, 0.35], which is confounded and gives no causal reading.
+- To rerun on the all-data probe export once it exists.
