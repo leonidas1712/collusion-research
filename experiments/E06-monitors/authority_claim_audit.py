@@ -87,7 +87,12 @@ def sources():
     out = []
     for key in qkeys:
         path = episode_path(key)
-        out.append(("Qwen3-32B", key, path, None))
+        eligible = [r for r in qrows if r["episode"] == key and r["condition"] == "recruiting" and r["eligible"]]
+        labels = {bool(r["label"]) for r in eligible}
+        action_rounds = {r.get("action_round") for r in eligible}
+        assert len(labels) == 1 and len(action_rounds) == 1
+        qwen_row = {"channel_publication": labels.pop(), "first_channel_emission_round": action_rounds.pop()}
+        out.append(("Qwen3-32B", key, path, qwen_row))
     manifest = json.loads(GPT_MANIFEST.read_text())
     grows = [r for r in manifest["episodes"] if r["condition"] == "recruiting"]
     assert len(grows) == 300, len(grows)
@@ -111,9 +116,6 @@ def prepare():
         if manifest_row is not None:
             give_in = bool(manifest_row["channel_publication"])
             leak_round = manifest_row.get("first_channel_emission_round") if give_in else None
-        else:
-            leak_round = label.get("first_channel_publication_round") or label.get("first_action_round")
-            give_in = leak_round is not None
         peer = [m for m in ep["channel"] if m["actor"] == "recruiter" and
                 (leak_round is None or int(m["round"]) <= int(leak_round))]
         episodes.append({"target": target, "episode": key, "source": str(path.relative_to(ROOT)),
@@ -149,12 +151,17 @@ def prepare():
 def summarize(directory, ledger):
     messages = json.loads((directory / "messages.json").read_text())
     episodes = json.loads((directory / "episodes.json").read_text())
-    cache = {p.stem: json.loads(p.read_text()) for p in (directory / "cache").glob("*.json")}
-    total_cost = sum((Decimal(str(r.get("cost") or 0)) for r in cache.values()), Decimal(0))
+    payloads = json.loads((directory / "payloads.json").read_text())
+    all_cache = {p.stem: json.loads(p.read_text()) for p in (directory / "cache").glob("*.json")}
+    cache = {key: all_cache[key] for key in payloads}
+    total_cost = sum((Decimal(str(r.get("cost") or 0)) for r in all_cache.values()), Decimal(0))
+    in_scope_cost = sum((Decimal(str(r.get("cost") or 0)) for r in cache.values()), Decimal(0))
     billed_keys = {r["key"] for r in ledger.data["calls"] if r["state"] == "billed"}
-    billing = {"total_audit_cost_usd": str(total_cost), "this_run_billed_usd": ledger.data["billed"],
+    billing = {"total_audit_cost_usd_including_superseded_scope": str(total_cost),
+               "canonical_in_scope_cached_cost_usd": str(in_scope_cost), "this_run_billed_usd": ledger.data["billed"],
                "this_run_billed_or_reserved_usd": ledger.data["charged_or_reserved"],
-               "reused_cached_payloads": len(set(cache) - billed_keys), "new_payloads": len(billed_keys),
+               "reused_cached_payloads": len(set(payloads) - billed_keys), "new_payloads": len(billed_keys),
+               "superseded_cached_payloads": len(set(all_cache) - set(payloads)),
                "hard_cap_usd": str(CAP), "combined_within_cap": total_cost <= CAP}
     by_ep = defaultdict(list)
     for msg in messages:
@@ -220,7 +227,7 @@ def summarize(directory, ledger):
         lines.append("")
     lines += ["## Author spot check", "",
               "Ten reproducibly sampled Q1-positive messages are in `author_spot_check.json` (seed 20261026). Protected values are redacted.", "",
-              f"Total audit cost USD {total_cost}; this corrected run billed USD {ledger.data['billed']} after reusing "
+              f"Total audit cost USD {total_cost}, including {billing['superseded_cached_payloads']} judgments from superseded scope; this corrected run billed USD {ledger.data['billed']} after reusing "
               f"{billing['reused_cached_payloads']} content-addressed judgments from the superseded first pass; hard cap USD {CAP}."]
     (directory / "report.md").write_text("\n".join(lines) + "\n")
     return metrics
