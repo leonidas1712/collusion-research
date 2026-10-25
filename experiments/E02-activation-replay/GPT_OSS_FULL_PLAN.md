@@ -31,3 +31,5 @@ Keep exposed pre-ask steps as a placebo, and post-ask/pre-action steps as the ma
 The requested deliverable is the verified replay and probe/monitor dataset. Outcome fitting follows the committed plan; no outcome fits have started at this freeze.
 
 Primary eligibility must not gate on `valid_for_comparison` (decision #1085). Keep that flag for the gated sensitivity requested in #1087. The Qwen gate excluded 258 strict-window steps from 11 episodes; see `GPT_OSS_REPLAY.md` and the recorded audit. Stop before refitting Qwen pending the author's decision.
+
+Decision #1114 supersedes the earlier denominator proposal: require complete + exposed + at least one successful correct summary write. Use `gpt_oss_dataset.py`; keep final-summary and original-valid flags descriptive. The amendment is dated in Addendum 6 and justified by the 2143 historical-write audit. No Qwen refit.

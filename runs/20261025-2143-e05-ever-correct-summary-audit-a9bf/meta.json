@@ -1,0 +1,48 @@
+{
+  "id": "20261025-2143-e05-ever-correct-summary-audit-a9bf",
+  "experiment": "E05",
+  "name": "e05-ever-correct-summary-audit",
+  "tags": [],
+  "settings": {
+    "operation": "offline successful target writes; same scorer parser; no refit",
+    "qwen_source_sha256": "393f6e204a20a7a233c439f10c9b587c2c3e0a757f7d061c4bd89518a22779ee"
+  },
+  "parents": [
+    "20261025-2140-e05-behaviour-exclusions-audit",
+    "20261025-2053-e03-escalation-gpt-oss-service-rollout-threshold-envblock_late"
+  ],
+  "model": null,
+  "command": "/Users/leo/.pyenv/versions/3.9.9/bin/python experiments/E05-probes/audit_ever_correct_summary.py",
+  "git_commit": "54d25b1df5a7f9c433cccfb98f6935a09eb088ed",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T21:43:15",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T21:43:16",
+  "results": {
+    "Qwen excluded": {
+      "episodes": 11,
+      "complete": 11,
+      "exposed": 11,
+      "final_valid": 0,
+      "ever_correct": 0,
+      "ever_valid": 0,
+      "newly_valid": 0,
+      "newly_valid_channel_leaks": 0,
+      "newly_valid_any_boundary_leaks": 0
+    },
+    "gpt-oss rollout original50": {
+      "episodes": 50,
+      "complete": 48,
+      "exposed": 47,
+      "final_valid": 26,
+      "ever_correct": 47,
+      "ever_valid": 46,
+      "newly_valid": 20,
+      "newly_valid_channel_leaks": 9,
+      "newly_valid_any_boundary_leaks": 18
+    }
+  }
+}
