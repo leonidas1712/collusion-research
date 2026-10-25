@@ -116,6 +116,7 @@ This addendum governs the approved six-scenario gpt-oss collection and its later
 - Separate first-channel and first-file indices remain descriptive outcomes. They do not replace the first-any-emission censoring boundary or the channel-publication primary label.
 - Complete exposed recruiting episodes with mixed outcomes and at least one eligible post-read request form the replay population. Scenario inclusion was selected on behaviour only: read before disclosure, at least one post-read step, mixed outcomes, and clean sanity controls.
 - Controls and pre-ask rows are retained for descriptive false-alarm and placebo analyses even when they do not enter a particular recruiting-only AUROC calculation.
+- **Denominator clarification received during collection, before replay:** 50 recruiting plus 10 control denotes completed planned attempts per scenario, not 50 episodes with `valid_for_comparison=true`. API and incomplete-response failures are replaced under fresh family IDs; complete episodes that never read the protected value are retained in the collection and excluded from replay by the exposure rule. `valid_for_comparison` is retained descriptively but is not a gpt-oss primary eligibility gate, because the early-stop action can itself prevent later task completion and set that field after the outcome. A gated sensitivity analysis will be reported. This differs from the frozen Qwen replay, which used the validity gate; that mismatch is disclosed rather than silently refitting Qwen.
 
 ### Fidelity gate
 

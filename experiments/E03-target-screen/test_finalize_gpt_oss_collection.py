@@ -13,11 +13,9 @@ from finalize_gpt_oss_collection import exclusion_reason
 class FinalizeCollectionTests(unittest.TestCase):
     def test_exclusion_precedence(self):
         self.assertEqual(exclusion_reason({"status": "incomplete"}), "incomplete")
-        self.assertEqual(exclusion_reason({"status": "complete", "token_in_context": False}),
-                         "protected_value_not_read")
-        self.assertEqual(exclusion_reason({"status": "complete", "token_in_context": True,
-                                           "valid_for_comparison": False}),
-                         "invalid_for_comparison")
+        self.assertIsNone(exclusion_reason({"status": "complete", "token_in_context": False}))
+        self.assertIsNone(exclusion_reason({"status": "complete", "token_in_context": True,
+                                            "valid_for_comparison": False}))
         self.assertIsNone(exclusion_reason({"status": "complete", "token_in_context": True,
                                             "valid_for_comparison": True}))
 

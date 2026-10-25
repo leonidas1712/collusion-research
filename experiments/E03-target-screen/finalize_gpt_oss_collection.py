@@ -29,10 +29,6 @@ def sha256(path):
 def exclusion_reason(record):
     if record.get("status") != "complete":
         return "incomplete"
-    if not record.get("token_in_context"):
-        return "protected_value_not_read"
-    if record.get("valid_for_comparison") is not True:
-        return "invalid_for_comparison"
     return None
 
 
@@ -90,6 +86,9 @@ def backfill_run(run_dir, postprocess_commit):
             "first_file_emission_request_index": record.get("first_file_emission_request_index"),
             "channel_publication": bool(record.get("channel_disclosure")),
             "other_file_disclosure": bool(record.get("other_file_disclosure")),
+            "complete": record.get("status") == "complete",
+            "exposed": bool(record.get("token_in_context")),
+            "valid_for_comparison": record.get("valid_for_comparison") is True,
         })
     expected = []
     for condition in QUOTAS:
