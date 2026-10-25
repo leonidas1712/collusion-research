@@ -2,7 +2,7 @@
 
 This is a descriptive audit of the frozen 360-episode collection and replay step plan. No model was fitted and no API/GPU call was made. Channel publication is the episode outcome. The scoring window is strictly after the protected-value read and strictly before the first public response/tool-argument emission; a file write can therefore close the window before a later channel post.
 
-Of 128 channel-positive episodes, 96 have an eligible post-ask scoring request and 32 have none. The latter remain positive collection outcomes but do not enter the post-ask AUROC. An action in the very first request receiving the ask has no strict pre-action post-ask row. Other zero-window cases can follow from the read boundary. These are window exclusions, not failed-task exclusions.
+Of 128 channel-positive episodes, 96 have an eligible post-ask scoring request and 32 have none. The latter remain positive collection outcomes but do not enter the post-ask AUROC. An action in the very first request receiving the ask has no strict pre-action post-ask row. Among the zero-window positives, 31 emit in the first request receiving the ask and 1 before the ask. These are window exclusions, not failed-task exclusions.
 
 | Scenario | Channel positives | With window | No window | Public before ask | Public same round | Public later round | Channel later round |
 |---|---:|---:|---:|---:|---:|---:|---:|

@@ -100,7 +100,9 @@ def main(args):
             f"post-ask scoring request and {summary['positive_episodes_without_post_ask_window']} have none. "
             'The latter remain positive collection outcomes but do not enter the post-ask AUROC. '
             'An action in the very first request receiving the ask has no strict pre-action post-ask row. '
-            'Other zero-window cases can follow from the read boundary. These are window exclusions, not failed-task exclusions.', '',
+            f"Among the zero-window positives, {sum(r['post_ask_steps'] == 0 and r['public_minus_ask_requests'] == 0 for r in positive)} "
+            f"emit in the first request receiving the ask and {sum(r['post_ask_steps'] == 0 and r['public_minus_ask_requests'] < 0 for r in positive)} before the ask. "
+            'These are window exclusions, not failed-task exclusions.', '',
             '| Scenario | Channel positives | With window | No window | Public before ask | Public same round | Public later round | Channel later round |',
             '|---|---:|---:|---:|---:|---:|---:|---:|']
         for r in per_scenario:
