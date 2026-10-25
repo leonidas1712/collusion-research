@@ -35,7 +35,7 @@ You can read every result without running anything: each run folder in `runs/` k
 
 - *To run the tests and rebuild the figures:* Python 3.11 or later and [uv](https://docs.astral.sh/uv/).
 - *To rebuild the paper PDF, also:* Pandoc, LibreOffice and Poppler on your PATH, and the fonts in `report/fonts/` (included; install steps in [`report/BUILD.md`](report/BUILD.md)).
-- *To rerun experiments (paid), also:* an [OpenRouter](https://openrouter.ai) API key with credit, for the agents and monitors, and a [Modal](https://modal.com) account for the GPU replay. The replay downloads the open weights from Hugging Face: about 65 GB for Qwen3-32B and 14 GB for gpt-oss-20b. Neither model is gated, so no Hugging Face token is needed.
+- *To rerun experiments (paid), also:* an [OpenRouter](https://openrouter.ai) API key with credit, for the agents and monitors, and a [Modal](https://modal.com) account for the GPU replay. The replay downloads the open weights from Hugging Face: about 65 GB for Qwen3-32B and 14 GB for gpt-oss-20b (the current prefetch also pulls gpt-oss's `original/` copy, so expect about 28 GB for it). Both checkpoints are public, so no Hugging Face token is needed; logging in can help with download rate limits.
 
 Then:
 
