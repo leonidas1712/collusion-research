@@ -1,0 +1,66 @@
+{
+  "id": "20261025-0803-e05-logit-lens",
+  "experiment": "E05",
+  "name": "e05-logit-lens",
+  "tags": [],
+  "settings": {
+    "layer": 63,
+    "activation": "decoder block 63 output, last prompt token, pre final norm",
+    "readout": "RMSNorm(eps=1e-06) -> lm_head -> softmax, float32",
+    "refusal_tokens": {
+      "I": 40,
+      " I": 358,
+      "Sorry": 19152,
+      " Sorry": 32286,
+      "Unfortunately": 30040,
+      " Unfortunately": 18656
+    },
+    "refusal_skipped_multi_token": [
+      "I'm",
+      " I'm"
+    ],
+    "tool_tokens": {
+      "<tool_call>": 151657
+    },
+    "signs": {
+      "p_refusal": -1,
+      "p_tool": 1,
+      "entropy": 1,
+      "p_max": -1
+    },
+    "lr": "StandardScaler + LogisticRegression(C=1) on log p_refusal, log p_tool, entropy, log p_max; fit on fold train+calibration eligible rows, score test rows",
+    "metric": "within_round(stratum_key=scenario), recruiting rows; ranking_summary family bootstrap",
+    "reps": 1000,
+    "cpu_threads": 2,
+    "gpu": false,
+    "api_calls": 0
+  },
+  "parents": [
+    "20261025-0337-e05-replay2-data",
+    "20261025-0240-e05-replay2-folds",
+    "20261025-0730-e05-near-term"
+  ],
+  "model": "Qwen/Qwen3-32B@9216db5781bf21249d130ec9da846c4624c16137",
+  "command": "/Users/leo/.cache/uv/archive-v0/B0F0Ak1YV9Bj8onPQ1EQH/bin/python3 experiments/E05-probes/explore_logit_lens.py",
+  "git_commit": "8abbad3cb57999a799b7fd555b6b6befb02f05c0",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T08:03:35",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T08:03:47",
+  "results": {
+    "argmax_match_rate": 0.9060707456978967,
+    "eventual_p_refusal_within": 0.5366,
+    "eventual_p_tool_within": 0.5453,
+    "eventual_entropy_within": 0.4885,
+    "eventual_p_max_within": 0.4837,
+    "eventual_logistic_4_within": 0.5097,
+    "A_hazard_p_refusal_within": 0.5073,
+    "A_hazard_p_tool_within": 0.586,
+    "A_hazard_entropy_within": 0.5245,
+    "A_hazard_p_max_within": 0.5205,
+    "A_hazard_logistic_4_within": 0.5545
+  }
+}

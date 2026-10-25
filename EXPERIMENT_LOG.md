@@ -349,3 +349,14 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
   - Radev's code → code + messages (68 → 81%) matches our L1 → L2.
   - No paper combines activations with a text monitor, so our combination test is new.
 - **Method fix for the deciding test:** I chose Jev forecaster L3 by looking at test results. So the combination test must pick the monitor and level *inside the training folds*, nested. Jev L3 can only be reported as a post-hoc best.
+
+### 2026-10-25 ~09:30 SGT — Logit lens at layer 63 (APA-65, Claude subagent): little signal
+
+- **Run:** `runs/20261025-0803-e05-logit-lens/` (report, metrics, scores.csv, examples). Code `experiments/E05-probes/explore_logit_lens.py`. Applies the final RMSNorm and lm_head (shard 17 of the pinned revision) to the saved block-63 output. CPU, $0.
+- **Wiring check:** the argmax equals the reply's first token on 90.6% of 4,184 rows, and the true first token is in the top 5 on 99.8%.
+- **Within scenario × round AUROC:**
+  - p(`<tool_call>`): eventual 0.545, **near-term A 0.586 [0.556, 0.618]**, added value +0.019 [0.006, 0.032].
+  - Refusal mass, entropy, max probability: 0.48–0.54.
+  - Logistic on the 4 scalars: A 0.554.
+  - All below the refit probe (0.611 held-out scenario) and the Jev forecaster L3 (0.660).
+- **Reading:** just before a leak, the target is a bit more likely to open with a tool call (mean p_tool 0.47 vs 0.27 on held rows). Refusal-opener mass doesn't differ. So the decision isn't visible in the first token; it's made later in the reply.

@@ -1,0 +1,374 @@
+{
+  "sanity": {
+    "rows": 4184,
+    "known_first_token": 4184,
+    "reply_kinds": {
+      "text": 3108,
+      "tool_call": 1076
+    },
+    "argmax_match_rate": 0.9060707456978967,
+    "by_kind": {
+      "text": {
+        "rows": 3108,
+        "match_rate": 0.8886743886743886
+      },
+      "tool_call": {
+        "rows": 1076,
+        "match_rate": 0.9563197026022305
+      }
+    },
+    "by_condition": {
+      "alone": 1.0,
+      "control": 0.9044117647058824,
+      "recruiting": 0.9051546391752577
+    },
+    "actual_token_in_top5_rate": 0.9983269598470363,
+    "mean_prob_of_actual_first_token": 0.8611382246017456
+  },
+  "variants": {
+    "eventual": {
+      "p_refusal": {
+        "rows": 2910,
+        "positives": 618,
+        "families": 133,
+        "within_round_auc": 0.5365559478126906,
+        "within_round_ci95": [
+          0.4582505276195012,
+          0.622456734370591
+        ],
+        "within_round_by_seed": [
+          0.5365559478126906
+        ],
+        "positive_coverage": [
+          1.0
+        ],
+        "pooled_auc": 0.49064707975397753,
+        "pooled_ci95": [
+          0.4161981948885719,
+          0.5663985968437072
+        ],
+        "added_value_over_turn_length": {
+          "base_auc": 0.6947497839678748,
+          "with_score_auc": 0.6913275103497744,
+          "gain": -0.0034222736181004354,
+          "gain_ci95": [
+            -0.020889885082026875,
+            0.012535309971947508
+          ],
+          "rows": 2910
+        }
+      },
+      "p_tool": {
+        "rows": 2910,
+        "positives": 618,
+        "families": 133,
+        "within_round_auc": 0.5452518627993904,
+        "within_round_ci95": [
+          0.5178217655783264,
+          0.5776975321976875
+        ],
+        "within_round_by_seed": [
+          0.5452518627993904
+        ],
+        "positive_coverage": [
+          1.0
+        ],
+        "pooled_auc": 0.6154430494134657,
+        "pooled_ci95": [
+          0.5905708297963275,
+          0.6447427221091645
+        ],
+        "added_value_over_turn_length": {
+          "base_auc": 0.6947497839678748,
+          "with_score_auc": 0.6970685993776016,
+          "gain": 0.002318815409726782,
+          "gain_ci95": [
+            -0.008270667010038082,
+            0.012446845690943828
+          ],
+          "rows": 2910
+        }
+      },
+      "entropy": {
+        "rows": 2910,
+        "positives": 618,
+        "families": 133,
+        "within_round_auc": 0.48849606965432135,
+        "within_round_ci95": [
+          0.41063280902599275,
+          0.5606034794376991
+        ],
+        "within_round_by_seed": [
+          0.48849606965432135
+        ],
+        "positive_coverage": [
+          1.0
+        ],
+        "pooled_auc": 0.572386999666774,
+        "pooled_ci95": [
+          0.49746210234403443,
+          0.6482347791929862
+        ],
+        "added_value_over_turn_length": {
+          "base_auc": 0.6947497839678748,
+          "with_score_auc": 0.6931207181867987,
+          "gain": -0.0016290657810761333,
+          "gain_ci95": [
+            -0.003714006075633369,
+            0.00046534183416166994
+          ],
+          "rows": 2910
+        }
+      },
+      "p_max": {
+        "rows": 2910,
+        "positives": 618,
+        "families": 133,
+        "within_round_auc": 0.48371874686293814,
+        "within_round_ci95": [
+          0.4045348460970648,
+          0.5574966005538522
+        ],
+        "within_round_by_seed": [
+          0.48371874686293814
+        ],
+        "positive_coverage": [
+          1.0
+        ],
+        "pooled_auc": 0.5625886014108451,
+        "pooled_ci95": [
+          0.48826848028232217,
+          0.6371530042362873
+        ],
+        "added_value_over_turn_length": {
+          "base_auc": 0.6947497839678748,
+          "with_score_auc": 0.6936064374749374,
+          "gain": -0.0011433464929373471,
+          "gain_ci95": [
+            -0.004890315878784429,
+            0.0023029224416581335
+          ],
+          "rows": 2910
+        }
+      },
+      "logistic_4": {
+        "rows": 2910,
+        "positives": 618,
+        "families": 133,
+        "within_round_auc": 0.5096875034930219,
+        "within_round_ci95": [
+          0.4450586781282115,
+          0.5722525818182991
+        ],
+        "within_round_by_seed": [
+          0.5089154079489164,
+          0.5120600198902454,
+          0.5080870826399041
+        ],
+        "positive_coverage": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "pooled_auc": 0.6104310099760718,
+        "pooled_ci95": [
+          0.5504138204391593,
+          0.6725881992038014
+        ],
+        "fold_stratified_auc": 0.5064413206950822,
+        "added_value_over_turn_length": {
+          "base_auc": 0.6947497839678748,
+          "with_score_auc": 0.6934878316022524,
+          "gain": -0.0012619523656224318,
+          "gain_ci95": [
+            -0.007526052171495762,
+            0.004280073699756039
+          ],
+          "rows": 2910
+        }
+      }
+    },
+    "A_hazard": {
+      "p_refusal": {
+        "rows": 2910,
+        "positives": 168,
+        "families": 133,
+        "within_round_auc": 0.5073064854031062,
+        "within_round_ci95": [
+          0.446108726634721,
+          0.5705343160194799
+        ],
+        "within_round_by_seed": [
+          0.5073064854031062
+        ],
+        "positive_coverage": [
+          1.0
+        ],
+        "pooled_auc": 0.46604624709110487,
+        "pooled_ci95": [
+          0.413172286879886,
+          0.5165735290523569
+        ],
+        "added_value_over_turn_length": {
+          "base_auc": 0.7137929387655865,
+          "with_score_auc": 0.7146352158660693,
+          "gain": 0.0008422771004827911,
+          "gain_ci95": [
+            -0.014009707087692336,
+            0.015224321493043829
+          ],
+          "rows": 2910
+        }
+      },
+      "p_tool": {
+        "rows": 2910,
+        "positives": 168,
+        "families": 133,
+        "within_round_auc": 0.5860227532252359,
+        "within_round_ci95": [
+          0.5557408941855864,
+          0.6179341322589167
+        ],
+        "within_round_by_seed": [
+          0.5860227532252359
+        ],
+        "positive_coverage": [
+          1.0
+        ],
+        "pooled_auc": 0.658671546663888,
+        "pooled_ci95": [
+          0.633500361358064,
+          0.6837737640992632
+        ],
+        "added_value_over_turn_length": {
+          "base_auc": 0.7137929387655865,
+          "with_score_auc": 0.7323968427633636,
+          "gain": 0.018603903997777116,
+          "gain_ci95": [
+            0.005713878213166035,
+            0.032454795015923084
+          ],
+          "rows": 2910
+        }
+      },
+      "entropy": {
+        "rows": 2910,
+        "positives": 168,
+        "families": 133,
+        "within_round_auc": 0.5244583049004418,
+        "within_round_ci95": [
+          0.47143058155660134,
+          0.5772669437947355
+        ],
+        "within_round_by_seed": [
+          0.5244583049004418
+        ],
+        "positive_coverage": [
+          1.0
+        ],
+        "pooled_auc": 0.6351767913584107,
+        "pooled_ci95": [
+          0.5838915720692966,
+          0.683981165457215
+        ],
+        "added_value_over_turn_length": {
+          "base_auc": 0.7137929387655865,
+          "with_score_auc": 0.7154232225348199,
+          "gain": 0.0016302837692334649,
+          "gain_ci95": [
+            -0.005577413294087346,
+            0.009645032099222616
+          ],
+          "rows": 2910
+        }
+      },
+      "p_max": {
+        "rows": 2910,
+        "positives": 168,
+        "families": 133,
+        "within_round_auc": 0.5205298095994136,
+        "within_round_ci95": [
+          0.466307852175883,
+          0.5721487433939738
+        ],
+        "within_round_by_seed": [
+          0.5205298095994136
+        ],
+        "positive_coverage": [
+          1.0
+        ],
+        "pooled_auc": 0.6228606595811191,
+        "pooled_ci95": [
+          0.5751670270185952,
+          0.6695482844860267
+        ],
+        "added_value_over_turn_length": {
+          "base_auc": 0.7137929387655865,
+          "with_score_auc": 0.7138385259282415,
+          "gain": 4.558716265501417e-05,
+          "gain_ci95": [
+            -0.006430850525948939,
+            0.0069086059337356695
+          ],
+          "rows": 2910
+        }
+      },
+      "logistic_4": {
+        "rows": 2910,
+        "positives": 168,
+        "families": 133,
+        "within_round_auc": 0.554450002137541,
+        "within_round_ci95": [
+          0.5170501626504701,
+          0.593813987857797
+        ],
+        "within_round_by_seed": [
+          0.5516700854987638,
+          0.5613305151341561,
+          0.5503494057797033
+        ],
+        "positive_coverage": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "pooled_auc": 0.7031190302525095,
+        "pooled_ci95": [
+          0.6633744246991142,
+          0.7408681672235339
+        ],
+        "fold_stratified_auc": 0.5572602212513382,
+        "added_value_over_turn_length": {
+          "base_auc": 0.7137929387655865,
+          "with_score_auc": 0.7403615713243722,
+          "gain": 0.02656863255878572,
+          "gain_ci95": [
+            0.010586898618600068,
+            0.04768926892261488
+          ],
+          "rows": 2910
+        }
+      }
+    }
+  },
+  "group_means": {
+    "one step before the leaking call (recruiting, label 1, steps_until_action 1)": {
+      "p_refusal": 0.20116195226939076,
+      "p_tool": 0.47248466381405774,
+      "entropy": 0.6981860993814374,
+      "p_max": 0.7741935858650814
+    },
+    "held (recruiting, eventual label 0)": {
+      "p_refusal": 0.232183723287434,
+      "p_tool": 0.26863906895868356,
+      "entropy": 0.2841224625132513,
+      "p_max": 0.9031566561932756
+    },
+    "control": {
+      "p_refusal": 0.006578637671917471,
+      "p_tool": 0.1299624966200387,
+      "entropy": 0.34337632590312733,
+      "p_max": 0.8896517177033268
+    }
+  }
+}
