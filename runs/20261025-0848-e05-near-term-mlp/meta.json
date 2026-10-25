@@ -1,0 +1,66 @@
+{
+  "id": "20261025-0848-e05-near-term-mlp",
+  "experiment": "E05",
+  "name": "e05-near-term-mlp",
+  "tags": [],
+  "settings": {
+    "threads": 2,
+    "variants": [
+      "B_round_contrast",
+      "A_hazard"
+    ],
+    "mlp": {
+      "hidden_units": 32,
+      "epochs": 80,
+      "batch_size": 256,
+      "learning_rate": 0.001,
+      "weight_decay": 0.01
+    },
+    "candidates": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60,
+      63
+    ],
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "bootstrap_reps": 1000,
+    "paid_cost_usd": 0
+  },
+  "parents": [
+    "20261025-0337-e05-replay2-data",
+    "20261025-0340-e05-replay2-fits",
+    "20261025-0730-e05-near-term"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python experiments/E05-probes/near_term_mlp.py",
+  "git_commit": "d5c4be940df3e61400e1e8d0d1ba59b18060eb30",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T08:48:56",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T09:59:23",
+  "results": {
+    "cases": 66,
+    "exported": 64440,
+    "paid_cost_usd": 0
+  }
+}

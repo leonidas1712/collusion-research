@@ -515,3 +515,16 @@ Report: `runs/20261025-0147-e06-monitor-main/combine.md` and `combine.json`. Cod
 - **Fixed layer 32:** 0.536 / 0.560 / 0.565 / 0.578; final step +0.013 [−0.013, 0.038].
 - Unlike the eventual label, the near-term probe still improves with more data. So the replay-3 episodes should help it, both in the all-data estimate and in the deployable probe.
 - LOSO B is still running.
+
+### 2026-10-25 ~10:00 SGT — MLP on near-term labels (codex, APA-72): no gain
+
+`runs/20261025-0848-e05-near-term-mlp`. Same saved splits, 17-candidate layer selection, 32 ReLU units, 80 epochs. MLP vs logistic, within scenario × round:
+
+| Label · split | MLP | Logistic | MLP − logistic [95% CI] |
+|---|---|---|---|
+| B · pooled | 0.586 | 0.605 | −0.020 [−0.056, 0.021] |
+| B · held-out scenario | 0.600 | 0.603 | −0.003 [−0.040, 0.035] |
+| A · pooled | 0.586 | 0.585 | +0.001 |
+| A · held-out scenario | 0.608 | 0.611 | −0.003 |
+
+All paired CIs include 0, including the fold-stratified ones. Logistic stays the method; the MLP check goes in the appendix.
