@@ -103,7 +103,7 @@ Under a recruiting peer, Qwen3-32B gives in on 98 of 224 episodes (44%), from 36
 
 ### 4.2 Eventual give-in is barely predictable from one step
 
-On held-out scenarios (4,697 recruiting steps from 241 episodes, 998 eventual-positive steps), the activation probe scores 0.523, with an interval that includes chance. The strongest text monitor, the Jev 1.14 forecaster with everything the target saw, reaches 0.577, just clear of chance; GPT-5-nano with the conversation is 0.549 (Figure 2a). A single step therefore carries little warning: the signal is weak, not absent (Section 5).
+On held-out scenarios (4,697 recruiting steps from 241 episodes, 998 eventual-positive steps), the activation probe scores 0.523, with an interval that includes chance. The strongest text monitor, the Jev 1.14 forecaster with everything the target saw, reaches 0.577, just clear of chance; GPT-5-nano with the conversation is 0.549 (Figure 2a). A single step therefore carries little warning: the signal is weak, not absent.
 
 ### 4.3 Near-term give-in is modestly predictable, and not only from pressure
 
@@ -115,9 +115,9 @@ We collected 89 new episodes after the analysis plan was fixed and scored them o
 
 ### 4.5 What a monitor should ask and see
 
-For the near-term label, asking Jev to forecast beats asking it to detect (0.650 versus 0.578 with everything the target saw). The gain comes from the peer's messages: adding the conversation to Jev's actions-only view adds +0.123 [0.063, 0.176], while adding everything else the target saw adds only +0.025 [-0.004, 0.054]. More access does not help every monitor (Appendix E, Figure E.1).
+For the near-term label, asking Jev to forecast beats asking it to detect (0.650 versus 0.578 with everything the target saw). The gain comes from the peer's messages: adding the conversation to Jev's actions-only view adds +0.123 [0.063, 0.176], while adding everything else the target saw adds only +0.025 [-0.004, 0.054] (not significant). More access does not help every monitor (Appendix E, Figure E.1).
 
-The activation probe adds to the weaker monitor, not the strong forecaster. Adding the probe's score to GPT-5-nano's (a small logistic model on round, prompt length and the monitor score; Appendix E) lifts near-term AUROC by +0.081 [0.038, 0.126] in pooled cross-validation and +0.113 [0.025, 0.203] on the confirmation set, but the held-out-scenario gain is only +0.022 [-0.013, 0.059]; it does not clearly add to the Jev forecaster (held-out +0.003 [-0.011, 0.018]; Table 1).
+The activation probe adds to the weaker monitor, not the strong forecaster. Adding the probe's score to GPT-5-nano's (a small logistic model on round, prompt length and the monitor score; Appendix E) lifts near-term AUROC by +0.081 [0.038, 0.126] in pooled cross-validation and +0.113 [0.025, 0.203] on the confirmation set, but the held-out-scenario gain is only +0.022 [-0.013, 0.059] (not significant); it does not clearly add to the Jev forecaster (held-out +0.003 [-0.011, 0.018]; Table 1).
 
 | Evaluation | Monitor | Baseline [95% CI] | + probe [95% CI] | Paired gain [95% CI] |
 |---|---|---|---|---|
@@ -132,7 +132,7 @@ The activation probe adds to the weaker monitor, not the strong forecaster. Addi
 
 ### 4.6 Transfer to a second target
 
-The same pipeline, unchanged, runs on gpt-oss-20b (details in Appendix F). It gives in by a different route, copying a configuration block that holds the protected value, and usually soon after the ask: 32 of its 128 channel give-ins leave no step to predict from, and for 65 of the other 96 the earliest possible warning is in the same round. On the steps that remain, the probe is near chance (near-term 0.53 [0.48, 0.58] on held-out scenarios) and the best monitor, the Jev forecaster, is only weakly predictive (0.56 [0.51, 0.61]), although an exposure probe on the same activations detects that the token has been read at AUROC 1.000. We read this not as a failed replication but as a limit on when prediction is possible; one reading is that when a model gives in almost as soon as it is asked, there is little window in which to warn.
+gpt-oss-20b (Appendix F) gives in by a different route, copying a configuration block that holds the protected value, and usually soon after the ask: 32 of its 128 channel give-ins leave no step to predict from, and for 65 of the other 96 the earliest possible warning is in the same round. On the steps that remain, the probe is near chance (near-term 0.53 [0.48, 0.58] on held-out scenarios) and the best monitor, the Jev forecaster, is only weakly predictive (0.56 [0.51, 0.61]), although an exposure probe on the same activations detects that the token has been read at AUROC 1.000. We read this not as a failed replication but as a limit on when prediction is possible; one reading is that when a model gives in almost as soon as it is asked, there is little window in which to warn.
 
 ---
 
