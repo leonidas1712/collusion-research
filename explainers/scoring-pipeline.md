@@ -115,7 +115,7 @@ This is why Jev L2 showed 98% recall and 98% held alarm rate. Control episodes h
 ## 7. Added value and the combination test (these do learn from labels)
 
 - **Added value:** fit a small logistic model on [scenario, round, log length] → score A. Fit another on the same plus the method's score → score B. Do this cross-fitted (train on some folds, score others). Gain = AUROC(B) − AUROC(A). It asks whether the method knows anything beyond when and how long.
-- **Combination (APA-66, `experiments/E06-monitors/combine.py`):** logistic on [round, log length, monitor] vs [round, log length, monitor, probe], same folds. If adding the probe raises AUROC with a family-bootstrap CI above 0, the activations hold something the text doesn't. The monitor is picked inside the training folds; Jev L3 is reported separately as "post hoc", because we picked it after seeing test results.
+- **Combination test (`experiments/E06-monitors/combine.py`):** logistic on [round, log length, monitor] vs [round, log length, monitor, probe], same folds. If adding the probe raises AUROC with a family-bootstrap CI above 0, the activations hold something the text doesn't. The monitor is picked inside the training folds; Jev L3 is reported separately as "post hoc", because we picked it after seeing test results.
 
 Both are trained on labels, so they are rerun per label. They're also cheap CPU work on the saved score columns.
 
