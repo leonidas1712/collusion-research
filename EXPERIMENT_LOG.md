@@ -370,3 +370,16 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
   - monitor + monitor (Jev + GPT-5-nano) as reference.
   All are stacked logistic models on [turn, log length, scores], paired family-bootstrap difference, within scenario × round. Labels: near-term A/B/C and eventual.
 - **Leo (25 Oct ~10:00):** monitor prompts reviewed and approved as run. No prompt changes.
+
+### 2026-10-25 ~10:20 SGT — Balanced behaviour batch launched (Leo approved)
+
+- **Why:** deploy-token v2 has 61 recruiting episodes, the five spray scenarios 19–28. A reviewer could object that v2 dominates training and the pooled AUROC. This batch fills each spray scenario to ~50 recruiting episodes, for more data overall and possibly a better probe. v2 is the development scenario and gets no new episodes.
+- **Batch:** consequence rule, Qwen3-32B target, plain peer, 4 controls each, no alone. Families start at x250 to stay clear of the existing x201–x224 ranges.
+  - rollout +24 (9250…)
+  - procurement +30 (9350…)
+  - handoff +22 (9450…)
+  - capacity +22 (9550…)
+  - dispatch +26 (9650…)
+- **Cost and code:** cap $0.45 per scenario; the earlier top-up cost ~$0.20 per 35 episodes. The harness is unchanged since the top-up except for added request-index labels (cd9d1b4).
+- **Runs:** `runs/20261025-0817-e01-scaleup-spray-*`. Launcher: scratchpad `run_balance.sh`.
+- **Afterwards:** semantic-judge labels, a validity check, and the balanced-weight AUROC (macro average over scenarios). The replay of the new episodes plus peer-message positions (~$7–10 Modal) stays conditional on the learning curve / combination test.
