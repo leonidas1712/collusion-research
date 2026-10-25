@@ -465,3 +465,22 @@ The new balanced-batch episodes become a held-out confirmation set for the near-
 - **Success criteria:** set in advance in the doc.
 
 The plan was committed before any near-term grading of the new data. Replay 3 and the monitor subset were still running, and none of their scores had been looked at. This lets the near-term result be reported as a main, confirmatory result rather than only exploratory (Leo's request).
+
+### 2026-10-25 ~09:30 SGT — Combination test (APA-66) done, on replay-2 data
+
+Report: `runs/20261025-0147-e06-monitor-main/combine.md` and `combine.json`. Code: `experiments/E06-monitors/combine.py`. Stacked logistic on [round, log length, monitor] ± probe, fit on the probe's own training folds; within scenario × round AUROC; paired family-bootstrap CIs.
+
+| Comparison | Near-term A/B/C, held-out scenario (LOSO) | Near-term, pooled CV | Eventual label |
+|---|---|---|---|
+| Probe added to Jev forecaster L3 | −0.004 to +0.006, CIs around 0 | −0.008 to −0.003 | +0.001 / +0.008 |
+| Probe added to GPT-5-nano detector L2 (fixed in advance) | **+0.051 to +0.076**, all CIs above 0 | **+0.073 to +0.080** | +0.012 / +0.013, n.s. |
+| Jev + GPT-5-nano (monitor + monitor) | −0.002 to +0.018, n.s. | — | — |
+| Jev alone − probe alone, paired | +0.046 [−0.009, 0.098] A; +0.072 [0.016, 0.133] B; +0.069 [0.009, 0.132] C | — | — |
+
+- Selection on training rows chose Jev forecaster L3 in every near-term fold.
+- **Reading:**
+  - On near-term give-in, the best text decision model beats the probe by ~0.05–0.07.
+  - The activations add nothing on top of Jev.
+  - They add a reliable +0.05–0.08 over a weaker LLM judge, more than a second text monitor adds.
+  - On the eventual label, nothing combines into a signal.
+- Exploratory on these data; the frozen confirmation test on the new episodes follows (`docs/confirmatory_plan.md`).
