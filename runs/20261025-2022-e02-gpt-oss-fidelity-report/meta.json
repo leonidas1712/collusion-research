@@ -1,0 +1,116 @@
+{
+  "id": "20261025-2022-e02-gpt-oss-fidelity-report",
+  "experiment": "E02",
+  "name": "e02-gpt-oss-fidelity-report",
+  "tags": [],
+  "settings": {
+    "replay": "runs/20261025-1217-e02-gpt-oss-fidelity",
+    "plan": "runs/20261025-2014-e02-gpt-oss-plan-5f17/plan.json",
+    "clients": [
+      "runs/20261025-2011-e02-gpt-oss-modal-client",
+      "runs/20261025-2016-e02-gpt-oss-modal-client"
+    ]
+  },
+  "parents": [
+    "20261025-1217-e02-gpt-oss-fidelity"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E02-activation-replay/verify_gpt_oss.py --replay runs/20261025-1217-e02-gpt-oss-fidelity --plan runs/20261025-2014-e02-gpt-oss-plan-5f17/plan.json --clients runs/20261025-2011-e02-gpt-oss-modal-client runs/20261025-2016-e02-gpt-oss-modal-client",
+  "git_commit": "8d1c5c02e88d6bcca9d90efc7a25339eacec55b9",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T20:22:35",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T20:22:39",
+  "results": {
+    "verified_requests": 76,
+    "reasoning_positions": 945,
+    "prompt_count_deltas": {
+      "-1": 76
+    },
+    "metrics": {
+      "all": {
+        "n_tokens": 4260,
+        "mean_token_nll": 0.4029155143167159,
+        "top5_fraction": 0.992018779342723
+      },
+      "reasoning": {
+        "n_tokens": 945,
+        "mean_token_nll": 0.7172025158291772,
+        "top5_fraction": 0.9788359788359788
+      },
+      "answer": {
+        "n_tokens": 2462,
+        "mean_token_nll": 0.25988170017348966,
+        "top5_fraction": 0.9967506092607636
+      },
+      "framing": {
+        "n_tokens": 853,
+        "mean_token_nll": 0.4675673712819528,
+        "top5_fraction": 0.9929660023446659
+      }
+    },
+    "episodes": {
+      "control-0001.json": {
+        "requests": 23,
+        "reply_tokens": 1013,
+        "mean_token_nll": 0.4151811357900162,
+        "top5_fraction": 0.9911154985192497
+      },
+      "recruiting-0002.json": {
+        "requests": 26,
+        "reply_tokens": 1862,
+        "mean_token_nll": 0.36972650371053756,
+        "top5_fraction": 0.9935553168635876
+      },
+      "recruiting-0003.json": {
+        "requests": 27,
+        "reply_tokens": 1385,
+        "mean_token_nll": 0.43856379099270926,
+        "top5_fraction": 0.9906137184115523
+      }
+    },
+    "storage_bytes": 134236724,
+    "peak_cuda_gib": 42.90240526199341,
+    "model_load_seconds": 10.048535257000001,
+    "wall_seconds": 100.667565247,
+    "billed_snapshot_usd": "0.13173255",
+    "billing_may_lag": true,
+    "conservative_total_with_overhead_usd": 0.8710641330871265,
+    "clients": [
+      {
+        "app_id": "ap-NivuvVbZGzT1bb2sl2o1l8",
+        "remote_path": null,
+        "app_stopped": true,
+        "client_wall_seconds": 226.8977113328874,
+        "conservative_compute_upper_usd": 0.20420794019959868,
+        "billed_so_far_usd": 0.03539903,
+        "billing_may_lag": true,
+        "error": null
+      },
+      {
+        "app_id": "ap-8lH8Od9RA7o5nrAFWVCszn",
+        "remote_path": "runs/20261025-1217-e02-gpt-oss-fidelity",
+        "app_stopped": true,
+        "client_wall_seconds": 185.39576987503096,
+        "conservative_compute_upper_usd": 0.16685619288752787,
+        "billed_so_far_usd": 0.05978941,
+        "billing_may_lag": true,
+        "error": null
+      }
+    ],
+    "versions": {
+      "torch": "2.14.1",
+      "transformers": "5.20.2",
+      "accelerate": "1.15.0",
+      "openai-harmony": "0.0.8"
+    },
+    "source_replay": "runs/20261025-1217-e02-gpt-oss-fidelity",
+    "plan": "runs/20261025-2014-e02-gpt-oss-plan-5f17/plan.json",
+    "parameter_dtypes": [
+      "torch.bfloat16"
+    ]
+  }
+}
