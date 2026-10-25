@@ -435,3 +435,17 @@ Rule-based labels, valid episodes only. "Not first-round" counts give-ins whose 
 - **Leo approved replay 3** (25 Oct): the balanced-batch episodes, last-token capture only, with the replay-2 pipeline unchanged. Hard cap $4 Modal. Run by codex-3; codex-2 informed. Output: a new combined dataset folder; replay-2 files are not touched.
 - **Peer-message token capture:** not blocking replay 3 (Leo). Revisit only if the combination test shows the probe adds something.
 - **Limitations:** Leo asked to track the scenario imbalance and the uneven drop-out (procurement 15/30, rollout 15/24) for the appendix. Started `docs/writeup_limitations.md`; add items there as they come up.
+
+### 2026-10-25 ~12:00 SGT — Monitor subset on the balanced episodes launched; replay-3 cap raised to $7
+
+- **Leo approved:**
+  - the 8-setup monitor subset on the new episodes;
+  - raising the replay-3 Modal cap $4 → $7 (codex-3's conservative projection was $4.32; the likely spend is ~$3).
+- **Run:** `runs/20261025-0841-e06-monitor-main-balanced`.
+  - Steps: `runs/20261025-0838-e02-replay3-plan/all.jsonl` with the same eligibility as the main run: 2,220 steps, 5 spray scenarios.
+  - Setups: Jev detector and forecaster L1–L3, plus GPT-5-nano detector L2 and forecaster L2. Cap $3; expected ~$2.3.
+- **Justification for the write-up:** the setups were chosen on the original 4,184 steps before any new-episode results existed. On the new data this is an out-of-sample check of "Jev and GPT-5-nano L2 are the best monitors".
+  - Jev: best on both labels and the cheapest. Running all 6 setups keeps its full context ladder, our RQ 2.2 evidence.
+  - GPT-5-nano: only L2, its best level. L3 was no better and sometimes worse, consistent with Arike et al. 2601.21112 ("less is more").
+  - Luna dropped as consistently weakest (0.48–0.55).
+  - The full 18-setup table stays on the original steps.
