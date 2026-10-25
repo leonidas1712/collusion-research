@@ -98,7 +98,7 @@ def summarize(run,rows,near,reps):
     (run.dir/'figure_description.txt').write_text('Four panels compare eventual outcome and near-term B, each under pooled CV and leave-one-scenario-out. '+caption+' Numeric values are in layer_metrics.csv.\n')
     lines=['# Outcome-probe layer diagnostic','',caption,'',
         '![All candidate layers](layer_diagnostic.png)','',
-        'The highest observed layer is reported descriptively below. Selecting it on these outer-test scores would invalidate a headline estimate. The original inner-selected result is unchanged.','',
+        'The highest observed layer is reported descriptively below. Selecting it on these outer-test scores would invalidate a headline estimate. The original inner-selected result is unchanged. Pooled curves retain the scenario × round metric’s sensitivity to cross-fold score calibration; LOSO comparisons stay within one fitted model per scenario.','',
         '| Label | Analysis | Descriptive maximum layer | AUROC | Inner-selected AUROC |','|---|---|---:|---:|---:|']
     for name in LABELS:
         for mode in MODES:

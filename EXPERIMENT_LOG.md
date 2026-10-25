@@ -494,3 +494,12 @@ Report: `runs/20261025-0147-e06-monitor-main/combine.md` and `combine.json`. Cod
   - Fixed layer 32: 0.508 / 0.548 / 0.557 / 0.576; final gain +0.018 [−0.003, 0.038].
   - No clear gain from more data on the eventual label. LOSO and near-term B curves are still running.
 - **Monitor subset on the balanced episodes:** `runs/20261025-0841-e06-monitor-main-balanced` is complete (status above). Not graded yet: the scores wait for the frozen confirmation analysis.
+
+- 2026-10-25 09:37 SGT [result] E05 APA-67 eventual LOSO learning checkpoint: `runs/20261025-0936-e05-learning-checkpoint/report.md`; nested 25/50/75/100% AUROC .521/.537/.552/.551, paired75→100 −.001 [−.031,+.030]; fixed32 .541/.552/.551/.547, gain −.004 [−.019,+.010]. Three seeds × three draws, frozen replay2 folds, 1,000 family resamples; no clear final-size gain, not evidence of saturation. Near-term B fits continue; CPU only.
+
+### 2026-10-25 ~09:55 SGT — Learning curve (eventual LOSO); confirmation script ready
+
+- **Learning curve, eventual label, LOSO** (`runs/20261025-0936-e05-learning-checkpoint`): nested probe at 25/50/75/100% of training families = 0.521 / 0.537 / 0.552 / 0.551; 75 → 100% −0.001. Fixed layer 32: 0.541 / 0.552 / 0.551 / 0.547. Flat, so more data does not help the eventual label. Near-term B curve still to come.
+- **Confirmation script** `experiments/E06-monitors/confirm.py`: dry run on 25% of replay-2 families (not the confirmation set) works end to end. Addenda 2–4 of `docs/confirmatory_plan.md` were written before any replay-3 data existed:
+  - seed models averaged after z-scoring;
+  - the stacker's OOF and final probe scores put on a common z-scale (prompted by a side review).
