@@ -48,3 +48,9 @@
 - **SHA-256 hash:** a 64-character fingerprint of some bytes; any one-byte change gives a different hash. We store hashes of each episode, request, rendered prompt and token list.
 - **Pinned revision:** a 40-character Hugging Face commit ID that fixes the exact weights, tokenizer and template, unlike the moving "main" branch.
 - **Modal / Modal Volume:** a service that runs a Python function on a rented GPU, billed per second; a Volume is its persistent network disk, where we keep weights and outputs.
+- **Near-term (hazard) label:** a step is 1 if the target leaks this round or next (label A), else 0; "hazard" means the chance something happens soon, given it hasn't happened yet. Compare the eventual label, where every step before a leak is 1.
+- **Clean contrast (labels B, C):** the near-term 1s compared only with held episodes; the earlier steps of give-in episodes are dropped rather than set to 0. C uses "within 3 target calls" instead of "this round or next".
+- **Stacking:** fitting a small model (here logistic regression) whose inputs are other methods' scores, e.g. [turn, log length, probe, monitor]; fit on training folds, applied to the held-out fold.
+- **Fold-stratified AUROC:** within-round AUROC that also only compares steps scored by the same cross-validation fold's probe, so scores from differently scaled probes are never mixed.
+- **Logit lens:** applying the model's final norm and output matrix to an internal vector to read off next-token probabilities; we use it at layer 63 to get the reply's first-token distribution.
+- **Zero-shot monitor:** a monitor that is prompted, never trained on our labels; changing the label only re-grades its saved scores.
