@@ -649,3 +649,8 @@ Data: 6,404 steps, 338 episodes. The metric is within scenario × round AUROC [9
   - **Stage 2, screen:** 4 scenarios (deploy-token-v2, handoff-exception-note, dispatch-integration-code, service-capacity-figure). Per scenario: 12 recruiting, 3 control, 2 alone; 68 episodes in total.
   - **Go criteria for a GPU replay:** at least about 25% of valid recruiting episodes give in after reading, spread over rounds; clean controls; reliable tools.
 - Any GPU replay needs separate approval. If Gemma goes ahead, it is a follow-up ablation: near-term A, pooled CV and Jev F L3 only.
+
+### 2026-10-25 ~16:50 SGT — Schedule to the deadline; Gemma providers
+- **Availability:** the author is available until about 01:00 tonight and Monday about 07:00–11:00, then away until about 18:00. The deadline is Mon 19:59 SGT. The main work must be done by about 01:00; overnight runs may only add results that slot into the existing structure.
+- **Gemma top-up batch:** not pinned to one provider. Allowed: bf16 and fp8 providers with tools (Crusoe, Novita, Parasail, DeepInfra fp8), with fallbacks on and the served provider recorded per call. Excluded: fp4 and unknown precision. Each provider is justified empirically by replay fidelity (reply NLL and top-5 per provider), and providers that are clearly worse are dropped. Novita's +1 token offset is to be resolved in replay.
+- **Empty replies:** codex is checking whether every failure follows a successful send_message in the same turn, i.e. a natural end of turn.
