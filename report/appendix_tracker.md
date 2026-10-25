@@ -8,7 +8,7 @@ Main-text "in passing" mentions are listed under **Main-text pointer** so the pa
 |---|------|----------|-------------------|--------|--------|
 | 1 | Limitations list, dual-use reasoning | A. Limitations and Dual-Use | Discussion | `docs/report_plan_outline.md` §5 | TODO in paper |
 | 2 | Pipeline figure, stage table, replay fidelity | B. Pipeline and Reproducibility | §3.2 | `report/appendix_pipeline.md` | in paper |
-| 3 | Eligibility rule (wrote a correct summary at some point); 11 Qwen exclusions; same set for Qwen | B. Pipeline (stage 3) | none | `runs/20261025-2143-e05-ever-correct-summary-audit-a9bf`, `runs/20261025-2140-e05-behaviour-exclusions-audit` | in paper |
+| 3 | Eligibility rule (wrote a correct summary at some point); 11 Qwen exclusions; same set for Qwen; behaviour slice 304→226 vs scored 241 | B. Pipeline (stage 3) | §4.1, Table 1 caption | `runs/20261025-2143-e05-ever-correct-summary-audit-a9bf`, `runs/20261025-2140-e05-behaviour-exclusions-audit` | in paper |
 | 4 | Example trajectories (one give-in, one held) | C. Example Trajectories | §3.1 / Fig 1 | viewer reading lists | TODO |
 | 5 | Scenario table, incident grounding, per-scenario counts | D. Scenarios and Data | §3.1 | Table 1 CSV | TODO |
 | 6 | Model choice (candidates tried, why Qwen3-32B) | E. Model Choice | §3.1 | `docs/` model notes | TODO |
