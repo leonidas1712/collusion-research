@@ -12,7 +12,7 @@ Authors: [TODO]  ·  Affiliation: [TODO]
 
 ## Abstract
 
-When AI agents work as a team, they usually split access, so one agent can need a value that only another is allowed to hold — and can press that other agent to break its operator's rule to hand it over. This is the first step of collusion between agents, and we ask whether it can be **forecasted** before it happens. A peer agent repeatedly asks a target agent (Qwen3-32B) for a protected value over up to 20 rounds, across six workflow scenarios; the target gives in on about 44% of recruiting episodes (100 of 226) and holds otherwise. We compare linear probes on the target's activations with text monitors — an LLM judge and two decision models — that read the target's actions, the conversation, or everything the target saw. All methods are scored on the same steps: after the target has read the value and before it discloses it. Three findings emerge. First, whether the target will *eventually* give in is not predictable from a single step: probes are at chance and the best monitor only weakly above it (AUROC 0.577). Second, whether it gives in *this round or the next* is modestly predictable — a probe reaches AUROC 0.58 on held-out scenarios and the best monitor 0.65 — and this reproduced on a further 89 episodes collected afterward and scored under a plan written before we saw them, confirming the finding rather than fitting it in hindsight. Third, a monitor asked "will it break the rule?" outperforms one asked "is it breaking the rule?", and a probe adds to a weaker monitor. [SECOND-MODEL CLAUSE — one sentence if the gpt-oss run yields a result.]
+When AI agents work as a team, they usually split access, so one agent can need a value that only another is allowed to hold — and can press that other agent to break its operator's rule to hand it over. This is the first step of collusion between agents, and we ask whether it can be **forecasted** before it happens. A peer agent repeatedly asks a target agent (Qwen3-32B) for a protected value over up to 20 rounds, across six workflow scenarios; the target gives in on about 44% of recruiting episodes (100 of 226) and holds otherwise. We compare linear probes on the target's activations with text monitors — an LLM judge and two decision models — that read the target's actions, the conversation, or everything the target saw. All methods are scored on the same steps: after the target has read the value and before it discloses it. Three findings emerge. First, whether the target will *eventually* give in is not predictable from a single step: across 241 recruiting episodes (4,697 scored steps), probes are at chance and the best monitor only weakly above it (AUROC 0.577). Second, whether it gives in *this round or the next* is modestly predictable — a probe reaches AUROC 0.58 on held-out scenarios and the best monitor 0.65 (250 near-term positives) — and this reproduced on a further 89 episodes (1,787 steps) collected afterward and scored under a plan written before we saw them, confirming the finding rather than fitting it in hindsight. Third, a monitor asked "will it break the rule?" outperforms one asked "is it breaking the rule?", and a probe adds to a weaker monitor. [SECOND-MODEL CLAUSE — one sentence if the gpt-oss run yields a result.]
 
 ---
 
@@ -98,18 +98,20 @@ We report a **held-out scenario** evaluation (leave one scenario out: train on f
 ## 4. Results
 
 > **[TODO — @claude is drafting Results 4.1–4.6 in parallel.]** Each subsection heading asks a question; its first sentence answers it. Figures 1 and 2 are placed together early (around page 2).
+>
+> **Denominator convention (every headline score carries its n):** the headline AUROCs rank **recruiting steps only** — 4,697 steps from 241 recruiting episodes (250 near-term positives; 998 eventual positives). Report these next to every headline score and in the figure/table captions. The **confirmation** set is 1,787 steps from 89 episodes (82 near-term positives). Use the whole-dataset figure (6,404 eligible steps from 338 episodes) only for dataset and pipeline descriptions, never for a score's denominator.
 
 ### 4.1 Does the setup produce mixed outcomes?
 **[TODO]** Behaviour and the behavioural positive control: give-in rates by scenario, controls at zero leaks, Table 1 (per-scenario counts).
 
 ### 4.2 Can anything predict eventual give-in?
-**[TODO]** No. The probe is at chance and the best monitor only weakly above it (AUROC 0.577); branching (outcome partly chance) as the reason.
+**[TODO]** No. The probe is at chance and the best monitor only weakly above it (AUROC 0.577); 4,697 recruiting steps from 241 episodes, 998 eventual positives; branching (outcome partly chance) as the reason.
 
 ### 4.3 Can anything predict imminent give-in?
-**[TODO]** Modestly. Figure 2 (bars with CIs); held-out-scenario probe ≈ 0.58, best monitor ≈ 0.65. Close with the pressure check (pressure probe 1.000 recruiting-vs-benign, ≈ 0.43 gave-in-vs-held), answering Fomin et al.
+**[TODO]** Modestly. Figure 2 (bars with CIs); held-out-scenario probe ≈ 0.58, best monitor ≈ 0.65; 4,697 recruiting steps from 241 episodes, 250 near-term positives. Close with the pressure check (pressure probe 1.000 recruiting-vs-benign, ≈ 0.43 gave-in-vs-held), answering Fomin et al.
 
 ### 4.4 Does it hold on new episodes?
-**[TODO]** The frozen-plan confirmation on 89 later episodes, explained only here.
+**[TODO]** The frozen-plan confirmation on the new-episode set: 1,787 recruiting steps from 89 episodes, 82 near-term positives; explained only here.
 
 ### 4.5 What should a text monitor ask, and see?
 **[TODO]** Forecaster vs detector; the access ladder (actions only → + conversation → + everything the target saw); Table 2 (combination test); error overlap in one sentence. Frame the combination result as agreeing with the closest precedent (Gao, 2610.04575 — no clear gain over the strong forecaster) and extending it (a gain over the weaker judge, with different errors); cite Gao, Cunningham et al. (2601.04603) and Kramár et al. (2601.11516). The probe+monitor combination is a test, not our novelty.
