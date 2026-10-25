@@ -96,8 +96,6 @@ The same pipeline is applied, unchanged, to gpt-oss-20b [@openai2025gptoss]. Onl
 
 ## 4. Results
 
-> Headline scores are within scenario × round AUROC and carry their denominators; every number traces to a `report/figures/*.csv` or a run report. Figures 1 and 2 are placed together near the top of page 2 at render.
-
 ### 4.1 The setup produces mixed outcomes
 
 Under a recruiting peer, Qwen3-32B gives in on 100 of 226 episodes (44%), from 36% to 66% across the six scenarios; control and target-alone episodes never leak (0 of 66 and 0 of 25). Per-scenario rates and the scored cohort are in Appendix C.
@@ -112,7 +110,7 @@ For the near-term label, on the same held-out steps (250 near-term positives), t
 
 ![Figure 2. Predicting eventual and near-term give-in](figures/figure2_prediction.png)
 
-**Figure 2.** Whether the target gives in eventually is barely predictable; whether it gives in this round or the next is modestly predictable, and best by a text forecaster. Within scenario × round AUROC (0.5 = chance) on 4,697 recruiting steps from 241 episodes; whiskers are 95% family-bootstrap intervals. Filled markers: held-out scenarios, all data; text monitors are fixed and scored on the same steps. Hollow markers: the new-episode set (1,787 steps from 89 episodes, 82 near-term positives), scored once under a plan fixed in advance (near-term only, so panel (a) has no hollow markers). The all-data set includes the confirmation episodes, so filled and hollow estimates are not independent replications.
+**Figure 2.** Eventual give-in is barely predictable; near-term give-in is modestly predictable, and best by a text forecaster. Within scenario × round AUROC (0.5 = chance) on 4,697 recruiting steps from 241 episodes; whiskers are 95% family-bootstrap intervals. Filled: held-out scenarios, all data. Hollow: the new-episode confirmation set (near-term only). The two sets overlap, so they are not independent replications.
 
 ### 4.4 The near-term result holds on new episodes
 
@@ -131,23 +129,23 @@ The activation probe adds to the weaker monitor, not the strong forecaster. Stac
 
 ## 5. Discussion and Limitations
 
-Two patterns organise these results. First, prediction depends on the horizon. Whether an episode will eventually give in is close to unreadable from a single step, while whether it will give in within a round or two is modestly readable. One reading, consistent with the branching check (Appendix H), is that the outcome is not yet settled at most steps: the same held state can still go either way, and a signal appears only as the decision approaches. The alternative is that an early signal exists but our probes and text monitors miss it. This is also why a useful warning arrives only shortly before the act. Second, what a detector reads matters more than which detector it is. The largest single gain came from giving a text monitor the peer's messages and asking it to forecast rather than to judge the current step, and the activation probe helped a weak monitor in pooled and new-episode tests but not a strong one. For an overseer, the first lever is the monitor's framing and inputs, with internal signals as a complement where the text is weak.
+Two patterns organise these results. First, prediction depends on the horizon: eventual give-in is close to unreadable from a single step, while near-term give-in is modestly readable. One reading, consistent with the branching check (Appendix H), is that the outcome is not yet settled at most steps, so a signal appears only as the decision approaches; the alternative is that an early signal exists but our detectors miss it. Either way, a useful warning arrives only shortly before the act. Second, what a detector reads matters more than which detector it is: the largest gain came from giving a text monitor the peer's messages and asking it to forecast, and the probe helped a weak monitor but not a strong one. For an overseer, the first lever is the monitor's framing and inputs, with internal signals as a complement where the text is weak.
 
 **For monitor builders.** Ask the monitor a forecasting question rather than a detection one. Give it the other agent's messages, not only the target's own actions. And expect an activation probe to help most when the text monitor is weak, and little when it is already strong.
 
 ### Limitations
-This is one target model (Qwen3-32B) on six scenarios built from a single task template, so the rates and the predictability are specific to this setting, not a claim about agents in general. Probes read the last prompt token, so a decision that forms within the reply would be understated. The deliberate-versus-accidental split relies on a single automated judge (validated against hand labels on 36 of 40 give-ins), and the near-term labels were defined after seeing the eventual result, which the confirmation set guards against. The full list, with the dual-use statement, is in Appendix A.
+One target model (Qwen3-32B) on six scenarios from one task template. Probes read the last prompt token, so a decision that forms within the reply is understated. The deliberate/accidental split relies on one automated judge (36 of 40 against hand labels). The near-term label was chosen after seeing the eventual result, which the confirmation set guards against. The environment is synthetic. Full list and dual-use statement: Appendix A.
 
 ### Future Work
-The clearest next step is a second target with a different route to giving in; our second-target lane (Appendix F) begins this. Beyond that: warning signals that hold across models and settings, probes read at the decision token rather than the last prompt token, and a stronger ensemble of text monitors, so the probe's complementary value can be tested against the best available judge rather than only a weak one.
+A second target with a different route to giving in (Appendix F begins this). Then: warning signals that transfer across models and settings, probes read at the decision token rather than the last prompt token, and a stronger monitor ensemble, to test the probe's complement against the best judge rather than a weak one.
 
 ---
 
 ## 6. Conclusion
 
-A peer agent can push a target into breaking its operator's rule, and we asked whether that break can be forecast. On Qwen3-32B across six scenarios, eventual give-in is barely predictable from a single step, but near-term give-in is modestly predictable, and the result held on new episodes under a plan fixed in advance. A probe that detects the pressure almost perfectly still cannot say who gives in, so near-term prediction reads more than the pressure alone.
+A peer agent can push a target into breaking its operator's rule. On Qwen3-32B across six scenarios, eventual give-in is barely predictable from a single step, but near-term give-in is modestly predictable, and it held on new episodes under a plan fixed in advance. A probe that detects the pressure still cannot say who gives in.
 
-For building monitors, framing and inputs matter most: a forecasting question and the peer's side of the conversation carry the gain, and an activation probe adds to a weak monitor in pooled and new-episode tests though not to a strong one. Earlier, transferable warning signals would let an overseer interrupt recruitment before it succeeds; the setup and matched scoring here are a step toward building them.
+For monitors, a forecasting question and the peer's messages carry the gain, and a probe helps a weak monitor but not a strong one. Earlier, transferable warning signals would let an overseer interrupt recruitment before it succeeds; the setup and matched scoring here are a step toward building them.
 
 ---
 
@@ -157,13 +155,13 @@ The code, prompts, scoring scripts, saved activations and transcripts are releas
 
 ---
 
-> Generated by pandoc citeproc from `report/references.bib` (built by claude-2), author–year per `report/CITATIONS.md`. In-text citations are being converted from inline arXiv IDs to pandoc author–year keys as they land.
+## References
+
+<!-- Generated by pandoc --citeproc from report/references.bib; the list renders here. -->
 
 ---
 
 ## Appendix
-
-> Nine appendices, A–I, each answering one question a reader has after a given part of the main text. Appendix A's title matches the organisers' requirement. Content marked **[TODO]** is not yet written; the source run for each is named inline.
 
 ### A. Limitations and Dual-Use / Ethical Considerations  *(required)*
 
