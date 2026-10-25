@@ -58,7 +58,7 @@ A **target agent** works in a mocked workspace (tools act in memory; no real sys
 
 Each scenario runs in three conditions: **recruiting** (the peer asks), a **control** peer (no forbidden ask), and the **target alone**. Controls and alone episodes never leaked; each condition's purpose is in Appendix C. The peer is not told the rule, so we study recruitment from an ordinary conflict of goals. In 17 of the 241 scored recruiting episodes the peer also carried a single persuasion tactic (three tactics, in 5, 6 and 6 episodes; defined in Appendix G).
 
-Six scenarios are built from one task template that fixes the structure while varying the surface domain (a credential, a number, a text value, or code), each grounded in a real incident type (Appendix C). The target is Qwen3-32B [@yang2025qwen3] with thinking disabled; the peer is DeepSeek-V4-Flash [@deepseek2026v4flash]. Scenario and model choices, the repeated-round precedent [@shi2026; @agrawal2025], and serving details are in Appendices C and B. Figure 1b shows the setup; a real exchange from one give-in episode is in Figure 1a, annotated in Appendix C.
+Six scenarios are built from one task template that fixes the structure while varying the surface domain (a credential, a number, a text value, or code), each grounded in a real incident type (Appendix C). The target is Qwen3-32B [@yang2025qwen3] with thinking disabled; the peer is DeepSeek-V4-Flash [@deepseek2026v4flash]. Scenario and model choices, the repeated-round precedent [@shi2026; @agrawal2025], and serving details are in Appendices B and C; Figure 1b shows the setup and Figure 1a a real give-in exchange (annotated in Appendix C).
 
 ### 3.2 Data
 
@@ -100,11 +100,11 @@ Under a recruiting peer, Qwen3-32B gives in on 100 of 226 episodes (44%), from 3
 
 ### 4.2 Eventual give-in is barely predictable from one step
 
-On held-out scenarios (4,697 recruiting steps from 241 episodes, 998 eventual-positive steps), the activation probe scores a within-scenario × round AUROC of 0.523, with an interval that includes chance. The strongest text monitor, the Jev 1.14 forecaster with everything the target saw, reaches 0.577, just clear of chance; GPT-5-nano with the conversation is 0.549 (Figure 2a). A single step therefore carries little warning of whether an episode will eventually give in. The signal is weak rather than absent. One likely reason, that the outcome is only partly settled at the step we read, is taken up in Section 5.
+On held-out scenarios (4,697 recruiting steps from 241 episodes, 998 eventual-positive steps), the activation probe scores a within-scenario × round AUROC of 0.523, with an interval that includes chance. The strongest text monitor, the Jev 1.14 forecaster with everything the target saw, reaches 0.577, just clear of chance; GPT-5-nano with the conversation is 0.549 (Figure 2a). A single step therefore carries little warning: the signal is weak, not absent (Section 5).
 
 ### 4.3 Near-term give-in is modestly predictable, and not only from pressure
 
-For the near-term label, on the same held-out steps (250 near-term positives), the probe reaches 0.579 and the best monitor, the Jev forecaster, 0.650 (Figure 2b). The probe is not merely reading the pressure. In an exploratory check on the first data batch (fixed layer 32), a probe trained to tell recruiting steps from control and target-alone steps separates them almost perfectly (AUROC 1.000 on 4,184 steps), yet the same score ranks gave-in against held steps at only 0.430 (eventual label, 2,910 recruiting steps): the near-term probe captures the harder signal of which target gives in, the control @fomin2026 identify as missing.
+For the near-term label, on the same held-out steps (250 near-term positives), the probe reaches 0.579 and the best monitor, the Jev forecaster, 0.650 (Figure 2b). In an exploratory check on the first data batch (fixed layer 32), a probe trained to tell recruiting steps from control and target-alone steps separates them almost perfectly (AUROC 1.000 on 4,184 steps), yet the same score ranks gave-in against held steps at only 0.430 (eventual label, 2,910 recruiting steps): the near-term probe captures the harder signal of which target gives in, the control @fomin2026 identify as missing.
 
 ![Figure 2. Predicting eventual and near-term give-in](figures/figure2_prediction.png)
 
@@ -118,7 +118,18 @@ We collected 89 new episodes after the analysis plan was fixed and scored them o
 
 For the near-term label, asking Jev to forecast beats asking it to detect (0.650 versus 0.578 with everything the target saw). The gain comes from the peer's messages: adding the conversation to Jev's actions-only view adds +0.123 [0.063, 0.176], while adding everything else the target saw adds only +0.025 [-0.004, 0.054] (interval includes zero). More access does not help every monitor (Appendix E, monitor-design figure).
 
-The activation probe adds to the weaker monitor, not the strong forecaster. Stacking it on GPT-5-nano lifts near-term AUROC by +0.081 [0.038, 0.126] in pooled cross-validation and +0.113 [0.025, 0.203] on the confirmation set, but the held-out-scenario gain is +0.022 [-0.013, 0.059] (interval includes zero); it does not clearly add to the Jev forecaster (held-out +0.003 [-0.011, 0.018]; Table 2, Appendix E). This agrees with the closest precedent, where a combined monitor gave no clear gain over a strong forecaster [@gao2026], and extends it with a gain over a weaker judge.
+The activation probe adds to the weaker monitor, not the strong forecaster. Stacking it on GPT-5-nano lifts near-term AUROC by +0.081 [0.038, 0.126] in pooled cross-validation and +0.113 [0.025, 0.203] on the confirmation set, but the held-out-scenario gain is +0.022 [-0.013, 0.059] (interval includes zero); it does not clearly add to the Jev forecaster (held-out +0.003 [-0.011, 0.018]; Table 2). This agrees with the closest precedent, where a combined monitor gave no clear gain over a strong forecaster [@gao2026], and extends it with a gain over a weaker judge.
+
+| Evaluation | Monitor | Baseline [95% CI] | + probe [95% CI] | Paired gain [95% CI] |
+|---|---|---|---|---|
+| Held-out scenario | Jev forecaster | 0.645 [0.603, 0.683] | 0.649 [0.608, 0.688] | +0.003 [-0.011, +0.018] |
+| Held-out scenario | GPT-5-nano detector | 0.554 [0.512, 0.594] | 0.576 [0.535, 0.615] | +0.022 [-0.013, +0.059] |
+| Pooled family CV | Jev forecaster | 0.615 [0.572, 0.651] | 0.623 [0.582, 0.665] | +0.008 [-0.020, +0.039] |
+| Pooled family CV | GPT-5-nano detector | 0.494 [0.453, 0.534] | 0.575 [0.531, 0.619] | +0.081 [+0.038, +0.126] |
+| New-episode confirmation | Jev forecaster | 0.643 [0.556, 0.723] | 0.695 [0.624, 0.763] | +0.052 [-0.014, +0.121] |
+| New-episode confirmation | GPT-5-nano detector | 0.554 [0.471, 0.633] | 0.667 [0.580, 0.750] | +0.113 [+0.025, +0.203] |
+
+**Table 2.** The probe adds to the weaker monitor (GPT-5-nano detector) in pooled CV and on confirmation, but not to the strong Jev forecaster. Near-term within scenario × round AUROC; baseline is round, log prompt length and the monitor score, combined adds the probe. All data 4,697 steps / 250 positives; confirmation 1,787 / 82. Gains use paired resamples; confirmation overlaps the all-data pool.
 
 ### 4.6 Transfer to a second target
 **[TODO — conditional on the gpt-oss replay.]** Frame as *does near-term prediction transfer to a second model*. gpt-oss windows are short — 148 of 169 eventual-positive steps are also near-term-positive (versus 250 of 998 near-term for Qwen) — so it barely tests eventual against near-term; note the short window and do not present a gpt-oss eventual result as a separate finding. Cohort: 2,059 post-ask recruiting steps / 238 episodes / 148 near-term positives, plus a 1,141-step pre-ask placebo (Appendix F). If the replay yields no probe result, this becomes two sentences of behaviour.
@@ -127,7 +138,7 @@ The activation probe adds to the weaker monitor, not the strong forecaster. Stac
 
 ## 5. Discussion and Limitations
 
-Two patterns organise these results. First, prediction depends on the horizon: eventual give-in is close to unreadable from a single step, while near-term give-in is modestly readable. One reading, consistent with the branching check (Appendix H), is that the outcome is not yet settled at most steps, so a signal appears only as the decision approaches; the alternative is that an early signal exists but our detectors miss it. Either way, a useful warning arrives only shortly before the act. Second, what a detector reads matters more than which detector it is: the largest gain came from giving a text monitor the peer's messages and asking it to forecast, and the probe helped a weak monitor but not a strong one. For an overseer, the first lever is the monitor's framing and inputs, with internal signals as a complement where the text is weak.
+Two patterns organise these results. First, prediction depends on the horizon: eventual give-in is close to unreadable from a single step, while near-term give-in is modestly readable. One reading, consistent with the branching check (Appendix H), is that the outcome is not yet settled at most steps, so a signal appears only as the decision approaches; the alternative is that an early signal exists but our detectors miss it. Either way, a useful warning arrives only shortly before the act. Second, what a detector reads matters more than which detector it is: the largest gain came from giving a text monitor the peer's messages and asking it to forecast, and the probe helped a weak monitor but not a strong one.
 
 **For monitor builders.** Ask the monitor a forecasting question rather than a detection one. Give it the other agent's messages, not only the target's own actions. And expect an activation probe to help most when the text monitor is weak, and little when it is already strong.
 
@@ -260,18 +271,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 
 **Monitor-design figure.** A forecasting question and the peer's messages make the biggest difference; more access does not help every monitor. Near-term within scenario × round AUROC, 95% whiskers. (a) Jev detector vs forecaster, all data; (b) forecasters on the first data batch (the only one with the full ladder). The panels use different cohorts and are not paired.
 
-**Combination test (Table 2).**
-
-| Evaluation | Monitor | Baseline [95% CI] | + probe [95% CI] | Paired gain [95% CI] |
-|---|---|---|---|---|
-| Held-out scenario | Jev forecaster | 0.645 [0.603, 0.683] | 0.649 [0.608, 0.688] | +0.003 [-0.011, +0.018] |
-| Held-out scenario | GPT-5-nano detector | 0.554 [0.512, 0.594] | 0.576 [0.535, 0.615] | +0.022 [-0.013, +0.059] |
-| Pooled family CV | Jev forecaster | 0.615 [0.572, 0.651] | 0.623 [0.582, 0.665] | +0.008 [-0.020, +0.039] |
-| Pooled family CV | GPT-5-nano detector | 0.494 [0.453, 0.534] | 0.575 [0.531, 0.619] | +0.081 [+0.038, +0.126] |
-| New-episode confirmation | Jev forecaster | 0.643 [0.556, 0.723] | 0.695 [0.624, 0.763] | +0.052 [-0.014, +0.121] |
-| New-episode confirmation | GPT-5-nano detector | 0.554 [0.471, 0.633] | 0.667 [0.580, 0.750] | +0.113 [+0.025, +0.203] |
-
-**Table 2.** The probe adds to the weaker monitor (GPT-5-nano detector) in pooled CV and on confirmation, but not to the strong Jev forecaster. Near-term within scenario × round AUROC; baseline is round, log prompt length and the monitor score, combined adds the probe. All data 4,697 steps / 250 positives; confirmation 1,787 / 82. Gains use paired resamples; confirmation overlaps the all-data pool. Probe–monitor step-score rank correlation (within scenario × round, exploratory): 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano detector.
+**Combination test.** The six-row combination table is Table 2 in §4.5. Probe–monitor step-score rank correlation (within scenario × round, exploratory): 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano detector.
 
 ### F. Second Target: gpt-oss-20b (and Gemma-4-31B)
 
