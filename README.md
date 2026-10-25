@@ -2,7 +2,7 @@
 
 This repository holds the code, prompts, transcripts and results for the paper *Recruited: Pre-Crime for Agents? Predicting Give-In to Collusion Pressure, with Activation Probes and Text Monitors*, written for the Apart AI Collusion Research Sprint (October 2026).
 
-- **Paper:** [`report/build/paper.pdf`](report/build/paper.pdf) (source: [`report/paper.md`](report/paper.md))
+- **Paper:** [`report/build/paper.pdf`](report/build/paper.pdf) (source: [`report/paper.md`](report/paper.md); the committed PDF was built from source commit `21bb990d`)
 - **License:** MIT for the project code ([`LICENSE`](LICENSE)); the vendored fonts (`report/fonts/`) and citation style (`report/apa.csl`) keep their own licenses
 
 ## What this project is
@@ -12,15 +12,32 @@ Two AI agents share a team channel. One of them, the **target**, holds a value i
 We ask whether a give-in can be seen coming before it happens, using two kinds of tools scored on exactly the same steps:
 
 - **activation probes:** small linear classifiers that read the target model's internal activations;
-- **text monitors:** an LLM judge (GPT-5-nano) and two decision models (Jev 1.14 and Luna Decisions) that read the target's actions, the conversation, or everything the target saw.
+- **text monitors:** an LLM judge (GPT-5-nano) and two decision models (Jev 1.14 and Luna Decisions: commercial models that return a probability over fixed yes/no options instead of written text). Each reads the target's actions, the conversation, or everything the target saw.
 
 The main target is Qwen3-32B, across six scenarios; gpt-oss-20b is a second target.
 
-**What we found, in short.** Qwen3-32B gives in on 101 of 241 episodes (42%). Whether it will *eventually* give in is barely predictable from a single step. Whether it gives in *this round or the next* is modestly predictable: the probe reaches AUROC 0.58 on held-out scenarios and the best monitor (Jev 1.14, asked to forecast) 0.65, and both results held on 89 new episodes scored under an analysis plan fixed in advance. (AUROC is the chance that a randomly chosen give-in step scores above a randomly chosen non-give-in step; 0.5 is guessing.) On gpt-oss-20b, which usually gives in within the round it is asked, neither probes nor monitors predict give-in much above chance. The paper has the full results and their limits.
+**What we found.** Predictions are scored with AUROC: the chance that a randomly chosen give-in step scores above a randomly chosen other step (0.5 = guessing, 1.0 = perfect).
+
+- Qwen3-32B gives in on 101 of 241 episodes (42%).
+- Whether it will *eventually* give in is barely predictable from a single step.
+- Whether it gives in *this round or the next* is modestly predictable: probe 0.58 and best text monitor (Jev 1.14, asked to forecast) 0.65 on held-out scenarios. Both held on 89 new episodes scored under an [analysis plan fixed in advance](docs/confirmatory_plan.md).
+- On gpt-oss-20b, which usually gives in within the round it is asked, neither probes nor monitors predict give-in much above chance.
+
+![Figure 2: how well each detector predicts give-in, by target and horizon](report/figures/figure2_prediction.png)
+
+The paper has the full results and their limits.
 
 ## Quick start
 
-You can read every result without running anything: each run folder in `runs/` keeps its command, settings and outputs, and the tables below say which folder backs which number in the paper. To run code:
+You can read every result without running anything: each run folder in `runs/` keeps its command, settings and outputs, and the tables below say which folder backs which number in the paper.
+
+**What you need to run code.**
+
+- *To run the tests and rebuild the figures:* Python 3.11 or later and [uv](https://docs.astral.sh/uv/).
+- *To rebuild the paper PDF, also:* Pandoc, LibreOffice and Poppler on your PATH, and the fonts in `report/fonts/` (included; install steps in [`report/BUILD.md`](report/BUILD.md)).
+- *To rerun experiments (paid), also:* an [OpenRouter](https://openrouter.ai) API key with credit, for the agents and monitors, and a [Modal](https://modal.com) account for the GPU replay. The replay downloads the open weights from Hugging Face: about 65 GB for Qwen3-32B and 14 GB for gpt-oss-20b. Neither model is gated, so no Hugging Face token is needed.
+
+Then:
 
 1. **Install** Python 3.11 or later and [uv](https://docs.astral.sh/uv/).
 2. **Clone and create the main environment** (agent harness, monitors, behaviour summaries):
@@ -31,7 +48,7 @@ You can read every result without running anything: each run folder in `runs/` k
    uv sync
    ```
 
-3. **Create the probe and replay environments.** These folders pin their packages in a `requirements-lock.txt` rather than a `pyproject.toml`:
+3. **Create the probe and replay environments.** The probe and GPU-replay code pin exact package versions (numerical and model libraries) in their own `requirements-lock.txt`, separate from the main environment:
 
    ```bash
    uv venv experiments/E05-probes/.venv --python 3.11
@@ -43,7 +60,9 @@ You can read every result without running anything: each run folder in `runs/` k
 
    `experiments/E02-activation-replay/run.sh` creates the replay environment on first use if you skip this.
 
-4. **Add API keys** only if you will make model calls. Put `OPENROUTER_API_KEY=…` in a `.env` file at the repository root; agents and monitors all go through OpenRouter. The GPU replay runs on [Modal](https://modal.com) (one A100-80GB); run `uv run modal setup` once to log in (Modal is installed in the main environment, so call it through `uv run`).
+4. **Only for paid steps:**
+   - *API key:* put `OPENROUTER_API_KEY=…` in a `.env` file at the repository root; agents and monitors all go through OpenRouter.
+   - *GPU:* the replay runs on [Modal](https://modal.com) (one A100-80GB). Run `uv run modal setup` once to log in (Modal is installed in the main environment, so call it through `uv run`).
 
 5. **Check the setup** without spending anything by running the probe tests:
 
@@ -51,26 +70,28 @@ You can read every result without running anything: each run folder in `runs/` k
    experiments/E05-probes/.venv/bin/python -m unittest discover -s experiments/E05-probes -p 'test_*.py'
    ```
 
-**Costs.** Reading results, rerunning analyses from saved outputs and rebuilding the figures and paper cost nothing. Collecting episodes, running monitors and the GPU replay are paid. Every paid step takes a hard spending cap (`--cap-usd`, `--cap` or `--phase-ceiling`, depending on the script) and records what it was billed in its run folder. Monitor costs are in `runs/20261025-1543-e06-cost-and-scenarios`. For scale, the gpt-oss-20b replay cost about USD 9.50 on Modal, including its rendering checks; prices change, so treat this as a guide, not a quote. The GPU replay also needs the model weights from Hugging Face.
+**Costs.** Reading results, rerunning analyses from saved outputs and rebuilding the figures and paper cost nothing. Collecting episodes, running monitors and the GPU replay are paid. Every paid step takes a hard spending cap (`--cap-usd`, `--cap` or `--phase-ceiling`, depending on the script) and records what it was billed in its run folder. Monitor costs are in `runs/20261025-1543-e06-cost-and-scenarios`; a total for the paper's paid runs is under the next table.
 
 ## Reproduce the paper from a fresh clone
 
-These steps use only what is committed and cost nothing. Times were measured on a laptop.
+These steps use only what is committed and cost nothing. Times were measured on a recent laptop. The figure and paper steps write into tracked folders (`report/figures/`, `report/build/`); to compare against the committed files instead, pass `--output-dir DIR` to the two figure scripts and `--output DIR/paper.docx` to the paper build.
 
 | Step | Command (from the repository root) | What you get | Time | Cost |
 |---|---|---|---|---|
 | Set up | `uv sync`, then the two `uv venv` / `uv pip sync` commands above | The three Python environments | a few minutes | free |
 | Run the tests | `experiments/E05-probes/.venv/bin/python -m unittest discover -s experiments/E05-probes -p 'test_*.py'` | 33 tests; 3 skip because they need saved activation splits that are not in git | under a minute | free |
-| Rebuild the figures and tables | `OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 experiments/E05-probes/.venv/bin/python report/make_data_figures.py` | Table C.1, Table 1, Figure E.1 and the Qwen-only Figure 2 in `report/figures/` (PNG, PDF and the numbers as CSV) | about 5 s | free |
-| Rebuild Figure 2 with both targets | `uv run --with matplotlib python report/figures/make_figure2_targets.py` (after the step above) | `report/figures/figure2_prediction.*` | seconds | free |
+| Rebuild the figures and tables | `OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 experiments/E05-probes/.venv/bin/python report/make_data_figures.py` | Table C.1, Table 1, Figure E.1 and a Qwen-only draft of Figure 2 in `report/figures/` (PNG, PDF and the numbers as CSV). **This overwrites the committed two-target Figure 2; the next row restores it.** | about 5 s | free |
+| Rebuild Figure 2 with both targets | `uv run --with matplotlib python report/figures/make_figure2_targets.py` (always run right after the step above) | `report/figures/figure2_prediction.*`, identical to the committed files | about 1 s | free |
 | Rebuild the paper | `uv run --with python-docx --with lxml --with pillow --with pypdf python report/build_paper.py` (needs Pandoc, LibreOffice, Poppler and the fonts listed in [`report/BUILD.md`](report/BUILD.md)) | `report/build/paper.docx` and `paper.pdf` | about 20 s | free |
 | Browse the transcripts | `uv run python experiments/E01-behaviour-pilot/build_viewer.py` | `runs/viewer.html` (see [Trace viewer](#trace-viewer)) | about 20 s | free |
 
-Rerunning the analyses that read activations (probe training, the combination test) needs the activations first, from the paid GPU replay; see [What is not in git](#what-is-not-in-git). Recollecting episodes or rerunning monitors makes paid API calls. For scale, the paper's own runs cost: episode collection for the new-episode set \$0.82; Qwen replay \$5.51 (first batch) and \$2.94 (new-episode set); monitors \$12.67 (first batch, 18 setups) and \$2.33 (new-episode set, 8 setups); gpt-oss-20b replay about \$8 billed (Appendix B and F of the paper).
+Rerunning the analyses that read activations (probe training, the combination test) needs the activations first, from the paid GPU replay; see [What is not in git](#what-is-not-in-git). Recollecting episodes or rerunning monitors makes paid API calls. For scale, the paper's own paid runs cost about USD 34 in total, not counting first-batch episode collection: new-episode collection USD 0.82; Qwen replay USD 5.51 (first batch) and USD 2.94 (new-episode set); monitors USD 12.67 (first batch, 18 setups) and USD 2.33 (new-episode set, 8 setups); gpt-oss-20b replay USD 9.54 at a conservative upper bound, including its rendering checks (about USD 8 billed; paper Appendices B and F). Prices change, so treat these as a guide, not a quote.
 
 ## Reproducing the results
 
-Each result below names the script that produced it and the run folder the paper uses. Every run folder is named `runs/YYYYMMDD-HHMM-<experiment>-<name>/` and holds `meta.json`, which records the exact command, the git commit and the settings, next to the outputs (usually `report.md` and `metrics.json`). The recorded commands are a faithful record of what ran, but some use absolute paths from the original machine or temporary input files; adapt the paths before rerunning. Generating scores, tables and figures from saved outputs needs no API key.
+Each result below names the script that produced it and the run folder the paper uses. Every run folder is named `runs/YYYYMMDD-HHMM-<experiment>-<name>/` and holds `meta.json`, which records the exact command, the git commit and the settings, next to the outputs (usually `report.md` and `metrics.json`). The recorded commands are a faithful record of what ran, but some use absolute paths from the original machine or temporary input files; adapt the paths before rerunning. Generating scores, tables and figures from saved outputs needs no API key. Run-folder timestamps are Singapore time (UTC+8).
+
+**Uncommitted changes at run time.** Most runs were launched from a working tree with uncommitted edits: `meta.json` records this as `"dirty": true` for 728 of 816 runs. The uncommitted diff (`diff.patch`) was saved next to each run locally but is not in git, so for those runs the recorded `git_commit` is the nearest commit, not an exact pin of the code. The analysis and figure scripts at the current commit regenerate the paper's committed tables and figures from the saved outputs (checked for every row of the table above).
 
 The pipeline runs in this order: collect episodes with the agent harness (E01), replay every target request through the open weights on a GPU to save activations (E02), build the step table and train and score probes (E05), score the same steps with text monitors (E06), then combine and confirm. Steps that need activations (E05 and the combination test) need the replay step first; see [What is not in git](#what-is-not-in-git).
 
@@ -149,7 +170,7 @@ The pipeline runs in this order: collect episodes with the agent harness (E01), 
 ## What is not in git
 
 - **Activations.** The saved activations, and the per-step feature arrays built from them (`features.npy` in the step-table runs), are too large for git. They can be regenerated with the GPU replay steps above.
-- **Per-step probe scores and split plans** (`probe_scores.csv`, `split_plan.json` in the `all-data-main`, `near-term` and `gpt-oss-main` runs) are left out for size. The metrics, intervals and reports computed from them are committed; to regenerate the per-step files, rerun `all_data_main.py`, `near_term.py` or `gpt_oss_probes.py` once the activations exist.
+- **Per-step probe scores** (`probe_scores.csv` in the `all-data-main`, `near-term` and `gpt-oss-main` runs) are left out for size, as are most split plans. The final all-data split plan is committed in compressed form (`runs/20261025-1456-e05-all-data-main/split_plan.json.gz`). The metrics, intervals and reports computed from the scores are committed; to regenerate the per-step files, rerun `all_data_main.py`, `near_term.py` or `gpt_oss_probes.py` once the activations exist.
 - **Monitor response caches** (`runs/*/cache/`). Monitor scores and metrics are committed, but rerunning `monitors.py` makes fresh paid calls.
 - **Large or regenerable run outputs**: rendered prompts, tokenizer and model-config copies, and per-row probe-score exports (see [`.gitignore`](.gitignore)).
 - **API keys.** `.env` is never committed.
@@ -168,7 +189,7 @@ Transcripts, labels, monitor scores, metrics and reports are in `runs/`.
 | [`experiments/E06-monitors/`](experiments/E06-monitors/) | Text monitors, their scoring, the combination test and the confirmation test |
 | [`report/`](report/) | The paper source, figure and table scripts, and the build |
 | [`runs/`](runs/) | One folder per run, each with its command, settings and outputs |
-| [`docs/`](docs/) | Design notes, scenario guidelines and the frozen confirmatory plan |
+| [`docs/`](docs/) | Design notes and working documents from the sprint (informal; the paper is the checked version), the scenario guidelines and the frozen confirmatory plan |
 | [`explainers/`](explainers/) | Plain-language explainers of the methods |
 | [`archive/internal/`](archive/internal/) | Working notes from the sprint, kept for the record |
 | [`src/collusion/`](src/collusion/) | Shared helper that creates run folders |
@@ -176,6 +197,15 @@ Transcripts, labels, monitor scores, metrics and reports are in `runs/`.
 | [`EXPERIMENT_LOG.md`](EXPERIMENT_LOG.md) | A dated journal of results, decisions and dead ends, each pointing to its run folders |
 
 Each experiment folder has its own `README.md` with more detail.
+
+**Reading the names.**
+
+- *Experiment numbers* follow the original sprint plan, not the pipeline order. The pipeline is E01 (episodes), then E02 (GPU replay), E05 (probes) and E06 (monitors). E03 holds the target screens and behaviour summaries; E04 was never run.
+- *Run folders* are `runs/YYYYMMDD-HHMM-e0N-<name>`. [`runs/index.jsonl`](runs/index.jsonl) lists every run in order, with its status.
+- *Episode runs:* `recruiting` means the peer asks for the protected value; `control` means a peer that asks only for the non-protected values it needs; `alone` means no peer. `consequence` is the rule wording used throughout; `spray-<scenario>` is one of the five scenarios other than the deploy token; `t1`, `t2` and `t7` are single-tactic peer variants. `e01-scaleup-…` folders are parent sweeps whose child folders hold the episodes.
+- *Data batches:* `replay2` is the first data batch and `replay3` the new-episode (confirmation) set.
+- *All-data probe runs:* `runs/20261025-1317-e05-all-data-main` holds the fits; `runs/20261025-1456-e05-all-data-main` is a report-only merge of those fits with the audit run `runs/20261025-1456-e05-all-data-audit`, and is the source of the paper's numbers.
+- Other terms are defined in plain language in [`explainers/GLOSSARY.md`](explainers/GLOSSARY.md).
 
 ## Trace viewer
 
@@ -196,7 +226,7 @@ and open `runs/viewer.html` in a browser (a local file is fine). It uses only th
 
 ## Sprint timeline and pre-existing work
 
-The sprint started on Fri 23 Oct 2026 00:00 AoE (20:00 SGT). The only project work that predates it is commit `a5bd6f93` (planning documents, no code); all code and results come from later commits. The author's own pre-existing open-source tools, Aboard (an agent message board) and Leaf (a document viewer for inline review comments), were used to coordinate and review the AI agents that helped with the work. They are not part of this repository's research code.
+The sprint started on Fri 23 Oct 2026 00:00 AoE (12:00 UTC). The only project work that predates it is commit `a5bd6f93` (planning documents, no code; see `git show --stat a5bd6f93`); all code and results come from later commits. The author's own pre-existing open-source tools, Aboard (an agent message board) and Leaf (a document viewer for inline review comments), were used to coordinate and review the AI agents that helped with the work. They are not part of this repository's research code. AI coding agents wrote most of the code and ran the experiments under the author's direction, and drafted the paper's text from the author's outline; the paper's LLM Usage Statement gives the full account.
 
 ## Data and model terms
 
