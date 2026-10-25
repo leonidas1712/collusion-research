@@ -8,14 +8,14 @@ Main-text "in passing" mentions are listed under **Main-text pointer** so the pa
 
 | # | Item | Appendix | Main-text pointer | Source | Status |
 |---|------|----------|-------------------|--------|--------|
-| 1 | Limitations list, dual-use reasoning | A. Limitations and Dual-Use | Discussion | `docs/report_plan_outline.md` §5 | TODO in paper |
+| 1 | Limitations list, dual-use reasoning | A. Limitations and Dual-Use | Discussion | `docs/report_plan_outline.md` §5, `docs/writeup_limitations.md` | draft ready (`report/appendix_drafts/A.md`); merge after render |
 | 2 | Pipeline figure, stage table, replay fidelity | B. Pipeline and Reproducibility | §3.2 | `report/appendix_pipeline.md` | in paper |
 | 3 | Eligibility rule (wrote a correct summary at some point); 11 Qwen exclusions; same set for Qwen; behaviour slice 304→226 vs scored 241 | B. Pipeline (stage 3) | §4.1, Table 1 caption | `runs/20261025-2143-e05-ever-correct-summary-audit-a9bf`, `runs/20261025-2140-e05-behaviour-exclusions-audit` | in paper |
 | 4 | Example trajectories (one give-in, one held) | C. Example Trajectories | §3.1 / Fig 1 | viewer reading lists | TODO |
-| 5 | Scenario table, incident grounding, per-scenario counts | D. Scenarios and Data | §3.1 | Table 1 CSV | TODO |
-| 6 | Model choice (candidates tried, why Qwen3-32B) | E. Model Choice | §3.1 | `docs/` model notes | TODO |
+| 5 | Scenario table, incident grounding, per-scenario counts | C. Scenarios/Example/Model | §3.1 | `SCENARIO_SPECS.md`, Table 1 CSV | counts in paper; new columns drafted (`report/appendix_drafts/C.md`) |
+| 6 | Model choice (candidates tried, why Qwen3-32B) | C. Scenarios/Example/Model | §3.1 | `docs/scenario_guidelines.md`, `EXPERIMENT_LOG.md` | draft ready (`report/appendix_drafts/C.md`); candidate counts to confirm |
 | 7 | Full monitor grid (18 setups), Luna, decision models defined, prompts, costs | Monitor setups | §3.4 | `runs/20261025-0147-e06-monitor-main`, `experiments/E06-monitors/PROMPTS.md` | TODO |
-| 8 | Eventual label: learning curve, per-layer, branching | Eventual-label details | §4.2 | E05 branching / replay2 reports | TODO |
+| 8 | Eventual label: learning curve, per-layer, branching | H. Robustness and Diagnostics | §4.2 | `runs/20261025-1456-e05-all-data-main`, branching run | prose drafted (`report/appendix_drafts/H.md`); codex builds per-layer figure |
 | 9 | Near-term robustness: labels B/C, per-layer, scenario-mean, per-scenario | Near-term robustness | §4.3 | `runs/20261025-1456-e05-all-data-main/report.md` | TODO |
 | 10 | Pooled CV and fold mixing | Pooled CV | §3.5 | same | TODO |
 | 11 | Pressure-probe check (first batch, layer 32) | Pressure vs outcome | §4.3 (in paper) | `runs/20261025-0800-e05-explore-trajectories-pressure` | main text done; appendix TODO |
