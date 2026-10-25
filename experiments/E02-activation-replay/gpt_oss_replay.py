@@ -50,9 +50,11 @@ def render(record, date, keep_reasoning=False):
         else:raise ValueError('Unsupported saved role: '+raw['role'])
     config=h.RenderConversationConfig(auto_drop_analysis=False)
     prompt=enc.render_conversation_for_completion(h.Conversation.from_messages(messages),h.Role.ASSISTANT,config)
-    raw=record['response']['choices'][0]['message']
+    choices=(record.get('response') or {}).get('choices') or []
+    raw=(choices[0].get('message') or {}) if choices else {}
     reply_messages=assistant_messages(raw,h)
-    if not reply_messages:raise ValueError('Empty served reply')
+    if not reply_messages:
+        return dict(prompt_ids=prompt,reply_ids=[],reasoning_positions=[],answer_positions=[],effort=effort,reply_status='missing_or_empty')
     full=enc.render_conversation_for_training(h.Conversation.from_messages(messages+reply_messages),config)
     assert full[:len(prompt)]==prompt, 'Harmony prompt/reply prefix mismatch'
     reply=full[len(prompt):]
@@ -133,7 +135,7 @@ def score_positions(model,hidden,ids,positions):
     return dict(n_tokens=len(positions),mean_token_nll=nll/len(positions),top5_fraction=hits/len(positions))
 
 
-def execute(payload, output_root, tiny=False, checkpoint=None):
+def execute(payload, output_root, tiny=False, checkpoint=None, model=None):
     import numpy as np
     import torch
     from transformers import AutoModelForCausalLM,GptOssConfig,Mxfp4Config
@@ -142,7 +144,10 @@ def execute(payload, output_root, tiny=False, checkpoint=None):
     rh.RUNS=Path(output_root);rh.INDEX=rh.RUNS/'index.jsonl'
     run=rh.start_run('e02-gpt-oss-fidelity',experiment='E02',model=MODEL,settings={'revision':REVISION,'tiny_random':tiny,'requests':len(payload['rows']),'history_reasoning':payload['history_reasoning']})
     start=time.monotonic()
-    if tiny:
+    reused_model=model is not None
+    if reused_model:
+        model.eval()
+    elif tiny:
         config=GptOssConfig(vocab_size=201088,hidden_size=32,intermediate_size=32,num_hidden_layers=2,num_attention_heads=4,num_key_value_heads=2,head_dim=8,num_local_experts=4,num_experts_per_tok=2)
         model=AutoModelForCausalLM.from_config(config,attn_implementation='eager').float().eval()
     else:
@@ -161,7 +166,7 @@ def execute(payload, output_root, tiny=False, checkpoint=None):
         expected=(model.config.num_hidden_layers,model.config.hidden_size)
         assert last.shape==expected and reasoning.shape==(expected[0],len(row['reasoning_positions']),expected[1])
         assert np.isfinite(last).all() and np.isfinite(reasoning).all()
-        fidelity=score_hidden(model,hidden,len(prompt),reply)
+        fidelity=score_hidden(model,hidden,len(prompt),reply) if reply else dict(n_reply_tokens=0,mean_token_nll=None,top5_fraction=None,status='missing_or_empty_reply')
         segments={name:score_positions(model,hidden,ids,row[name+'_positions']) for name in ['reasoning','answer']}
         del hidden
         filename=f'request-{i:04}.npz'
@@ -174,7 +179,7 @@ def execute(payload, output_root, tiny=False, checkpoint=None):
         if checkpoint and (i+1)%10==0:checkpoint()
         print('PROGRESS',i+1,len(payload['rows']),fidelity,flush=True)
     summary={'requests':len(index),'model_load_seconds':load_seconds,'wall_seconds':time.monotonic()-start,
-             'versions':{n:importlib.metadata.version(n) for n in ['torch','transformers','accelerate','openai-harmony']},
+             'reused_model':reused_model,'versions':{n:importlib.metadata.version(n) for n in ['torch','transformers','accelerate','openai-harmony']},
              'model_config':model.config.to_dict(),'parameter_dtypes':sorted({str(p.dtype)for p in model.parameters()}),
              'peak_cuda_bytes':torch.cuda.max_memory_allocated() if torch.cuda.is_available() else None}
     for name in ['all','reasoning','answer']:

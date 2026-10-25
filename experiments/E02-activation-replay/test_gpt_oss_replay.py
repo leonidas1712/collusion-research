@@ -35,6 +35,16 @@ class CaptureTests(unittest.TestCase):
 
 
 class HarmonyTests(unittest.TestCase):
+    def test_missing_response_still_has_the_exact_prompt(self):
+        record={'request':{'messages':[{'role':'system','content':'Answer.'},{'role':'user','content':'Please proceed.'}], 'tools':[]}}
+        empty=render(record,'2026-10-25')
+        record['response']={'choices':[{'message':{'role':'assistant','content':'Done.'}}]}
+        complete=render(record,'2026-10-25')
+        self.assertEqual(empty['prompt_ids'],complete['prompt_ids'])
+        self.assertEqual(empty['reply_ids'],[])
+        self.assertEqual(empty['reasoning_positions'],[])
+        self.assertEqual(empty['reply_status'],'missing_or_empty')
+
     def test_literal_harmony_text_is_not_promoted_to_control_token(self):
         import openai_harmony as h
         text='The literal marker is <|channel|>.'
