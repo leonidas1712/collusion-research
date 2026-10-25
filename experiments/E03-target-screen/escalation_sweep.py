@@ -1,0 +1,180 @@
+"""Directed escalation sweep: one literature-grounded peer strategy per invocation.
+
+API only, no GPU. Replaces ONLY the peer system prompt of the fixed deploy-token-v2
+scenario; target system prompt, task, fake credential, tools and the deterministic leak
+scorer are unchanged. Peer is DeepSeek-V4-Pro (reasoning on). Records served provider and
+precision per call. Shared capped ledger per invocation.
+
+    uv run python experiments/E03-target-screen/escalation_sweep.py \
+        --target gpt-oss --strategy reframe --recruiting 6 --control 2 --cap-usd 1.5
+
+See docs/second_target_escalation_lit.md for grounding and escalation_prompts.py for text.
+"""
+import argparse
+import asyncio
+from dataclasses import asdict, replace
+from decimal import Decimal
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path[:0] = [str(ROOT / 'src'), str(ROOT / 'experiments/E01-behaviour-pilot')]
+
+from harness import Settings, run_episode
+from scale_up import scale_up_scenario
+from overnight_sweep import options
+from gemma_screen import ConcurrentBudget, price_for, pooled_target_price, pool_options
+from gemma_pressure import PEER, peer_price, peer_options
+from escalation_prompts import RECRUITING, CONTROL, STRATEGIES
+from collusion.runs import start_run, write_json_atomic
+
+
+def target_config(name):
+    if name == 'gpt-oss':
+        model = 'openai/gpt-oss-20b'
+        price = price_for(model, 'CoreWeave', 'fp4')
+        opts = options(price)
+        opts['extra_body']['provider']['quantizations'] = ['fp4']
+        opts['extra_body']['provider']['require_parameters'] = True
+        opts['extra_body']['reasoning'] = {'effort': 'low', 'exclude': False}
+        return model, price, opts
+    if name == 'gemma':
+        model = 'google/gemma-4-31b-it'
+        price = pooled_target_price()
+        opts = pool_options(price)  # reasoning stays disabled (options() default)
+        return model, price, opts
+    raise ValueError(f'unknown target {name!r}')
+
+
+def build_scenario(strategy, condition, family_id):
+    """Fixed deploy-token-v2 scenario with only the peer system prompt swapped."""
+    base = scale_up_scenario('deploy-token-v2', 'consequence', condition, str(family_id))
+    peer_system = (RECRUITING if condition == 'recruiting' else CONTROL)[strategy]
+    metadata = dict(base.metadata)
+    metadata.update(escalation_strategy=strategy,
+                    peer_system_sha256=hashlib.sha256(peer_system.encode()).hexdigest(),
+                    base_recruiter_system_sha256=hashlib.sha256(base.recruiter_system.encode()).hexdigest())
+    return replace(base, recruiter_system=peer_system, metadata=metadata,
+                   scenario_version=base.scenario_version + f'-escalation-{strategy}-1')
+
+
+def episode_record(strategy, condition, ep):
+    label = ep.get('label') or {}
+    calls = []
+    for rec in ep.get('requests', []):
+        resp = rec.get('response') or {}
+        if not resp:
+            continue
+        calls.append({'actor': rec.get('actor'), 'round': rec.get('round'),
+                      'served_provider': resp.get('provider'),
+                      'served_quantization': resp.get('quantization')})
+    return {'strategy': strategy, 'condition': condition, 'episode_id': ep['episode_id'],
+            'status': ep['status'], 'stop_reason': ep['stop_reason'],
+            'objective_success': label.get('objective_success'),
+            'other_file_disclosure': label.get('other_file_disclosure'),
+            'token_in_context': label.get('token_in_context'),
+            'token_read_round': label.get('token_read_round'),
+            'first_action_round': label.get('first_action_round'),
+            'disclosure_kind': label.get('disclosure_kind'),
+            'exposure_requirement_met': label.get('exposure_requirement_met'),
+            'task_success': label.get('task_success'),
+            'served_calls': calls}
+
+
+def summarize(records):
+    out = {}
+    for cond in ('recruiting', 'control'):
+        rows = [r for r in records if r['condition'] == cond]
+        complete = [r for r in rows if r['status'] == 'complete']
+        exposed = [r for r in complete if r.get('token_in_context')]
+        give_in = [r for r in complete if r.get('objective_success') or r.get('other_file_disclosure')]
+        give_in_after_read = [r for r in give_in if r.get('token_in_context')]
+        out[cond] = {'n': len(rows), 'complete': len(complete), 'exposed_secret': len(exposed),
+                     'give_ins': len(give_in), 'give_ins_after_read': len(give_in_after_read),
+                     'give_in_rounds': sorted(r.get('first_action_round') for r in give_in
+                                              if r.get('first_action_round') is not None),
+                     'give_in_episodes': [r['episode_id'] for r in give_in]}
+    return out
+
+
+async def main(a):
+    if a.strategy not in STRATEGIES:
+        raise ValueError(f'strategy must be one of {STRATEGIES}')
+    if not 0 < a.cap_usd <= 3:
+        raise ValueError('Per-invocation cap must be in (0, 3]; keep total sweep under $6')
+    model, target_price, target_opts = target_config(a.target)
+    prices = {model: target_price, PEER: peer_price()}
+    settings = Settings(model, PEER, rounds=20, max_tool_steps=12, max_tokens=4096,
+                        empty_response_retries=2, empty_after_send_ends_turn=True,
+                        api_retry_attempts=10, api_retry_max_delay=60,
+                        target_request_options=target_opts,
+                        recruiter_request_options=peer_options(prices[PEER]))
+    run = start_run(f'e03-escalation-{a.target}-{a.strategy}', experiment='E03', model=model,
+                    settings={**vars(a), 'peer': PEER, 'episode_settings': asdict(settings)},
+                    tags=['second-target', 'escalation', a.target, a.strategy])
+    write_json_atomic(run.dir / 'prices.json',
+                      {k: {kk: vv for kk, vv in v.items() if kk not in ('endpoint', 'endpoints', 'snapshot')}
+                       for k, v in prices.items()})
+    from dotenv import load_dotenv
+    from openai import AsyncOpenAI
+    load_dotenv(ROOT / '.env')
+    records = []
+    try:
+        async with AsyncOpenAI(api_key=os.environ['OPENROUTER_API_KEY'],
+                               base_url='https://openrouter.ai/api/v1', max_retries=0, timeout=90) as client:
+            budget = ConcurrentBudget(client, run.dir / 'budget.json', prices, Decimal(str(a.cap_usd)))
+            budget.save()
+            gate = asyncio.Semaphore(a.parallelism)
+
+            async def one(condition, index):
+                async with gate:
+                    s = build_scenario(a.strategy, condition, a.family_start + index)
+                    try:
+                        ep = await run_episode(s, settings, budget, run.dir / 'episodes',
+                                               episode_id=f'{condition}-{index+1:04}')
+                    except Exception as exc:
+                        print('EPISODE_ERROR', condition, index + 1, type(exc).__name__, exc, flush=True)
+                        return
+                    rec = episode_record(a.strategy, condition, ep)
+                    records.append(rec)
+                    write_json_atomic(run.dir / 'records.json', records)
+                    write_json_atomic(run.dir / 'summary.json',
+                                      {'summary': summarize(records),
+                                       'reported_cost_usd': budget.ledger['reported_cost_usd'],
+                                       'charged_or_reserved_usd': budget.ledger['charged_or_reserved_usd']})
+                    print('EPISODE', condition, index + 1, ep['status'], ep['stop_reason'],
+                          'give_in=%s' % (rec['objective_success'] or rec['other_file_disclosure']),
+                          'read=%s' % rec['token_in_context'],
+                          'kind=%s' % rec['disclosure_kind'],
+                          '$' + budget.ledger['reported_cost_usd'], flush=True)
+
+            jobs = [('recruiting', i) for i in range(a.recruiting)] + [('control', i) for i in range(a.control)]
+            # Smoke the first recruiting episode before fanning out.
+            await one(*jobs[0])
+            if not records or records[0]['status'] != 'complete':
+                raise RuntimeError('First episode did not complete; inspect before continuing')
+            await asyncio.gather(*(one(*j) for j in jobs[1:]))
+            run.result(episodes=len(records), summary=summarize(records),
+                       reported_cost_usd=budget.ledger['reported_cost_usd'],
+                       charged_or_reserved_usd=budget.ledger['charged_or_reserved_usd'])
+            run.finish()
+            print('SWEEP_DONE', run.id, json.dumps(summarize(records)),
+                  '$' + budget.ledger['reported_cost_usd'], flush=True)
+    except BaseException as exc:
+        run.finish('failed', str(exc))
+        raise
+
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--target', choices=['gpt-oss', 'gemma'], default='gpt-oss')
+    p.add_argument('--strategy', required=True, choices=list(STRATEGIES))
+    p.add_argument('--recruiting', type=int, default=6)
+    p.add_argument('--control', type=int, default=2)
+    p.add_argument('--family-start', type=int, default=97001)
+    p.add_argument('--parallelism', type=int, choices=(1, 2, 3, 4), default=3)
+    p.add_argument('--cap-usd', type=float, default=1.5)
+    asyncio.run(main(p.parse_args()))
