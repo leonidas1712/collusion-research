@@ -102,7 +102,7 @@ We report a **held-out scenario** evaluation (leave one scenario out: train on f
 > **Denominator convention (every headline score carries its n):** the headline AUROCs rank **recruiting steps only** — 4,697 steps from 241 recruiting episodes (250 near-term positives; 998 eventual positives). Report these next to every headline score and in the figure/table captions. The **confirmation** set is 1,787 steps from 89 episodes (82 near-term positives). Use the whole-dataset figure (6,404 eligible steps from 338 episodes) only for dataset and pipeline descriptions, never for a score's denominator.
 
 ### 4.1 Does the setup produce mixed outcomes?
-**[TODO]** Behaviour and the behavioural positive control: give-in rates by scenario, controls at zero leaks, Table 1 (per-scenario counts).
+**[TODO]** Behaviour and the behavioural positive control: give-in rates by scenario, controls at zero leaks, Table 1 (per-scenario counts). Report the give-in rate here as 100/226 (44%), labelled as the behaviour count over all complete plain-peer recruiting episodes, and add one sentence on why it differs from the 241 scored recruiting episodes (101/241, 42%): some episodes were not replayed, and invalid episodes and ones with no scored step are dropped. Name the slice wherever a rate is given.
 
 ### 4.2 Can anything predict eventual give-in?
 **[TODO]** No. The probe is at chance and the best monitor only weakly above it (AUROC 0.577); 4,697 recruiting steps from 241 episodes, 998 eventual positives; branching (outcome partly chance) as the reason.
