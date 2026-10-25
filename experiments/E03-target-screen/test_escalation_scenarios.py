@@ -153,8 +153,14 @@ class EscalationScenarioTests(unittest.TestCase):
             ],
         }
         self.assertEqual(first_emission_indices(episode), {
-            "first_any_emission_request_index": 2,
-            "first_any_emission_round": 2,
+            "first_any_emission_request_index": 3,
+            "first_any_emission_round": 3,
+            "first_public_emission_request_index": 3,
+            "first_public_emission_round": 3,
+            "first_reasoning_emission_request_index": 2,
+            "first_reasoning_emission_round": 2,
+            "first_reasoning_inclusive_emission_request_index": 2,
+            "first_reasoning_inclusive_emission_round": 2,
             "first_channel_emission_request_index": 4,
             "first_channel_emission_round": 4,
             "first_file_emission_request_index": 3,
@@ -173,6 +179,8 @@ class EscalationScenarioTests(unittest.TestCase):
         }
         result = first_emission_indices(episode)
         self.assertEqual(result["first_any_emission_request_index"], 2)
+        self.assertEqual(result["first_public_emission_request_index"], 2)
+        self.assertIsNone(result["first_reasoning_emission_request_index"])
         self.assertEqual(result["first_channel_emission_request_index"], 2)
         self.assertIsNone(result["first_file_emission_request_index"])
 
