@@ -549,3 +549,33 @@ All paired CIs include 0, including the fold-stratified ones. Logistic stays the
 - **Near-term B:** ~0.55–0.62 through the middle layers, then consistently higher at layers 48–63 in both analyses (pooled maximum layer 48 0.644; LOSO maximum layer 63 0.660, with layers 48–63 at 0.63–0.66).
 - **Reading:** the inner-selected probe (0.60) under-uses the late layers because its choice is noisy. Imminent action may be most readable near the output.
 - **Late-band hypothesis:** since this was found on test data, it is post hoc on replay 2. It is now added to the frozen confirmation plan as a secondary hypothesis (addendum 5): an average of the layer 48/52/56/60/63 probes, tested on the new episodes. Added before any replay-3 outcome analysis.
+
+### 2026-10-25 ~10:45 SGT — CONFIRMATION TEST: passed (frozen plan, one run)
+
+`runs/20261025-1030-e06-confirmation/report.md` and `confirm.json`. Script at commit 61e0168, as frozen in `docs/confirmatory_plan.md` (addenda 1–5, all written before the data). Trained on replay 2 only; scored once on the 89 usable new episodes (5 spray scenarios). Within scenario × round AUROC; family-bootstrap CIs over the new episodes.
+
+**Primary label A (1,787 steps, 82 positive):**
+
+| Method | AUROC [95% CI] |
+|---|---|
+| **Probe** (seed-mean, inner-selected) | **0.681 [0.604, 0.753]** |
+| Jev forecaster L3 | 0.644 [0.560, 0.722] |
+| GPT-5-nano detector L2 | 0.532 [0.462, 0.602] |
+
+| Pre-stated criterion | Result |
+|---|---|
+| 1. Probe CI above 0.5 | **PASS** |
+| 2. Gain from adding the probe to GPT-5-nano det L2 | **PASS:** +0.113 [+0.025, +0.203] |
+| 3. Gain from adding the probe to Jev (expected ≈ 0) | +0.052 [−0.014, +0.121]: positive point estimate, CI includes 0 |
+
+- Jev − probe = −0.038 [−0.142, 0.059]. On new episodes the probe is level with Jev; on replay 2 Jev led by ~0.05.
+- **Secondary labels:**
+  - B: probe 0.686, Jev 0.656, gain over GPT-5-nano +0.114 [0.001, 0.211].
+  - C: probe 0.637, Jev 0.617, gain +0.105 [−0.006, 0.216].
+- **Late-band hypothesis (addendum 5):** 0.664 on A, −0.017 vs the primary probe. Not better, so the hypothesis is not supported.
+- Seed 42 alone 0.639; fixed layer 32 0.640. Averaging seeds helped.
+- **Reading:** near-term give-in is predictable from the target's last-token activations on unseen episodes, with every choice fixed in advance. The probe adds real information to an LLM judge. Against the best decision model it is level, and adding it may help (+0.05, not significant).
+- **Caveats:**
+  - only the 5 spray scenarios, no deploy-token v2;
+  - 89 episodes, so CIs ~±0.08;
+  - same scenarios as training (not a new-scenario test).
