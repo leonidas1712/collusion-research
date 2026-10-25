@@ -27,7 +27,7 @@ COUNTS = {
     "kept": ("230 kept, 38 dropped", "108 kept, 21 dropped"),
     "steps": ("4,184 eligible steps", "2,220 eligible steps"),
     "requests": ("6,003 target requests", "3,112 target requests"),
-    "fidelity": ("reply NLL 0.249, top-5 99.79%", "reply NLL 0.227, top-5 99.82%"),
+    "fidelity": ("NLL 0.249, top-5 99.79%", "NLL 0.227, top-5 99.82%"),
 }
 
 INK = "#1f2933"
@@ -94,7 +94,7 @@ def main():
          f"{c['kept'][first]}; {c['steps'][first]}  |  {c['kept'][new]}; {c['steps'][new]}"], STAGE)
     box(ax, x, ys[3], w, h, "4  GPU replay",
         ["Each target request runs once through the open weights (bf16, pinned revision 9216db5, A100-80GB).",
-         "All 64 decoder-layer outputs saved at the last prompt token; fidelity scored on the actual replies.",
+         "All 64 decoder-layer outputs saved at the last prompt token; fidelity on the first 64 reply tokens.",
          f"{c['requests'][first]}, {c['fidelity'][first]}  |  {c['requests'][new]}, {c['fidelity'][new]}"], STAGE)
     for i in range(3):
         down(ax, x + w / 2, ys[i], ys[i + 1] + h)
@@ -133,7 +133,7 @@ def main():
         ("1  Collect", "peer DeepSeek-V4-Pro,", "delayed whole-block ask;", "300 recruiting, 60 control"),
         ("2  Label", "channel give-ins: 128/300"),
         ("3  Eligible steps", "after the ask: 2,059 steps,", "238 episodes; pre-ask", "placebo: 1,141 steps"),
-        ("4  Replay", "6,985 requests, all verified;", "24 layers saved; reply NLL", "0.41, top-5 99.0% (main", "provider, 6,672 requests)"),
+        ("4  Replay", "6,985 requests, all verified;", "24 layers saved; NLL 0.41,", "top-5 99.0% on all reply", "tokens (main provider)"),
         ("5-8  Score", "near-term positives: 148;", "probes and the same", "monitors, plus a", "reasoning level"),
     ]
     yy = top - 0.02
