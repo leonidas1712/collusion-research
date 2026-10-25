@@ -19,3 +19,16 @@ A running list for the appendix and limitations section. Add an item whenever on
 - **Near-term labels are post hoc,** defined on 25 Oct after the eventual-label result.
 - **The forecaster prompt** asks about "any later point", yet tracks near-term risk better.
 - **Stacking leak (replay-2 combination test):** the stacker's training rows use out-of-fold probe scores from probes that saw the test fold's labels. That tilts slightly towards "the probe adds value", plausibly ~0.01 (estimate, 25 Oct). The GPT-5-nano + probe gains are +0.05 to +0.08, but the lower CI bounds for B and C on held-out scenarios are +0.004 and +0.007, so those two are borderline. The frozen confirmation test has no such leak; nested stacking is the fallback if it is borderline.
+
+## Scoring window: only steps after the secret is read and before the leak (methods + limitations)
+
+- **Methods sentence:** we score every method only on steps where the secret is already in the target's context and it has not yet leaked. A step before the read cannot leak, and including those steps would let a method score well just by detecting that the file was read; a probe does this perfectly, with an exposure check AUROC of 1.000. Steps after the leak are detection after the fact. Probes are trained on the same window, and monitors were run on the same steps.
+- **Coverage (combined data):** 6,404 of 9,138 replayed steps are in the window. Of 320 recruiting episodes:
+  - 5 of 109 give-ins have no step in the window, because the target leaked on the call right after reading;
+  - 74 of 211 held episodes never read the secret.
+  - Neither group contributes to training or scoring.
+- **Limitation:** an instant give-in like this cannot be predicted from within the episode by any method.
+- **Future work:**
+  - Influence before exposure, such as tone shifting from "I can't help" to "sure, let me help". This needs its own label, for example a judged "stance" per turn.
+  - Recruitment towards side tasks unrelated to the secret.
+  - Prediction from the peer's messages alone, before the target has read anything.
