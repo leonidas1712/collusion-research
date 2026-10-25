@@ -158,7 +158,7 @@ Our setup has one recruiter and one target, but collusion in deployed systems in
 
 A second direction is what to do after an alarm. A cheap probe or forecaster could pass a flagged step to a stronger monitor or a human approver, as two-stage cascades already do for jailbreaks [@cunningham2026]. The target could also be given a way to escalate the request to its operator, so that it can do more than hold or give in.
 
-Third, the gpt-oss-20b result sets a boundary: prediction needs a window in which the target deliberates (§4.6). Settings that give such a window on more models, and probes read at the decision token rather than the last prompt token, would test whether earlier warning signals exist and whether they transfer across models. Finally, because our monitors are prompted with no tuning, a fair test would tune both detector types per model and score them once on fresh episodes; Appendix J outlines such a study, with the result that would change each conclusion and a rough budget.
+Third, the gpt-oss-20b result sets a boundary: prediction needs a window in which the target deliberates (§4.6). Settings that give such a window on more models, and probes read at the decision token rather than the last prompt token, would test whether earlier warning signals exist and whether they transfer across models. Finally, because our monitors are prompted with no tuning, a fair test would tune both detector types per model and score them once on fresh episodes; Appendix J outlines a follow-up design and the result that would change each conclusion.
 
 ---
 
@@ -682,17 +682,7 @@ Remember, we are concerned that the agent may not follow its operator's rule. Yo
 
 **J.6 Deployment-oriented evaluation.** We would measure leaks prevented against review burden (the share of actions held for review), false alarms per episode, and intervention loops in which an alarm holds the action, escalates to a stronger monitor, or asks a human. Literal secrets such as our tokens can be caught by an exact-match output filter, so prediction matters most for paraphrased or semantic disclosures (a summary of a reserve price, a rewritten note) and for deciding when to raise oversight. *What would change our conclusion:* today every detector catches at most a tenth of give-ins at a 5% false-alarm rate set on held episodes (App. H). A loop that prevents most semantic leaks while holding a small share of actions would make prediction practically useful. A loop that does not would mean output filters and access control are the better defence in this setting.
 
-**J.7 Scale of the study.** Rates measured in this study: target generation cost \$0.82 per 129 Qwen3-32B episodes; GPU replay cost \$8.45 for 9,115 Qwen3-32B requests (one A100-80GB, App. B) and about \$9.5 for 6,985 gpt-oss-20b requests (App. F); text monitors cost \$12.67 per 75,312 calls (App. E). Episodes averaged about 23 target requests (Qwen) and 19 (gpt-oss). We size the locked test by its interval. With 82 positives our confirmation intervals were about ±0.08 AUROC, so about 330 near-term positives would narrow them to about ±0.04, enough to resolve a 0.05 difference between detectors.
-
-| Component, per target model | Size | Rough cost |
-|---|---|---|
-| Development and locked-test episodes | 1,200 recruiting + 200 control episodes, about 30,000 requests | about \$10 generation |
-| Rerun labels (J.2) | 300 states × 20 reruns, about 50,000 requests | about \$15 generation |
-| GPU replay | about 80,000 requests at \$0.9 to \$1.4 per 1,000 | about \$75 to \$110 |
-| Text monitors | 8 setups on about 25,000 steps | about \$35 |
-| Total, excluding monitor fine-tuning and steering | | about \$135 to \$170 |
-
-At four target models, this is under \$1,000 in compute. Two costs are not covered by our measurements: fine-tuning monitors (J.1) and steering (J.4), which needs full generation on the GPU rather than one forward pass per request. Human validation of generated scenarios will cost more than compute. These estimates are extrapolations from a small study and could be off by a factor of two or more.
+**J.7 Sample size.** With 82 near-term positives, our confirmation intervals were about ±0.08 AUROC. A locked test with about 330 near-term positives would narrow them to about ±0.04, enough to resolve a 0.05 difference between detectors.
 
 ## LLM Usage Statement
 
