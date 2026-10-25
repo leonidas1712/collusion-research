@@ -6,7 +6,7 @@ Leonidas Raghav, Independent
 
 ## Abstract
 
-Can we tell that an AI agent is about to be talked into breaking its operator's rule? A peer agent may press it to reveal a value, such as a deploy token, that its operator told it to keep private, often the first step of collusion. In six scenarios, one inspired by a real 2026 agent incident, a peer presses a Qwen3-32B target for such a value over up to 20 rounds; the target gives in on 101 of 241 episodes (42%). We compare probes on the target's activations with text monitors (an LLM judge and two decision models) that see the target's actions, the conversation, or everything the target saw. Whether we can tell depends on how far ahead we ask. Eventual give-in is barely predictable from one step. Giving in this round or the next is modestly predictable: a probe scores AUROC 0.58 on held-out scenarios and the best monitor (Jev, a decision model asked to forecast) 0.65, and this held on 89 further episodes, collected after the analysis was fixed. Monitors asked whether the target *will* break the rule beat monitors asked whether it *is* breaking it, and probes can add to weaker monitors. On gpt-oss-20b, which usually gives in within the round it is asked, neither probes nor monitors predict give-in much above chance. Useful warnings thus arrive only shortly before the rule is broken. If future work can find signals that appear earlier and hold across models, overseers could interrupt collusion before it succeeds.
+Can we tell that an AI agent is about to be talked into breaking its operator's rule? A peer agent may press it to reveal a value, such as a deploy token, that its operator told it to keep private, often the first step of collusion. In six scenarios, one inspired by a real 2026 agent incident, a peer presses a Qwen3-32B target for such a value over up to 20 rounds; the target gives in on 101 of 241 episodes (42%). We compare probes on the target's activations with text monitors (an LLM judge and two decision models) that see the target's actions, the conversation, or everything the target saw. Whether we can tell depends on how far ahead we ask. Eventual give-in is barely predictable from one step. Giving in this round or the next is modestly predictable: a probe scores AUROC 0.58 on held-out scenarios and the best monitor (a forecasting decision model) 0.65, and both held on 89 new episodes under a frozen analysis plan. Monitors asked to forecast beat monitors asked to detect, and probes can add to weaker monitors. On gpt-oss-20b, which usually gives in within the round it is asked, neither probes nor monitors predict give-in much above chance. Warnings thus arrive late, so oversight must check each step close to the action. If future work finds earlier signals that hold across models, overseers could stop collusion before it succeeds.
 
 ---
 
@@ -46,6 +46,7 @@ We make the following contributions.
 **Monitors and persuasion.** Monitors that see agents' messages catch more coordinated sabotage [@radev2026], and persuasion between agents is measured from text and outcomes [@tao2026; @tang2026]. *We differ:* probes and text monitors, at three access levels and asked to detect or to forecast, are scored on exactly the same steps.
 
 To our knowledge, no prior work predicts, before it acts, whether an agent recruited by a peer will give in. Appendix K gives the full comparison.
+
 ---
 
 ## 3. Methods
@@ -132,6 +133,7 @@ The activation probe adds to the weaker monitor, not the strong forecaster. Addi
 ### 4.6 Transfer to a second target
 
 The same pipeline, unchanged, runs on gpt-oss-20b (details in Appendix F). It gives in by a different route, copying a configuration block that holds the protected value, and usually soon after the ask: 32 of its 128 channel give-ins leave no step to predict from, and for 65 of the other 96 the earliest possible warning is in the same round. On the steps that remain, the probe is near chance (near-term 0.53 [0.48, 0.58] on held-out scenarios) and the best monitor, the Jev forecaster, is only weakly predictive (0.56 [0.51, 0.61]), although an exposure probe on the same activations detects that the token has been read at AUROC 1.000. We read this as a boundary condition, not a replication; one reading is that this model leaves little window in which to deliberate before it gives in.
+
 ---
 
 ## 5. Discussion and Limitations
@@ -150,6 +152,7 @@ One main target model (Qwen3-32B) on six scenarios from one task template; the s
 ### Future Work
 
 Collusion in deployment involves groups of agents: several recruiting peers, honest teammates who can object, and recruited targets that recruit others, as in the 2026 incident [@greenblatt2026incident] and as attacks spread between agents through shared memory [@pulipaka2026shareborne]. An alarm could also feed an intervention loop that passes a flagged step to a stronger monitor or a human, as two-stage cascades do for jailbreaks [@cunningham2026]. Because our monitors are prompted with no tuning, a fair next test would tune both detector types per model and score them once on fresh episodes, in settings that give the target time to deliberate; Appendix J outlines this follow-up design and the result that would change each conclusion.
+
 ---
 
 ## 6. Conclusion
@@ -157,6 +160,7 @@ Collusion in deployment involves groups of agents: several recruiting peers, hon
 Collusion between agents often starts with one agent talking another into breaking its operator's rule. We asked whether that give-in can be seen before it happens. On Qwen3-32B, it can, modestly and only shortly before: whether the target gives in this round or the next is readable, and this held on new episodes, while whether it will eventually give in barely is. The best warning came from a decision model, Jev 1.14, asked to forecast rather than detect and shown the peer's messages; activations helped only a weaker monitor. On the question of combining what agents say with what they do, the conversation mattered most. On gpt-oss-20b, which usually gives in as soon as it is asked, the probe was near chance and the best monitor only weakly predictive.
 
 These signals are far from a working alarm. But the moment before the give-in is the step an overseer would need to catch to stop recruitment before it spreads to further agents, and scoring probes and monitors on the same steps gives a way to look for earlier signals that transfer across models.
+
 ---
 
 ## Code and Data
