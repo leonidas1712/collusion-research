@@ -3,6 +3,7 @@
     uv run python experiments/E01-behaviour-pilot/viewer.py open --run 20261024-0312 --episode 3 --turn 4
     uv run python experiments/E01-behaviour-pilot/viewer.py open --outcome leak_deliberate --model qwen --sort round
     uv run python experiments/E01-behaviour-pilot/viewer.py open --list best --print     # just print the URL
+    uv run python experiments/E01-behaviour-pilot/viewer.py open --list label-batch-2 --blind  # blind hand-labelling
     uv run python experiments/E01-behaviour-pilot/viewer.py list add best 20261024-0312 3 --turn 4 --note "gives in after 3 refusals"
     uv run python experiments/E01-behaviour-pilot/viewer.py list show best
     uv run python experiments/E01-behaviour-pilot/viewer.py list clear best
@@ -90,7 +91,7 @@ def cmd_open(a) -> int:
     keys = [("run", run), ("episode", check_episode(run, str(a.episode)) if a.episode is not None else None),
             ("turn", a.turn), ("q", a.q), ("tag", ",".join(a.tag)), ("outcome", ",".join(a.outcome)),
             ("scenario", ",".join(a.scenario)), ("model", ",".join(a.model)), ("rmin", a.rmin), ("rmax", a.rmax),
-            ("sort", a.sort), ("view", a.view), ("list", a.list)]
+            ("sort", a.sort), ("view", a.view), ("list", a.list), ("blind", 1 if a.blind else None)]
     frag = "&".join(f"{k}={quote(str(v), safe=',/')}" for k, v in keys if v not in (None, ""))
     url = VIEWER.as_uri() + ("#" + frag if frag else "")
     if a.print:
@@ -180,6 +181,7 @@ def main() -> int:
     o.add_argument("--sort", help="runs: new, rate, med; episodes: run, round, rounds (round/rounds switch to episodes)")
     o.add_argument("--view", choices=["runs", "episodes"], help="home list to show")
     o.add_argument("--list", help="saved list to show in the sidebar (alone: open its first item)")
+    o.add_argument("--blind", action="store_true", help="blind labelling: hide automatic kind labels and monitor scores")
     o.add_argument("--print", action="store_true", help="print the URL instead of opening it")
     o.set_defaults(fn=cmd_open)
 

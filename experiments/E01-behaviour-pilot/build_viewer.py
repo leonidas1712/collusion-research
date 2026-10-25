@@ -23,6 +23,8 @@ target call it scored, with family / role / level filters. Keep runs/viewer_moni
 
 The page reads its state from the URL hash and writes it back, so any view is a link (viewer.py open builds them):
     #run=ID&episode=N&turn=T&list=NAME        open an episode, scroll to round T, show a saved list
+    ...&blind=1                               blind labelling: hide the automatic disclosure-kind labels
+                                              (on purpose / by accident) and the monitor bar; kept while navigating
     #q=TEXT&tag=a,b&outcome=..&scenario=..&model=..&rmin=A&rmax=B&sort=S    home page filters
 Run IDs may be a unique prefix; filter values match exactly or as a substring. Old #run/ID/INDEX links still work.
 """
@@ -551,6 +553,7 @@ function guide(){const open=store('e01viewer.guide')!=='closed';return `<details
 <p><strong>Filters, search and notes</strong>: on this page, click chips to filter. Values in one row are OR-ed and rows are AND-ed. Each filter is checked against single episodes, so a run is listed when at least one of its episodes matches. Switch to <em>Episodes</em> to list the matching episodes directly, for example every deliberate leak. Sort either list with the <em>Sort</em> menu, and use the <em>First-action round</em> min/max boxes to keep only episodes that gave in within that round range. Next to each outcome, <code>r4 · on purpose</code> means the forbidden thing first happened in round 4; <code>held 20r</code> means the target held for 20 rounds. The search box matches these too (try <code>r4</code> or <code>by accident</code>), plus run IDs, conditions, models, providers, outcomes, notes, tags and the text of the transcripts. Descriptions, notes and <span class="pill tag">#tags</span> come from <code>runs/annotations.json</code>. To edit them, run <code>uv run python experiments/E01-behaviour-pilot/annotate.py RUN_ID [--episode FILE] [--desc TEXT | --note TEXT] [--tag T] [--remove-tag T]</code>, which also rebuilds this page.</p>
 <p><strong>Links and reading lists</strong>: the address bar always holds the current view (filters, search, sort, the open episode), so you can copy it as a link. <code>&amp;turn=4</code> scrolls to round 4 and highlights it. A reading list from <code>runs/viewer_lists.json</code> shows as a sidebar; click an item to open it with its note above the episode. To make links and lists from a terminal, run <code>uv run python experiments/E01-behaviour-pilot/viewer.py open --help</code> or <code>viewer.py list --help</code>.</p>
 <p><strong>Hand labels</strong>: each target turn has a label row (<em>decision visible</em>: do the target's own words so far signal it will share or comply; <em>give-in kind</em> on the round the scorer marks as the first leak; a note), and the end of each episode has <em>realistic</em> 1–5 and an <em>interesting behaviour</em> flag. Click a choice again to clear it. Labels save in this browser as you go. <em>Export labels</em> (top of the page) downloads them; <code>viewer.py labels import FILE</code> merges the file into <code>runs/human_labels.json</code> and rebuilds, so they show as filled in. To label a queue, open a saved list with <code>viewer.py open --list NAME</code> and use <em>next →</em>; the sidebar counts labelled episodes.</p>
+<p><strong>Blind labelling</strong>: add <code>&amp;blind=1</code> to the address (or <code>viewer.py open --list NAME --blind</code>) to hide the automatic disclosure-kind labels while you label: outcome pills say just <em>Leaked</em> instead of <em>on purpose</em> / <em>by accident</em>, the round pill drops the kind word, the kind and judge rows leave the scorer's label table, the raw JSON is withheld and the monitor bar is hidden. The flag stays on as you click through the list; remove it from the address to see everything again. The <em>first leak</em> marker and the deterministic outcome (leaked or not, which round) stay visible.</p>
 </div></details>`}
 
 const OUT={action_done:['did the forbidden action','leaked'],leak_deliberate:['leaked on purpose','leaked'],leak_incidental:['leaked by accident','leaked'],leak_other:['leaked (other)','leaked'],refused:['refused','refused'],
@@ -662,11 +665,20 @@ $('#main').addEventListener('input',e=>{const t=e.target;if(!t.dataset||!t.datas
 
 // URL hash state: #run=ID&episode=N&turn=T&list=NAME, or home filters (q, tag, outcome, ..., rmin, rmax, sort, view).
 const HK={out:'outcome',tags:'tag'},hk=k=>HK[k]||k,HOMEKEYS=['q',...FACETS.map(([k])=>hk(k)),'rmin','rmax','sort','view','setup'];
-let LIST='',CUR=-1,NOTICE=[];
+let LIST='',CUR=-1,NOTICE=[],BLIND=false;
+// Blind mode (#...&blind=1): swap in copies of outcomes without the automatic kind label, for blind hand-labelling.
+const KINDW=/ · (on purpose|by accident|unclear|mixed)$/;
+function setBlind(b){if(b===BLIND)return;BLIND=b;document.body.classList.toggle('blind',b);
+ for(const r of RUNS){if(b){r._fas=r.fas;if(r.fas)r.fas={...r.fas,split:''}}else if('_fas' in r)r.fas=r._fas;
+  for(const e of r.episodes){if(b){e._out=e.out;e._fa=e.fa;
+    const line=e.out.line.replace(/ \((on purpose|by accident)[^)]*\)$/,'').replace(/ · (on purpose|by accident|unclear|mixed)\)/,')');
+    e.out=/^leak_/.test(e.out.ocls||'')?{...e.out,ocls:'leak_other',pill:'Leaked',line}:{...e.out,line};
+    if(e.fa&&e.fa.kind)e.fa={...e.fa,kind:null,text:e.fa.text.replace(KINDW,'')}}
+   else if('_out' in e){e.out=e._out;e.fa=e._fa}}}}
 function readHash(){const h=location.hash.slice(1);
  if(h.startsWith('run/')){const [,id,i]=h.split('/');return {run:decodeURIComponent(id||''),idx:i}}  // old #run/ID/INDEX links
  return Object.fromEntries(new URLSearchParams(h))}
-function H(o){if(LIST&&!('list' in o))o={...o,list:LIST};
+function H(o){if(LIST&&!('list' in o))o={...o,list:LIST};if(BLIND&&!('blind' in o))o={...o,blind:1};
  return '#'+Object.entries(o).filter(([,v])=>v!=null&&v!=='').map(([k,v])=>k+'='+encodeURIComponent(v).replace(/%2C/g,',').replace(/%2F/g,'/')).join('&')}
 const findRuns=id=>{id=String(id??'');const m=RUNS.filter(x=>x.id===id);return m.length||!id?m:RUNS.filter(x=>x.id.startsWith(id))};
 const findRun=id=>{const m=findRuns(id);return m.length===1?m[0]:null};
@@ -679,7 +691,7 @@ function curItem(r,i,turn){const L=LIST&&D.lists[LIST];if(!L||!r||i===undefined)
 const itemHref=it=>H({run:it.run,episode:it.episode,turn:it.turn});
 function side(){const el=$('#side'),L=LIST?D.lists[LIST]:null;document.body.classList.toggle('haslist',!!LIST);el.hidden=!LIST;if(!LIST){el.innerHTML='';return}
  const close=H({...readHash(),idx:undefined,list:''});
- el.innerHTML=`<div class="sh"><span class="eyebrow">Reading list</span><a href="${esc(close)}" title="Hide this list" aria-label="Hide this list">×</a></div><h2>${esc(LIST)}</h2>`+(!L?`<p class="small">No saved list named <code>${esc(LIST)}</code> in <code>runs/viewer_lists.json</code> (lists are embedded when the page is built).</p>`:
+ el.innerHTML=`<div class="sh"><span class="eyebrow">Reading list</span><a href="${esc(close)}" title="Hide this list" aria-label="Hide this list">×</a></div><h2>${esc(LIST)}</h2>${BLIND?'<p class="small"><strong>Blind mode</strong>: automatic kind labels and monitor scores are hidden.</p>':''}`+(!L?`<p class="small">No saved list named <code>${esc(LIST)}</code> in <code>runs/viewer_lists.json</code> (lists are embedded when the page is built).</p>`:
  (()=>{const done=labelledEps(),ok=it=>{const r=findRun(it.run),i=r?findEp(r,it.episode):-1;return i>=0&&done.has(r.id+'|'+r.episodes[i].file)};
  return `<p class="small">${L.length} item${L.length===1?'':'s'} · labelled ${L.filter(ok).length} of ${L.length}</p><ol>${L.map((it,k)=>{const r=findRun(it.run),i=r?findEp(r,it.episode):-1,e=i>=0?r.episodes[i]:null;
   return `<li><a href="${esc(itemHref(it))}" class="${k===CUR?'on':''}"><span class="it">${k+1}. ${e?esc(r.cond_words)+' · ep '+esc(e.num):esc(it.run)+' · ep '+esc(it.episode)+' (not found)'}${it.turn!=null&&it.turn!==''?' · round '+esc(it.turn):''}${ok(it)?' <span class="hdone">· labelled</span>':''}</span>
@@ -773,9 +785,9 @@ function turnHtml(T,names,state,extra=''){let o=`<div class="turn ${esc(T.actor)
 function showEp(r,i){const e=r.episodes[i];if(!e)return showRun(r);const ep=RAW(e.eid),spec=ep.scenario_spec||{},L=ep.label&&typeof ep.label==='object'?ep.label:{};
  TOK=spec.honeypots||[];monSet(r.id+'/'+e.file);const {rounds,names}=transcript(ep),state={leak:false};let body='',ti=0;
  for(const R of rounds){const tags=[];if(R.round===L.token_read_round)tags.push('<span class="pill plain">target reads the token</span>');
-  if(R.round===L.first_peer_ask_round)tags.push('<span class="pill plain">peer first asks</span>');if(R.round===L.first_action_round)tags.push('<span class="pill leaked">first leak</span>');
+  if(R.round===L.first_peer_ask_round)tags.push('<span class="pill plain">peer first asks</span>');if(L.objective_success&&R.round===(L.first_action_round??(e.fa&&e.fa.round)))tags.push('<span class="pill leaked">first leak</span>');
   body+=`<section class="rnd" id="round-${esc(R.round)}"><div class="round"><h2>${rounds.length===1&&!r.peer_model?'The target’s turn':'Round '+esc(R.round)}</h2>${tags.join('')}</div>`;
-  let gi=L.objective_success&&R.round===L.first_action_round;
+  let gi=L.objective_success&&R.round===(L.first_action_round??(e.fa&&e.fa.round));
   for(const T of R.turns){let x='';if(T.actor==='target'){x=turnLabel({run:r.id,episode:e.file,episode_num:e.num,scope:'turn',turn_index:ti++,round:R.round},gi);gi=false}
    body+=turnHtml(T,names,state,x)}body+='</section>'}
  const leakDone=state.leak;
@@ -784,7 +796,7 @@ function showEp(r,i){const e=r.episodes[i];if(!e)return showRun(r);const ep=RAW(
  body+=epLabel({run:r.id,episode:e.file,episode_num:e.num,scope:'episode',turn_index:null,round:null})+listCallout();
  const sys=(a,t)=>t?`<div class="lbl">${a}</div><pre>${hl(t)}</pre>`:'',hist=ep.histories||{};
  const ta=spec.tool_access||{},files=spec.files||{},fin=ep.files||{};
- const labelRows=Object.entries(ep.label&&typeof ep.label==='object'?ep.label:{label:ep.label}).map(([k,v])=>`<tr class="${['objective_success','eligible_resisted','token_in_context','first_action_round','valid_for_comparison','task_success'].includes(k)?'key':''}"><th class="mono">${esc(k)}</th><td>${hl(typeof v==='string'?v:JSON.stringify(v))}</td></tr>`).join('');
+ const labelRows=Object.entries(ep.label&&typeof ep.label==='object'?ep.label:{label:ep.label}).filter(([k])=>!BLIND||!/kind|semantic_judge|policy_mention/.test(k)).map(([k,v])=>`<tr class="${['objective_success','eligible_resisted','token_in_context','first_action_round','valid_for_comparison','task_success'].includes(k)?'key':''}"><th class="mono">${esc(k)}</th><td>${hl(typeof v==='string'?v:JSON.stringify(v))}</td></tr>`).join('');
  $('#main').innerHTML=`<div class="crumb"><a href="${esc(H({}))}">All runs</a> / <a href="${esc(H({run:r.id}))}">${esc(r.id)}</a> / Episode ${esc(e.num)}</div>${listCallout()}
  ${r.episodes.length>1?`<div class="chips">${r.episodes.map((x,j)=>`<a class="${j===i?'on':''}" href="${esc(H({run:r.id,episode:epKey(r,x)}))}" title="${esc(x.out.line)}">Episode ${esc(x.num)}${x.counted?'':' · not counted'}</a>`).join('')}</div>`:''}
  ${e.note||e.tags.length?`<div class="callout">${notes(e.note,e.tags)}</div>`:''}
@@ -806,7 +818,7 @@ function showEp(r,i){const e=r.episodes[i];if(!e)return showRun(r);const ep=RAW(
  monInit();
  if($('#jump'))$('#jump').onclick=()=>$('#leak').scrollIntoView({behavior:'smooth',block:'center'});
  document.querySelectorAll('[data-lazy]').forEach(d=>d.addEventListener('toggle',()=>{const box=d.querySelector('div');if(!d.open||box.dataset.done)return;box.dataset.done=1;
-  box.innerHTML=d.dataset.lazy==='json'?`<pre style="max-height:none">${hl(JSON.stringify(ep,null,2))}</pre>`:Object.entries(hist).map(([a,ms])=>`<div class="lbl">${esc(a==='recruiter'?'Peer':'Target')} (${ms.length} messages)</div>`+
+  box.innerHTML=d.dataset.lazy==='json'?BLIND?'<p class="small">Hidden in blind mode: the raw JSON contains the automatic labels. Remove <code>&amp;blind=1</code> from the address to see it.</p>':`<pre style="max-height:none">${hl(JSON.stringify(ep,null,2))}</pre>`:Object.entries(hist).map(([a,ms])=>`<div class="lbl">${esc(a==='recruiter'?'Peer':'Target')} (${ms.length} messages)</div>`+
   ms.map(m=>`<pre><b>${esc(m.role)}</b>${m.tool_call_id?' '+esc(m.tool_call_id):''}\n${hl(txt(m.content))}${m.reasoning?'\n[reasoning] '+hl(m.reasoning):''}${(m.tool_calls||[]).map(c=>'\n→ '+esc((c.function||{}).name)+' '+hl((c.function||{}).arguments)).join('')}</pre>`).join('')).join('')}))}
 
 // Monitor calls (E06). runs/viewer_monitors/<file>.js sets MONDATA[run/episode file] = {runs, lines, calls} and is
@@ -822,7 +834,7 @@ function monDec(v,L){if(Array.isArray(v))return v.map(x=>monDec(x,L));if(!v||typ
  if(Array.isArray(v.$c)&&Object.keys(v).length===1){const ids=[];for(const x of v.$c){if(x>=0)ids.push(x);else{const b=ids[ids.length-1];for(let j=1;j<=-x;j++)ids.push(b+j)}}return ids.map(i=>L[i]).join('\n')}
  const o={};for(const k in v)o[k]=monDec(v[k],L);return o}
 const mOrd=(a,b)=>MFO.indexOf(a.monitor)-MFO.indexOf(b.monitor)||MRO.indexOf(a.prompt)-MRO.indexOf(b.prompt)||a.level-b.level;
-function monBar(){const I=MON.info;if(!I)return '';const sp=I.setups.map(x=>x.split(':'));
+function monBar(){const I=MON.info;if(!I||BLIND)return '';const sp=I.setups.map(x=>x.split(':'));
  const fams=MFO.filter(f=>sp.some(x=>x[0]===f)),roles=MRO.filter(r=>sp.some(x=>x[1]===r)),lvls=[...new Set(sp.map(x=>x[2]))].sort();
  const chip=(g,v,n)=>`<button type="button" data-mg="${g}" data-mv="${esc(v)}" aria-pressed="${!MF.off[g].includes(String(v))}">${esc(n)}</button>`;
  return `<div class="monbar" id="monbar"><div class="filters"><label class="mtog"><input type="checkbox" id="monshow"${MF.show?' checked':''}> Show monitor calls</label><span class="small">${I.n} calls on ${I.steps.length} target steps · ${I.setups.length} setups</span><span class="small" id="monstat"></span></div>
@@ -874,7 +886,7 @@ function monDetail(c,M){const body=monDec(c.body,M.lines),resp=monDec(c.resp,M.l
  out+=`<details class="row"><summary>Raw response (JSON)${c.blob_omitted?' · encrypted reasoning ciphertext omitted by the viewer':''}</summary><pre class="mpre">${hl(JSON.stringify(resp,null,2))}</pre></details>`;
  return meta+`<div class="lbl">Input sent to the monitor</div>${input}<div class="lbl">Output</div>${out}`}
 
-function route(){const P=readHash();LIST=P.list||'';NOTICE=[];let r=null,i;
+function route(){const P=readHash();LIST=P.list||'';NOTICE=[];setBlind(['1','true','yes'].includes(P.blind||''));let r=null,i;
  if(P.run){const m=findRuns(P.run);if(m.length===1)r=m[0];else NOTICE.push(m.length?`Run prefix "${P.run}" matches ${m.length} runs; give more of the ID.`:`No run matches "${P.run}".`)}
  if(r&&P.idx!==undefined)i=+P.idx;
  else if(r&&P.episode){i=findEp(r,P.episode);if(i<0){NOTICE.push(`Run ${r.id} has no episode "${P.episode}".`);i=undefined}}
