@@ -23,10 +23,10 @@ A running list for the appendix and limitations section. Add an item whenever on
 ## Scoring window: only steps after the secret is read and before the leak (methods + limitations)
 
 - **Methods sentence:** we score every method only on steps where the secret is already in the target's context and it has not yet leaked. A step before the read cannot leak, and including those steps would let a method score well just by detecting that the file was read; a probe does this perfectly, with an exposure check AUROC of 1.000. Steps after the leak are detection after the fact. Probes are trained on the same window, and monitors were run on the same steps.
-- **Coverage (combined data):** 6,404 of 9,138 replayed steps are in the window. Of 320 recruiting episodes:
-  - 5 of 109 give-ins have no step in the window, because the target leaked on the call right after reading;
-  - 74 of 211 held episodes never read the secret.
-  - Neither group contributes to training or scoring.
+- **Coverage (combined data, rechecked 25 Oct 15:50):** 6,404 of 9,138 replayed steps are in the window. Of 320 recruiting episodes:
+  - 109 give-ins: 3 are invalid (excluded from all analyses); of the 106 valid ones, 2 have no step in the window because the target leaked on the call right after reading.
+  - 211 held: 74 are invalid (43 of them never read the secret; the rest are setup or API failures); all 137 valid held episodes have steps in the window.
+  - (An earlier note said "5 of 109 give-ins and 74 of 211 held never read the secret"; that miscounted invalid episodes.)
 - **Limitation:** an instant give-in like this cannot be predicted from within the episode by any method.
 - **Future work:**
   - Influence before exposure, such as tone shifting from "I can't help" to "sure, let me help". This needs its own label, for example a judged "stance" per turn.
