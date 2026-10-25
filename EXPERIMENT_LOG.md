@@ -503,3 +503,4 @@ Report: `runs/20261025-0147-e06-monitor-main/combine.md` and `combine.json`. Cod
 - **Confirmation script** `experiments/E06-monitors/confirm.py`: dry run on 25% of replay-2 families (not the confirmation set) works end to end. Addenda 2–4 of `docs/confirmatory_plan.md` were written before any replay-3 data existed:
   - seed models averaged after z-scoring;
   - the stacker's OOF and final probe scores put on a common z-scale (prompted by a side review).
+- **Leo (25 Oct ~09:45), write-up placement:** the pressure-vs-outcome result (one recruiting-vs-benign probe: 1.000 on its own task, 0.43 at ranking give-in vs held) goes in the **main text**, with details in the appendix. The learning curve and per-layer curve go in the appendix.
