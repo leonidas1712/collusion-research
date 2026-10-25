@@ -104,20 +104,18 @@ def selected_rows(manifest):
 def report(directory, manifest_path):
     judgments = [json.loads(path.read_text())
                  for path in sorted((directory / "judgments").glob("*.json"))]
-    complete = [row for row in judgments if row.get("labels", {}).get(
-        "first_publication_kind") in ("deliberate", "accidental")]
-    by_public = Counter((row["first_public_route"],
-                         row["labels"]["first_publication_kind"]) for row in complete)
-    by_channel = Counter((row["first_channel_route"],
-                          row["labels"]["first_publication_kind"]) for row in complete
+    judged = [row for row in judgments if "first_publication_kind" in row.get("labels", {})]
+    def kind(row):
+        return row["labels"]["first_publication_kind"] or "uncertain"
+    by_public = Counter((row["first_public_route"], kind(row)) for row in judged)
+    by_channel = Counter((row["first_channel_route"], kind(row)) for row in judged
                          if row.get("first_channel_route"))
     ledger = json.loads((directory / "budget.json").read_text())
     result = {
         "canonical_episodes": 200,
-        "judged": len(complete),
+        "judged": len(judged),
         "parse_errors": sum("parse_error" in row for row in judgments),
-        "kind_counts": dict(Counter(row["labels"]["first_publication_kind"]
-                                    for row in complete)),
+        "kind_counts": dict(Counter(kind(row) for row in judged)),
         "first_public_route_counts": [
             {"route": route, "kind": kind, "n": count}
             for (route, kind), count in sorted(by_public.items())],
@@ -133,7 +131,7 @@ def report(directory, manifest_path):
     lines = [
         "# gpt-oss canonical disclosure-kind judge", "",
         (f"The frozen Qwen disclosure-kind question and `{MODEL}` judged "
-         f"{len(complete)}/200 canonical first-public emissions. The prompt and choice "
+         f"{len(judged)}/200 canonical first-public emissions. The prompt and choice "
          "criteria were unchanged. No labels were joined into source episodes."), "",
         "## Overall", "",
         "| Kind | Episodes |", "|---|---:|",
@@ -141,18 +139,20 @@ def report(directory, manifest_path):
     for kind, count in sorted(result["kind_counts"].items()):
         lines.append(f"| {kind} | {count} |")
     lines += ["", "## First public-emission route", "",
-              "| Route | Deliberate | Accidental | Total |", "|---|---:|---:|---:|"]
+              "| Route | Deliberate | Accidental | Uncertain | Total |", "|---|---:|---:|---:|---:|"]
     for route in sorted({route for route, _ in by_public}):
         deliberate = by_public[(route, "deliberate")]
         accidental = by_public[(route, "accidental")]
-        lines.append(f"| {route} | {deliberate} | {accidental} | {deliberate + accidental} |")
+        uncertain = by_public[(route, "uncertain")]
+        lines.append(f"| {route} | {deliberate} | {accidental} | {uncertain} | {deliberate + accidental + uncertain} |")
     lines += ["", "## Actual first-channel route", "",
               "This table covers channel-positive episodes only. File-only public emissions remain in the first table.", "",
-              "| Route | Deliberate | Accidental | Total |", "|---|---:|---:|---:|"]
+              "| Route | Deliberate | Accidental | Uncertain | Total |", "|---|---:|---:|---:|---:|"]
     for route in ("send_message", "final_reply"):
         deliberate = by_channel[(route, "deliberate")]
         accidental = by_channel[(route, "accidental")]
-        lines.append(f"| {route} | {deliberate} | {accidental} | {deliberate + accidental} |")
+        uncertain = by_channel[(route, "uncertain")]
+        lines.append(f"| {route} | {deliberate} | {accidental} | {uncertain} | {deliberate + accidental + uncertain} |")
     lines += ["", "## Provenance and scope", "",
               f"Canonical manifest: `{manifest_path}` at commit `752b8d3e`.",
               (f"Billed cost: ${ledger['billed']}; charged or reserved: "
@@ -167,10 +167,22 @@ def main():
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--run", type=Path)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--report-only", action="store_true")
     args = parser.parse_args()
     manifest_path = args.manifest.resolve()
     manifest = json.loads(manifest_path.read_text())
     rows = selected_rows(manifest)
+    if args.report_only:
+        if not args.run:
+            parser.error("--report-only requires --run")
+        result = report(args.run.resolve(), manifest_path)
+        meta_path = args.run.resolve() / "meta.json"
+        meta = json.loads(meta_path.read_text())
+        meta["results"] = result
+        meta.pop("result", None)
+        write_json_atomic(meta_path, meta)
+        print(json.dumps(result, indent=2))
+        return
 
     endpoint_url = f"https://openrouter.ai/api/v1/models/{MODEL}/endpoints"
     with urllib.request.urlopen(endpoint_url, timeout=30) as response:
