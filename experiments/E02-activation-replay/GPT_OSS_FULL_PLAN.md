@@ -33,3 +33,5 @@ The requested deliverable is the verified replay and probe/monitor dataset. Outc
 Primary eligibility must not gate on `valid_for_comparison` (decision #1085). Keep that flag for the gated sensitivity requested in #1087. The Qwen gate excluded 258 strict-window steps from 11 episodes; see `GPT_OSS_REPLAY.md` and the recorded audit. Stop before refitting Qwen pending the author's decision.
 
 Decision #1114 supersedes the earlier denominator proposal: require complete + exposed + at least one successful correct summary write. Use `gpt_oss_dataset.py`; keep final-summary and original-valid flags descriptive. The amendment is dated in Addendum 6 and justified by the 2143 historical-write audit. No Qwen refit.
+
+Decision #1129 (21:59 SGT) supersedes reasoning-inclusive censoring: use first public response content/tool-argument emission, as returned by `gpt_oss_dataset.request_boundaries`, for the primary step window. Preserve first reasoning mention and inclusive boundary descriptively. The 2157 audit found 54 steps lost under inclusive censoring, 53 from three held episodes. Reasoning-token probing is optional and must not delay the last-token pipeline.

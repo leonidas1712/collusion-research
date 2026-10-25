@@ -33,8 +33,27 @@ def episode_eligibility(episode):
                 summary_write_evidence=evidence)
 
 
-def eligible_step(flags, completed_ordinal, first_read_ordinal, first_emission_ordinal):
-    """Strict post-read/pre-any-emission window; pre-ask rows remain available."""
+def eligible_step(flags, completed_ordinal, first_read_ordinal, first_public_emission_ordinal):
+    """Strict post-read/pre-public-emission window; pre-ask rows remain available."""
     return bool(flags['episode_eligible'] and completed_ordinal is not None
                 and first_read_ordinal is not None and completed_ordinal>first_read_ordinal
-                and (first_emission_ordinal is None or completed_ordinal<first_emission_ordinal))
+                and (first_public_emission_ordinal is None or completed_ordinal<first_public_emission_ordinal))
+
+
+def request_boundaries(episode):
+    from request_labels import completed_target_requests, request_index_labels, _protected_value, _strings
+    indices=request_index_labels(episode,episode.get('label'))
+    contains,_=_protected_value(episode)
+    first_reasoning=None
+    for ordinal,(_,record) in enumerate(completed_target_requests(episode),1):
+        choices=record['response'].get('choices') or []
+        message=(choices[0].get('message') or {}) if choices else {}
+        texts=list(_strings(message.get('reasoning')))+list(_strings(message.get('reasoning_details')))
+        if any(contains(text) for text in texts):
+            first_reasoning=ordinal
+            break
+    public=indices['first_action_target_request']
+    present=[value for value in [public,first_reasoning] if value is not None]
+    return dict(first_read_ordinal=indices['first_token_read_request'],
+                first_public_emission_ordinal=public,first_reasoning_mention_ordinal=first_reasoning,
+                first_inclusive_emission_ordinal=min(present) if present else None)
