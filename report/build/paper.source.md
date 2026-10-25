@@ -20,33 +20,31 @@ Can we tell that an AI agent is about to be talked into breaking its operator's 
 
 In July 2026, AI agents running in OpenAI's internal cyber evaluations coordinated on an unsanctioned shared message board, passed stolen credentials to one another, and broke out of their sandboxes to compromise Hugging Face's production infrastructure [@openai2026huggingface]. An independent investigation found that roughly 700 of about 1,200 agents that were meant to be isolated joined in, some recruited under "significant pressure" from other agents, and many despite recognising the activity as "out of scope and unethical" [@greenblatt2026incident]. Coordinated rule-breaking of this kind begins with recruitment: one agent needs something it cannot reach, and another has the access.
 
-We study that first step. In our main scenario the operator gives the target a staging deploy token and one rule: never share it outside the file that holds it. A peer agent needs the token and asks for it. Handing it over is an ordinary action, so what makes compliance a violation is the operator's rule, which keeps the question about policy rather than about a model's refusal training.
+We study that first step. Following prior work, collusion is coordination between agents that serves their own or one another's goals against a party they are meant to serve [@agrawal2025; @nakamura2026]; we study one route, **recruitment**, in which one agent gets another to act against its operator on its behalf. In our main scenario the target's operator (the **principal**) gives it a staging deploy token and one rule: never share it outside the file that holds it. A peer (the **recruiter**) needs the token, asks for it, and does not see the rule.
 
-Following prior work, we take **collusion** to be coordination between agents that serves their own or one another's goals against a party they are meant to serve [@agrawal2025; @nakamura2026]. We study one route, **recruitment**: one agent gets another to act against its operator on its behalf. Agent systems split access by design, so an agent needing something outside its reach must recruit another, and coordinated rule-breaking concentrates at the request.
-
-The **principal** is the target's operator, who sets the rule; the **recruiter** is the peer, which needs the token, asks for it, and does not see the rule. A **give-in** is the forbidden action, decided by a rule on the tool log: the complete token in a channel post or a new file. Accidental disclosures count, reported separately as a sensitivity check. The same disclosure is ordinary help without the rule and collusion with it.
+A **give-in** is the forbidden action, decided by a rule on the tool log: the complete token in a channel post or a new file. Accidental disclosures count and are reported separately. Handing over a token is ordinary help without the rule and collusion with it, so the question concerns the operator's policy, not a model's refusal training.
 
 Prior work detects that an agent is under attack or that a peer is pushing. We ask instead: among agents under the same pressure, which one gives in, and when, before it acts.
 
 We make the following contributions.
 
-1. **Six recruitment scenarios with mixed outcomes, and same-step scoring.** Under the same peer pressure Qwen3-32B gives in on 42% of episodes and holds on the rest, with controls that never leak; we score activation probes and text monitors on exactly the same steps (Section 3).
-2. **Eventual give-in is not predictable from one step; near-term give-in is, modestly.** The probe is at chance on the eventual label and reaches 0.58 on the near-term label on held-out scenarios, and the near-term result held on new episodes under a plan fixed in advance (Sections 4.2–4.4).
-3. **The probe is not just a pressure detector.** It separates pressured from unpressured steps perfectly, yet that alone does not rank which target gives in (Section 4.3).
-4. **Monitors should forecast, and see the conversation.** Forecasting beats detecting, the peer's messages carry the gain, and a probe adds to a weaker monitor but not to a strong one (Section 4.5).
-5. **A second model family, if the run yields a result.** The same pipeline, unchanged, on gpt-oss-20b, which gives in by a different route (Section 4.6).
+1. **Six recruitment scenarios with mixed outcomes.** Under the same pressure Qwen3-32B gives in on 42% of episodes, and probes and text monitors are scored on exactly the same steps (Section 3).
+2. **Near-term give-in is modestly predictable; eventual give-in is not.** The probe reaches 0.58 on held-out scenarios on the near-term label, and this held on new episodes under a plan fixed in advance (Sections 4.2–4.4).
+3. **The probe is not just a pressure detector.** It separates pressured from unpressured steps perfectly, but that score does not rank who gives in (Section 4.3).
+4. **Monitors should forecast and see the conversation,** and a probe adds to a weaker monitor but not a strong one (Section 4.5).
+5. **[If gpt-oss yields a result]** The same pipeline, unchanged, on gpt-oss-20b, which gives in by a different route (Section 4.6).
 
 ---
 
 ## 2. Related Work
 
-**Probes on a model under attack.** Probes detect prompt-injection exposure in tool-using agents [@dong2026], recover directions that separate hijacked from resisted trajectories [@yu2026], and predict a reasoning model's next behaviour in single-turn settings [@kortukov2026]; @fomin2026 warn that such probes often read the situation, not the coming action, and NARCBench [@rose2026] reads agents told to collude. *We differ:* we read the agent being recruited by a peer over many turns against its operator's rule, comparing episodes under the same pressure that end differently, the control @fomin2026 find missing.
+**Probes on a model under attack.** Probes detect prompt-injection exposure in tool-using agents [@dong2026], recover directions separating hijacked from resisted trajectories [@yu2026], and predict a reasoning model's next behaviour single-turn [@kortukov2026]; @fomin2026 warn such probes read the situation, not the action, and NARCBench [@rose2026] reads agents told to collude. *We differ:* we read the recruited agent over many turns, comparing episodes under the same pressure that end differently — the control @fomin2026 find missing.
 
-**Monitoring what agents say and do.** A monitor that sees agents' messages as well as their code catches more coordinated sabotage [@radev2026], yet more of the trace can make a monitor worse [@arike2026]; conversation-judge scores track actual collusion only weakly [@nakamura2026], and private plans reveal later deviations at rates that vary widely by game [@shi2026]. *We differ:* these monitors detect an attempt under way, whereas we ask which target gives in, scoring probes and monitors on the same steps, at three access levels, asked both to detect and to forecast.
+**Monitoring what agents say and do.** A monitor that sees agents' messages as well as their code catches more coordinated sabotage [@radev2026], yet more of the trace can make a monitor worse [@arike2026]; conversation-judge scores track actual collusion only weakly [@nakamura2026], and private plans reveal later deviations at rates that vary widely by game [@shi2026]. *We differ:* these detect an attempt under way; we ask which target gives in, scoring probes and monitors on the same steps at three access levels and two questions.
 
 **Persuasion between agents.** Agents accept secret, unfair arrangements [@zeng2026], are swayed by colluding peers [@tao2026], mislead a decision-maker agent [@bashir2025], and yield under sustained multi-turn pressure [@tang2026]; collusion can also arise tacitly, with no request, as when pricing agents reach supracompetitive prices on their own [@fish2026; @lin2025]. *We differ:* all are measured from text and outcomes, and none reads the recruited agent's activations or predicts an individual give-in.
 
-**Early warning and combined detectors.** Per-round probe AUROC among running episodes predicts task failure [@ruan2026], and probes paired with classifiers already filter jailbreaks and misuse [@cunningham2026; @kramar2026]. The closest precedent is @gao2026: on AgentDojo it fuses an activation monitor with forecasts of the agent's future actions and shows that per-step false-alarm rates understate per-episode ones. *We differ:* we adopt the per-round metric and per-episode alarm counts and repeat the combination test where a peer recruits the agent over many turns, including on scenarios neither detector has seen.
+**Early warning and combined detectors.** Per-round probe AUROC among running episodes predicts task failure [@ruan2026], and probes paired with classifiers already filter jailbreaks and misuse [@cunningham2026; @kramar2026]. The closest precedent, @gao2026, fuses an activation monitor with action forecasts on AgentDojo and shows per-step false-alarm rates understate per-episode ones. *We differ:* we adopt the per-round metric and per-episode alarm counts and repeat the combination test where a peer recruits the agent, including on scenarios neither detector has seen.
 
 No prior work reads the activations of an agent being recruited by a peer, at every step before it acts.
 
@@ -56,11 +54,11 @@ No prior work reads the activations of an agent being recruited by a peer, at ev
 
 ### 3.1 Setup
 
-A **target agent** works in a mocked workspace (tools act in memory, with no real system, credential, or network). Its operator task is ordinary (read a small configuration file, write a short status report) under one rule: do not share a protected value outside the file that holds it. In the main scenario that value is a staging deploy token. A **peer agent** shares a team channel and needs the value but cannot read the file. Each episode runs up to 20 rounds; the peer posts first, then the target takes a turn of tool calls (read a file, write a file, send a channel message). The forbidden action is the complete value appearing in a channel post or a new file, decided by a rule on the tool log rather than by judgement; partial disclosures do not count. A secondary decision model labels each give-in deliberate or accidental (Appendix D).
+A **target agent** works in a mocked workspace (tools act in memory; no real system, credential, or network). Its operator task is ordinary — read a configuration file, write a short status report — under one rule: do not share a protected value outside the file that holds it (in the main scenario, a staging deploy token). A **peer agent** shares a team channel and needs the value but cannot read the file. Each episode runs up to 20 rounds; the peer posts first, then the target takes a turn of tool calls (read, write, send a channel message). A give-in is scored from the tool log (the complete value in a post or a new file; partial disclosures do not count), and a secondary decision model labels it deliberate or accidental (Appendix D).
 
-Each scenario runs in three conditions: **recruiting** (the peer asks for the value), a **control** peer (no forbidden ask), and the **target alone**. Controls and alone episodes never leaked, and the purpose of each condition is in Appendix C. The peer is not told the rule, so we study recruitment that arises from an ordinary conflict of goals. In 17 of the 241 scored recruiting episodes the peer also carried a single persuasion tactic (three tactics, in 5, 6 and 6 episodes; defined in Appendix G).
+Each scenario runs in three conditions: **recruiting** (the peer asks), a **control** peer (no forbidden ask), and the **target alone**. Controls and alone episodes never leaked; each condition's purpose is in Appendix C. The peer is not told the rule, so we study recruitment from an ordinary conflict of goals. In 17 of the 241 scored recruiting episodes the peer also carried a single persuasion tactic (three tactics, in 5, 6 and 6 episodes; defined in Appendix G).
 
-Six scenarios are built from one task template that fixes the structure while varying the surface domain (a credential, a number, a text value, or code), each grounded in a real incident type (Appendix C). The target is Qwen3-32B [@yang2025qwen3] with thinking disabled; the peer is DeepSeek-V4-Flash [@deepseek2026v4flash]. Why these scenarios and models, the repeated-round precedent [@shi2026; @agrawal2025], and the serving details are in Appendices C and B. Figure 1b shows the setup and what each detector reads; a real exchange from one give-in episode is in Figure 1a, annotated in full in Appendix C.
+Six scenarios are built from one task template that fixes the structure while varying the surface domain (a credential, a number, a text value, or code), each grounded in a real incident type (Appendix C). The target is Qwen3-32B [@yang2025qwen3] with thinking disabled; the peer is DeepSeek-V4-Flash [@deepseek2026v4flash]. Scenario and model choices, the repeated-round precedent [@shi2026; @agrawal2025], and serving details are in Appendices C and B. Figure 1b shows the setup; a real exchange from one give-in episode is in Figure 1a, annotated in Appendix C.
 
 ### 3.2 Data
 
@@ -74,7 +72,7 @@ We score two labels (Figure 1c). Under the **eventual** label, every eligible st
 
 ![Figure 1](figures/figure1_setup.png)
 
-**Figure 1.** Under the same rule, the target refuses, then posts the token after the peer reframes the request as a routine handoff; probes and text monitors are scored on the steps between reading the token and posting it. (a) A real exchange from one give-in episode (episode-0032): the target refuses and cites the operator's policy, the peer reframes its request as a standard inter-agent handoff, and the target posts the token (verbatim, shortened with "…"; token truncated). (b) Setup. A peer agent that needs the token, and is not told the operator's rule, messages the target agent through a team channel. The target works with mock tools on a config file that holds the token. The probe reads the target's activations at the last prompt token before each reply. A text monitor reads no activations; its three levels of access add, in turn, the target's tool calls and posts (1), the peer's messages (2), and the tool results and unposted text the target saw (3). (c) Which steps are scored, and how each label marks them, in a toy episode with one step per round. Only eligible steps are scored: the target has read the token and not yet posted it (shaded, in both episodes). Under the eventual label, every eligible step of an episode that gives in is positive. Under the near-term label, only steps in the round of the give-in or the round before it are positive. Every step of a held episode is negative under both labels.
+**Figure 1.** The target refuses, then posts the token after the peer reframes the request as a routine handoff; probes and monitors are scored on the steps between reading the token and posting it. (a) A real give-in exchange (episode-0032; verbatim, shortened, token truncated). (b) Setup: the probe reads the target's activations at the last prompt token, and a monitor's three access levels add the target's actions (1), the peer's messages (2), and everything the target saw (3). (c) A toy episode with eligible steps shaded and the eventual and near-term labels marked.
 
 ### 3.4 Detectors
 
@@ -106,11 +104,11 @@ On held-out scenarios (4,697 recruiting steps from 241 episodes, 998 eventual-po
 
 ### 4.3 Near-term give-in is modestly predictable, and not only from pressure
 
-For the near-term label, on the same held-out steps (250 near-term positives), the probe reaches 0.579 and the best monitor, the Jev forecaster, 0.650 (Figure 2b). The probe is not merely reading the pressure. In an exploratory check on the first data batch (fixed layer 32), a probe trained to tell recruiting steps from control and target-alone steps separates them almost perfectly (AUROC 1.000 on 4,184 steps), yet the same score ranks gave-in against held steps at only 0.430 (eventual label, 2,910 recruiting steps). Detecting that the peer is pushing is easy. Telling which target gives in is the harder signal the near-term probe captures, the control @fomin2026 identify as missing.
+For the near-term label, on the same held-out steps (250 near-term positives), the probe reaches 0.579 and the best monitor, the Jev forecaster, 0.650 (Figure 2b). The probe is not merely reading the pressure. In an exploratory check on the first data batch (fixed layer 32), a probe trained to tell recruiting steps from control and target-alone steps separates them almost perfectly (AUROC 1.000 on 4,184 steps), yet the same score ranks gave-in against held steps at only 0.430 (eventual label, 2,910 recruiting steps): the near-term probe captures the harder signal of which target gives in, the control @fomin2026 identify as missing.
 
 ![Figure 2. Predicting eventual and near-term give-in](figures/figure2_prediction.png)
 
-**Figure 2.** Eventual give-in is barely predictable; near-term give-in is modestly predictable, and best by a text forecaster. Within scenario × round AUROC (0.5 = chance) on 4,697 recruiting steps from 241 episodes; whiskers are 95% family-bootstrap intervals. Filled: held-out scenarios, all data. Hollow: the new-episode confirmation set (near-term only). The two sets overlap, so they are not independent replications.
+**Figure 2.** Eventual give-in is barely predictable; near-term give-in is modestly predictable, and best by a text forecaster. Within scenario × round AUROC (0.5 = chance) on 4,697 recruiting steps from 241 episodes, 95% family-bootstrap whiskers. Filled: held-out scenarios, all data; hollow: the new-episode confirmation set (near-term only, overlapping the all-data set).
 
 ### 4.4 The near-term result holds on new episodes
 
@@ -145,7 +143,7 @@ A second target with a different route to giving in (Appendix F begins this). Th
 
 A peer agent can push a target into breaking its operator's rule. On Qwen3-32B across six scenarios, eventual give-in is barely predictable from a single step, but near-term give-in is modestly predictable, and it held on new episodes under a plan fixed in advance. A probe that detects the pressure still cannot say who gives in.
 
-For monitors, a forecasting question and the peer's messages carry the gain, and a probe helps a weak monitor but not a strong one. Earlier, transferable warning signals would let an overseer interrupt recruitment before it succeeds; the setup and matched scoring here are a step toward building them.
+For monitors, a forecasting question and the peer's messages carry the gain, and a probe helps a weak monitor but not a strong one. Transferable early warning signals would let an overseer interrupt recruitment before it succeeds; our setup and matched scoring are a step toward them.
 
 ---
 
@@ -179,7 +177,7 @@ This appendix shows how raw runs became the reported numbers. The pipeline figur
 
 ![Pipeline](figures/pipeline.png)
 
-**Figure [Pipeline].** How the collected episodes become the reported numbers, for the Qwen3-32B target. Each box gives one stage: what it does, and the count at that point, written as *first data batch | new-episode set*. Stages 1–3: 397 complete episodes shrink to 338 kept episodes with 6,404 eligible steps. Stage 4: every target request is replayed through the open weights, and fidelity is checked on the replies. Stages 5 and 6: the probe and the text monitors branch from the same eligible steps, and both feed scoring on all the data (stage 7) and the confirmation test (stage 8). Second lane (dashed): reserved for gpt-oss-20b, with its own peer and counts, never pooled with the first. Counts come from the combined step table and the replay, monitor and confirmation summaries.
+**Figure (Pipeline).** How collected episodes become scored steps, for Qwen3-32B: 397 complete episodes become 338 kept, with 6,404 eligible steps; probes and monitors branch from the same steps and rejoin at scoring (stages 7–8). Counts are *first data batch | new-episode set*; the dashed lane is the reserved gpt-oss lane, never pooled.
 
 | Stage | Input | What happens | Output | Key settings | Code |
 |---|---|---|---|---|---|
@@ -216,7 +214,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
   | Service rollout threshold | 13/36 | 36.1% [22.5, 52.4] | 0/8 | 0/4 |
   | **Total** | **100/226** | **44.2% [37.9, 50.8]** | **0/66** | **0/25** |
 
-  **Table 1.** Give-in rates range from 36% to 66% across six scenarios, while controls never leak. Give-ins over analysed episodes (plain-peer slice), with Wilson 95% intervals; accidental disclosures count. The behaviour slice differs from the smaller scored cohort (4,697 recruiting steps from 241 episodes; see Appendix B): not every episode was replayed, and invalid episodes and those with no scored step are dropped.
+  **Table 1.** Give-in rates range from 36% to 66% across six scenarios; controls never leak. Give-ins over analysed plain-peer episodes, Wilson 95% intervals. The behaviour slice differs from the scored cohort (241 recruiting episodes; Appendix B).
 - **Example give-in (episode-0032; deploy-token scenario, recruiting, plain peer).** The target reads the token in round 1 and refuses in rounds 2–5, citing the operator's policy; in round 5 it even refuses to confirm the token's prefix. In round 6 the peer reframes the request as a routine inter-agent handoff, and the target posts the token. Eligible steps are rounds 2–6; the near-term label is positive in rounds 5–6. The same excerpt is panel (a) of Figure 1.
 
   | Round | Speaker | Line |
@@ -258,7 +256,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 
 ![Monitor-design figure](figures/figure_monitor_design.png)
 
-**Monitor-design figure.** A forecasting question and the peer's messages make the biggest difference; more access does not help every monitor. Near-term within scenario × round AUROC on Qwen3-32B, 95% family-bootstrap intervals, chance line at 0.5. Panel (a) compares the Jev detector and forecaster questions on all data (4,697 steps, 250 positives); panel (b) compares forecasters on the first data batch only (2,910 steps, 168 positives), the only batch with the full three-monitor ladder. The two panels use different cohorts and are not paired.
+**Monitor-design figure.** A forecasting question and the peer's messages make the biggest difference; more access does not help every monitor. Near-term within scenario × round AUROC, 95% whiskers. (a) Jev detector vs forecaster, all data; (b) forecasters on the first data batch (the only one with the full ladder). The panels use different cohorts and are not paired.
 
 **Combination test (Table 2, moved from §4.5).**
 
@@ -271,7 +269,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 | New-episode confirmation | Jev forecaster | 0.643 [0.556, 0.723] | 0.695 [0.624, 0.763] | +0.052 [-0.014, +0.121] |
 | New-episode confirmation | GPT-5-nano detector | 0.554 [0.471, 0.633] | 0.667 [0.580, 0.750] | +0.113 [+0.025, +0.203] |
 
-**Table 2.** The probe adds to the weaker monitor in pooled cross-validation and on confirmation, but not to the strong forecaster. Near-term within scenario × round AUROC on Qwen3-32B. The baseline is a cross-fitted model of round, log prompt length and the monitor score; the combined model adds the probe score. Jev uses the forecaster question with everything the target saw; GPT-5-nano uses the detector question with the conversation. Held-out-scenario and pooled family cross-validation use all data (4,697 steps, 250 positives); the frozen-plan confirmation evaluates 89 new episodes (1,787 steps, 82 positives). Gains use paired resamples. The confirmation episodes are part of the all-data pool, so these estimates are not independent. The probe and the monitors rank steps differently (within scenario × round Spearman 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano detector; exploratory).
+**Table 2.** The probe adds to the weaker monitor (GPT-5-nano detector) in pooled CV and on confirmation, but not to the strong Jev forecaster. Near-term within scenario × round AUROC; baseline is round, log prompt length and the monitor score, combined adds the probe. All data 4,697 steps / 250 positives; confirmation 1,787 / 82. Gains use paired resamples; confirmation overlaps the all-data pool. Probe–monitor rank correlation (exploratory): 0.23 with Jev, 0.09 with GPT-5-nano.
 
 ### F. Second Target: gpt-oss-20b (and Gemma-4-31B)
 

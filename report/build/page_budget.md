@@ -5,26 +5,26 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 | Section | Words | Starts on page | Page-equivalent span |
 |---|---:|---:|---:|
 | Abstract | 231 | 1 | 0.39 |
-| 1. Introduction | 531 | 1 | 1.07 |
-| 2. Related Work | 352 | 2 | 0.80 |
+| 1. Introduction | 424 | 1 | 0.91 |
+| 2. Related Work | 323 | 2 | 0.77 |
 | 3. Methods | 0 | 3 | 0.05 |
-| 3.1 Setup | 332 | 3 | 0.60 |
-| 3.2 Data | 113 | 4 | 0.24 |
-| 3.3 What gets scored | 418 | 4 | 1.46 |
-| 3.4 Detectors | 169 | 5 | 0.36 |
-| 3.5 Evaluation | 139 | 6 | 0.26 |
-| 3.6 Second target | 41 | 6 | 0.12 |
-| 4. Results | 0 | 6 | 0.05 |
-| 4.1 The setup produces mixed outcomes | 44 | 6 | 0.12 |
-| 4.2 Eventual give-in is barely predictable from one step | 99 | 6 | 0.22 |
-| 4.3 Near-term give-in is modestly predictable, and not only from pressure | 178 | 6 | 0.63 |
-| 4.4 The near-term result holds on new episodes | 64 | 7 | 0.17 |
-| 4.5 Forecasting monitors with the conversation work best; probes help weaker monitors | 167 | 7 | 0.37 |
-| 4.6 Does it transfer to a second target? | 25 | 8 | 0.10 |
-| 5. Discussion and Limitations | 191 | 8 | 0.34 |
-| Limitations | 68 | 8 | 0.17 |
-| Future Work | 54 | 8 | 0.14 |
-| 6. Conclusion | 105 | 8 | 0.25 |
+| 3.1 Setup | 298 | 3 | 0.54 |
+| 3.2 Data | 113 | 3 | 0.24 |
+| 3.3 What gets scored | 260 | 4 | 0.84 |
+| 3.4 Detectors | 169 | 4 | 0.35 |
+| 3.5 Evaluation | 139 | 5 | 0.26 |
+| 3.6 Second target | 41 | 5 | 0.12 |
+| 4. Results | 0 | 5 | 0.05 |
+| 4.1 The setup produces mixed outcomes | 44 | 5 | 0.12 |
+| 4.2 Eventual give-in is barely predictable from one step | 99 | 5 | 0.26 |
+| 4.3 Near-term give-in is modestly predictable, and not only from pressure | 161 | 6 | 0.59 |
+| 4.4 The near-term result holds on new episodes | 64 | 6 | 0.17 |
+| 4.5 Forecasting monitors with the conversation work best; probes help weaker monitors | 167 | 6 | 0.38 |
+| 4.6 Does it transfer to a second target? | 25 | 7 | 0.10 |
+| 5. Discussion and Limitations | 191 | 7 | 0.34 |
+| Limitations | 68 | 7 | 0.17 |
+| Future Work | 54 | 7 | 0.14 |
+| 6. Conclusion | 103 | 7 | 0.25 |
 
 ## Editorial blocks
 
