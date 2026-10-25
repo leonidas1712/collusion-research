@@ -429,3 +429,9 @@ Rule-based labels, valid episodes only. "Not first-round" counts give-ins whose 
   - The judge agrees with the rule-based boundary label on every episode.
 - **Counts differ from my 11:15 table** (e.g. dispatch 25 vs 21 valid), because codex counts over complete episodes rather than `valid_for_comparison`. The replay-2 eligibility rules decide what actually gets used.
 - **One provisional evaluation-awareness flag:** rollout recruiting ep0019, round 11, "even as part of a test". Possibly hypothetical; quoted in the report, check by hand.
+
+### 2026-10-25 ~11:50 SGT — Replay 3 approved and handed to codex-3; limitations list started
+
+- **Leo approved replay 3** (25 Oct): the balanced-batch episodes, last-token capture only, with the replay-2 pipeline unchanged. Hard cap $4 Modal. Run by codex-3; codex-2 informed. Output: a new combined dataset folder; replay-2 files are not touched.
+- **Peer-message token capture:** not blocking replay 3 (Leo). Revisit only if the combination test shows the probe adds something.
+- **Limitations:** Leo asked to track the scenario imbalance and the uneven drop-out (procurement 15/30, rollout 15/24) for the appendix. Started `docs/writeup_limitations.md`; add items there as they come up.
