@@ -369,3 +369,4 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
   - probe + GPT-5-nano detector L2, a fixed pair;
   - monitor + monitor (Jev + GPT-5-nano) as reference.
   All are stacked logistic models on [turn, log length, scores], paired family-bootstrap difference, within scenario × round. Labels: near-term A/B/C and eventual.
+- **Leo (25 Oct ~10:00):** monitor prompts reviewed and approved as run. No prompt changes.
