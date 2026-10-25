@@ -398,7 +398,7 @@ def render(output,renderer, pdfa=False):
 def measure_pages(output):
     pdf = output.with_suffix('.pdf')
     pages=[p.extract_text() for p in PdfReader(pdf).pages]
-    marker=re.compile(r'^Code and Data\s*$',re.M)
+    marker=re.compile(r'^References\s*$',re.M)
     boundary=next(i for i,p in enumerate(pages) if marker.search(p))
     before=marker.split(pages[boundary])[0].strip()
     body_pages=boundary+bool(before)
@@ -407,8 +407,8 @@ def measure_pages(output):
     body_words = []
     for page_number, page in enumerate(bbox.findall('.//x:page', ns), 1):
         words = page.findall('.//x:word', ns)
-        stop = next((i for i in range(len(words)-2)
-                     if [w.text for w in words[i:i+3]] == ['Code', 'and', 'Data']), None)
+        stop = next((i for i, word in enumerate(words)
+                     if page_number == boundary+1 and word.text == 'References'), None)
         body_words.extend((page_number, float(w.get('yMax'))) for w in words[:stop])
         if stop is not None:
             break
@@ -422,9 +422,10 @@ def measure_pages(output):
             'main_body_last_text_y_pt':last_y,
             'fraction_definition':'Whole preceding pages plus occupied text-area height on the final body page.',
             'total_pages':len(pages),'main_body_pages':body_pages,'main_body_limit':8,
-            'within_limit':body_pages<=8,'code_and_data_starts_page':boundary+1,
+            'within_limit':body_pages<=8,
+            'code_and_data_starts_page':next((i+1 for i,p in enumerate(pages) if re.search(r'^Code and Data\s*$',p,re.M)),None),
             'references_starts_page':next((i+1 for i,p in enumerate(pages) if re.search(r'^References\s*$',p,re.M)),None),
-            'count_definition':'Physical pages containing Title through Conclusion, inclusive; partial final page counts.',
+            'count_definition':'Physical pages containing Title through Code and Data, inclusive; references and appendices excluded; partial final page counts.',
             'page_text_file':output.with_suffix('.pages.txt').name}
     output.with_suffix('.pages.txt').write_text('\n\f\n'.join(pages))
     output.with_suffix('.pagination.json').write_text(json.dumps(result,indent=2)+'\n')

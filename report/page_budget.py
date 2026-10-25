@@ -31,7 +31,7 @@ sections=[];current=None;objects=[];notes=[];heading_after=0
 for b in ast['blocks']:
  t=b['t'];text=plain(b)
  if t=='Header':
-  if text=='Code and Data':break
+  if text=='References':break
   if b['c'][0]==1:continue
   current={'section':text,'words':0,'start':position(text,heading_after)};sections.append(current);heading_after=current['start']['end_char']
  elif current:
@@ -40,7 +40,7 @@ for b in ast['blocks']:
   if t=='Para' and any(n.get('t')=='Image' for n in walk(b)):objects.append({'object':'Figure','section':current['section'],'source':next(n['c'][2][0] for n in walk(b) if n.get('t')=='Image')})
   if t=='BlockQuote' or text.startswith(('Related-work author note','[TODO','[Placeholder')):
    notes.append({'section':current['section'],'words':count,'text':text,'position':position(text[:100])})
-end=position('Code and Data')
+end=position('References')
 for i,s in enumerate(sections):
  stop=sections[i+1]['start'] if i+1<len(sections) else end
  s['end']=stop
