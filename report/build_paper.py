@@ -20,6 +20,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
 from pypdf import PdfReader
+from template_layout import apply_layout, copy_title_footnote
 from build_docx import (ROOT, set_cell_margins, set_cell_shading, set_table_borders,
                         set_repeat_header, set_run_font)
 
@@ -64,7 +65,7 @@ def prepare_ast(source,raw):
     return ast,images
 
 
-def format_docx(path):
+def format_docx(path, template):
     # Pandoc copies embedded TTFs from this template but omits their content-type default.
     with ZipFile(path) as z:
         parts={n:z.read(n) for n in z.namelist()}
@@ -76,6 +77,9 @@ def format_docx(path):
         with ZipFile(path,'w',compression=8) as z:
             for n,data in parts.items():z.writestr(n,data)
     doc=Document(path)
+    for name in ['First Paragraph', 'Body Text', 'Bibliography', 'Compact']:
+        if name not in doc.styles:
+            doc.styles.add_style(name, WD_STYLE_TYPE.PARAGRAPH).base_style = doc.styles['normal']
     if 'Caption' not in doc.styles:
         doc.styles.add_style('Caption',WD_STYLE_TYPE.PARAGRAPH).base_style=doc.styles['normal']
     # Pandoc references Hyperlink even when the reference document omits it.
@@ -96,8 +100,15 @@ def format_docx(path):
         if p.style.name.startswith('Heading'):p.paragraph_format.keep_with_next=True;p.paragraph_format.space_before=Pt(10)
         if re.match(r'^(?:Figure (?:\d+|\[[^]]+\])|Table \d+|Monitor-design figure)\.',p.text):
             p.style=doc.styles['Caption'];p.paragraph_format.keep_together=True
+            p.paragraph_format.line_spacing=1
+            p.paragraph_format.space_before=Pt(0)
+            p.paragraph_format.space_after=Pt(0)
             # Pandoc can leave captions as normal paragraphs following pictures.
             if i and doc.paragraphs[i-1]._p.xpath('.//w:drawing'):doc.paragraphs[i-1].paragraph_format.keep_with_next=True
+        if p._p.xpath('.//w:drawing'):
+            p.paragraph_format.space_before=Pt(0)
+            p.paragraph_format.space_after=Pt(0)
+            p.paragraph_format.line_spacing=1
         p.paragraph_format.widow_control=True
         for r in p.runs:set_run_font(r)
     width=doc.sections[0].page_width.inches-doc.sections[0].left_margin.inches-doc.sections[0].right_margin.inches
@@ -122,18 +133,11 @@ def format_docx(path):
                     if caption_follows and j == len(t.rows)-1:
                         p.paragraph_format.keep_with_next=True
                     for r in p.runs:
-                        set_run_font(r,size=8.5)
+                        set_run_font(r,size=9)
                         if j==0:r.bold=True
-    # This LibreOffice build appends a visible X to OOXML hyperlinks. Preserve
-    # the complete URL text as ordinary runs for consistent DOCX/PDF output.
-    for link in list(doc._element.body.iter(qn('w:hyperlink'))):
-        parent = link.getparent()
-        at = parent.index(link)
-        for child in list(link):
-            parent.insert(at, child)
-            at += 1
-        parent.remove(link)
+    footnote_id = apply_layout(doc, template)
     doc.save(path)
+    copy_title_footnote(path, template, footnote_id)
 
 
 def build(args):
@@ -148,7 +152,7 @@ def build(args):
     temporary = tempfile.NamedTemporaryFile(suffix='.docx', dir=out.parent, delete=False)
     temporary.close()
     draft = Path(temporary.name)
-    command=['pandoc','--from=json','--to=docx','--standalone','--citeproc',f'--bibliography={bib}',
+    command=['pandoc','--from=json','--to=docx','--standalone','--citeproc','-M','link-citations=true','-M','link-bibliography=true',f'--bibliography={bib}',
              f'--csl={args.csl.resolve()}',f'--reference-doc={args.template.resolve()}',
              f'--resource-path={source.parent}',f'--output={draft}']
     result=subprocess.run(command,input=json.dumps(ast),text=True,capture_output=True,check=True)
@@ -156,7 +160,7 @@ def build(args):
     if 'not found' in result.stderr and not args.allow_missing_bibliography:
         draft.unlink(missing_ok=True)
         raise RuntimeError(result.stderr)
-    format_docx(draft)
+    format_docx(draft, args.template)
     d=Document(draft);all_text='\n'.join(''.join(t.text or '' for t in n.iter(qn('w:t'))) for n in d._element.body)
     unresolved=re.findall(r'\[@[^\]]+\]|\?\?\?',all_text)
     if unresolved and not args.allow_missing_bibliography:raise ValueError(f'Unresolved citations: {unresolved}')
