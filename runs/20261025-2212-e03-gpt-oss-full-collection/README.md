@@ -7,3 +7,9 @@ The selection unit is a completed planned attempt. API/model failures were repla
 `excluded_attempts.json` retains 27 incomplete attempts and nine scheduled episodes that were never started after a smoke failure. `all_attempts.json` contains selected, failed, surplus, and unstarted records. The cutoff was clarified after collection launch but before outcome fitting: the primary boundary is the first exact public emission in response content or decoded tool arguments. Private reasoning mentions are retained for a sensitivity analysis and do not censor the primary window. The prompts and behavior collection were unchanged.
 
 Frozen prompt implementation: `c4478407`. Initial collection metadata implementation: `84240dee`. Final public/reasoning timing postprocessor: `ca1f928c`. Denominator and cutoff amendments: `6e1f0ba5`, `4ea35dcc`, `ebbd9460`, and `3131b2e5`.
+
+## Reproduction provenance
+
+The API collection was produced by `experiments/E03-target-screen/escalation_sweep.py`; the frozen manifest and attempt audits were produced by `experiments/E03-target-screen/finalize_gpt_oss_collection.py`. `meta.json` records every exact collection invocation, including all replacement batches, plus the final manifest-builder invocation and the common model, provider, reasoning, episode, and retry settings. Absolute interpreter paths in that file are the commands recorded by the source runs; from the repository root, `uv run python` is the portable interpreter prefix.
+
+The final builder invocation used all 20 source run directories listed in `manifest.json`, wrote this directory, and passed `--postprocess-commit ca1f928c`. The immutable manifest was committed as `752b8d3e`; its SHA-256 is `eb704bc672d478cc4d4e15e7bb2416d459f452f88600c8a455adf62dff615fdd`.

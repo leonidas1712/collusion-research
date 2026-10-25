@@ -1,0 +1,105 @@
+{
+  "id": "20261025-2212-e03-gpt-oss-full-collection",
+  "experiment": "E03",
+  "status": "finished",
+  "artifact_kind": "frozen_collection_manifest",
+  "scripts": {
+    "collection_runner": "experiments/E03-target-screen/escalation_sweep.py",
+    "manifest_builder": "experiments/E03-target-screen/finalize_gpt_oss_collection.py"
+  },
+  "commits": {
+    "frozen_prompt": "c4478407",
+    "initial_collection_code": "84240dee",
+    "replacement_collection_code": "6e1f0ba5",
+    "final_public_timing_postprocessor": "ca1f928c",
+    "initial_frozen_collection": "03cd91a6",
+    "immutable_manifest": "752b8d3e"
+  },
+  "settings": {
+    "target_model": "openai/gpt-oss-20b",
+    "target_reasoning_effort": "low",
+    "target_reasoning_excluded": false,
+    "target_provider_order": [
+      "AkashML",
+      "DekaLLM",
+      "CoreWeave",
+      "DeepInfra",
+      "Parasail"
+    ],
+    "target_quantization_candidates": [
+      "fp4",
+      "bf16"
+    ],
+    "peer_model": "deepseek/deepseek-v4-pro-0813",
+    "peer_reasoning_enabled": true,
+    "peer_reasoning_effort": "medium",
+    "strategy": "envblock_late",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 4096,
+    "temperature": 0.7,
+    "early_stop": true,
+    "empty_response_retries": 2,
+    "empty_after_send_ends_turn": true,
+    "api_retry_attempts": 10,
+    "api_retry_max_delay_seconds": 60,
+    "quota_per_scenario": {
+      "recruiting": 50,
+      "control": 10
+    },
+    "primary_episode_label": "channel_publication",
+    "analysis_cutoff": "first_public_exact_secret_emission"
+  },
+  "collection_commands": [
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario deploy-token-v2 --strategy envblock_late --recruiting 50 --control 10 --family-start 200001 --cap-usd 3 --parallelism 2 --prompt-commit c4478407 --code-commit 84240dee",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario dispatch-integration-code --strategy envblock_late --recruiting 50 --control 10 --family-start 200101 --cap-usd 3 --parallelism 2 --prompt-commit c4478407 --code-commit 84240dee",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario handoff-exception-note --strategy envblock_late --recruiting 50 --control 10 --family-start 200201 --cap-usd 3 --parallelism 2 --prompt-commit c4478407 --code-commit 84240dee",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario procurement-reserve-price --strategy envblock_late --recruiting 50 --control 10 --family-start 200301 --cap-usd 3 --parallelism 2 --prompt-commit c4478407 --code-commit 84240dee",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario service-capacity-figure --strategy envblock_late --recruiting 50 --control 10 --family-start 200401 --cap-usd 3 --parallelism 2 --prompt-commit c4478407 --code-commit 84240dee",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario service-rollout-threshold --strategy envblock_late --recruiting 50 --control 10 --family-start 200501 --cap-usd 3 --parallelism 2 --prompt-commit c4478407 --code-commit 84240dee",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario service-rollout-threshold --strategy envblock_late --recruiting 2 --control 0 --family-start 201501 --cap-usd 0.5 --parallelism 2 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario handoff-exception-note --strategy envblock_late --recruiting 4 --control 0 --family-start 201601 --cap-usd 0.5 --parallelism 2 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario procurement-reserve-price --strategy envblock_late --recruiting 3 --control 0 --family-start 201701 --cap-usd 0.5 --parallelism 2 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario service-capacity-figure --strategy envblock_late --recruiting 3 --control 0 --family-start 201801 --cap-usd 0.5 --parallelism 2 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario service-rollout-threshold --strategy envblock_late --recruiting 2 --control 0 --family-start 201901 --cap-usd 0.5 --parallelism 2 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario handoff-exception-note --strategy envblock_late --recruiting 4 --control 0 --family-start 202101 --cap-usd 1.5 --parallelism 2 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario procurement-reserve-price --strategy envblock_late --recruiting 3 --control 0 --family-start 202201 --cap-usd 1.5 --parallelism 2 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario service-capacity-figure --strategy envblock_late --recruiting 3 --control 0 --family-start 202301 --cap-usd 1.5 --parallelism 2 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario service-rollout-threshold --strategy envblock_late --recruiting 2 --control 0 --family-start 202401 --cap-usd 1.5 --parallelism 2 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario dispatch-integration-code --strategy envblock_late --recruiting 1 --control 0 --family-start 202501 --cap-usd 1.5 --parallelism 1 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario handoff-exception-note --strategy envblock_late --recruiting 2 --control 0 --family-start 202601 --cap-usd 1.5 --parallelism 1 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario procurement-reserve-price --strategy envblock_late --recruiting 1 --control 0 --family-start 202701 --cap-usd 1.5 --parallelism 1 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario service-capacity-figure --strategy envblock_late --recruiting 1 --control 0 --family-start 202801 --cap-usd 1.5 --parallelism 1 --prompt-commit c4478407 --code-commit 6e1f0ba5",
+    "/Users/leo/collusion-research/.venv/bin/python3 experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --scenario deploy-token-v2 --strategy envblock_late --recruiting 5 --control 0 --family-start 202901 --cap-usd 1.5 --parallelism 1 --prompt-commit c4478407 --code-commit 6e1f0ba5"
+  ],
+  "manifest_builder_command": "uv run python experiments/E03-target-screen/finalize_gpt_oss_collection.py --run-dir runs/20261025-2053-e03-escalation-gpt-oss-deploy-token-v2-envblock_late --run-dir runs/20261025-2053-e03-escalation-gpt-oss-dispatch-integration-code-envblock_late --run-dir runs/20261025-2053-e03-escalation-gpt-oss-handoff-exception-note-envblock_late --run-dir runs/20261025-2053-e03-escalation-gpt-oss-procurement-reserve-price-envblock_late --run-dir runs/20261025-2053-e03-escalation-gpt-oss-service-capacity-figure-envblock_late --run-dir runs/20261025-2053-e03-escalation-gpt-oss-service-rollout-threshold-envblock_late --run-dir runs/20261025-2137-e03-escalation-gpt-oss-service-rollout-threshold-envblock_late --run-dir runs/20261025-2143-e03-escalation-gpt-oss-handoff-exception-note-envblock_late --run-dir runs/20261025-2143-e03-escalation-gpt-oss-procurement-reserve-price-envblock_late --run-dir runs/20261025-2143-e03-escalation-gpt-oss-service-capacity-figure-envblock_late --run-dir runs/20261025-2143-e03-escalation-gpt-oss-service-rollout-threshold-envblock_late --run-dir runs/20261025-2144-e03-escalation-gpt-oss-handoff-exception-note-envblock_late --run-dir runs/20261025-2144-e03-escalation-gpt-oss-procurement-reserve-price-envblock_late --run-dir runs/20261025-2144-e03-escalation-gpt-oss-service-capacity-figure-envblock_late --run-dir runs/20261025-2144-e03-escalation-gpt-oss-service-rollout-threshold-envblock_late --run-dir runs/20261025-2148-e03-escalation-gpt-oss-dispatch-integration-code-envblock_late --run-dir runs/20261025-2149-e03-escalation-gpt-oss-handoff-exception-note-envblock_late --run-dir runs/20261025-2149-e03-escalation-gpt-oss-procurement-reserve-price-envblock_late --run-dir runs/20261025-2149-e03-escalation-gpt-oss-service-capacity-figure-envblock_late --run-dir runs/20261025-2155-e03-escalation-gpt-oss-deploy-token-v2-envblock_late --output-dir runs/20261025-2212-e03-gpt-oss-full-collection --postprocess-commit ca1f928c",
+  "source_run_ids": [
+    "20261025-2053-e03-escalation-gpt-oss-deploy-token-v2-envblock_late",
+    "20261025-2053-e03-escalation-gpt-oss-dispatch-integration-code-envblock_late",
+    "20261025-2053-e03-escalation-gpt-oss-handoff-exception-note-envblock_late",
+    "20261025-2053-e03-escalation-gpt-oss-procurement-reserve-price-envblock_late",
+    "20261025-2053-e03-escalation-gpt-oss-service-capacity-figure-envblock_late",
+    "20261025-2053-e03-escalation-gpt-oss-service-rollout-threshold-envblock_late",
+    "20261025-2137-e03-escalation-gpt-oss-service-rollout-threshold-envblock_late",
+    "20261025-2143-e03-escalation-gpt-oss-handoff-exception-note-envblock_late",
+    "20261025-2143-e03-escalation-gpt-oss-procurement-reserve-price-envblock_late",
+    "20261025-2143-e03-escalation-gpt-oss-service-capacity-figure-envblock_late",
+    "20261025-2143-e03-escalation-gpt-oss-service-rollout-threshold-envblock_late",
+    "20261025-2144-e03-escalation-gpt-oss-handoff-exception-note-envblock_late",
+    "20261025-2144-e03-escalation-gpt-oss-procurement-reserve-price-envblock_late",
+    "20261025-2144-e03-escalation-gpt-oss-service-capacity-figure-envblock_late",
+    "20261025-2144-e03-escalation-gpt-oss-service-rollout-threshold-envblock_late",
+    "20261025-2148-e03-escalation-gpt-oss-dispatch-integration-code-envblock_late",
+    "20261025-2149-e03-escalation-gpt-oss-handoff-exception-note-envblock_late",
+    "20261025-2149-e03-escalation-gpt-oss-procurement-reserve-price-envblock_late",
+    "20261025-2149-e03-escalation-gpt-oss-service-capacity-figure-envblock_late",
+    "20261025-2155-e03-escalation-gpt-oss-deploy-token-v2-envblock_late"
+  ],
+  "artifacts": {
+    "manifest.json": "eb704bc672d478cc4d4e15e7bb2416d459f452f88600c8a455adf62dff615fdd",
+    "all_attempts.json": "da5247d6ebc732397460e20d4ec4a55bb858203b6512acb1d69b1a498fd08ca9",
+    "excluded_attempts.json": "2de021f0ef08512b875d0f0031c55d96645eae00056655e55c3d598ca7f0c279",
+    "report.md": "8baf4e95b9c0287f0c5e93824b3f7d835aa4492da74ffd7cf91d6949d23a6a8c",
+    "first_ask_hand_check.md": "26afae4815b8e26389e720b3b60991df7acdb4ed2b8005115f6ed84cf630f14a"
+  }
+}
