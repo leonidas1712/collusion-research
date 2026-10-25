@@ -1,0 +1,234 @@
+{
+  "saved_episodes": {
+    "Qwen": 304,
+    "gpt-oss": 360
+  },
+  "gpt_status": {
+    "complete": 360
+  },
+  "reasoning": [
+    {
+      "outcome_definition": "channel_leak",
+      "outcome": "gave_in",
+      "complete_exposed_episodes": 128,
+      "episode_eligible": 128,
+      "reasoning_before_public": 1,
+      "reasoning_same_request": 7,
+      "public_window_steps": 169,
+      "inclusive_window_steps": 168,
+      "removed_steps": 1,
+      "affected_episodes": 1,
+      "missing_ask": 0
+    },
+    {
+      "outcome_definition": "channel_leak",
+      "outcome": "held",
+      "complete_exposed_episodes": 166,
+      "episode_eligible": 164,
+      "reasoning_before_public": 3,
+      "reasoning_same_request": 1,
+      "public_window_steps": 1890,
+      "inclusive_window_steps": 1837,
+      "removed_steps": 53,
+      "affected_episodes": 3,
+      "missing_ask": 0
+    },
+    {
+      "outcome_definition": "any_boundary_leak",
+      "outcome": "gave_in",
+      "complete_exposed_episodes": 198,
+      "episode_eligible": 198,
+      "reasoning_before_public": 1,
+      "reasoning_same_request": 8,
+      "public_window_steps": 261,
+      "inclusive_window_steps": 260,
+      "removed_steps": 1,
+      "affected_episodes": 1,
+      "missing_ask": 0
+    },
+    {
+      "outcome_definition": "any_boundary_leak",
+      "outcome": "held",
+      "complete_exposed_episodes": 96,
+      "episode_eligible": 94,
+      "reasoning_before_public": 3,
+      "reasoning_same_request": 0,
+      "public_window_steps": 1798,
+      "inclusive_window_steps": 1745,
+      "removed_steps": 53,
+      "affected_episodes": 3,
+      "missing_ask": 0
+    }
+  ],
+  "routes": [
+    {
+      "model": "Qwen",
+      "condition": "recruiting",
+      "route": "send_message",
+      "judge_kind": "deliberate",
+      "first_channel_leaks": 40
+    },
+    {
+      "model": "Qwen",
+      "condition": "recruiting",
+      "route": "send_message",
+      "judge_kind": "accidental",
+      "first_channel_leaks": 10
+    },
+    {
+      "model": "Qwen",
+      "condition": "recruiting",
+      "route": "send_message",
+      "judge_kind": "unjoined_or_unclear",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "Qwen",
+      "condition": "recruiting",
+      "route": "final_reply",
+      "judge_kind": "deliberate",
+      "first_channel_leaks": 27
+    },
+    {
+      "model": "Qwen",
+      "condition": "recruiting",
+      "route": "final_reply",
+      "judge_kind": "accidental",
+      "first_channel_leaks": 20
+    },
+    {
+      "model": "Qwen",
+      "condition": "recruiting",
+      "route": "final_reply",
+      "judge_kind": "unjoined_or_unclear",
+      "first_channel_leaks": 1
+    },
+    {
+      "model": "Qwen",
+      "condition": "control",
+      "route": "send_message",
+      "judge_kind": "deliberate",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "Qwen",
+      "condition": "control",
+      "route": "send_message",
+      "judge_kind": "accidental",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "Qwen",
+      "condition": "control",
+      "route": "send_message",
+      "judge_kind": "unjoined_or_unclear",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "Qwen",
+      "condition": "control",
+      "route": "final_reply",
+      "judge_kind": "deliberate",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "Qwen",
+      "condition": "control",
+      "route": "final_reply",
+      "judge_kind": "accidental",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "Qwen",
+      "condition": "control",
+      "route": "final_reply",
+      "judge_kind": "unjoined_or_unclear",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "recruiting",
+      "route": "send_message",
+      "judge_kind": "deliberate",
+      "first_channel_leaks": 1
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "recruiting",
+      "route": "send_message",
+      "judge_kind": "accidental",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "recruiting",
+      "route": "send_message",
+      "judge_kind": "unjoined_or_unclear",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "recruiting",
+      "route": "final_reply",
+      "judge_kind": "deliberate",
+      "first_channel_leaks": 126
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "recruiting",
+      "route": "final_reply",
+      "judge_kind": "accidental",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "recruiting",
+      "route": "final_reply",
+      "judge_kind": "unjoined_or_unclear",
+      "first_channel_leaks": 1
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "control",
+      "route": "send_message",
+      "judge_kind": "deliberate",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "control",
+      "route": "send_message",
+      "judge_kind": "accidental",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "control",
+      "route": "send_message",
+      "judge_kind": "unjoined_or_unclear",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "control",
+      "route": "final_reply",
+      "judge_kind": "deliberate",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "control",
+      "route": "final_reply",
+      "judge_kind": "accidental",
+      "first_channel_leaks": 0
+    },
+    {
+      "model": "gpt-oss",
+      "condition": "control",
+      "route": "final_reply",
+      "judge_kind": "unjoined_or_unclear",
+      "first_channel_leaks": 0
+    }
+  ],
+  "verified_channel_reconstructions": 664
+}

@@ -1,4 +1,5 @@
 """Saved-trace audit of reasoning censoring and actual channel publication routes."""
+import argparse
 import csv
 from collections import Counter
 import hashlib
@@ -98,19 +99,41 @@ def inspect(path,model,scope):
     return result
 
 
-def main():
+def main(args):
     behaviour=ROOT/'runs/20261025-1850-e03-behaviour-summary/episodes.csv'
     source=list(csv.DictReader(behaviour.open()))
     qwen=[(ROOT/r['path'],'Qwen','plain recruiting all attempts') for r in source
           if r['model']=='Qwen3-32B' and r['arm']=='plain' and r['condition']=='recruiting']
-    gpt_runs=sorted((ROOT/'runs').glob('20261025-2053-e03-escalation-gpt-oss-*-envblock_late'))
-    assert len(gpt_runs)==6
-    gpt=[(p,'gpt-oss','original collection snapshot') for parent in gpt_runs for p in sorted((parent/'episodes').glob('*.json'))]
-    run=start_run('e05-reasoning-route-audit',experiment='E05',parents=['20261025-1850-e03-behaviour-summary',*[p.name for p in gpt_runs]],
+    if args.manifest:
+        manifest=Path(args.manifest).resolve();entries=json.loads(manifest.read_text())['episodes']
+        for entry in entries:
+            assert hashlib.sha256((ROOT/entry['episode_file']).read_bytes()).hexdigest()==entry['episode_sha256']
+        assert len(entries)==360
+        gpt=[(ROOT/e['episode_file'],'gpt-oss','canonical completed collection') for e in entries]
+        parents=[manifest.parent.name];population='canonical 360 completed episodes; replacements selected by immutable manifest'
+    else:
+        gpt_runs=sorted((ROOT/'runs').glob('20261025-2053-e03-escalation-gpt-oss-*-envblock_late'))
+        assert len(gpt_runs)==6
+        gpt=[(p,'gpt-oss','original collection snapshot') for parent in gpt_runs for p in sorted((parent/'episodes').glob('*.json'))]
+        parents=[p.name for p in gpt_runs];population='original six 2053 runs; saved snapshot only; top-ups excluded'
+    run=start_run('e05-reasoning-route-audit',experiment='E05',parents=['20261025-1850-e03-behaviour-summary',*parents],
         settings={'operation':'saved episodes only; no fitting','qwen_source_sha256':hashlib.sha256(behaviour.read_bytes()).hexdigest(),
-                  'gpt_population':'original six 2053 runs; saved snapshot only; top-ups excluded'})
+                  'gpt_population':population,'kind_join':args.kind_join,'plan':args.plan})
     try:
         rows=[inspect(*item) for item in qwen+gpt]
+        if args.kind_join:
+            kinds={r['episode']:r for r in json.loads((Path(args.kind_join)/'episode_kinds.json').read_text())}
+            for row in rows:
+                if row['model']!='gpt-oss':continue
+                path=Path(row['path']);key=path.parent.parent.name+'/'+path.name
+                if key in kinds:
+                    kind=kinds[key];assert kind['episode_sha256']==row['sha256']
+                    row['judge_kind']=kind['first_publication_kind'] or 'unjoined_or_unclear'
+                    row['judge_scope']='first public emission, possibly before first channel publication'
+        if args.plan:
+            planned=[json.loads(line) for line in (Path(args.plan)/'rows.jsonl').read_text().splitlines()]
+            assert sum(r['public_window_steps'] for r in rows if r['model']=='gpt-oss' and r['condition']=='recruiting')==sum(
+                r['eligible'] for r in planned if r['condition']=='recruiting')
         write_json_atomic(run.dir/'episodes.json',rows)
         base=[r for r in rows if r['model']=='gpt-oss' and r['condition']=='recruiting' and r['complete'] and r['exposed']]
         reasoning=[]
@@ -139,9 +162,9 @@ def main():
                     reasoning=reasoning,routes=route_counts,verified_channel_reconstructions=len(rows))
         write_json_atomic(run.dir/'counts.json',counts)
         lines=['# Private reasoning cutoff and channel-publication route audit','',
-            'This is an offline snapshot audit, not a fit or a change to the censoring rule. '
-            'Qwen uses the 304 plain recruiting attempts behind Table 1. gpt-oss uses saved episodes from the six original 2053 collection runs; '
-            'top-ups are excluded, so this is not the final canonical collection. Source hashes and per-episode evidence indices are in episodes.json.','',
+            'This is an offline saved-trace audit, not a fit or a change to the censoring rule. '
+            'Qwen uses the 304 plain recruiting attempts behind Table 1. gpt-oss population: '+population+'. '
+            'Source hashes and per-episode evidence indices are in episodes.json.','',
             '## Private reasoning cutoff','',
             'Episode counts below use complete, exposed recruiting episodes. Step counts additionally require an ever-correct summary, '
             'strict post-read eligibility, and delivery of the recorded first ask (verified inside the target request). '
@@ -154,13 +177,16 @@ def main():
         for r in reasoning:lines.append('| '+ ' | '.join(str(r[k]) for k in ['outcome_definition','outcome','complete_exposed_episodes','reasoning_before_public','reasoning_same_request','public_window_steps','inclusive_window_steps','removed_steps','affected_episodes'])+' |')
         lines+=['','The primary episode outcome is channel publication; its negative group can contain file-only disclosures. '
             'The any-boundary split is supplied to distinguish these from episodes with no observed disclosure. '
-            'Harmony replay omits earlier reasoning from later prompts; such reasoning is not part of the later last-prompt-token input. '
+            'AkashML Harmony replay keeps reasoning from earlier tool calls within the same user/peer turn, then drops it '
+            'after the next user/peer message. DekaLLM uses the drop-all approximation. '
             'Reasoning-token analysis is optional and does not delay the primary last-token pipeline.','',
             '## First channel leak route','',
             'Routes use actual channel events. The script reconstructs successful send_message calls and the harness auto-post '
             'of a no-tool final reply when the actor has not already posted in that turn. It checks the entire target-channel sequence, '
-            'and checks explicit publication receipt origins where saved. Judge kinds come only from saved semantic_judge labels; '
-            'missing labels stay unjoined_or_unclear. Incomplete attempts are included here if they already contain a channel leak.','',
+            'and checks explicit publication receipt origins where saved. Qwen kinds come from saved semantic_judge labels; '
+            'gpt-oss kinds optionally join the separately saved first-public-emission judgments by episode SHA256. '
+            'That judgment may describe an earlier file write, not the channel post itself. Missing/null labels stay '
+            'unjoined_or_unclear. Qwen incomplete attempts are included if they already contain a channel leak.','',
             '| Model | Condition | Route | Judge kind | First channel leaks |','|---|---|---|---|---:|']
         for r in route_counts:
             if r['first_channel_leaks']:lines.append('| '+' | '.join(str(r[k]) for k in ['model','condition','route','judge_kind','first_channel_leaks'])+' |')
@@ -170,4 +196,6 @@ def main():
     except BaseException as exc:run.finish('failed',str(exc));raise
 
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    parser=argparse.ArgumentParser();parser.add_argument('--manifest');parser.add_argument('--kind-join');parser.add_argument('--plan')
+    main(parser.parse_args())
