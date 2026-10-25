@@ -109,7 +109,7 @@ For the near-term label, on the same held-out steps (250 near-term positives), t
 
 ![Figure 2. Predicting eventual and near-term give-in](figures/figure2_prediction.png)
 
-**Figure 2.** Eventual give-in is barely predictable; near-term give-in is modestly predictable, and best by a text forecaster. Within scenario × round AUROC (0.5 = chance) on 4,697 recruiting steps from 241 episodes, 95% family-bootstrap whiskers. Filled: held-out scenarios, all data; hollow: the new-episode confirmation set (near-term only, overlapping the all-data set).
+**Figure 2.** How well each detector predicts give-in, by target and horizon. On Qwen3-32B, eventual give-in is barely predictable and near-term give-in is modestly predictable, best by a text forecaster; on gpt-oss-20b, nothing is much above chance. Within scenario × round AUROC (0.5 = chance) with 95% family-bootstrap whiskers. (a, b) Qwen3-32B, 4,697 recruiting steps from 241 episodes; filled circles: held-out scenarios, all data; hollow squares: the new-episode confirmation set (near-term only; these episodes are also in the all-data set, so the two estimates are not independent). (c) gpt-oss-20b, 2,059 post-ask steps from 238 episodes, held-out scenarios; diamonds: eventual; triangles: near-term. The combination rows were not drawn for gpt-oss; adding the probe to the Jev forecaster changes its near-term AUROC by +0.002 (Appendix F). The two targets' cohorts differ, so markers are not paired across panels.
 
 ### 4.4 The near-term result holds on new episodes
 
@@ -219,7 +219,7 @@ This appendix shows how raw runs became the reported numbers. The pipeline figur
 
 ![Pipeline](figures/pipeline.png)
 
-**Figure B.1.** The experimental pipeline, stage by stage. How collected episodes become scored steps for Qwen3-32B: 397 complete episodes become 338 kept, with 6,404 eligible steps; probes and monitors branch from the same steps and rejoin at scoring (stages 7–8). Counts are *first data batch | new-episode set*; the dashed lane is the reserved gpt-oss lane, never pooled.
+**Figure B.1.** The experimental pipeline, stage by stage. How collected episodes become scored steps for Qwen3-32B: 397 complete episodes become 338 kept, with 6,404 eligible steps; probes and monitors branch from the same steps and rejoin at scoring (stages 7–8). Counts are *first data batch | new-episode set*; the dashed lane gives the same stages for gpt-oss-20b, whose counts are never pooled with Qwen's.
 
 | Stage | Input | What happens | Output | Key settings | Code |
 |---|---|---|---|---|---|
