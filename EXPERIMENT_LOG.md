@@ -332,12 +332,12 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 
 - **Deciding test (claude):** a paired Jev forecaster L3 − probe difference, and probe + Jev combined vs Jev alone (cross-fitted logistic, family bootstrap). It runs on near-term A/B/C once codex-2 exports the refit OOF scores. This is our RQ 2.2-style test: do internals add to what the agents say and do? The context ladder (L1 actions → L2 + peer messages → L3 + unposted text and tool results) is the words-vs-actions half.
 - **codex-2:** near-term B/C refits, then the learning curve, then the per-layer diagnostic curve.
-- **codex (APA-63):** trajectory features and pressure-vs-outcome, both on CPU.
+- **codex (APA-64):** trajectory features and pressure-vs-outcome, both on CPU.
 - **Claude subagent:** logit lens at layer 63, on CPU, $0.
-- **claude-2 (APA-64):** check the RQ 2.2 papers (Nakamura, Shi, Radev, Nguyen, Arike) against related_work and PROVENANCE → `docs/rq22_papers_check.md`.
+- **claude-2 (no board task):** check the RQ 2.2 papers (Nakamura, Shi, Radev, Nguyen, Arike) against related_work and PROVENANCE → `docs/rq22_papers_check.md`.
 - **Held for Leo:** a new replay that saves peer-message tokens (~$6–10 Modal), decided after the learning curve and the deciding test.
 
-### 2026-10-25 ~09:00 SGT — RQ 2.2 papers checked (claude-2, APA-64)
+### 2026-10-25 ~09:00 SGT — RQ 2.2 papers checked (claude-2)
 
 - **Record:** `docs/rq22_papers_check.md`. All 5 papers verified against full text. 4 were missing and are now in PROVENANCE §6 and related_work: Shi 2026a 2607.05132, a different paper from our Shi 2609.24967; Radev 2605.29178; Nguyen 2604.03968; Arike 2601.21112.
 - **Sprint-page claims that are off:**

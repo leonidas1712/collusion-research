@@ -95,3 +95,14 @@ The pre-fit pooled split export for E06 is `runs/20261025-0240-e05-replay2-folds
 All 78 fold audits passed; pooled splits match the E06 export, and saved selected LR/metadata/MLP scores and LR/MLP cutoffs reconstruct within the recorded numerical tolerance (maximum score error 7.63e-6). All 18 tests pass. The [post-hoc baseline audit](../../runs/20261025-0533-e05-replay2-baseline-audit/report.md) explains below-chance training-prevalence CV baselines through cross-fold comparisons. Primary metrics are unchanged; no probe was refit or rescored under a new fold stratum. The final report flags this limitation and the below-chance v2 shuffled-label check.
 
 Fits: `20261025-0340-e05-replay2-fits`; frozen numerical analysis: `20261025-0531-e05-replay2-analysis`; final narrative/package: `20261025-0536-e05-replay2-analysis`. `replay2_finalize.py` copies the frozen numerical artifacts and plots with hash checks, then adds the summary and audit caveat without recomputation.
+
+### Near-term action labels (APA-62)
+
+`near_term.py` reuses replay-2 features and the saved outer, inner-validation and stacking folds. A labels all eligible recruiting steps by whether the first action is in the current or next round. B drops earlier give-in steps, comparing near-action positives with held negatives. C uses B's contrast with at most three completed target requests until action. All retained steps precede the first action. It evaluates frozen eventual-label probes and refits inner-selected/fixed32 logistic probes, metadata baselines and a cross-fitted added-value model. Family-bootstrap ranking uses scenario × round, with fold × scenario × round as a sensitivity. The CSV includes each variant's exact labels and E06 row IDs.
+
+```sh
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/near_term.py --workers 3
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/near_term_validate.py <run-id>
+```
+
+Status: CPU fits running in `runs/20261025-0730-e05-near-term`; no new episodes or GPU use. The initial run was stopped before LOSO fitting to correct reconstruction of a shared-family validation scenario; completed pooled fits were verified and reused. `test_near_term.py` checks exact reproduction of the saved stacking splits.
