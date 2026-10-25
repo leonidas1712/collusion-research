@@ -132,3 +132,11 @@ The cache builder verifies every prompt/reply token array, prompt/input hash, re
 The declared 17 candidate layers are `[0,1,3,4,6,7,9,10,12,13,15,16,18,19,20,22,23]`, with fixed12 secondary. This is a separate 24-layer path; Qwen caches, candidates and results are unchanged.
 
 `gpt_oss_kind_join.py` produces a separate metadata join from saved disclosure judgments, checking source episode hashes. These describe the first public emission, often a file write before a channel publication. They do not change the primary channel outcome or eligibility. Null judgment labels remain null.
+
+## Verified full collection replay (26 October)
+
+[Completion report](../../runs/20261026-0138-e02-gpt-oss-full-completion/report.md): all 6,985 requests from 360 episodes passed input-token, hash, shape and finite-value checks. The cache is `runs/20261025-2305-e05-gpt-oss-full-data`, with last-prompt features `[6985,24,2880]` and 83,747 reasoning positions retained in the source artifacts. The A100 app is stopped. Client wall time was 164.30 minutes; billed snapshot USD8.002761 and conservative shared total USD9.539242, including the paired diagnostic, reserve and two worker preemptions, were below the USD20 cap.
+
+AkashML answer/tool-body NLL was 0.26901 with top-5 fraction 0.99315; DekaLLM was 0.31983 / 0.99416. Prompt counts were within one token for 6,598/6,672 AkashML and 18/313 DekaLLM requests. The Deka approximation remains flagged. The family-held-out exposure check passed: layer12 AUROC1.000 on 2,100 test rows; the minimum over all24 layers was0.99947. See `runs/20261026-0137-e05-gpt-oss-positive-control`.
+
+The [window audit](../../runs/20261026-0056-e05-gpt-oss-window-audit/report.md) separates collection outcomes from prediction opportunities: 96/128 channel-positive episodes have eligible post-ask requests; 31 emit in the first request receiving the ask and one before the detected ask. These 32 have no post-ask prediction window. Their collection outcomes remain recorded.
