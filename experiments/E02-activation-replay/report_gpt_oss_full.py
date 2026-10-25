@@ -29,6 +29,20 @@ def main(args):
     run = start_run('e02-gpt-oss-full-completion', experiment='E02', parents=[data.name, client.name, plan_dir.name, download.name],
         settings={'read_only_completion_report': True, 'provider_modes': plan['provider_modes']})
     try:
+        # The extraction process started before the separate saved-judgment join was discovered.
+        report_path = data/'report.md'
+        original_report = report_path.read_text()
+        corrected_report = original_report.replace(
+            'No semantic-judge disclosure-kind labels were available for this collection, so kind remains null.',
+            'This cache does not join disclosure-kind judgments, so kind remains null. Saved judgments are available '
+            'at runs/20261025-2310-e05-gpt-oss-disclosure-kind-join and join by episode plus source SHA256. '
+            'Primary outcomes and eligibility are unchanged.')
+        report_path.write_text(corrected_report)
+        write_json_atomic(run.dir/'dataset-report-correction.json', dict(
+            path=str(report_path), changed=corrected_report != original_report,
+            before_sha256=hashlib.sha256(original_report.encode()).hexdigest(),
+            after_sha256=hashlib.sha256(corrected_report.encode()).hexdigest(),
+            reason='Correct availability wording for the separately saved judgment metadata; no data or numbers changed'))
         seconds = sum(v['summary']['wall_seconds'] for v in shards.values())
         tokens = plan['counts']['prompt_tokens']+plan['counts']['reply_tokens']
         versions = read(Path(next(iter(copies.values()))['local'])/'summary.json').get('versions')

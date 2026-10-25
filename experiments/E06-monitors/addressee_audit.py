@@ -57,7 +57,7 @@ def author_review(rows, cached):
         preliminary_jev_to_peer=122, low_score_reviewed=10, low_score_to_peer=9, low_score_unclear=1,
         high_score_sample_reviewed=8, high_score_sample_to_peer=8,
         current_matched_low_score_reviews=matched,
-        current_jev_or_targeted_author_review=sum(cached.get(r['key'],{}).get('score',-1)>=.5 or
+        current_jev_or_targeted_author_review=sum((cached.get(r['key'],{}).get('score') or 0)>=.5 or
                                                  matched.get(r['id'])=='to_peer' for r in selected),
         current_first_leak_replies=len(selected))
 

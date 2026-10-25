@@ -175,7 +175,8 @@ def main(args):
                          f"{b['steps']} ({b['positive_steps']}) | {b['episodes']} ({b['positive_episodes']}) |")
         lines += ['', 'Within-1 excludes individual requests with absolute prompt-count gap >1; it does not discard '
             'all rows of an episode merely because another request mismatched. The primary keeps all eligible requests. '
-            'No semantic-judge disclosure-kind labels were available for this collection, so kind remains null.', '',
+            'This cache does not join disclosure-kind judgments, so kind remains null. Saved judgments can be joined '
+            'separately by episode and source SHA256 without changing primary outcomes or eligibility.', '',
             '## Fidelity and provider format', '',
             '| Provider | Segment | Tokens | Mean NLL | Top-5 |', '|---|---|---:|---:|---:|']
         for m in metrics:
