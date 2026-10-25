@@ -118,13 +118,15 @@ def panel_timeline(ax):
     row(y_nt, "near-term", {r: int(r >= leak - 1) for r in eligible})
 
     ax.plot([-1.55, 6.4], [0.75, 0.75], color=FAINT, lw=0.5)
+    # Held episode: every step after the read is eligible, scored 0.
+    ax.add_patch(Rectangle((read + 0.5, y_held - 0.45), 6 - read, 0.9, fc=WINDOW, ec="none"))
     ax.text(-1.55, y_held, "held\nepisode", va="center", weight="bold", linespacing=1.1)
     ax.text(read, y_held, "reads\nvalue", ha="center", va="center", fontsize=6.2, linespacing=1.1)
     for r in range(read + 1, 7):
         ax.text(r, y_held, "0", ha="center", va="center", color=INK)
 
-    ax.text(-1.55, -0.75, "Shaded: eligible steps (value read, not yet posted).  – not scored.\n"
-            "Held episodes are 0 under both labels.", va="center", fontsize=5.9, color=MUTED, linespacing=1.3)
+    ax.text(-1.55, -0.75, "Shaded: eligible steps (value read, not yet posted); all are scored.\n"
+            "– not scored. Held episodes are 0 under both labels.", va="center", fontsize=5.9, color=MUTED, linespacing=1.3)
 
 
 def main():
