@@ -13,6 +13,8 @@
 - The project defines "collusion" itself, so include a definition paragraph.
 - Methodology is scored, not scale: say what the sample can and can't show.
 
+
+
 Template headings, in order (extracted from `report/template.docx`): Title · Authors · Abstract · 1. Introduction · 2. Related Work · 3. Methods · 4. Results · 5. Discussion and Limitations (subheadings: Limitations, Future Work) · 6. Conclusion · Code and Data · Author Contributions (optional) · References · Appendix (optional) · LLM Usage Statement.
 
 The template has no separate dual-use heading. We put limitations in full plus the dual-use note in the Appendix (Appendix A), as the old skeleton `report/draft.md` planned.
@@ -111,7 +113,7 @@ The template has no separate dual-use heading. We put limitations in full plus t
 - **Decision models as monitors** (`docs/decision_models_as_monitors.md`): decision models return probabilities over fixed options, no rationale. Prior use as cheap detectors exists ("Just Ask Jev", Guo et al. 2609.29429; a GitHub Jev collusion monitor on NARCBench). Not found: per-step *forecasting* of a later violation, compared against LLM judges *and* probes in multi-turn recruitment.
 - **Behavioural collusion / persuasion:** Shi et al. 2026b 2609.24967 (own stake drives collusion); Voluntary Collusion (Zeng & Rudzicz) 2605.27593; Many-to-One 2512.03097; SPINE 2609.09090 (sustained pressure); GroupGuard 2603.13940.
 - **Timing / early warning:** SafetyDrift 2603.27148; StepShield 2601.22136; From Probe Scores to Alarm Policies (Gao) 2610.04575.
-- **Gap statement (one sentence):** no paper we found combines activation probes with a text monitor for the same agent; our combination test is new (`docs/rq22_papers_check.md`, "Bearing on our results").
+- **Gap statement (one sentence):** probes and text monitors have not been compared on the same steps of an agent being recruited by a peer, over many turns, against its operator's rule, separating eventual from imminent give-in, at several levels of monitor access, with monitors asked both to detect and to forecast. Combining the two is a test here, not a novelty: Gao (2610.04575) already fuses an activation monitor with LLM forecasts on AgentDojo, and probes are paired with classifiers for misuse (Cunningham et al., 2601.04603; Kramár et al., 2601.11516).
 
 > Q: Cite the spread paper the author co-authored (arXiv 2609.35576, "Share-Borne AI Virus") in Related Work or only in Future Work (spread)? Its title is from the author and the id is not yet verified (`PROVENANCE.md` §8).
 

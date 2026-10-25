@@ -107,5 +107,5 @@ This fits less-is-more. Their mechanism is testable cheaply on our saved E06 rat
 ## What this means for the combination test
 
 - Our setup answers RQ 2.2 in two halves: the context ladder (words vs actions) and probe + Jev combined (internals vs words). Radev and Arike show that what the monitor sees changes results by 10–20 pp. So fix the monitor's view (L2 or L3) on validation data before combining with the probe, not on the test rows.
-- No paper here combines activations with a text monitor. The nearest is Radev's code + messages joint view. So a positive or null result from probe + Jev is new either way.
+- None of these five papers combines activations with a text monitor. Gao (2610.04575, outside this list) does: it fuses an activation monitor with Qwen-14B future-outcome forecasts on AgentDojo, and the joint monitor falls short of its frozen detection targets. So our probe + Jev result is a test in a new setting, not a new kind of method. Correction added 25 Oct, evening.
 - Wording for the report: "conversation scores track pressure, not outcome", supported by our own held-episode alarm rates, with Colosseum as a weak precedent. Don't use the sprint page's "0% to >70%" or "more than 90% of deviations" as written.
