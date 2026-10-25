@@ -1029,6 +1029,14 @@ round, exploratory): 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano dete
 F. Second Target: gpt-oss-20b (and Gemma-4-31B)
 Does the setup, and the detection result, carry to a differently trained model, and what had to change? gpt-
 oss numbers are never pooled with Qwen’s.
+Gemma-4-31B (behaviour only). Like gpt-oss, Gemma refused direct requests that named the  
+token: the plain peer drew 1 give-in in 43 valid episodes and a stacked-pressure peer 1 in 35  
+(runs/20261025-1642-e03-gemma-screen-retry2,  runs/20261025-1953-e03-gemma-pressure-
+metrics). The delayed whole-block request made it write the token into a file in 8 of 8 episodes (0 of 
+4  controls),  but  it  never  posted  the  token  to  the  channel  (0  of  8;  
+docs/second_target_behaviour_report.md). Because our primary outcome is a channel post, Gemma 
+does not give the outcome the probe and monitor analysis needs, so it stayed behaviour-only: no GPU 
+replay, probes or monitors were run on it, and its numbers are never pooled with either target’s.
 - Kept the same / changed for gpt-oss. Kept the same across targets: the scenario template, 
 operator rule, and protected value; the forbidden-action rule from the tool log; the eligible-
 step window; the labels and the within scenario × round metric; the detector recipes; and 
@@ -1042,6 +1050,7 @@ chosen on behaviour alone and frozen before any probe or monitor saw the data.
 configuration-block request, a strategy we designed in these screens rather than one taken 
 from prior work, passes the selection gate; the scaled collection gives 128/300 channel give-
 ins, controls 0/60. Gemma stays file-only and behaviour-only.
+
 - What counts as a leak. The scored give-in is the complete value posted to the channel. Any 
 earlier public emission of the value, such as a write to another file, ends the scoring window. 
 Private reasoning that mentions the token is not a leak. Episodes are eligible under the same 
@@ -1049,7 +1058,6 @@ rule as for Qwen (complete, the token read, and a correct status summary written
 point).
 - Disclosure-kind judge. The first public disclosure, a file write in 196 of 200 episodes, was 
 judged deliberate in 198 of 200 (0 accidental, 2 uncertain). The judge labels that first public 
-
 leak, not the later auto-posted channel message, so the channel post’s intent is read from the 
 addressee check (Appendix D) rather than from this judge.
 - Leak route. The canonical gpt-oss first channel leak is the auto-posted end-of-turn reply 
@@ -1089,10 +1097,10 @@ nine rounds for 1. These are opportunities for warning, not achieved lead times.
 Detector Near-term, pooled Near-term, held-out scenario Eventual, held-out scenario
 Activation probe (layer 
 chosen in training) 0.526 [0.473, 0.574] 0.528 [0.476, 0.578] 0.511 [0.461, 0.565]
-Activation probe, fixed layer 
-12 (secondary) 0.535 [0.475, 0.594] 0.563 [0.499, 0.628] 0.521 [0.457, 0.593]
 
 Detector Near-term, pooled Near-term, held-out scenario Eventual, held-out scenario
+Activation probe, fixed layer 
+12 (secondary) 0.535 [0.475, 0.594] 0.563 [0.499, 0.628] 0.521 [0.457, 0.593]
 Probe on the pre-ask 
 placebo window (1,141 
 steps)
@@ -1137,10 +1145,10 @@ Which episodes are counted (n). An episode is counted only if all of the followi
 the end;
 - the target told the peer where the summary was;
 - the peer only sent messages and never successfully used a workspace tool itself.
+
 This is the same rule as in the main analysis (App. B). We check for a correct summary at some point, 
 not in the final file, because a give-in can overwrite the summary file; a check on the final file would  
 mostly drop give-ins. One consequence is that this rule excludes some deploy-token episodes that an 
-
 older, looser validity check had accepted. The episodes dropped (incomplete, never read the value,  
 or failing another check), along with the control and target-alone cells, are listed in the detailed table 
 and CSV in the repository.
