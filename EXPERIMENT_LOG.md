@@ -360,3 +360,12 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
   - Logistic on the 4 scalars: A 0.554.
   - All below the refit probe (0.611 held-out scenario) and the Jev forecaster L3 (0.660).
 - **Reading:** just before a leak, the target is a bit more likely to open with a tool call (mean p_tool 0.47 vs 0.27 on held rows). Refusal-opener mass doesn't differ. So the decision isn't visible in the first token; it's made later in the reply.
+
+### 2026-10-25 ~09:45 SGT — Notes: judge prompt grounding; combination test scope
+
+- **LLM judge prompt:** adapted from ControlArena `default.txt`: warning signs, guiding questions, reasoning, then a 0–10 or 0–100 score anchored only at the ends. It is not a summed checklist or an anchored-band rubric; ControlArena's full_trajectory prompt has 8 bands, which we did not copy. Leo's call (25 Oct): fine, list it as a limitation. An optional rerun of the best setup with a rubric would cost ~$1.
+- **Combination test (APA-66), confirmed by Leo to run:**
+  - probe + (best monitor chosen on training folds);
+  - probe + GPT-5-nano detector L2, a fixed pair;
+  - monitor + monitor (Jev + GPT-5-nano) as reference.
+  All are stacked logistic models on [turn, log length, scores], paired family-bootstrap difference, within scenario × round. Labels: near-term A/B/C and eventual.
