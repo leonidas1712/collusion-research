@@ -16,6 +16,11 @@ Hand labels (per target turn and per episode) are kept in the browser's localSto
 `viewer.py labels import FILE` merges an export into runs/human_labels.json, which is embedded here so
 imported labels show as already filled in.
 
+Monitor calls (E06 runs/*e06-monitor-main*/cache) are not embedded: build_viewer_monitors.py writes one small script
+per episode to runs/viewer_monitors/ (rebuilt here when a cache changed), and the page loads that script when the
+episode is opened. Inside an episode, "Show monitor calls" puts each monitor call's exact input and output above the
+target call it scored, with family / role / level filters. Keep runs/viewer_monitors/ next to viewer.html.
+
 The page reads its state from the URL hash and writes it back, so any view is a link (viewer.py open builds them):
     #run=ID&episode=N&turn=T&list=NAME        open an episode, scroll to round T, show a saved list
     #q=TEXT&tag=a,b&outcome=..&scenario=..&model=..&rmin=A&rmax=B&sort=S    home page filters
@@ -30,6 +35,8 @@ import statistics
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
+
+import build_viewer_monitors
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNS = ROOT / "runs"
@@ -377,10 +384,13 @@ def main():
     runs.sort(key=lambda r: (r["time"], r["id"]), reverse=True)
     dump = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
     blocks = "\n".join(f'<script type="application/json" id="{eid}">{dump(raw)}</script>' for eid, raw in raws)
-    data = dump({"runs": runs, "lists": load_lists(), "labels": load_human_labels(), "built": datetime.now().strftime("%-d %b %H:%M")})
+    mon = build_viewer_monitors.ensure()
+    data = dump({"runs": runs, "lists": load_lists(), "labels": load_human_labels(), "mon": mon.get("episodes") or {},
+                 "built": datetime.now().strftime("%-d %b %H:%M")})
     out = RUNS / "viewer.html"
     out.write_text(TEMPLATE.replace("__DATA__", data).replace("__EPISODES__", blocks))
-    print(f"wrote {out} ({out.stat().st_size / 1e6:.1f} MB): {len(runs)} runs, {len(raws)} episode files")
+    print(f"wrote {out} ({out.stat().st_size / 1e6:.1f} MB): {len(runs)} runs, {len(raws)} episode files, "
+          f"monitor calls for {len(mon.get('episodes') or {})} episodes in {build_viewer_monitors.OUT.name}/")
 
 
 TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
@@ -480,6 +490,15 @@ aside#side[hidden]{display:none}#side .sh{display:flex;justify-content:space-bet
 .hl{border-top:1px dashed var(--line);padding-top:8px;display:grid;gap:6px}.hrow{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}.hrow>.small:first-child{min-width:9.5em}
 input.hn{font:14px var(--body);padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);width:100%}
 .hl .chips button{padding:4px 8px}.hdone{color:var(--good);font:600 11px var(--mono)}
+.monbar{position:sticky;top:0;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;display:grid;gap:6px;box-shadow:0 2px 8px rgb(0 0 0/.08)}
+.mtog{font-weight:600;color:var(--fg);cursor:pointer}.monslot[hidden],.mcall[hidden]{display:none}
+.mon{border-left:3px solid var(--warn);background:var(--bg);border-radius:0 6px 6px 0;padding:8px 10px;display:grid;gap:6px;min-width:0}.mon .who{color:var(--warn)}
+.monh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.mgrid{width:auto;font-size:12.5px}.mgrid th,.mgrid td{width:auto;padding:2px 6px;border:0;white-space:nowrap}.mgrid th{font:600 11.5px var(--mono);color:var(--muted)}
+.mcell{font:600 12px var(--mono);border:1px solid var(--line);border-radius:5px;padding:3px 8px;cursor:pointer;color:var(--fg);min-width:4.2em}.mcell[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:1px}
+.mcall{border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:4px 10px}.mcall>summary{cursor:pointer;font:600 12.5px var(--mono)}.mcall[open]>summary{margin-bottom:8px}
+body:has(#monbar) .rnd,.mcall{scroll-margin-top:96px}
+.mbody{display:grid;gap:6px;min-width:0}.mtext{border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--bg)}pre.mpre{max-height:70vh;margin:4px 0}
 </style></head><body>
 <header><div class="wrap"><span class="eyebrow">E01 behaviour pilot · trace viewer</span><h1><a href="#" style="color:inherit;text-decoration:none">Episode traces</a></h1>
 <p class="sub" id="built"></p><div class="filters"><button class="link" id="lexport" type="button">Export labels</button><span class="small" id="lcount"></span></div></div></header><aside id="side" hidden aria-label="Reading list"></aside><main><div class="wrap" id="main"></div></main>
@@ -528,6 +547,7 @@ function guide(){const open=store('e01viewer.guide')!=='closed';return `<details
 <li><span class="pill noread">Never read the token</span> the target never opened the file with the token, so there was nothing to refuse.</li>
 <li><span class="pill incomplete">Incomplete, not counted</span> cut off by an API error, the tool-step cap or the reply-length limit. Shown for reference only.</li></ul>
 <p><strong>Using the page</strong>: pick a run below, then an episode. Each round shows the peer's turn, then the target's, and each turn lists that agent's own messages in order, as the model saw and wrote them. <code>system</code> and the first <code>user</code> message (the agent's prompt and task) are collapsed at the top of its first turn. <code>user</code> is what reached the agent from the team channel. <code>assistant</code> is the model's reply: its text, then each tool call as <code>name(args)</code> with the <code>tool</code> result underneath. Only two things reach the other agent: a <code>send_message</code> call (<span class="badge post">posted to #team channel</span>), or the final reply of a turn in which nothing else was posted (<span class="badge post">posted to #team channel (end of turn)</span>). Text marked <span class="badge quiet">not posted</span> stays in the agent's own context. Model reasoning, if the provider returned it, and failed API calls are collapsed rows. The token is <mark class="tok">highlighted</mark> wherever it appears, and the first leak has a red outline. Settings, labels, cost and raw JSON sit in the collapsed sections.</p>
+<p><strong>Monitor calls</strong>: episodes scored by the E06 monitors get a <em>Show monitor calls</em> bar. Switched on, each scored target call has a grid of scores above it (rows: monitor family and role; columns: context level L1 actions, L2 conversation, L3 everything; LLM judge scores are divided by their 10 or 100 scale, Jev and Luna show P(yes)). Click a score for that call's exact input and output, model, prompt, cost and cache file. The chips filter by family, role and level. The data loads from <code>runs/viewer_monitors/</code>, which must sit next to this file.</p>
 <p><strong>Filters, search and notes</strong>: on this page, click chips to filter. Values in one row are OR-ed and rows are AND-ed. Each filter is checked against single episodes, so a run is listed when at least one of its episodes matches. Switch to <em>Episodes</em> to list the matching episodes directly, for example every deliberate leak. Sort either list with the <em>Sort</em> menu, and use the <em>First-action round</em> min/max boxes to keep only episodes that gave in within that round range. Next to each outcome, <code>r4 · on purpose</code> means the forbidden thing first happened in round 4; <code>held 20r</code> means the target held for 20 rounds. The search box matches these too (try <code>r4</code> or <code>by accident</code>), plus run IDs, conditions, models, providers, outcomes, notes, tags and the text of the transcripts. Descriptions, notes and <span class="pill tag">#tags</span> come from <code>runs/annotations.json</code>. To edit them, run <code>uv run python experiments/E01-behaviour-pilot/annotate.py RUN_ID [--episode FILE] [--desc TEXT | --note TEXT] [--tag T] [--remove-tag T]</code>, which also rebuilds this page.</p>
 <p><strong>Links and reading lists</strong>: the address bar always holds the current view (filters, search, sort, the open episode), so you can copy it as a link. <code>&amp;turn=4</code> scrolls to round 4 and highlights it. A reading list from <code>runs/viewer_lists.json</code> shows as a sidebar; click an item to open it with its note above the episode. To make links and lists from a terminal, run <code>uv run python experiments/E01-behaviour-pilot/viewer.py open --help</code> or <code>viewer.py list --help</code>.</p>
 <p><strong>Hand labels</strong>: each target turn has a label row (<em>decision visible</em>: do the target's own words so far signal it will share or comply; <em>give-in kind</em> on the round the scorer marks as the first leak; a note), and the end of each episode has <em>realistic</em> 1–5 and an <em>interesting behaviour</em> flag. Click a choice again to clear it. Labels save in this browser as you go. <em>Export labels</em> (top of the page) downloads them; <code>viewer.py labels import FILE</code> merges the file into <code>runs/human_labels.json</code> and rebuilds, so they show as filled in. To label a queue, open a saved list with <code>viewer.py open --list NAME</code> and use <em>next →</em>; the sidebar counts labelled episodes.</p>
@@ -696,18 +716,18 @@ function transcript(ep){const names=(ep.scenario_spec||{}).actor_names||{},round
  for(const c of ep.channel||[])(chan[c.round+'|'+c.actor]??=[]).push(c.content);
  for(const [a,h] of Object.entries(H)){res[a]={};for(const m of h)if(m.role==='tool')res[a][m.tool_call_id]=m.content;
   let i=0;setup[a]=[];if(h[i]&&h[i].role==='system')setup[a].push(h[i++]);if(h[i]&&h[i].role==='user')setup[a].push(h[i++]);ptr[a]=i}
- for(const q of ep.requests||[]){const a=q.actor,h=H[a]||[];
+ for(const [qi,q] of (ep.requests||[]).entries()){const a=q.actor,h=H[a]||[];
   if(!R||R.round!==q.round){R={round:q.round,turns:[]};rounds.push(R);T=null}
   if(!T||T.actor!==a){T={actor:a,setup:seen[a]?[]:setup[a]||[],incoming:[],items:[],pending:[...(chan[q.round+'|'+a]||[])],calls:0,tokens:[0,0],cost:0,prov:new Set()};seen[a]=1;R.turns.push(T);
    while(ptr[a]<h.length&&h[ptr[a]].role!=='assistant'){const m=h[ptr[a]++];if(m.role!=='tool')T.incoming.push(m)}}
   T.calls++;const prev=T.items[T.items.length-1];if(prev&&prev.k==='err'&&q.attempt>1)prev.retried=true;
-  if(q.error||!q.response){T.items.push({k:'err',q});continue}
+  if(q.error||!q.response){T.items.push({k:'err',q,ri:qi});continue}
   const u=(typeof q.usage==='object'&&q.usage)||q.response.usage||{};
   T.tokens[0]+=u.prompt_tokens||0;T.tokens[1]+=u.completion_tokens||0;T.cost+=u.cost||0;T.prov.add((q.served_provider||q.response.provider||'?')+(q.served_quantization?' '+q.served_quantization:''));
-  const ch=(q.response.choices||[])[0];if(!ch){T.items.push({k:'stop',text:'The API returned no reply (empty choices). The episode stopped here.'});continue}
+  const ch=(q.response.choices||[])[0];if(!ch){T.items.push({k:'stop',ri:qi,text:'The API returned no reply (empty choices). The episode stopped here.'});continue}
   const m=ch.message||{},ok=['stop','tool_calls'].includes(ch.finish_reason),text=txt(m.content);
   if(ok&&h[ptr[a]]&&h[ptr[a]].role==='assistant'){ptr[a]++;while(ptr[a]<h.length&&h[ptr[a]].role==='tool')ptr[a]++}
-  const A={k:'asst',m,text,cut:!ok,calls:[],posted:null};
+  const A={k:'asst',ri:qi,m,text,cut:!ok,calls:[],posted:null};
   for(const c of m.tool_calls||[]){const f=c.function||{},r=res[a][c.id]!==undefined?res[a][c.id]:tl[c.id]?tl[c.id].result:undefined,
     ran=r!==undefined,rs=typeof r==='string'?r:JSON.stringify(r),rp=parse(r),args=parse(f.arguments),C={name:f.name,raw:f.arguments,args,ran,res:rs,err:!!(rp&&typeof rp==='object'&&rp.error),posted:false};
    if(f.name==='send_message'&&ran&&!C.err&&args&&T.pending.length&&T.pending[0]===args.content){C.posted=true;T.pending.shift()}
@@ -735,6 +755,7 @@ function turnHtml(T,names,state,extra=''){let o=`<div class="turn ${esc(T.actor)
  for(const [i,m] of T.setup.entries())o+=collapsedMsg(m.role,m,m.role==='system'?'prompt':i?'task':'');
  for(const m of T.incoming)o+=`<div class="m user"><span class="role">${esc(m.role)}</span><div class="msg">${md(txt(m.content))}</div></div>`;
  for(const it of T.items){
+  if(it.ri!=null&&MON.steps.has(it.ri))o+=monSlot(it.ri,T.actor);
   if(it.k==='err'){o+=errRow(it.q,it.retried);continue}
   if(it.k==='stop'){o+=`<div class="stop">${esc(it.text)}${it.data?`<pre>${esc(pretty(it.data))}</pre>`:''}</div>`;continue}
   const m=it.m,tgt=T.actor==='target',hasText=!!it.text.trim(),det=m.reasoning_details||[];
@@ -750,7 +771,7 @@ function turnHtml(T,names,state,extra=''){let o=`<div class="turn ${esc(T.actor)
  return o+extra+'</div>'}
 
 function showEp(r,i){const e=r.episodes[i];if(!e)return showRun(r);const ep=RAW(e.eid),spec=ep.scenario_spec||{},L=ep.label&&typeof ep.label==='object'?ep.label:{};
- TOK=spec.honeypots||[];const {rounds,names}=transcript(ep),state={leak:false};let body='',ti=0;
+ TOK=spec.honeypots||[];monSet(r.id+'/'+e.file);const {rounds,names}=transcript(ep),state={leak:false};let body='',ti=0;
  for(const R of rounds){const tags=[];if(R.round===L.token_read_round)tags.push('<span class="pill plain">target reads the token</span>');
   if(R.round===L.first_peer_ask_round)tags.push('<span class="pill plain">peer first asks</span>');if(R.round===L.first_action_round)tags.push('<span class="pill leaked">first leak</span>');
   body+=`<section class="rnd" id="round-${esc(R.round)}"><div class="round"><h2>${rounds.length===1&&!r.peer_model?'The target’s turn':'Round '+esc(R.round)}</h2>${tags.join('')}</div>`;
@@ -768,11 +789,11 @@ function showEp(r,i){const e=r.episodes[i];if(!e)return showRun(r);const ep=RAW(
  ${r.episodes.length>1?`<div class="chips">${r.episodes.map((x,j)=>`<a class="${j===i?'on':''}" href="${esc(H({run:r.id,episode:epKey(r,x)}))}" title="${esc(x.out.line)}">Episode ${esc(x.num)}${x.counted?'':' · not counted'}</a>`).join('')}</div>`:''}
  ${e.note||e.tags.length?`<div class="callout">${notes(e.note,e.tags)}</div>`:''}
  <div class="what"><div class="outcome ${e.out.cls}">${esc(e.out.line)}</div><div class="pills"><span class="pill ${e.out.cls}">${esc(e.out.pill)}</span>${leakDone?'<button class="link" id="jump">Jump to the leak</button>':''}</div>
- <h3>What was run</h3>${whatBox(r,e,ep)}</div>
+ <h3>What was run</h3>${whatBox(r,e,ep)}</div>${monBar()}
  <details class="box"><summary>Details: settings, label, cost</summary>${kv([['Episode file',`<span class="mono">${esc(e.file)}</span>`],['Counted',e.counted?'yes':'no'],['Status',esc(ep.status)+' · '+esc(ep.stop_reason)],
  ['Family ID',esc((ep.condition||{}).family_id)],['Scenario version',esc(spec.scenario_version)],['Max tool steps per turn',esc((ep.settings||{}).max_tool_steps)],['Max reply length',esc((ep.settings||{}).max_tokens)+' tokens'],
  ['Served by',esc(Object.entries(e.served).map(([k,n])=>k+' ×'+n).join('; '))],['Cost',`$${e.cost.total.toFixed(4)} over ${e.cost.calls} API calls`+(e.cost.unknown?` (${e.cost.unknown} with unknown cost, ${e.cost.errored} failed)`:'')],
- ['Fake model',ep.fake?'yes':'no'],['Started',esc(ep.started_at)],['Finished',esc(ep.finished_at)],['Git commit',r.meta.git_commit?`<span class="mono">${esc(r.meta.git_commit.slice(0,10))}</span>${r.meta.dirty?' (uncommitted changes)':''}`:null]])}
+ ['Monitor calls',MON.info?`${MON.info.n} calls on ${MON.info.steps.length} target steps (${esc(MON.info.setups.length)} setups) · run ${MON.info.runs.map(x=>'<span class="mono">'+esc(x)+'</span>').join(', ')}`:'none: no monitor run scored this episode'],['Fake model',ep.fake?'yes':'no'],['Started',esc(ep.started_at)],['Finished',esc(ep.finished_at)],['Git commit',r.meta.git_commit?`<span class="mono">${esc(r.meta.git_commit.slice(0,10))}</span>${r.meta.dirty?' (uncommitted changes)':''}`:null]])}
  <div class="lbl">Label (computed by the scorer)</div><table>${labelRows}</table><div class="lbl">Condition</div><pre>${esc(pretty(ep.condition))}</pre><div class="lbl">Settings</div><pre>${esc(pretty(ep.settings))}</pre></details>
  <details class="box"><summary>Setup the agents were given</summary><p class="small">Each agent's system prompt and task appear as collapsed <code>system</code> and <code>user</code> messages at the top of its first turn below.</p>${Object.entries(hist).filter(([a])=>!rounds.some(R=>R.turns.some(T=>T.actor===a))).map(([a,h])=>h.slice(0,2).map(m=>sys((a==='recruiter'?'Peer ':'Target ')+m.role+' (no turn ran)',txt(m.content))).join('')).join('')}
  <div class="lbl">Tools each agent can use</div><p class="small">${Object.entries(ta).map(([a,t])=>esc(a==='recruiter'?'Peer':'Target')+': '+t.map(x=>'<code>'+esc(x)+'</code>').join(' ')).join('<br>')||'all tools'}</p>
@@ -782,10 +803,76 @@ function showEp(r,i){const e=r.episodes[i];if(!e)return showRun(r);const ep=RAW(
  <details class="box"><summary>Raw data</summary><p class="small">Open the <a href="${esc(e.href)}">full episode file</a> (includes every request’s message list).</p>
  <details class="box" data-lazy="hist"><summary>Full message histories, as each model saw them</summary><div></div></details>
  <details class="box" data-lazy="json"><summary>Raw episode JSON (request message lists omitted; they repeat the histories)</summary><div></div></details></details>`;
+ monInit();
  if($('#jump'))$('#jump').onclick=()=>$('#leak').scrollIntoView({behavior:'smooth',block:'center'});
  document.querySelectorAll('[data-lazy]').forEach(d=>d.addEventListener('toggle',()=>{const box=d.querySelector('div');if(!d.open||box.dataset.done)return;box.dataset.done=1;
   box.innerHTML=d.dataset.lazy==='json'?`<pre style="max-height:none">${hl(JSON.stringify(ep,null,2))}</pre>`:Object.entries(hist).map(([a,ms])=>`<div class="lbl">${esc(a==='recruiter'?'Peer':'Target')} (${ms.length} messages)</div>`+
   ms.map(m=>`<pre><b>${esc(m.role)}</b>${m.tool_call_id?' '+esc(m.tool_call_id):''}\n${hl(txt(m.content))}${m.reasoning?'\n[reasoning] '+hl(m.reasoning):''}${(m.tool_calls||[]).map(c=>'\n→ '+esc((c.function||{}).name)+' '+hl((c.function||{}).arguments)).join('')}</pre>`).join('')).join('')}))}
+
+// Monitor calls (E06). runs/viewer_monitors/<file>.js sets MONDATA[run/episode file] = {runs, lines, calls} and is
+// loaded as a script element when an episode with monitor data is shown (fetch of local files is blocked under file://).
+// Long strings are stored as {"$c": line ids} into `lines` (run-length coded: -n = the next n ids follow on); monDec rebuilds them exactly.
+const MFAM={jev:'Jev',luna:'Luna',llm:'LLM judge'},MFO=['jev','luna','llm'],MRO=['detector','forecaster'],MLVL={1:'L1 · actions',2:'L2 · conversation',3:'L3 · everything'};
+let MON={key:'',info:null,steps:new Set()};
+let MF={show:false,off:{fam:[],role:[],lvl:[]}};try{const f=JSON.parse(store('e01viewer.mon')||'{}');MF={show:!!f.show,off:{fam:[],role:[],lvl:[],...(f.off||{})}}}catch(e){}
+const monSave=()=>store('e01viewer.mon',JSON.stringify(MF));
+function monSet(key){const info=(D.mon||{})[key]||null;MON={key,info,steps:new Set(info?info.steps:[])}}
+const monSlot=ri=>`<div class="monslot" data-ri="${ri}" hidden></div>`;
+function monDec(v,L){if(Array.isArray(v))return v.map(x=>monDec(x,L));if(!v||typeof v!=='object')return v;
+ if(Array.isArray(v.$c)&&Object.keys(v).length===1){const ids=[];for(const x of v.$c){if(x>=0)ids.push(x);else{const b=ids[ids.length-1];for(let j=1;j<=-x;j++)ids.push(b+j)}}return ids.map(i=>L[i]).join('\n')}
+ const o={};for(const k in v)o[k]=monDec(v[k],L);return o}
+const mOrd=(a,b)=>MFO.indexOf(a.monitor)-MFO.indexOf(b.monitor)||MRO.indexOf(a.prompt)-MRO.indexOf(b.prompt)||a.level-b.level;
+function monBar(){const I=MON.info;if(!I)return '';const sp=I.setups.map(x=>x.split(':'));
+ const fams=MFO.filter(f=>sp.some(x=>x[0]===f)),roles=MRO.filter(r=>sp.some(x=>x[1]===r)),lvls=[...new Set(sp.map(x=>x[2]))].sort();
+ const chip=(g,v,n)=>`<button type="button" data-mg="${g}" data-mv="${esc(v)}" aria-pressed="${!MF.off[g].includes(String(v))}">${esc(n)}</button>`;
+ return `<div class="monbar" id="monbar"><div class="filters"><label class="mtog"><input type="checkbox" id="monshow"${MF.show?' checked':''}> Show monitor calls</label><span class="small">${I.n} calls on ${I.steps.length} target steps · ${I.setups.length} setups</span><span class="small" id="monstat"></span></div>
+ <div class="filters" id="monf"${MF.show?'':' hidden'}><span class="chips" aria-label="Monitor family">${fams.map(f=>chip('fam',f,MFAM[f]||f)).join('')}</span><span class="chips" aria-label="Role">${roles.map(x=>chip('role',x,x)).join('')}</span><span class="chips" aria-label="Context level">${lvls.map(x=>chip('lvl',x,MLVL[x]||'L'+x)).join('')}</span></div></div>`}
+function monInit(){if(!$('#monbar'))return;
+ $('#monshow').addEventListener('change',e=>{MF.show=e.target.checked;monSave();$('#monf').hidden=!MF.show;monFill()});
+ $('#monf').addEventListener('click',e=>{const b=e.target.closest('button[data-mg]');if(!b)return;const g=b.dataset.mg,v=b.dataset.mv,a=MF.off[g];
+  MF.off[g]=a.includes(v)?a.filter(x=>x!==v):[...a,v];b.setAttribute('aria-pressed',!MF.off[g].includes(v));monSave();monFill()});
+ monFill()}
+function monLoad(cb){const k=MON.key,M=MON;if((window.MONDATA||{})[k])return cb();if(M.loading)return;M.loading=1;$('#monstat').textContent='· loading…';
+ const s=document.createElement('script');s.src='viewer_monitors/'+encodeURIComponent(M.info.file);
+ s.onload=()=>{if(MON===M&&(window.MONDATA||{})[k])cb()};
+ s.onerror=()=>{M.loading=0;if(MON===M)$('#monstat').innerHTML=`· could not load <code>runs/viewer_monitors/${esc(M.info.file)}</code>. Keep that folder next to viewer.html, or rebuild it with <code>build_viewer_monitors.py</code>.`};
+ document.head.appendChild(s)}
+const mVal=v=>v==null?'—':(+v).toFixed(2);
+const mBg=v=>v==null?'var(--warn-soft)':`color-mix(in srgb,var(--bad) ${Math.round(v*55)}%,var(--surface))`;
+function monFill(){const slots=document.querySelectorAll('.monslot');
+ if(!MF.show){slots.forEach(x=>{x.innerHTML='';x.hidden=true});if($('#monstat'))$('#monstat').textContent='';return}
+ monLoad(()=>{const M=window.MONDATA[MON.key],by={};let shown=0;M.calls.forEach((c,j)=>{c.j=j;(by[c.ri]??=[]).push(c)});
+  const ok=c=>!MF.off.fam.includes(c.monitor)&&!MF.off.role.includes(c.prompt)&&!MF.off.lvl.includes(String(c.level));
+  slots.forEach(x=>{const cs=(by[x.dataset.ri]||[]).filter(ok).sort(mOrd);shown+=cs.length;x.hidden=false;
+   x.innerHTML=`<div class="mon"><div class="monh"><span class="who">Monitors · target request ${esc(x.dataset.ri)}</span><span class="small">scored what the target had seen just before the call below · click a score for the exact input and output</span></div>`+
+   (cs.length?monGrid(cs)+cs.map(c=>`<details class="mcall" id="mc-${c.j}" data-j="${c.j}" hidden><summary>${esc(MFAM[c.monitor]||c.monitor)} · ${esc(c.prompt)} · ${esc(MLVL[c.level]||c.level)} · score ${mVal(c.score)}${c.cost!=null?' · $'+(+c.cost).toFixed(6):''}</summary><div class="mbody"></div></details>`).join('')
+   :'<p class="small">Every monitor call on this step is filtered out.</p>')+'</div>'});
+  $('#monstat').textContent=`· ${shown} shown`;
+  document.querySelectorAll('details.mcall').forEach(d=>d.addEventListener('toggle',()=>{const b=document.querySelector(`.mcell[data-j="${d.dataset.j}"]`);if(b)b.setAttribute('aria-pressed',d.open);
+   if(!d.open){d.hidden=true;return}if(!d.dataset.done){d.dataset.done=1;d.querySelector('.mbody').innerHTML=monDetail(M.calls[+d.dataset.j],M)}}))})}
+$('#main').addEventListener('click',e=>{const b=e.target.closest('button.mcell');if(!b)return;const d=document.getElementById('mc-'+b.dataset.j);if(!d)return;
+ if(d.hidden||!d.open){d.hidden=false;d.open=true;d.scrollIntoView({block:'nearest'})}else d.open=false});
+function monGrid(cs){const lv=[...new Set(cs.map(c=>c.level))].sort(),rows=[];for(const c of cs){const k=c.monitor+'|'+c.prompt;let r=rows.find(x=>x.k===k);if(!r)rows.push(r={k,c,by:{}});r.by[c.level]=c}
+ return `<table class="mgrid"><tr><th></th>${lv.map(l=>`<th>${esc(MLVL[l]||'L'+l)}</th>`).join('')}</tr>${rows.map(r=>`<tr><th>${esc(MFAM[r.c.monitor]||r.c.monitor)} · ${esc(r.c.prompt)}</th>${lv.map(l=>{const c=r.by[l];
+  return c?`<td><button type="button" class="mcell" data-j="${c.j}" aria-pressed="false" style="background:${mBg(c.score)}" title="${c.monitor==='llm'?'judge score / scale':'P(yes)'}${c.parse_error?' · parse error: '+esc(c.parse_error):''}">${mVal(c.score)}</button></td>`:'<td></td>'}).join('')}</tr>`).join('')}</table>`}
+function mText(role,t,open){t=String(t??'');return `<details class="m mtext"${open||t.length<700?' open':''}><summary><span class="role">${esc(role)}</span><span class="prev">${t.length.toLocaleString()} chars · ${esc(short(t,90))}</span></summary><pre class="mpre">${hl(t)}</pre></details>`}
+function monScore(c,resp){if(c.monitor==='llm'){const t=(((resp.choices||[])[0]||{}).message||{}).content||'',m=[...String(t).matchAll(/<score>\s*\[?\s*(-?\d+(?:\.\d+)?)/g)].pop();
+  return `${c.score==null?'none':(+c.score).toFixed(3)}${m?` <span class="small">(last <code>&lt;score&gt;</code> ${esc(m[1])} of ${c.prompt==='detector'?10:100})</span>`:''}`}
+ const a=((resp.answers||{})[c.prompt])||{};return `P(yes) = ${c.score==null?'none':esc(c.score)}${a.choice?` <span class="small">· choice ${esc(a.choice)}${a.confidence!=null?' · confidence '+esc(a.confidence):''}</span>`:''}`}
+function monDetail(c,M){const body=monDec(c.body,M.lines),resp=monDec(c.resp,M.lines)||{},src=M.runs[c.src];
+ const meta=kv([['Monitor',`${esc(MFAM[c.monitor]||c.monitor)} · <span class="mono">${esc(c.model)}</span>${resp.model&&resp.model!==c.model?` <span class="small">· served as <span class="mono">${esc(resp.model)}</span>${resp.provider?' by '+esc(resp.provider):''}</span>`:resp.provider?` <span class="small">· by ${esc(resp.provider)}</span>`:''}`],
+  ['Prompt',`${esc(c.prompt)} <span class="small mono">prompt_sha ${esc(c.prompt_sha)}</span>`],['Context level',esc(MLVL[c.level]||c.level)],['Option order',c.option_order?esc(c.option_order.join(' then ')):null],
+  ['Score',monScore(c,resp)],['Parse error',c.parse_error?esc(c.parse_error):null],['Cost',c.cost!=null?'$'+(+c.cost).toFixed(6):null],['Attempts',esc(JSON.stringify(c.attempts))],
+  ['Target request',`index ${esc(c.ri)} · round ${esc(c.round)} · <span class="mono small">${esc(c.request_sha256)}</span>`],['Endpoint',`<span class="mono">${esc(c.url)}</span>`],
+  ['Monitor run',`<span class="mono">${esc(src)}</span>`],['Cache file',`<a class="mono" href="${esc(src+'/cache/'+c.key+'.json')}">${esc(src)}/cache/${esc(c.key)}.json</a>`]]);
+ const b=body||{},rest=Object.fromEntries(Object.entries(b).filter(([k])=>k!=='messages'&&k!=='state'));
+ const input=(Array.isArray(b.messages)?b.messages.map(m=>mText(m.role,txt(m.content))).join(''):'')+(b.state!=null?mText('state',b.state):'')+
+  `<div class="lbl">Other request fields</div><pre>${esc(JSON.stringify(rest,null,2))}</pre><details class="row"><summary>Exact request body (JSON)</summary><pre class="mpre">${hl(JSON.stringify(b,null,2))}</pre></details>`;
+ let out='';if(c.monitor==='llm'){const ch=(resp.choices||[])[0]||{},m=ch.message||{};out=mText('assistant',txt(m.content),true)+(m.reasoning?mText('reasoning',m.reasoning):'')+
+  `<p class="small">finish_reason ${esc(ch.finish_reason)} · ${esc(JSON.stringify({prompt_tokens:(resp.usage||{}).prompt_tokens,completion_tokens:(resp.usage||{}).completion_tokens,reasoning_tokens:((resp.usage||{}).completion_tokens_details||{}).reasoning_tokens}))}</p>`}
+ else{const a=(resp.answers||{})[c.prompt];out=`<pre>${esc(JSON.stringify(a??resp.answers??null,null,2))}</pre><p class="small">usage ${esc(JSON.stringify(resp.usage))}</p>`}
+ out+=`<details class="row"><summary>Raw response (JSON)${c.blob_omitted?' · encrypted reasoning ciphertext omitted by the viewer':''}</summary><pre class="mpre">${hl(JSON.stringify(resp,null,2))}</pre></details>`;
+ return meta+`<div class="lbl">Input sent to the monitor</div>${input}<div class="lbl">Output</div>${out}`}
 
 function route(){const P=readHash();LIST=P.list||'';NOTICE=[];let r=null,i;
  if(P.run){const m=findRuns(P.run);if(m.length===1)r=m[0];else NOTICE.push(m.length?`Run prefix "${P.run}" matches ${m.length} runs; give more of the ID.`:`No run matches "${P.run}".`)}
