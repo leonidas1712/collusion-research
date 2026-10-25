@@ -484,3 +484,13 @@ Report: `runs/20261025-0147-e06-monitor-main/combine.md` and `combine.json`. Cod
   - They add a reliable +0.05–0.08 over a weaker LLM judge, more than a second text monitor adds.
   - On the eventual label, nothing combines into a signal.
 - Exploratory on these data; the frozen confirmation test on the new episodes follows (`docs/confirmatory_plan.md`).
+
+- 2026-10-25 09:08 SGT [result] APA-67 eventual-label pooled learning checkpoint: runs/20261025-0907-e05-learning-checkpoint/report.md, parent0842-e05-learning-curve still running remaining analyses. All3 seeds×3 nested family draws at25/50/75/100%; fixed test/inner folds. Nested scenario×round AUROC0.501/0.536/0.527/0.522;75→100 increment−0.006 paired family95%CI[−0.031,+0.023]. Fixed32 0.508/0.548/0.557/0.576; increment+0.018 [−0.003,+0.038]. No clear final-size gain; intervals spanning0 do not establish saturation. Pooled cross-fold calibration remains a limitation. Replay2 data only; balanced batch remains untouched confirmation data per docs/confirmatory_plan.md.
+
+### 2026-10-25 ~09:40 SGT — Learning curve (first) and monitor subset on new episodes done
+
+- **Learning curve (codex-2, APA-67):** eventual label, pooled; `runs/20261025-0907-e05-learning-checkpoint/report.md`.
+  - Nested probe at 25/50/75/100% of training families: 0.501 / 0.536 / 0.527 / 0.522; 75 → 100% gain −0.006 [−0.031, 0.023].
+  - Fixed layer 32: 0.508 / 0.548 / 0.557 / 0.576; final gain +0.018 [−0.003, 0.038].
+  - No clear gain from more data on the eventual label. LOSO and near-term B curves are still running.
+- **Monitor subset on the balanced episodes:** `runs/20261025-0841-e06-monitor-main-balanced` is complete (status above). Not graded yet: the scores wait for the frozen confirmation analysis.
