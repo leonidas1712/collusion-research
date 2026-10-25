@@ -69,3 +69,10 @@ A side review pointed out that the stacker learns its probe weight from replay-2
 - each final seed model's scores are z-scored over the new rows it scores. This uses no labels.
 
 In both cases the three seeds are then averaged. In the dry run the two now match: SD 0.80 vs 0.80, means ≈0. The probe-alone AUROC is unaffected, since z-scoring doesn't change rankings within a model.
+
+## Addendum 5 (25 Oct ~10:15 SGT, before any replay-3 outcome analysis): one extra secondary hypothesis
+
+The replay-2 per-layer diagnostic (`runs/20261025-1003-e05-layer-diagnostic`) shows that for near-term B, the late layers (48–63) sit consistently higher than the middle ones, in both pooled CV and LOSO (~0.63–0.66 vs ~0.55–0.60). That pattern was found by looking at test results, so on replay 2 it is post hoc. Testing it on the confirmation set is clean.
+
+- **Secondary hypothesis (not part of the primary claim):** a "late-band" probe beats chance on the new episodes and scores at least as well as the primary inner-selected probe. The late-band probe fits one logistic probe per layer 48, 52, 56, 60 and 63 on all replay-2 rows (same recipe, seed 42), z-scores each over the new rows, and averages them.
+- It is reported alongside the primary result and labelled as a hypothesis from the replay-2 diagnostic. It does not replace the primary probe.

@@ -71,7 +71,7 @@ def oof_probe(variant):
     return {k: float(np.mean(v)) for k, v in acc.items()}
 
 
-def final_probe(rows, x, y, train, xnew, layer_fixed=None):
+def final_probe(rows, x, y, train, xnew, test, layer_fixed=None):
     """One model per seed on all training rows; returns new-episode scores per seed and chosen layers."""
     out, layers = {}, {}
     for seed in SEEDS:
@@ -83,7 +83,7 @@ def final_probe(rows, x, y, train, xnew, layer_fixed=None):
         model = fit_logistic(np.asarray(x[train, layer]), y[train], np.array([rows[i]['round'] for i in train]), seed)
         # Put each seed model on a common scale before averaging (z-score against its own training-row scores).
         # z-score within the scored (new) rows, as the OOF scores are z-scored within each fold model's scored rows.
-        raw = score(model, np.asarray(xnew[:, layer]))
+        raw = score(model, np.asarray(xnew[test, layer]))
         out[seed] = (raw - raw.mean()) / raw.std()
         layers[seed] = int(layer)
     return out, layers
@@ -138,15 +138,21 @@ def main():
         train = np.flatnonzero(keep_o & old_keep_fam)
         test = np.flatnonzero(keep_n)
         test = np.array([i for i in test if all(sid(new_rows[i]) in mon[m] for m in SUBSET)])
-        nested, layers = final_probe(old_rows, old_x, y_o, train, new_x[test])
-        fixed, _ = final_probe(old_rows, old_x, y_o, train, new_x[test], layer_fixed=32)
+        nested, layers = final_probe(old_rows, old_x, y_o, train, new_x, test)
+        fixed, _ = final_probe(old_rows, old_x, y_o, train, new_x, test, layer_fixed=32)
         yt = y_n[test]
         rt = np.array([new_rows[i]['round'] for i in test], float)
         st = np.array([new_rows[i]['scenario'] for i in test])
         ft = np.array([new_rows[i]['family'] for i in test])
         lt = np.log(np.array([new_rows[i]['n_tokens'] for i in test], float))
         probe = np.mean([nested[s] for s in SEEDS], axis=0)
+        late = []  # addendum 5: late-band hypothesis from the replay-2 per-layer diagnostic
+        for layer in (48, 52, 56, 60, 63):
+            m = fit_logistic(np.asarray(old_x[train, layer]), y_o[train], np.array([old_rows[i]['round'] for i in train]), 42)
+            raw = score(m, np.asarray(new_x[test, layer]))
+            late.append((raw - raw.mean()) / raw.std())
         cols = {'probe': probe, 'probe_seed42': nested[42], 'probe_fixed32': np.mean([fixed[s] for s in SEEDS], axis=0),
+                'probe_late_band': np.mean(late, axis=0),
                 'turn': -rt}
         for m in SUBSET:
             cols[m] = np.array([mon[m][sid(new_rows[i])] for i in test])
@@ -157,7 +163,7 @@ def main():
         rtr = np.array([old_rows[i]['round'] for i in tr], float)
         ltr = np.log(np.array([old_rows[i]['n_tokens'] for i in tr], float))
         ptr = np.array([oof[sid(old_rows[i])] for i in tr])
-        pairs = {'jev_minus_probe': ('jev forecaster L3', 'probe')}
+        pairs = {'jev_minus_probe': ('jev forecaster L3', 'probe'), 'late_band_minus_probe': ('probe_late_band', 'probe')}
         for m in PRIMARY_MONITORS:
             mtr = np.array([mon[m][sid(old_rows[i])] for i in tr])
             base_tr, base_te = np.c_[rtr, ltr, mtr], np.c_[rt, lt, cols[m]]
@@ -195,6 +201,7 @@ def write_report(out, results, dry):
           f"3. Expected ≈0 over Jev: {d(a, 'gain from probe over jev forecaster L3')}", '',
           '## Secondary', '']
     for v, r in results.items():
+        L.append(f"- {v}: late-band probe (addendum 5) {c(r, 'probe_late_band')}, minus primary probe {d(r, 'late_band_minus_probe')}")
         L.append(f"- {v}: seed-42 probe {c(r, 'probe_seed42')}; fixed layer 32 {c(r, 'probe_fixed32')}; chosen layers {r['chosen_layers']}; "
                  + '; '.join(f"{m} {c(r, m)}" for m in SUBSET if m not in PRIMARY_MONITORS))
     (out / 'report.md').write_text('\n'.join(L) + '\n')

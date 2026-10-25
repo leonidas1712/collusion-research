@@ -536,3 +536,16 @@ All paired CIs include 0, including the fold-stratified ones. Logistic stays the
 - **Near-term B, LOSO,** at 25/50/75/100% of training families: 0.592 / 0.602 / 0.611 / 0.603; last step −0.008 [−0.037, 0.019]. Fixed layer 32: −0.003.
 - So only near-term B *pooled* still rises at the end (+0.033). On held-out scenarios the curve is flat from about 50%: more episodes from the same scenarios help within-scenario prediction, but not transfer to a new scenario.
 - Per-layer diagnostic started.
+
+- 2026-10-25 10:04 SGT [result] E05 APA-67 learning curves complete: `runs/20261025-0842-e05-learning-curve/report.md`; all 594 fits audited in `runs/20261025-1003-e05-learning-curve-validation` (reconstruction error 0, exact 100% reuse, no family leakage). B LOSO nested25/50/75/100% .592/.602/.611/.603, paired final gain −.008 [−.037,+.019]; fixed32 −.003 [−.027,+.019]. Only B pooled nested has a positive final-increment CI (+.033 [.003,.066]); all eventual final increments include zero. Conditional family intervals and pooled calibration caveat apply. CPU only; per-layer diagnostic follows.
+
+- 2026-10-25 10:21 SGT [result] E05 APA-67 17-layer diagnostic complete: `runs/20261025-1003-e05-layer-diagnostic/report.md` (CSV, PNG, PDF). All66 outer cases scored; fixed32 matches original scores within7.11e-15. Descriptive outer-test maxima: eventual pooled l32 .576, LOSO l8 .574; B pooled l48 .644, LOSO l63 .660. Pointwise1,000-family-bootstrap CIs, three seeds, scenario×round scoring; maxima are diagnostic only and inner-selected headlines stay unchanged. Plot inspected, 2700×1950/300-dpi metadata verified. No confirmation-set outcomes used; CPU only, no commits.
+
+### 2026-10-25 ~10:15 SGT — Per-layer diagnostic (codex-2, APA-67); late-band hypothesis added to the confirmation plan
+
+`runs/20261025-1003-e05-layer-diagnostic` (report, PNG/PDF, CSV). Each of the 17 layers is scored on the outer test folds. This is a diagnostic only; the headline stays inner-selected.
+
+- **Eventual label:** flat at ~0.50–0.58 at every layer (maximum: layer 32 pooled 0.576, layer 8 LOSO 0.574).
+- **Near-term B:** ~0.55–0.62 through the middle layers, then consistently higher at layers 48–63 in both analyses (pooled maximum layer 48 0.644; LOSO maximum layer 63 0.660, with layers 48–63 at 0.63–0.66).
+- **Reading:** the inner-selected probe (0.60) under-uses the late layers because its choice is noisy. Imminent action may be most readable near the output.
+- **Late-band hypothesis:** since this was found on test data, it is post hoc on replay 2. It is now added to the frozen confirmation plan as a secondary hypothesis (addendum 5): an average of the layer 48/52/56/60/63 probes, tested on the new episodes. Added before any replay-3 outcome analysis.
