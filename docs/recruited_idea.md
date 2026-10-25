@@ -63,7 +63,7 @@ Existing white-box monitors watch the agent **doing** the bad thing, or detect b
 | Work | What it detects | Whose activations | Over turns? | Gap we fill |
 | --- | --- | --- | --- | --- |
 | [NARCBench](https://arxiv.org/abs/2604.01151) (Oxford/ELLIS) | Agents instructed to collude | Colluders (deception probes) | One verdict per scenario | Recruitment rather than instruction; per-turn detection (their stated future work) |
-| [FIBS / Caught in the Act](https://www.far.ai/fibs) (FAR.AI) | The model itself lying or sabotaging | The actor | Per step | Target side: being won over, not lying |
+| [FIBS / Caught in the Act](https://arxiv.org/abs/2610.12445) | The model itself lying or sabotaging | The actor | Per step | Target side: being won over, not lying |
 | [The Agent Knew](https://arxiv.org/abs/2610.17301) | An agent about to take an unauthorised action | The actor | Yes, single agent | The push comes from another agent |
 | TaskTracker (Abdelnabi et al., SaTML 2025) | An injected instruction pulling the model off task | The receiver | Single context | Multi-turn social persuasion; recognition vs compliance; agents taking actions |
 | [Prompt Injection as Role Confusion](https://arxiv.org/abs/2603.12277) | Who the model thinks is speaking | The receiver | Single context | Usable as a tool here (role probes on persuader messages) |
@@ -249,7 +249,7 @@ After the sprint: judging takes about a week; results 1–2 weeks after; everyon
 ## Sources
 
 - [NARCBench, arXiv 2604.01151](https://arxiv.org/abs/2604.01151) · [code](https://github.com/aaronrose227/narcbench)
-- [Telling FIBS, arXiv 2610.12445](https://arxiv.org/abs/2610.12445) · [project page](https://www.far.ai/fibs)
+- [Telling FIBS, arXiv 2610.12445](https://arxiv.org/abs/2610.12445)
 - [The Agent Knew, arXiv 2610.17301](https://arxiv.org/abs/2610.17301)
 - [Prompt Injection as Role Confusion, arXiv 2603.12277](https://arxiv.org/abs/2603.12277)
 - [Detecting Motivated Reasoning, arXiv 2603.17199](https://arxiv.org/abs/2603.17199)
