@@ -608,3 +608,24 @@ All paired CIs include 0, including the fold-stratified ones. Logistic stays the
 - To rerun on the all-data probe export once it exists.
 
 - 2026-10-25 14:58 SGT [result] E05 all-data main estimate (APA-73): `runs/20261025-1456-e05-all-data-main/report.md`; fits `runs/20261025-1317-e05-all-data-main`; audit `runs/20261025-1456-e05-all-data-audit/summary.json`. All144 cases/288 score checks passed (error0),208068 exported rows round-trip exactly; deployment inference checked. Nested scenario×round AUROC pooled/LOSO: eventual .488/.523, A .586/.579, B .605/.586, C .589/.569. A pooled probe CI [.541,.631], Jev .650 [.608,.688], nano .557 [.518,.593]; probe+nano gain +.081 [.038,.126] pooled vs +.022 [−.013,.059] LOSO. Combination estimates retain documented OOF-stacking leakage. Eight cached monitors, all four requested metrics/CIs,12 full-data model sets and local inference command included. CPU only, no API/GPU spend.
+
+### 2026-10-25 ~15:05 SGT — All-data main estimate (confirmatory plan addendum 1) done
+`runs/20261025-1456-e05-all-data-main/report.md`. Audit: `runs/20261025-1456-e05-all-data-audit/`. Commit e899e667.
+
+Data: 6,404 steps, 338 episodes. The metric is within scenario × round AUROC [95% family CI].
+
+| Label | Probe, pooled | Probe, fold-stratified | Probe, LOSO | Jev F L3 | GPT-5-nano det L2 |
+|---|---|---|---|---|---|
+| eventual | 0.488 | 0.512 | 0.523 | 0.577 | 0.549 |
+| A | 0.586 [0.541, 0.631] | 0.618 [0.571, 0.666] | 0.579 [0.537, 0.619] | 0.650 [0.608, 0.688] | 0.557 |
+| B | 0.605 | 0.639 | 0.586 | 0.664 | 0.562 |
+| C | 0.589 | 0.622 | 0.569 | 0.658 | 0.532 |
+
+- **Jev − probe (A):** +0.064 [0.012, 0.113] pooled and +0.071 [0.024, 0.116] LOSO, so Jev is better. On the fold-stratified comparison the CI includes 0.
+- **Probe + GPT-5-nano gain (A):** +0.081 [0.038, 0.126] pooled, but only +0.022 [−0.013, 0.059] LOSO, so the gain does not clearly carry over to unseen scenarios.
+- **Probe + Jev:** no clear gain.
+- **Eventual:** nothing predicts it.
+- **Against the confirmation test** (probe 0.681, Jev 0.644 on 89 new episodes): the all-data estimate puts the probe lower and Jev ahead.
+  - **Small sample:** the confirmation set is small (±0.08), so its "level with Jev" result was probably partly luck.
+  - **Fold mixing:** the confirmation test scores one final model, whereas pooled CV mixes fold models; the fold-stratified figure is 0.618.
+- **Headline for the paper:** the probe reads near-term give-in above chance on unseen scenarios and on new episodes, and it adds to the LLM judge within known scenarios. The Jev forecaster remains the best single method.
