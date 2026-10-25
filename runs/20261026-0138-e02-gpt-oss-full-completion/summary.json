@@ -1,0 +1,164 @@
+{
+  "requests": 6985,
+  "episodes": 360,
+  "shards": 70,
+  "prompt_tokens": 10723939,
+  "reply_tokens": 404410,
+  "reasoning_positions": 83747,
+  "completed_shard_wall_seconds": 9510.500825894998,
+  "input_tokens_per_second": 1170.1117747342976,
+  "client_wall_seconds": 9858.22582675,
+  "client_input_tokens_per_second": 1128.8389204681798,
+  "worker_preemptions": [
+    {
+      "partial_run": "20261025-1512-e02-gpt-oss-full-shard",
+      "completed_requests_logged": 4
+    },
+    {
+      "partial_run": "20261025-1557-e02-gpt-oss-full-shard",
+      "completed_requests_logged": 41
+    }
+  ],
+  "budget": {
+    "app_id": "ap-Z0R6qlnSGO1DntB8RgmEVi",
+    "app_stopped": true,
+    "client_wall_seconds": 9858.22582675,
+    "conservative_compute_upper_usd": 8.872403244075,
+    "billed_so_far_usd": 8.00276101,
+    "billing_may_lag": true,
+    "total_upper_usd": 9.539241677487501,
+    "journal": "/Users/leo/collusion-research/runs/20261025-2251-e02-gpt-oss-full-plan/completed-shards.json",
+    "error": null
+  },
+  "downloaded_bytes": 11951040190,
+  "fidelity": [
+    {
+      "provider": "AkashML",
+      "segment": "all",
+      "requests": 6672,
+      "tokens": 383371,
+      "mean_token_nll": 0.4143202057246269,
+      "top5_fraction": 0.9896079776508917
+    },
+    {
+      "provider": "AkashML",
+      "segment": "reasoning",
+      "requests": 6672,
+      "tokens": 76980,
+      "mean_token_nll": 0.6912154803689396,
+      "top5_fraction": 0.9770589763574955
+    },
+    {
+      "provider": "AkashML",
+      "segment": "answer",
+      "requests": 6672,
+      "tokens": 231353,
+      "mean_token_nll": 0.2690077013884137,
+      "top5_fraction": 0.9931533198186321
+    },
+    {
+      "provider": "DekaLLM",
+      "segment": "all",
+      "requests": 313,
+      "tokens": 21039,
+      "mean_token_nll": 0.472716137849711,
+      "top5_fraction": 0.9877845905223632
+    },
+    {
+      "provider": "DekaLLM",
+      "segment": "reasoning",
+      "requests": 313,
+      "tokens": 6767,
+      "mean_token_nll": 0.6829308754798491,
+      "top5_fraction": 0.9736958770503916
+    },
+    {
+      "provider": "DekaLLM",
+      "segment": "answer",
+      "requests": 313,
+      "tokens": 10613,
+      "mean_token_nll": 0.31983292844281447,
+      "top5_fraction": 0.9941581079807783
+    }
+  ],
+  "prompt_counts": {
+    "AkashML": {
+      "requests": 6672,
+      "exact": 5661,
+      "within1": 6598,
+      "median_absolute_gap": 0.0
+    },
+    "DekaLLM": {
+      "requests": 313,
+      "exact": 1,
+      "within1": 18,
+      "median_absolute_gap": 21.0
+    }
+  },
+  "eligible_counts": {
+    "recruiting_post_ask": {
+      "primary": {
+        "steps": 2059,
+        "positive_steps": 169,
+        "episodes": 238,
+        "positive_episodes": 96
+      },
+      "within1_sensitivity": {
+        "steps": 1923,
+        "positive_steps": 159,
+        "episodes": 227,
+        "positive_episodes": 91
+      }
+    },
+    "recruiting_pre_ask": {
+      "primary": {
+        "steps": 1141,
+        "positive_steps": 489,
+        "episodes": 292,
+        "positive_episodes": 128
+      },
+      "within1_sensitivity": {
+        "steps": 1066,
+        "positive_steps": 456,
+        "episodes": 290,
+        "positive_episodes": 126
+      }
+    },
+    "control_post_ask": {
+      "primary": {
+        "steps": 1125,
+        "positive_steps": 0,
+        "episodes": 58,
+        "positive_episodes": 0
+      },
+      "within1_sensitivity": {
+        "steps": 1125,
+        "positive_steps": 0,
+        "episodes": 58,
+        "positive_episodes": 0
+      }
+    },
+    "control_pre_ask": {
+      "primary": {
+        "steps": 231,
+        "positive_steps": 0,
+        "episodes": 58,
+        "positive_episodes": 0
+      },
+      "within1_sensitivity": {
+        "steps": 231,
+        "positive_steps": 0,
+        "episodes": 58,
+        "positive_episodes": 0
+      }
+    }
+  },
+  "versions": {
+    "torch": "2.14.1",
+    "transformers": "5.20.2",
+    "accelerate": "1.15.0",
+    "openai-harmony": "0.0.8"
+  },
+  "source_manifest_sha256": "eb704bc672d478cc4d4e15e7bb2416d459f452f88600c8a455adf62dff615fdd",
+  "rows_sha256": "c355b37aed5eab5e78e9f3b9388237797861bd258d2fb03b899753998141d03f"
+}

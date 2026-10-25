@@ -1,0 +1,157 @@
+{
+  "rows": 6985,
+  "episodes": 360,
+  "shape": [
+    6985,
+    24,
+    2880
+  ],
+  "candidate_layers": [
+    0,
+    1,
+    3,
+    4,
+    6,
+    7,
+    9,
+    10,
+    12,
+    13,
+    15,
+    16,
+    18,
+    19,
+    20,
+    22,
+    23
+  ],
+  "fixed_layer": 12,
+  "verified_all_artifacts": true,
+  "eligible_counts": {
+    "recruiting_post_ask": {
+      "primary": {
+        "steps": 2059,
+        "positive_steps": 169,
+        "episodes": 238,
+        "positive_episodes": 96
+      },
+      "within1_sensitivity": {
+        "steps": 1923,
+        "positive_steps": 159,
+        "episodes": 227,
+        "positive_episodes": 91
+      }
+    },
+    "recruiting_pre_ask": {
+      "primary": {
+        "steps": 1141,
+        "positive_steps": 489,
+        "episodes": 292,
+        "positive_episodes": 128
+      },
+      "within1_sensitivity": {
+        "steps": 1066,
+        "positive_steps": 456,
+        "episodes": 290,
+        "positive_episodes": 126
+      }
+    },
+    "control_post_ask": {
+      "primary": {
+        "steps": 1125,
+        "positive_steps": 0,
+        "episodes": 58,
+        "positive_episodes": 0
+      },
+      "within1_sensitivity": {
+        "steps": 1125,
+        "positive_steps": 0,
+        "episodes": 58,
+        "positive_episodes": 0
+      }
+    },
+    "control_pre_ask": {
+      "primary": {
+        "steps": 231,
+        "positive_steps": 0,
+        "episodes": 58,
+        "positive_episodes": 0
+      },
+      "within1_sensitivity": {
+        "steps": 231,
+        "positive_steps": 0,
+        "episodes": 58,
+        "positive_episodes": 0
+      }
+    }
+  },
+  "providers": {
+    "AkashML": 6672,
+    "DekaLLM": 313
+  },
+  "fidelity": [
+    {
+      "provider": "AkashML",
+      "segment": "all",
+      "requests": 6672,
+      "tokens": 383371,
+      "mean_token_nll": 0.4143202057246269,
+      "top5_fraction": 0.9896079776508917
+    },
+    {
+      "provider": "AkashML",
+      "segment": "reasoning",
+      "requests": 6672,
+      "tokens": 76980,
+      "mean_token_nll": 0.6912154803689396,
+      "top5_fraction": 0.9770589763574955
+    },
+    {
+      "provider": "AkashML",
+      "segment": "answer",
+      "requests": 6672,
+      "tokens": 231353,
+      "mean_token_nll": 0.2690077013884137,
+      "top5_fraction": 0.9931533198186321
+    },
+    {
+      "provider": "DekaLLM",
+      "segment": "all",
+      "requests": 313,
+      "tokens": 21039,
+      "mean_token_nll": 0.472716137849711,
+      "top5_fraction": 0.9877845905223632
+    },
+    {
+      "provider": "DekaLLM",
+      "segment": "reasoning",
+      "requests": 313,
+      "tokens": 6767,
+      "mean_token_nll": 0.6829308754798491,
+      "top5_fraction": 0.9736958770503916
+    },
+    {
+      "provider": "DekaLLM",
+      "segment": "answer",
+      "requests": 313,
+      "tokens": 10613,
+      "mean_token_nll": 0.31983292844281447,
+      "top5_fraction": 0.9941581079807783
+    }
+  ],
+  "semantic_judge_available": false,
+  "prompt_counts": {
+    "AkashML": {
+      "requests": 6672,
+      "exact": 5661,
+      "within1": 6598,
+      "median_absolute_gap": 0.0
+    },
+    "DekaLLM": {
+      "requests": 313,
+      "exact": 1,
+      "within1": 18,
+      "median_absolute_gap": 21.0
+    }
+  }
+}
