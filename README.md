@@ -85,7 +85,7 @@ These steps use only what is committed and cost nothing. Times were measured on 
 | Rebuild the paper | `uv run --with python-docx --with lxml --with pillow --with pypdf python report/build_paper.py` (needs Pandoc, LibreOffice, Poppler and the fonts listed in [`report/BUILD.md`](report/BUILD.md)) | `report/build/paper.docx` and `paper.pdf` | about 20 s | free |
 | Browse the transcripts | `uv run python experiments/E01-behaviour-pilot/build_viewer.py` | `runs/viewer.html` (see [Trace viewer](#trace-viewer)) | about 20 s | free |
 
-Rerunning the analyses that read activations (probe training, the combination test) needs the activations first, from the paid GPU replay; see [What is not in git](#what-is-not-in-git). Recollecting episodes or rerunning monitors makes paid API calls. For scale, the paper's own paid runs cost about USD 34 in total, not counting first-batch episode collection: new-episode collection USD 0.82; Qwen replay USD 5.51 (first batch) and USD 2.94 (new-episode set); monitors USD 12.67 (first batch, 18 setups) and USD 2.33 (new-episode set, 8 setups); gpt-oss-20b replay USD 9.54 at a conservative upper bound, including its rendering checks (about USD 8 billed; paper Appendices B and F). Prices change, so treat these as a guide, not a quote.
+Rerunning the analyses that read activations (probe training, the combination test) needs the activations first, from the paid GPU replay; see [What is not in git](#what-is-not-in-git). Recollecting episodes or rerunning monitors makes paid API calls. For scale, the paper's own paid runs cost about USD 34 in total, not counting first-batch episode collection: new-episode collection USD 0.82; Qwen replay USD 5.51 (first batch) and USD 2.94 (new-episode set); monitors USD 12.67 (first batch, 18 setups) and USD 2.33 (new-episode set, 8 setups); gpt-oss-20b replay: USD 9.54 conservative upper bound including rendering checks, versus approximately USD 8 actually billed (paper Appendices B and F). Prices change, so treat these as a guide, not a quote.
 
 ## Reproducing the results
 
@@ -112,7 +112,7 @@ The pipeline runs in this order: collect episodes with the agent harness (E01), 
 
 | Result in the paper | Script | Run |
 |---|---|---|
-| §4.1 and Table C.1 (behaviour rates) | `experiments/E03-target-screen/behaviour_summary.py` | `runs/20261025-1850-e03-behaviour-summary` |
+| §4.1 and Table C.1 (behaviour rates) | `uv run --with numpy python report/make_behaviour_table_input.py` (re-audit local episode files); `report/make_data_figures.py` (render committed compact input) | `report/figures/behaviour_uniform_input.json` and `report/figures/table1_behaviour.csv`: 98/224 overall, deploy-token 19/30; historical summary run retained unchanged |
 | §4.2–4.3, Figure 2 (probe vs monitors, eventual and near-term labels) | `all_data_main.py --workers 3`, then `finalize_all_data.py 20261025-1317-e05-all-data-main 20261025-1456-e05-all-data-audit` (both in `experiments/E05-probes/`, run with its environment) | `runs/20261025-1317-e05-all-data-main`, `runs/20261025-1456-e05-all-data-audit`, `runs/20261025-1456-e05-all-data-main` |
 | Near-term labels | `experiments/E05-probes/near_term.py` | `runs/20261025-0730-e05-near-term` |
 | Text monitors, first data batch (18 setups) | `experiments/E06-monitors/monitors.py --steps-file runs/20261025-0119-e02-replay2-plan/all.jsonl` | `runs/20261025-0147-e06-monitor-main` |

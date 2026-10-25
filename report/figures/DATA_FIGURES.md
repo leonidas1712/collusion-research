@@ -27,3 +27,17 @@ committed snapshot of the plotted estimates and their source hashes. No per-row
 exports or monitor caches are needed. Use `--refresh-from-runs` to repeat the
 original coverage audit from full local exports; that optional audit requires the
 untracked per-row probe and monitor files.
+
+## Behaviour eligibility
+
+Table C.1 (`table1_behaviour.csv`) now defaults to `behaviour_uniform_input.json`:
+98/224 recruiting give-ins, including deploy-token 19/30. The compact input records
+every episode hash and its receipt-based eligibility decision. It requires a
+correct summary written at some point, rather than checking only the final file.
+The historical 1850 summary remains unchanged and is not the table input.
+
+To repeat the audit with local episode JSONs, run
+`uv run --with numpy python report/make_behaviour_table_input.py`.
+Then run the normal figure command and restore the two-target Figure 2 with
+`uv run --with matplotlib python report/figures/make_figure2_targets.py`.
+A fresh clone can render the table directly from the committed compact input.
