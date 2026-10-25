@@ -188,6 +188,14 @@ Sources: `docs/llm_activations_lit.md` (author), `archive/internal/docs/probe_ta
 | "Just Ask Jev" (alignment-failure detection) | Prior work on decision models as monitors | see docs/decision_models_as_monitors.md | Median AUROC 0.886, ~63x cheaper than LLM judges (verify) |
 | Jev collusion monitor on NARCBench | Closest prior work for decision-model monitors | github.com/Rao-Aditya-127/jev-collusion-monitor | AUROC 0.82–0.89; we differ by forecasting, lead time, probe/judge comparison |
 
+### 4.z Streaming, token-level monitoring (paper App. J.8; added 2026-10-26)
+
+| Item | Where we use it | Source | Our changes / notes |
+|---|---|---|---|
+| Running per-token probe score: sliding-window mean of logits in training, softmax-weighted token loss, EMA at inference; probe-first cascade | Paper App. J.8; exploratory streaming probe on gpt-oss reasoning tokens | Cunningham et al. 2026, Constitutional Classifiers++, arXiv 2601.04603 (§5.1–5.2) | Our labels are reply-level horizons, not exchange labels; our all-layer view is a random 256-dim projection per layer |
+| Streaming classifier that stops a reply at the first flagged token (truncate-at-first-flag evaluation) | Paper App. J.8; exploratory blocking-point check | Sharma et al. 2025, Constitutional Classifiers, arXiv 2501.18837 | Our block point is just before the protected value's first character |
+| Prompt-token probes; maximum of rolling means as the aggregate | Paper App. J.8; exploratory aggregate | Kramár et al. 2026, Building Production-Ready Probes for Gemini, arXiv 2601.11516 | |
+
 ## 5. Datasets, models and tools
 
 Sources: `EXPERIMENT_LOG.md`, `experiments/E02-activation-replay/README.md`, `experiments/E01-behaviour-pilot/JUDGE_LABELS.md`, `docs/external_traces.md`, `docs/backup_shi_et_al.md`, `resources.md`.
@@ -278,6 +286,7 @@ Sources: `EXPERIMENT_LOG.md` [idea]/[decision] entries, `docs/overview.html` Dec
 | Backup route on constructed pairs | Probe route | Author (log 23:54, 02:45) | |
 | Action asks; rogue-fleet "unrelated" | Later scenarios | Author (log 00:30) | |
 | Shortcut checks and transfer order | Evaluation | Author (log 00:43) | |
+| Streaming per-token monitoring for collusion, scoring everything the target processes (incoming peer messages and tool results, reasoning, output up to the action) so suspicion can rise as pressure arrives | Paper App. J.8; exploratory streaming probe | Author (2026-10-26) | Methods borrowed from CC++, Constitutional Classifiers and Gemini probes (§4.z) |
 | Own stake (L1) | Scenarios | Author (log 01:11) | |
 | Early stopping | Harness | Author (log 01:39) | Approved 02:54 |
 | Per-turn LLM judge | Labels / text monitor | Author (log 01:44) | |
