@@ -655,7 +655,7 @@ Data: 6,404 steps, 338 episodes. The metric is within scenario × round AUROC [9
 - **Gemma top-up batch:** not pinned to one provider. Allowed: bf16 and fp8 providers with tools (Crusoe, Novita, Parasail, DeepInfra fp8), with fallbacks on and the served provider recorded per call. Excluded: fp4 and unknown precision. Each provider gets replay fidelity reported (reply NLL and top-5 per provider) in the appendix. Data is kept, not dropped; weaker fidelity is a stated limitation, with an optional sensitivity row excluding those providers. Novita's +1 token offset is to be resolved in replay.
 - **Empty replies:** codex is checking whether every failure follows a successful send_message in the same turn, i.e. a natural end of turn.
 
-### 2026-10-25 ~17:30 SGT — Hand labels: label batch 2 done (40/40, blind)
+### 2026-10-25 ~17:15 SGT — Hand labels: label batch 2 done (40/40, blind)
 Agreement output: `runs/20261025-1355-e01-label-batch-2/agreement.txt`. Labels are in `runs/human_labels.json`.
 - **Human give-in kind:** 25 deliberate, 15 incidental.
 - **Semantic judge (Luna Decisions):** agrees on **36/40 = 90%, Cohen's kappa 0.79**. Of the 4 disagreements, 3 are deliberate→incidental.
