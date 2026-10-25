@@ -1,7 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
-from near_term_mlp import inputs, paired_metrics, reconstruct
+from near_term_mlp import inputs, paired_metrics, reconstruct, ROOT, DATA, FIT, NEAR
 import numpy as np
 import torch
 from replay2_models import fit_mlp, score_mlp, save_mlp
@@ -9,6 +9,13 @@ from threadpoolctl import threadpool_limits
 
 
 class NearTermMLPTests(unittest.TestCase):
+    @unittest.skipUnless(
+        all(p.exists() for p in (
+            ROOT / "runs" / DATA / "rows.jsonl",
+            ROOT / "runs" / FIT / "pooled" / "split-s42-f0.npz",
+            ROOT / "runs" / NEAR / "B_round_contrast" / "pooled" / "s42-f0" / "scores.npz",
+            ROOT / "runs" / NEAR / "probe_scores.csv",
+        )), "requires regenerated replay2 splits and near-term score artifacts")
     def test_saved_memberships_and_logistic_reference(self):
         rows,labels,cases,reference,columns=inputs()
         self.assertEqual(len(cases),66)
