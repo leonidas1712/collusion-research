@@ -1,12 +1,15 @@
 """Measure the saved paper render; section spans include figures and tables."""
 import hashlib,json,re,subprocess,sys,unicodedata
 from pathlib import Path
+from docx import Document
 from xml.etree import ElementTree as ET
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'report'))
 from build_paper import prepare_ast,walk
 out=ROOT/'report/build/paper'
 source=out.with_suffix('.source.md');raw=source.read_bytes()
+section=Document(out.with_suffix('.docx')).sections[0]
+text_height=(section.page_height-section.top_margin-section.bottom_margin)/12700
 ast,_=prepare_ast(ROOT/'report/paper.md',raw)
 xml=subprocess.check_output(['pdftotext','-bbox-layout',str(out.with_suffix('.pdf')),'-'])
 r=ET.fromstring(xml);ns={'x':'http://www.w3.org/1999/xhtml'}
@@ -41,9 +44,9 @@ end=position('Code and Data')
 for i,s in enumerate(sections):
  stop=sections[i+1]['start'] if i+1<len(sections) else end
  s['end']=stop
- s['page_equivalent']=(stop['page']-s['start']['page'])+(stop['y']-s['start']['y'])/648
+ s['page_equivalent']=(stop['page']-s['start']['page'])+(stop['y']-s['start']['y'])/text_height
  # A section crossing a page includes the unused bottom/top space in its span.
-rows=['# Main-body page budget','', 'Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents use the 9-inch text height; spans include headings, graphics, captions and page-break whitespace. These are layout spans, not guaranteed savings. Section word counts include tables and captions.','', '| Section | Words | Starts on page | Page-equivalent span |','|---|---:|---:|---:|']
+rows=['# Main-body page budget','', f'Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents use the rendered {text_height/72:.2f}-inch text height; spans include headings, graphics, captions and page-break whitespace. These are layout spans, not guaranteed savings. Section word counts include tables and captions.','', '| Section | Words | Starts on page | Page-equivalent span |','|---|---:|---:|---:|']
 for s in sections:rows.append(f"| {s['section']} | {s['words']} | {s['start']['page']} | {s['page_equivalent']:.2f} |")
 rows+=['','## Editorial blocks','',f"Blocks labelled editorial/TODO/placeholder (including substantive draft Methods, not automatically removable): {sum(n['words'] for n in notes)} words. This excludes isolated inline TODO fragments inside substantive paragraphs.",'','| Section | Words | Beginning |','|---|---:|---|']
 for n in notes:rows.append(f"| {n['section']} | {n['words']} | {n['text'][:100].replace('|','/')}… |")

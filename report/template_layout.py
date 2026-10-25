@@ -5,7 +5,7 @@ from lxml import etree
 from docx import Document
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-from docx.shared import Pt
+from docx.shared import Pt, Inches
 from docx.text.paragraph import Paragraph
 
 
@@ -57,7 +57,8 @@ def apply_layout(doc, template):
     front_paragraphs = [Paragraph(p, doc) for p in front.iter(qn('w:p'))]
     title_p = next(p for p in front_paragraphs if p.text == 'PROJECT TITLE')
     footnote = deepcopy(title_p._p.find('.//' + qn('w:footnoteReference')))
-    replace_text(title_p, title, caps=True)
+    title_run = replace_text(title_p, title)
+    title_run.font.all_caps = False
     r = title_p.add_run()
     r._r.append(footnote)
     author_p = next(p for p in front_paragraphs if p.text.startswith('Author name 1'))
@@ -86,24 +87,15 @@ def apply_layout(doc, template):
     body.insert(0, deepcopy(reference.paragraphs[0]._p))
     body.insert(1, front)
     body.insert(2, deepcopy(reference.paragraphs[1]._p))
-    # The template explicitly numbers references; citeproc supplies their text.
+    # Citeproc supplies alphabetical author-year entries; keep them unnumbered.
     numbering = doc.part.numbering_part.element
-    refnum = reference.part.numbering_part.element
-    source_num = next(n for n in refnum.findall(qn('w:num')) if n.get(qn('w:numId')) == '1')
-    source_id = source_num.find(qn('w:abstractNumId')).get(qn('w:val'))
-    source_abs = next(n for n in refnum.findall(qn('w:abstractNum')) if n.get(qn('w:abstractNumId')) == source_id)
-    aid = max(int(n.get(qn('w:abstractNumId'))) for n in numbering.findall(qn('w:abstractNum'))) + 1
-    nid = max(int(n.get(qn('w:numId'))) for n in numbering.findall(qn('w:num'))) + 1
-    a = deepcopy(source_abs); a.set(qn('w:abstractNumId'), str(aid)); numbering.append(a)
-    n = deepcopy(source_num); n.set(qn('w:numId'), str(nid)); n.find(qn('w:abstractNumId')).set(qn('w:val'), str(aid)); numbering.append(n)
-    sample = next(p for p in reference.paragraphs if p.text == '[Reference 1]')
     for p in doc.paragraphs:
-        style = p._p.find(qn('w:pPr')+'/'+qn('w:pStyle'))
-        if style is not None and style.get(qn('w:val')) == 'Bibliography':
-            copy_properties(p, sample)
-            p._p.pPr.find(qn('w:numPr')).find(qn('w:numId')).set(qn('w:val'), str(nid))
-            for r in p.runs:
-                r.font.size = Pt(11)
+        if p.style.name == 'Bibliography':
+            for num in p._p.xpath('./w:pPr/w:numPr'):
+                num.getparent().remove(num)
+            p.paragraph_format.left_indent = Inches(.25)
+            p.paragraph_format.first_line_indent = Inches(-.25)
+            p.paragraph_format.space_after = Pt(4)
     # Word permits block-level bookmarks; LibreOffice can misplace their
     # PDF destinations. Anchor each reference inside its own paragraph.
     body = doc.element.body
