@@ -181,13 +181,13 @@ def main():
     parser.add_argument("--out", type=Path, default=OUT / "figure1_setup")
     args = parser.parse_args()
 
-    fig = plt.figure(figsize=(6.5, 3.95))
-    strip_h, body_h = 0.275, 0.69
+    fig = plt.figure(figsize=(6.5, 3.6))
+    strip_h, body_h = 0.285, 0.69
     if args.layout == "bottom":
         body_box, strip_box, labels = [0.01, 0.30, 0.48, body_h], [0.01, 0.0, 0.98, strip_h], "abc"
         right_box = [0.51, 0.30, 0.48, body_h]
     else:
-        strip_box, body_box, labels = [0.01, 0.72, 0.98, strip_h], [0.01, 0.0, 0.48, body_h], "bca"
+        strip_box, body_box, labels = [0.01, 0.712, 0.98, strip_h], [0.01, 0.0, 0.48, body_h], "bca"
         right_box = [0.51, 0.0, 0.48, body_h]
     panel_setup(fig.add_axes(body_box), labels[0])
     panel_timeline(fig.add_axes(right_box), labels[1])
