@@ -107,3 +107,28 @@ Aboard #1182 authorized the provider-stratified paired diagnostic and automatic 
 The full collection uses **AkashML current-turn reasoning retention** and **DekaLLM drop-all prior reasoning**. AkashML answer/tool-body NLL improved from0.32259 to0.25561; DekaLLM drop-all was0.35960 with99.126% top-5. DekaLLM count mismatch is not solved; it is an approximate provider-format replay with a documented likelihood sanity check. Full replay retains every request. Provider, token gap and rendering mode remain per-row fields, with a secondary analysis excluding |gap|>1 requests. The earlier CoreWeave default renderer remains unchanged.
 
 For AkashML, reasoning from earlier tool calls in the **same user/peer turn** is part of the prompt being replayed. It is dropped after the next user/peer message. Thus a mid-turn last-prompt-token feature can encode earlier reasoning from that turn; it is not a feature taken before the model has reasoned at all. This input-access distinction must be retained in monitor comparisons. Reasoning-position probe fitting is optional and does not delay primary last-token extraction.
+
+## Full-run download and CPU checks
+
+`download_gpt_oss_full.py` watches the completed-shard journal and reads committed outputs from the activation Volume. It writes local copies plus file hashes; it does not launch compute or modify remote files. Pass the same plan and client paths used for the GPU run:
+
+```bash
+python experiments/E02-activation-replay/download_gpt_oss_full.py \
+  --plan runs/20261025-2251-e02-gpt-oss-full-plan/plan.json \
+  --client runs/20261025-2253-e02-gpt-oss-full-client
+```
+
+Use a Python environment with Modal installed for downloading. The E05 environment is sufficient for verification and the exposure control:
+
+```bash
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/gpt_oss_replay_data.py \
+  --plan runs/20261025-2251-e02-gpt-oss-full-plan/plan.json \
+  --download runs/20261025-2255-e02-gpt-oss-full-download --watch
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/gpt_oss_positive_control.py DATA_RUN_ID
+```
+
+The cache builder verifies every prompt/reply token array, prompt/input hash, request metadata field, layer ID, activation shape and finite value. It rechecks canonical episode hashes and requires all shards before marking the dataset finished. The cache retains all requests; eligibility is metadata, never an extraction filter. Its primary feature tensor is float32 `[requests,24,2880]`. Reasoning arrays stay in the source NPZs. The exposure gate uses a family-disjoint 30% holdout with seed42 and requires layer12 AUROC >=0.95 before outcome fits.
+
+The declared 17 candidate layers are `[0,1,3,4,6,7,9,10,12,13,15,16,18,19,20,22,23]`, with fixed12 secondary. This is a separate 24-layer path; Qwen caches, candidates and results are unchanged.
+
+`gpt_oss_kind_join.py` produces a separate metadata join from saved disclosure judgments, checking source episode hashes. These describe the first public emission, often a file write before a channel publication. They do not change the primary channel outcome or eligibility. Null judgment labels remain null.
