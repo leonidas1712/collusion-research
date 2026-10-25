@@ -1,0 +1,5763 @@
+{
+  "manifest": {
+    "qwen_rows": "runs/20261025-1026-e05-replay3-data-1d95/rows.jsonl",
+    "screens": [
+      {
+        "parent": "20261025-1642-e03-gemma-screen-retry2",
+        "model": "Gemma4-31B",
+        "arm": "plain"
+      },
+      {
+        "parent": "20261025-1757-e03-gemma-pressure",
+        "model": "Gemma4-31B",
+        "arm": "max"
+      },
+      {
+        "parent": "20261025-1753-e03-gpt-oss-screen",
+        "model": "gpt-oss-20b",
+        "arm": "plain"
+      },
+      {
+        "parent": "20261025-1757-e03-gpt-oss-screen",
+        "model": "gpt-oss-20b",
+        "arm": "max"
+      },
+      {
+        "parent": "20261025-1806-e03-gpt-oss-screen",
+        "model": "gpt-oss-20b",
+        "arm": "max"
+      }
+    ],
+    "manual_kind_files": []
+  },
+  "cells": [
+    {
+      "path": "20261024-2103-e01-deploy-token-v2-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": null,
+      "saved": 6,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "deploy-token-v2",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b"
+      }
+    },
+    {
+      "path": "20261024-2103-e01-deploy-token-v2-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": null,
+      "saved": 15,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "deploy-token-v2",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b"
+      }
+    },
+    {
+      "path": "20261024-2103-e01-deploy-token-v2-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": null,
+      "saved": 40,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "deploy-token-v2",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b"
+      }
+    },
+    {
+      "path": "20261024-2132-e01-spray-procurement-reserve-price-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "procurement-reserve-price",
+      "status": "finished",
+      "planned": null,
+      "saved": 1,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-procurement-reserve-price",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b",
+        "spray_row": "procurement-reserve-price"
+      }
+    },
+    {
+      "path": "20261024-2132-e01-spray-procurement-reserve-price-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "procurement-reserve-price",
+      "status": "finished",
+      "planned": null,
+      "saved": 4,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-procurement-reserve-price",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "procurement-reserve-price"
+      }
+    },
+    {
+      "path": "20261024-2134-e01-spray-service-rollout-threshold-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "service-rollout-threshold",
+      "status": "finished",
+      "planned": null,
+      "saved": 1,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-rollout-threshold",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b",
+        "spray_row": "service-rollout-threshold"
+      }
+    },
+    {
+      "path": "20261024-2134-e01-spray-service-rollout-threshold-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "service-rollout-threshold",
+      "status": "finished",
+      "planned": null,
+      "saved": 4,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-rollout-threshold",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "service-rollout-threshold"
+      }
+    },
+    {
+      "path": "20261024-2141-e01-deploy-token-v2-consequence-control-32b-t1-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "single-T1",
+      "parent": null,
+      "condition": "control",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": null,
+      "saved": 2,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "deploy-token-v2",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "tactic_id": "T1"
+      }
+    },
+    {
+      "path": "20261024-2141-e01-deploy-token-v2-consequence-recruiting-32b-t1-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "single-T1",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": null,
+      "saved": 8,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "deploy-token-v2",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "tactic_id": "T1"
+      }
+    },
+    {
+      "path": "20261024-2141-e01-spray-service-capacity-figure-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": null,
+      "saved": 1,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-capacity-figure",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b",
+        "spray_row": "service-capacity-figure"
+      }
+    },
+    {
+      "path": "20261024-2141-e01-spray-service-capacity-figure-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": null,
+      "saved": 4,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-capacity-figure",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "service-capacity-figure"
+      }
+    },
+    {
+      "path": "20261024-2147-e01-spray-handoff-exception-note-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": null,
+      "saved": 1,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-handoff-exception-note",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b",
+        "spray_row": "handoff-exception-note"
+      }
+    },
+    {
+      "path": "20261024-2147-e01-spray-handoff-exception-note-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": null,
+      "saved": 4,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-handoff-exception-note",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "handoff-exception-note"
+      }
+    },
+    {
+      "path": "20261024-2149-e01-deploy-token-v2-consequence-control-32b-t2-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "single-T2",
+      "parent": null,
+      "condition": "control",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": null,
+      "saved": 2,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "deploy-token-v2",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "tactic_id": "T2"
+      }
+    },
+    {
+      "path": "20261024-2149-e01-deploy-token-v2-consequence-recruiting-32b-t2-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "single-T2",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": null,
+      "saved": 8,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "deploy-token-v2",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "tactic_id": "T2"
+      }
+    },
+    {
+      "path": "20261024-2149-e01-spray-dispatch-integration-code-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": null,
+      "saved": 1,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-dispatch-integration-code",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b",
+        "spray_row": "dispatch-integration-code"
+      }
+    },
+    {
+      "path": "20261024-2149-e01-spray-dispatch-integration-code-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": null,
+      "saved": 4,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-dispatch-integration-code",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "dispatch-integration-code"
+      }
+    },
+    {
+      "path": "20261024-2157-e01-deploy-token-v2-consequence-control-32b-t7-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "single-T7",
+      "parent": null,
+      "condition": "control",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": null,
+      "saved": 2,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "deploy-token-v2",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "tactic_id": "T7"
+      }
+    },
+    {
+      "path": "20261024-2157-e01-deploy-token-v2-consequence-recruiting-32b-t7-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "single-T7",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": null,
+      "saved": 8,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "deploy-token-v2",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "tactic_id": "T7"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-dispatch-integration-code-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": null,
+      "saved": 3,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-dispatch-integration-code",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b",
+        "spray_row": "dispatch-integration-code"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-dispatch-integration-code-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": null,
+      "saved": 8,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-dispatch-integration-code",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "spray_row": "dispatch-integration-code"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-dispatch-integration-code-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": null,
+      "saved": 24,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-dispatch-integration-code",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "dispatch-integration-code"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-handoff-exception-note-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": null,
+      "saved": 3,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-handoff-exception-note",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b",
+        "spray_row": "handoff-exception-note"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-handoff-exception-note-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": null,
+      "saved": 8,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-handoff-exception-note",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "spray_row": "handoff-exception-note"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-handoff-exception-note-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": null,
+      "saved": 24,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-handoff-exception-note",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "handoff-exception-note"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-procurement-reserve-price-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "procurement-reserve-price",
+      "status": "finished",
+      "planned": null,
+      "saved": 3,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-procurement-reserve-price",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b",
+        "spray_row": "procurement-reserve-price"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-procurement-reserve-price-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "procurement-reserve-price",
+      "status": "finished",
+      "planned": null,
+      "saved": 8,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-procurement-reserve-price",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "spray_row": "procurement-reserve-price"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-procurement-reserve-price-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "procurement-reserve-price",
+      "status": "finished",
+      "planned": null,
+      "saved": 24,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-procurement-reserve-price",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "procurement-reserve-price"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-service-capacity-figure-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": null,
+      "saved": 3,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-capacity-figure",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b",
+        "spray_row": "service-capacity-figure"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-service-capacity-figure-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": null,
+      "saved": 8,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-capacity-figure",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "spray_row": "service-capacity-figure"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-service-capacity-figure-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": null,
+      "saved": 24,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-capacity-figure",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "service-capacity-figure"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-service-rollout-threshold-consequence-alone-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "alone",
+      "scenario": "service-rollout-threshold",
+      "status": "finished",
+      "planned": null,
+      "saved": 3,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-rollout-threshold",
+        "strength": "consequence",
+        "condition": "alone",
+        "target": "32b",
+        "spray_row": "service-rollout-threshold"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-service-rollout-threshold-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "service-rollout-threshold",
+      "status": "finished",
+      "planned": null,
+      "saved": 8,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-rollout-threshold",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "spray_row": "service-rollout-threshold"
+      }
+    },
+    {
+      "path": "20261024-2338-e01-spray-service-rollout-threshold-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "service-rollout-threshold",
+      "status": "finished",
+      "planned": null,
+      "saved": 24,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-rollout-threshold",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "service-rollout-threshold"
+      }
+    },
+    {
+      "path": "20261025-0817-e01-spray-dispatch-integration-code-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": null,
+      "saved": 4,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-dispatch-integration-code",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "spray_row": "dispatch-integration-code"
+      }
+    },
+    {
+      "path": "20261025-0817-e01-spray-dispatch-integration-code-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": null,
+      "saved": 26,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-dispatch-integration-code",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "dispatch-integration-code"
+      }
+    },
+    {
+      "path": "20261025-0817-e01-spray-handoff-exception-note-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": null,
+      "saved": 4,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-handoff-exception-note",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "spray_row": "handoff-exception-note"
+      }
+    },
+    {
+      "path": "20261025-0817-e01-spray-handoff-exception-note-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": null,
+      "saved": 22,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-handoff-exception-note",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "handoff-exception-note"
+      }
+    },
+    {
+      "path": "20261025-0817-e01-spray-procurement-reserve-price-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "procurement-reserve-price",
+      "status": "finished",
+      "planned": null,
+      "saved": 4,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-procurement-reserve-price",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "spray_row": "procurement-reserve-price"
+      }
+    },
+    {
+      "path": "20261025-0817-e01-spray-procurement-reserve-price-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "procurement-reserve-price",
+      "status": "finished",
+      "planned": null,
+      "saved": 30,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-procurement-reserve-price",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "procurement-reserve-price"
+      }
+    },
+    {
+      "path": "20261025-0817-e01-spray-service-capacity-figure-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": null,
+      "saved": 4,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-capacity-figure",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "spray_row": "service-capacity-figure"
+      }
+    },
+    {
+      "path": "20261025-0817-e01-spray-service-capacity-figure-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": null,
+      "saved": 22,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-capacity-figure",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "service-capacity-figure"
+      }
+    },
+    {
+      "path": "20261025-0817-e01-spray-service-rollout-threshold-consequence-control-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "control",
+      "scenario": "service-rollout-threshold",
+      "status": "finished",
+      "planned": null,
+      "saved": 4,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-rollout-threshold",
+        "strength": "consequence",
+        "condition": "control",
+        "target": "32b",
+        "spray_row": "service-rollout-threshold"
+      }
+    },
+    {
+      "path": "20261025-0817-e01-spray-service-rollout-threshold-consequence-recruiting-32b-scaleup",
+      "model": "Qwen3-32B",
+      "arm": "plain",
+      "parent": null,
+      "condition": "recruiting",
+      "scenario": "service-rollout-threshold",
+      "status": "finished",
+      "planned": null,
+      "saved": 24,
+      "settings": {
+        "target_model": "qwen/qwen3-32b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0808,
+                "completion": 0.2828,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "scenario_family": "spray-service-rollout-threshold",
+        "strength": "consequence",
+        "condition": "recruiting",
+        "target": "32b",
+        "spray_row": "service-rollout-threshold"
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-deploy-token-v2-recruiting",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "recruiting",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": 12,
+      "saved": 12,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "deploy-token-v2",
+        "condition": "recruiting",
+        "count": 12,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-deploy-token-v2-control",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "control",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": 3,
+      "saved": 3,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "deploy-token-v2",
+        "condition": "control",
+        "count": 3,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-deploy-token-v2-alone",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "alone",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": 2,
+      "saved": 2,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "deploy-token-v2",
+        "condition": "alone",
+        "count": 2,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-handoff-exception-note-recruiting",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "recruiting",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": 12,
+      "saved": 12,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "handoff-exception-note",
+        "condition": "recruiting",
+        "count": 12,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-handoff-exception-note-control",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "control",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": 3,
+      "saved": 3,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "handoff-exception-note",
+        "condition": "control",
+        "count": 3,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-handoff-exception-note-alone",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "alone",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": 2,
+      "saved": 2,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "handoff-exception-note",
+        "condition": "alone",
+        "count": 2,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-dispatch-integration-code-recruiting",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "recruiting",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": 12,
+      "saved": 12,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "dispatch-integration-code",
+        "condition": "recruiting",
+        "count": 12,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-dispatch-integration-code-control",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "control",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": 3,
+      "saved": 3,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "dispatch-integration-code",
+        "condition": "control",
+        "count": 3,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-dispatch-integration-code-alone",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "alone",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": 2,
+      "saved": 2,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "dispatch-integration-code",
+        "condition": "alone",
+        "count": 2,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-service-capacity-figure-recruiting",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "recruiting",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": 12,
+      "saved": 12,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "service-capacity-figure",
+        "condition": "recruiting",
+        "count": 12,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-service-capacity-figure-control",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "control",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": 3,
+      "saved": 3,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "service-capacity-figure",
+        "condition": "control",
+        "count": 3,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1642-e01-gemma-screen-retry2-service-capacity-figure-alone",
+      "model": "Gemma4-31B",
+      "arm": "plain",
+      "parent": "20261025-1642-e03-gemma-screen-retry2",
+      "condition": "alone",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": 2,
+      "saved": 2,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Crusoe"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.1414,
+                "completion": 0.404,
+                "request": 0
+              }
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra"
+              ],
+              "allow_fallbacks": false,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              }
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "family": "service-capacity-figure",
+        "condition": "alone",
+        "count": 2,
+        "tactic_id": "T0",
+        "family_start": 92001
+      }
+    },
+    {
+      "path": "20261025-1757-e01-gemma-pressure-deploy-token-v2-recruiting",
+      "model": "Gemma4-31B",
+      "arm": "max",
+      "parent": "20261025-1757-e03-gemma-pressure",
+      "condition": "recruiting",
+      "scenario": "deploy-token-v2",
+      "status": "running",
+      "planned": 10,
+      "saved": 2,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "bf16",
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.202,
+                "completion": 0.404,
+                "request": 0
+              },
+              "only": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": true,
+              "effort": "medium"
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": false,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "deploy-token-v2",
+        "condition": "recruiting",
+        "count": 10,
+        "family_start": 96001,
+        "tactic_ids": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T6",
+          "T7"
+        ]
+      }
+    },
+    {
+      "path": "20261025-1757-e01-gemma-pressure-deploy-token-v2-control",
+      "model": "Gemma4-31B",
+      "arm": "max",
+      "parent": "20261025-1757-e03-gemma-pressure",
+      "condition": "control",
+      "scenario": "deploy-token-v2",
+      "status": "running",
+      "planned": 2,
+      "saved": 2,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "bf16",
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.202,
+                "completion": 0.404,
+                "request": 0
+              },
+              "only": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": true,
+              "effort": "medium"
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": false,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "deploy-token-v2",
+        "condition": "control",
+        "count": 2,
+        "family_start": 96001,
+        "tactic_ids": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T6",
+          "T7"
+        ]
+      }
+    },
+    {
+      "path": "20261025-1757-e01-gemma-pressure-handoff-exception-note-recruiting",
+      "model": "Gemma4-31B",
+      "arm": "max",
+      "parent": "20261025-1757-e03-gemma-pressure",
+      "condition": "recruiting",
+      "scenario": "handoff-exception-note",
+      "status": "running",
+      "planned": 10,
+      "saved": 2,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "bf16",
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.202,
+                "completion": 0.404,
+                "request": 0
+              },
+              "only": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": true,
+              "effort": "medium"
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": false,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "handoff-exception-note",
+        "condition": "recruiting",
+        "count": 10,
+        "family_start": 96001,
+        "tactic_ids": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T6",
+          "T7"
+        ]
+      }
+    },
+    {
+      "path": "20261025-1757-e01-gemma-pressure-handoff-exception-note-control",
+      "model": "Gemma4-31B",
+      "arm": "max",
+      "parent": "20261025-1757-e03-gemma-pressure",
+      "condition": "control",
+      "scenario": "handoff-exception-note",
+      "status": "running",
+      "planned": 2,
+      "saved": 2,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "bf16",
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.202,
+                "completion": 0.404,
+                "request": 0
+              },
+              "only": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": true,
+              "effort": "medium"
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": false,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "handoff-exception-note",
+        "condition": "control",
+        "count": 2,
+        "family_start": 96001,
+        "tactic_ids": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T6",
+          "T7"
+        ]
+      }
+    },
+    {
+      "path": "20261025-1757-e01-gemma-pressure-dispatch-integration-code-recruiting",
+      "model": "Gemma4-31B",
+      "arm": "max",
+      "parent": "20261025-1757-e03-gemma-pressure",
+      "condition": "recruiting",
+      "scenario": "dispatch-integration-code",
+      "status": "running",
+      "planned": 10,
+      "saved": 2,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "bf16",
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.202,
+                "completion": 0.404,
+                "request": 0
+              },
+              "only": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": true,
+              "effort": "medium"
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": false,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "dispatch-integration-code",
+        "condition": "recruiting",
+        "count": 10,
+        "family_start": 96001,
+        "tactic_ids": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T7"
+        ]
+      }
+    },
+    {
+      "path": "20261025-1757-e01-gemma-pressure-dispatch-integration-code-control",
+      "model": "Gemma4-31B",
+      "arm": "max",
+      "parent": "20261025-1757-e03-gemma-pressure",
+      "condition": "control",
+      "scenario": "dispatch-integration-code",
+      "status": "running",
+      "planned": 2,
+      "saved": 1,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "bf16",
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.202,
+                "completion": 0.404,
+                "request": 0
+              },
+              "only": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": true,
+              "effort": "medium"
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": false,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "dispatch-integration-code",
+        "condition": "control",
+        "count": 2,
+        "family_start": 96001,
+        "tactic_ids": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T7"
+        ]
+      }
+    },
+    {
+      "path": "20261025-1757-e01-gemma-pressure-service-capacity-figure-recruiting",
+      "model": "Gemma4-31B",
+      "arm": "max",
+      "parent": "20261025-1757-e03-gemma-pressure",
+      "condition": "recruiting",
+      "scenario": "service-capacity-figure",
+      "status": "running",
+      "planned": 10,
+      "saved": 1,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "bf16",
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.202,
+                "completion": 0.404,
+                "request": 0
+              },
+              "only": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": true,
+              "effort": "medium"
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": false,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "service-capacity-figure",
+        "condition": "recruiting",
+        "count": 10,
+        "family_start": 96001,
+        "tactic_ids": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T6",
+          "T7"
+        ]
+      }
+    },
+    {
+      "path": "20261025-1757-e01-gemma-pressure-service-capacity-figure-control",
+      "model": "Gemma4-31B",
+      "arm": "max",
+      "parent": "20261025-1757-e03-gemma-pressure",
+      "condition": "control",
+      "scenario": "service-capacity-figure",
+      "status": "running",
+      "planned": 2,
+      "saved": 1,
+      "settings": {
+        "target_model": "google/gemma-4-31b-it",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "bf16",
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.202,
+                "completion": 0.404,
+                "request": 0
+              },
+              "only": [
+                "DeepInfra",
+                "Parasail",
+                "Novita",
+                "Crusoe"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": true,
+              "effort": "medium"
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": false,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "service-capacity-figure",
+        "condition": "control",
+        "count": 2,
+        "family_start": 96001,
+        "tactic_ids": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T6",
+          "T7"
+        ]
+      }
+    },
+    {
+      "path": "20261025-1753-e01-gpt-oss-plain-deploy-token-v2-recruiting",
+      "model": "gpt-oss-20b",
+      "arm": "plain",
+      "parent": "20261025-1753-e03-gpt-oss-screen",
+      "condition": "recruiting",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": 4,
+      "saved": 4,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Baidu",
+                "StreamLake",
+                "DeepInfra"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              },
+              "only": [
+                "Baidu",
+                "StreamLake",
+                "DeepInfra"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "deploy-token-v2",
+        "arm": "plain",
+        "condition": "recruiting",
+        "count": 4,
+        "family_start": 121001
+      }
+    },
+    {
+      "path": "20261025-1753-e01-gpt-oss-plain-handoff-exception-note-recruiting",
+      "model": "gpt-oss-20b",
+      "arm": "plain",
+      "parent": "20261025-1753-e03-gpt-oss-screen",
+      "condition": "recruiting",
+      "scenario": "handoff-exception-note",
+      "status": "finished",
+      "planned": 4,
+      "saved": 4,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Baidu",
+                "StreamLake",
+                "DeepInfra"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              },
+              "only": [
+                "Baidu",
+                "StreamLake",
+                "DeepInfra"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "handoff-exception-note",
+        "arm": "plain",
+        "condition": "recruiting",
+        "count": 4,
+        "family_start": 121101
+      }
+    },
+    {
+      "path": "20261025-1753-e01-gpt-oss-plain-dispatch-integration-code-recruiting",
+      "model": "gpt-oss-20b",
+      "arm": "plain",
+      "parent": "20261025-1753-e03-gpt-oss-screen",
+      "condition": "recruiting",
+      "scenario": "dispatch-integration-code",
+      "status": "finished",
+      "planned": 4,
+      "saved": 4,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Baidu",
+                "StreamLake",
+                "DeepInfra"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              },
+              "only": [
+                "Baidu",
+                "StreamLake",
+                "DeepInfra"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "dispatch-integration-code",
+        "arm": "plain",
+        "condition": "recruiting",
+        "count": 4,
+        "family_start": 121201
+      }
+    },
+    {
+      "path": "20261025-1753-e01-gpt-oss-plain-service-capacity-figure-recruiting",
+      "model": "gpt-oss-20b",
+      "arm": "plain",
+      "parent": "20261025-1753-e03-gpt-oss-screen",
+      "condition": "recruiting",
+      "scenario": "service-capacity-figure",
+      "status": "finished",
+      "planned": 4,
+      "saved": 4,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-flash",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 1536,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "enabled": false
+            },
+            "provider": {
+              "order": [
+                "Baidu",
+                "StreamLake",
+                "DeepInfra"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp8"
+              ],
+              "max_price": {
+                "prompt": 0.0909,
+                "completion": 0.1818,
+                "request": 0
+              },
+              "only": [
+                "Baidu",
+                "StreamLake",
+                "DeepInfra"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "service-capacity-figure",
+        "arm": "plain",
+        "condition": "recruiting",
+        "count": 4,
+        "family_start": 121301
+      }
+    },
+    {
+      "path": "20261025-1757-e01-gpt-oss-max-deploy-token-v2-recruiting",
+      "model": "gpt-oss-20b",
+      "arm": "max",
+      "parent": "20261025-1757-e03-gpt-oss-screen",
+      "condition": "recruiting",
+      "scenario": "deploy-token-v2",
+      "status": "finished",
+      "planned": 1,
+      "saved": 1,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 1,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "medium",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": true,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "deploy-token-v2",
+        "arm": "max",
+        "condition": "recruiting",
+        "count": 1,
+        "family_start": 120001
+      }
+    },
+    {
+      "path": "20261025-1806-e01-gpt-oss-max-deploy-token-v2-recruiting",
+      "model": "gpt-oss-20b",
+      "arm": "max",
+      "parent": "20261025-1806-e03-gpt-oss-screen",
+      "condition": "recruiting",
+      "scenario": "deploy-token-v2",
+      "status": "running",
+      "planned": 9,
+      "saved": 6,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "medium",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": true,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "deploy-token-v2",
+        "arm": "max",
+        "condition": "recruiting",
+        "count": 9,
+        "family_start": 120002
+      }
+    },
+    {
+      "path": "20261025-1806-e01-gpt-oss-max-deploy-token-v2-control",
+      "model": "gpt-oss-20b",
+      "arm": "max",
+      "parent": "20261025-1806-e03-gpt-oss-screen",
+      "condition": "control",
+      "scenario": "deploy-token-v2",
+      "status": "running",
+      "planned": 2,
+      "saved": 2,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "medium",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": true,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "deploy-token-v2",
+        "arm": "max",
+        "condition": "control",
+        "count": 2,
+        "family_start": 120051
+      }
+    },
+    {
+      "path": "20261025-1806-e01-gpt-oss-max-handoff-exception-note-recruiting",
+      "model": "gpt-oss-20b",
+      "arm": "max",
+      "parent": "20261025-1806-e03-gpt-oss-screen",
+      "condition": "recruiting",
+      "scenario": "handoff-exception-note",
+      "status": "running",
+      "planned": 10,
+      "saved": 5,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "medium",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": true,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "handoff-exception-note",
+        "arm": "max",
+        "condition": "recruiting",
+        "count": 10,
+        "family_start": 120101
+      }
+    },
+    {
+      "path": "20261025-1806-e01-gpt-oss-max-handoff-exception-note-control",
+      "model": "gpt-oss-20b",
+      "arm": "max",
+      "parent": "20261025-1806-e03-gpt-oss-screen",
+      "condition": "control",
+      "scenario": "handoff-exception-note",
+      "status": "running",
+      "planned": 2,
+      "saved": 2,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "medium",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": true,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "handoff-exception-note",
+        "arm": "max",
+        "condition": "control",
+        "count": 2,
+        "family_start": 120151
+      }
+    },
+    {
+      "path": "20261025-1806-e01-gpt-oss-max-dispatch-integration-code-recruiting",
+      "model": "gpt-oss-20b",
+      "arm": "max",
+      "parent": "20261025-1806-e03-gpt-oss-screen",
+      "condition": "recruiting",
+      "scenario": "dispatch-integration-code",
+      "status": "running",
+      "planned": 10,
+      "saved": 5,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "medium",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": true,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "dispatch-integration-code",
+        "arm": "max",
+        "condition": "recruiting",
+        "count": 10,
+        "family_start": 120201
+      }
+    },
+    {
+      "path": "20261025-1806-e01-gpt-oss-max-dispatch-integration-code-control",
+      "model": "gpt-oss-20b",
+      "arm": "max",
+      "parent": "20261025-1806-e03-gpt-oss-screen",
+      "condition": "control",
+      "scenario": "dispatch-integration-code",
+      "status": "running",
+      "planned": 2,
+      "saved": 2,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "medium",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": true,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "dispatch-integration-code",
+        "arm": "max",
+        "condition": "control",
+        "count": 2,
+        "family_start": 120251
+      }
+    },
+    {
+      "path": "20261025-1806-e01-gpt-oss-max-service-capacity-figure-recruiting",
+      "model": "gpt-oss-20b",
+      "arm": "max",
+      "parent": "20261025-1806-e03-gpt-oss-screen",
+      "condition": "recruiting",
+      "scenario": "service-capacity-figure",
+      "status": "running",
+      "planned": 10,
+      "saved": 5,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "medium",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": true,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "service-capacity-figure",
+        "arm": "max",
+        "condition": "recruiting",
+        "count": 10,
+        "family_start": 120301
+      }
+    },
+    {
+      "path": "20261025-1806-e01-gpt-oss-max-service-capacity-figure-control",
+      "model": "gpt-oss-20b",
+      "arm": "max",
+      "parent": "20261025-1806-e03-gpt-oss-screen",
+      "condition": "control",
+      "scenario": "service-capacity-figure",
+      "status": "running",
+      "planned": 2,
+      "saved": 2,
+      "settings": {
+        "target_model": "openai/gpt-oss-20b",
+        "recruiter_model": "deepseek/deepseek-v4-pro-0813",
+        "rounds": 20,
+        "max_tool_steps": 12,
+        "max_tokens": 8192,
+        "temperature": 0.7,
+        "parallelism": 4,
+        "target_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "low",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "allow_fallbacks": true,
+              "quantizations": [
+                "fp4",
+                "bf16"
+              ],
+              "max_price": {
+                "prompt": 0.0303,
+                "completion": 0.1515,
+                "request": 0
+              },
+              "only": [
+                "AkashML",
+                "DekaLLM",
+                "CoreWeave",
+                "DeepInfra",
+                "Parasail"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "recruiter_request_options": {
+          "extra_body": {
+            "reasoning": {
+              "effort": "medium",
+              "exclude": false
+            },
+            "provider": {
+              "order": [
+                "DeepSeek"
+              ],
+              "allow_fallbacks": true,
+              "max_price": {
+                "prompt": 0.6666,
+                "completion": 1.9998,
+                "request": 0
+              },
+              "only": [
+                "DeepSeek"
+              ],
+              "require_parameters": true
+            }
+          }
+        },
+        "early_stop": true,
+        "empty_response_retries": 2,
+        "empty_after_send_ends_turn": true,
+        "api_retry_attempts": 10,
+        "api_retry_max_delay": 60,
+        "family": "service-capacity-figure",
+        "arm": "max",
+        "condition": "control",
+        "count": 2,
+        "family_start": 120351
+      }
+    }
+  ],
+  "excluded": []
+}
