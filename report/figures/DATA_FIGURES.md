@@ -17,3 +17,13 @@ Each figure and table has a PDF, a 300-dpi PNG and its numerical CSV. Tables als
 | `monitor_access_paired_contrasts` | `20261025-0147-e06-monitor-main/scores.json`; `20261025-0337-e05-replay2-data/rows.jsonl`; `20261025-0730-e05-near-term/labels.jsonl` |
 
 The script reads saved estimates and intervals, and recomputes only the paired access-level contrasts (1,000 family bootstrap draws). The adjacent historical monitor report is not used as a numerical source. Replacement source paths are CLI arguments; fixed manuscript cohort counts are asserted so changed cohorts require caption review. Confirmation contains only near-term labels and overlaps the all-data cohort. No second-target measurements are included.
+
+## Figure 2 with both targets
+
+Run `uv run --with matplotlib python report/figures/make_figure2_targets.py` after the original data-figure generator. This replaces only Figure 2's image/data/caption outputs and writes `figure2_targets_manifest.json`, which is authoritative for the updated figure. It reads saved Qwen and gpt-oss estimates without fitting models, checks the gpt-oss probe/monitor row-ID match, and preserves the Qwen estimates. The older `make_data_figures.py` still produces the Qwen-only layout if run alone. The new panel shows both gpt-oss horizons for the same three individual methods; combination results remain unavailable until supplied. The CSV contains every plotted estimate and interval. The caption file is for manuscript assembly; the generator does not edit paper.md.
+
+The two-target Figure 2 now rebuilds from `figure2_targets_input.json`, a compact
+committed snapshot of the plotted estimates and their source hashes. No per-row
+exports or monitor caches are needed. Use `--refresh-from-runs` to repeat the
+original coverage audit from full local exports; that optional audit requires the
+untracked per-row probe and monitor files.
