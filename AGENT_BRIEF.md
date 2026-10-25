@@ -6,6 +6,17 @@ The research plan lives in a separate doc (`docs/plan.md`, exported from Leo's p
 
 ---
 
+## 0. Write for a cold reader (applies to everything you write)
+
+Readers of the report, README, docs, code comments and run reports will not have your context: not this chat, not the Aboard board, not the log. Write so a stranger can follow from the file alone.
+
+- No references to people or process: not "because Leo asked", not Aboard task IDs (APA-xx), not "as discussed" or "the earlier run". State the reason itself: "we cap cost at $7 because…".
+- Name things by what they are, and define each term where it first appears. If you refer to a run, give its folder path and say what it is.
+- Build up from first principles in the report: setup → method → result → what it means, with the numbers needed to check each step.
+- Process history (who decided what, when) belongs in `EXPERIMENT_LOG.md`, not in code or docs.
+
+---
+
 ## 1. What we're doing
 
 Leo is entering the **Apart AI Collusion Research Sprint** (Fri Oct 23 – Sun Oct 25, 2026). The project uses white-box methods (activations, probes, steering) on open-weight agents over multiple turns.

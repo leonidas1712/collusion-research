@@ -12,6 +12,8 @@ We keep this repo for the submission. It isn't copied to a fresh one, because th
 - [ ] **README:** a repo map; how to reproduce the headline (scripts and run folders, in order); what is not in git and how to regenerate it (activations on the Modal volume, monitor caches, prompt renders).
 - [ ] **Tag** the submitted commit `apart-submission` and link the tag.
 - [ ] **Dead ends:** list them in the README, or move them to `archive/`. Don't delete them; history is evidence.
+- [ ] **Self-contained text pass:** remove the "because Leo…" remarks, Aboard task IDs and references to chat context from code, READMEs and docs; state the reason itself. `EXPERIMENT_LOG.md` stays as a dated lab notebook. Internal-only files (`AGENT_BRIEF.md`, `docs/overview.html`, `.claude/`) are either moved to `archive/internal/` or labelled internal in the README.
+- [ ] **Report read cold:** a fresh agent with no project context reads the report and lists every term, step or reference it can't follow. Fix those.
 - [ ] **Licence** file. MIT is suggested for code; data terms are a separate decision.
 
 ## Before making the repo public
