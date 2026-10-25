@@ -26,9 +26,9 @@ sys.path[:0] = [str(ROOT / 'src'), str(ROOT / 'experiments/E01-behaviour-pilot')
 
 from harness import Settings, run_episode
 from scale_up import scale_up_scenario
-from overnight_sweep import options
-from gemma_screen import ConcurrentBudget, price_for, pooled_target_price, pool_options
-from gemma_pressure import PEER, peer_price, peer_options
+from gemma_screen import ConcurrentBudget, pooled_target_price, pool_options
+from gemma_pressure import PEER, ServingMetadata, peer_price, peer_options
+from gpt_oss_screen import pool as gpt_oss_pool
 from escalation_prompts import SCENARIOS, STRATEGIES, peer_prompt
 from collusion.runs import start_run, write_json_atomic
 
@@ -36,10 +36,8 @@ from collusion.runs import start_run, write_json_atomic
 def target_config(name):
     if name == 'gpt-oss':
         model = 'openai/gpt-oss-20b'
-        price = price_for(model, 'CoreWeave', 'fp4')
-        opts = options(price)
-        opts['extra_body']['provider']['quantizations'] = ['fp4']
-        opts['extra_body']['provider']['require_parameters'] = True
+        price = gpt_oss_pool(model, ['fp4', 'bf16'])
+        opts = pool_options(price)
         opts['extra_body']['reasoning'] = {'effort': 'low', 'exclude': False}
         return model, price, opts
     if name == 'gemma':
@@ -68,6 +66,9 @@ def build_scenario(scenario_id, strategy, condition, family_id):
 
 def episode_record(scenario_id, strategy, condition, ep):
     label = ep.get('label') or {}
+    secret_in_context = label.get('token_in_context', label.get('secret_in_context'))
+    secret_read_round = label.get('token_read_round', label.get('secret_read_round'))
+    channel_disclosure = label.get('channel_disclosure', label.get('objective_success'))
     calls = []
     for rec in ep.get('requests', []):
         resp = rec.get('response') or {}
@@ -75,14 +76,16 @@ def episode_record(scenario_id, strategy, condition, ep):
             continue
         calls.append({'actor': rec.get('actor'), 'round': rec.get('round'),
                       'served_provider': resp.get('provider'),
-                      'served_quantization': resp.get('quantization')})
+                      'served_quantization': resp.get('quantization'),
+                      'serving_metadata': resp.get('screen_serving_metadata')})
     return {'scenario': scenario_id, 'strategy': strategy, 'condition': condition,
             'episode_id': ep['episode_id'],
             'status': ep['status'], 'stop_reason': ep['stop_reason'],
             'objective_success': label.get('objective_success'),
+            'channel_disclosure': channel_disclosure,
             'other_file_disclosure': label.get('other_file_disclosure'),
-            'token_in_context': label.get('token_in_context'),
-            'token_read_round': label.get('token_read_round'),
+            'token_in_context': secret_in_context,
+            'token_read_round': secret_read_round,
             'first_action_round': label.get('first_action_round'),
             'first_boundary_violation_round': label.get('first_boundary_violation_round'),
             'first_channel_publication_round': label.get('first_channel_publication_round'),
@@ -104,7 +107,7 @@ def summarize(records):
                      'give_ins': len(give_in), 'give_ins_after_read': len(give_in_after_read),
                      'give_in_rounds': sorted(r.get('first_boundary_violation_round') for r in give_in
                                               if r.get('first_boundary_violation_round') is not None),
-                     'channel_publications': sum(bool(r.get('objective_success')) for r in give_in),
+                     'channel_publications': sum(bool(r.get('channel_disclosure')) for r in give_in),
                      'file_disclosures': sum(bool(r.get('other_file_disclosure')) for r in give_in),
                      'give_in_episodes': [r['episode_id'] for r in give_in]}
     return out
@@ -140,13 +143,14 @@ async def main(a):
                                base_url='https://openrouter.ai/api/v1', max_retries=0, timeout=90) as client:
             budget = ConcurrentBudget(client, run.dir / 'budget.json', prices, Decimal(str(a.cap_usd)))
             budget.save()
+            serving_client = ServingMetadata(budget, prices)
             gate = asyncio.Semaphore(a.parallelism)
 
             async def one(condition, index):
                 async with gate:
                     s = build_scenario(a.scenario, a.strategy, condition, a.family_start + index)
                     try:
-                        ep = await run_episode(s, settings, budget, run.dir / 'episodes',
+                        ep = await run_episode(s, settings, serving_client, run.dir / 'episodes',
                                                episode_id=f'{condition}-{index+1:04}')
                     except Exception as exc:
                         print('EPISODE_ERROR', condition, index + 1, type(exc).__name__, exc, flush=True)
