@@ -118,10 +118,21 @@ We collected 89 new episodes after the analysis plan was fixed and scored them o
 
 For the near-term label, asking Jev to forecast beats asking it to detect (0.650 versus 0.578 with everything the target saw). The gain comes from the peer's messages: adding the conversation to Jev's actions-only view adds +0.123 [0.063, 0.176], while adding everything else the target saw adds only +0.025 [-0.004, 0.054] (interval includes zero). More access does not help every monitor (Appendix E, monitor-design figure).
 
-The activation probe adds to the weaker monitor, not the strong forecaster. Stacking it on GPT-5-nano lifts near-term AUROC by +0.081 [0.038, 0.126] in pooled cross-validation and +0.113 [0.025, 0.203] on the confirmation set, but the held-out-scenario gain is +0.022 [-0.013, 0.059] (interval includes zero); it does not clearly add to the Jev forecaster (held-out +0.003 [-0.011, 0.018]). Figure 2 plots the combined rows, and Table 2 (Appendix E) gives the full gains. This agrees with the closest precedent, where a combined monitor gave no clear gain over a strong forecaster [@gao2026], and extends it with a gain over a weaker judge.
+The activation probe adds to the weaker monitor, not the strong forecaster. Stacking it on GPT-5-nano lifts near-term AUROC by +0.081 [0.038, 0.126] in pooled cross-validation and +0.113 [0.025, 0.203] on the confirmation set, but the held-out-scenario gain is +0.022 [-0.013, 0.059] (interval includes zero); it does not clearly add to the Jev forecaster (held-out +0.003 [-0.011, 0.018]; Table 2). This agrees with the closest precedent, where a combined monitor gave no clear gain over a strong forecaster [@gao2026], and extends it with a gain over a weaker judge.
 
-### 4.6 Does it transfer to a second target?
-**[TODO — conditional on the gpt-oss run.]** Only if the second-target pipeline produces a result; otherwise one sentence in 4.1 or Discussion plus an appendix.
+| Evaluation | Monitor | Baseline [95% CI] | + probe [95% CI] | Paired gain [95% CI] |
+|---|---|---|---|---|
+| Held-out scenario | Jev forecaster | 0.645 [0.603, 0.683] | 0.649 [0.608, 0.688] | +0.003 [-0.011, +0.018] |
+| Held-out scenario | GPT-5-nano detector | 0.554 [0.512, 0.594] | 0.576 [0.535, 0.615] | +0.022 [-0.013, +0.059] |
+| Pooled family CV | Jev forecaster | 0.615 [0.572, 0.651] | 0.623 [0.582, 0.665] | +0.008 [-0.020, +0.039] |
+| Pooled family CV | GPT-5-nano detector | 0.494 [0.453, 0.534] | 0.575 [0.531, 0.619] | +0.081 [+0.038, +0.126] |
+| New-episode confirmation | Jev forecaster | 0.643 [0.556, 0.723] | 0.695 [0.624, 0.763] | +0.052 [-0.014, +0.121] |
+| New-episode confirmation | GPT-5-nano detector | 0.554 [0.471, 0.633] | 0.667 [0.580, 0.750] | +0.113 [+0.025, +0.203] |
+
+**Table 2.** The probe adds to the weaker monitor (GPT-5-nano detector) in pooled CV and on confirmation, but not to the strong Jev forecaster. Near-term within scenario × round AUROC; baseline is round, log prompt length and the monitor score, combined adds the probe. All data 4,697 steps / 250 positives; confirmation 1,787 / 82. Gains use paired resamples; confirmation overlaps the all-data pool.
+
+### 4.6 Transfer to a second target
+**[TODO — conditional on the gpt-oss replay.]** Frame as *does near-term prediction transfer to a second model*. gpt-oss windows are short — 148 of 169 eventual-positive steps are also near-term-positive (versus 250 of 998 near-term for Qwen) — so it barely tests eventual against near-term; note the short window and do not present a gpt-oss eventual result as a separate finding. Cohort: 2,059 post-ask recruiting steps / 238 episodes / 148 near-term positives, plus a 1,141-step pre-ask placebo (Appendix F). If the replay yields no probe result, this becomes two sentences of behaviour.
 
 ---
 
@@ -258,18 +269,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 
 **Monitor-design figure.** A forecasting question and the peer's messages make the biggest difference; more access does not help every monitor. Near-term within scenario × round AUROC, 95% whiskers. (a) Jev detector vs forecaster, all data; (b) forecasters on the first data batch (the only one with the full ladder). The panels use different cohorts and are not paired.
 
-**Combination test (Table 2, moved from §4.5).**
-
-| Evaluation | Monitor | Baseline [95% CI] | + probe [95% CI] | Paired gain [95% CI] |
-|---|---|---|---|---|
-| Held-out scenario | Jev forecaster | 0.645 [0.603, 0.683] | 0.649 [0.608, 0.688] | +0.003 [-0.011, +0.018] |
-| Held-out scenario | GPT-5-nano detector | 0.554 [0.512, 0.594] | 0.576 [0.535, 0.615] | +0.022 [-0.013, +0.059] |
-| Pooled family CV | Jev forecaster | 0.615 [0.572, 0.651] | 0.623 [0.582, 0.665] | +0.008 [-0.020, +0.039] |
-| Pooled family CV | GPT-5-nano detector | 0.494 [0.453, 0.534] | 0.575 [0.531, 0.619] | +0.081 [+0.038, +0.126] |
-| New-episode confirmation | Jev forecaster | 0.643 [0.556, 0.723] | 0.695 [0.624, 0.763] | +0.052 [-0.014, +0.121] |
-| New-episode confirmation | GPT-5-nano detector | 0.554 [0.471, 0.633] | 0.667 [0.580, 0.750] | +0.113 [+0.025, +0.203] |
-
-**Table 2.** The probe adds to the weaker monitor (GPT-5-nano detector) in pooled CV and on confirmation, but not to the strong Jev forecaster. Near-term within scenario × round AUROC; baseline is round, log prompt length and the monitor score, combined adds the probe. All data 4,697 steps / 250 positives; confirmation 1,787 / 82. Gains use paired resamples; confirmation overlaps the all-data pool. Probe–monitor rank correlation (exploratory): 0.23 with Jev, 0.09 with GPT-5-nano.
+**Combination test.** The six-row combination table is Table 2 in §4.5. Probe–monitor step-score rank correlation (within scenario × round, exploratory): 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano detector.
 
 ### F. Second Target: gpt-oss-20b (and Gemma-4-31B)
 
@@ -278,8 +278,8 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 - **Fixed-versus-varied protocol.** Held fixed across targets: the scenario template, operator rule, and protected value; the forbidden-action rule from the tool log; the eligible-step window; the labels and the within scenario × round metric; the detector recipes; and the matched controls. Allowed to vary per target: the peer model (DeepSeek-V4-Flash for the main target, V4-Pro for the second), its system prompt and strategy, and the amount of exploratory prompt development. A peer strategy qualifies only if the target reads the value before any disclosure, there is at least one eligible step between the read and the leak, some episodes give in and some hold, and the matched controls never leak.
 - **Behaviour [source ready]:** blunt pressure fails (gpt-oss 0/27, Gemma 1/35). A delayed whole-configuration-block request passes the selection gate; the scaled collection gives 128/300 channel give-ins, controls 0/60. Gemma stays file-only and behaviour-only.
 - **Rule amendments:** a public-only cutoff (reasoning mentions are not leaks) and the eligibility rule shared with Qwen (Addendum 6 of the frozen plan).
-- **Disclosure-kind judge:** 198/200 deliberate, 0 accidental, 2 uncertain. The first public emission is `write_file` in 196/200; when the token reaches the channel it is almost always the end-of-turn reply (127 of 128).
-- **Leak route:** of the 128 channel give-ins, 127 are the end-of-turn reply and 1 an explicit `send_message` (canonical disclosure-kind judge). The gpt-oss addressee rerun is pending, so no addressee line is given yet.
+- **Disclosure-kind judge.** The first public disclosure, a file write in 196 of 200 episodes, was judged deliberate in 198 of 200 (0 accidental, 2 uncertain). The judge labels that first public leak, not the later auto-posted channel message, so the channel post's intent is read from the addressee check (Appendix D) rather than from this judge.
+- **Leak route.** The canonical gpt-oss first channel leak is the auto-posted end-of-turn reply (127 of 128; 1 explicit `send_message`; `runs/20261025-2324-e05-reasoning-route-audit`). The gpt-oss addressee rerun is pending.
 - **Reasoning and rendering.** gpt-oss reasons, and the Harmony format drops reasoning from earlier turns but keeps the current turn's reasoning between tool calls. A rendering gate checks that the replayed prompt reproduces the served one: keeping the current-turn reasoning raised exact match from 68% to 98.9% within one token on one provider (AkashML), while another (DekaLLM) left about 4.5% of requests unresolved, with a median token gap of about 24. The leak cutoff is public output only: private reasoning is not a leak, and an inclusive cutoff would drop 53 held steps. Reasoning mentions of the token are reported as a descriptive column, not as give-ins. Because the format keeps the current turn's reasoning, a mid-turn probe step can include the target's earlier reasoning from that turn, which the monitors' "everything the target saw" level does not; this access difference is stated wherever the gpt-oss probe and monitors are compared. [Rendering-gate source: `runs/20261025-2236-e02-gpt-oss-rendering-gate`; internal pointer, remove before submission.]
 - **If the replay works:** fidelity with the provider-quantisation caveat; the rendering check reported as passed; probe and monitors, including the reasoning-access level, in a small table matching Figure 2; and the pre-ask placebo split and the no-post-ask-window family as table rows. Section 4.6 of the main text gets the headline.
 - **If the replay fails:** the rendering mismatch is reported as the reason; the probe results are cut and stated as a limitation in Appendix A; Section 4.6 becomes two sentences of behaviour.

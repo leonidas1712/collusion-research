@@ -19,17 +19,17 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 | 4.2 Eventual give-in is barely predictable from one step | 99 | 5 | 0.26 |
 | 4.3 Near-term give-in is modestly predictable, and not only from pressure | 161 | 6 | 0.59 |
 | 4.4 The near-term result holds on new episodes | 64 | 6 | 0.17 |
-| 4.5 Forecasting monitors with the conversation work best; probes help weaker monitors | 167 | 6 | 0.38 |
-| 4.6 Does it transfer to a second target? | 25 | 7 | 0.10 |
-| 5. Discussion and Limitations | 191 | 7 | 0.34 |
-| Limitations | 68 | 7 | 0.17 |
-| Future Work | 54 | 7 | 0.14 |
-| 6. Conclusion | 103 | 7 | 0.25 |
+| 4.5 Forecasting monitors with the conversation work best; probes help weaker monitors | 318 | 6 | 0.74 |
+| 4.6 Transfer to a second target | 93 | 7 | 0.22 |
+| 5. Discussion and Limitations | 191 | 7 | 0.38 |
+| Limitations | 68 | 8 | 0.17 |
+| Future Work | 54 | 8 | 0.14 |
+| 6. Conclusion | 103 | 8 | 0.22 |
 
 ## Editorial blocks
 
-Blocks labelled editorial/TODO/placeholder (including substantive draft Methods, not automatically removable): 25 words. This excludes isolated inline TODO fragments inside substantive paragraphs.
+Blocks labelled editorial/TODO/placeholder (including substantive draft Methods, not automatically removable): 93 words. This excludes isolated inline TODO fragments inside substantive paragraphs.
 
 | Section | Words | Beginning |
 |---|---:|---|
-| 4.6 Does it transfer to a second target? | 25 | [TODO — conditional on the gpt-oss run.] Only if the second-target pipeline produces a result; other… |
+| 4.6 Transfer to a second target | 93 | [TODO — conditional on the gpt-oss replay.] Frame as does near-term prediction transfer to a second … |
