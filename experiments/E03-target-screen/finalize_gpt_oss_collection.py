@@ -91,6 +91,21 @@ def backfill_run(run_dir, postprocess_commit):
             "channel_publication": bool(record.get("channel_disclosure")),
             "other_file_disclosure": bool(record.get("other_file_disclosure")),
         })
+    expected = []
+    for condition in QUOTAS:
+        for index in range(int(settings[condition])):
+            expected.append((condition, index + 1, f"{condition}-{index + 1:04}"))
+    observed = {row["episode_id"] for row in attempts}
+    for condition, ordinal, episode_id in expected:
+        if episode_id in observed:
+            continue
+        attempts.append({
+            "run_id": meta["id"], "scenario": scenario, "condition": condition,
+            "episode_id": episode_id,
+            "family_id": str(int(settings["family_start"]) + ordinal - 1),
+            "episode_file": None, "episode_sha256": None,
+            "selected": False, "exclusion_reason": "no_record_after_exception",
+        })
     write_json(run_dir / "records.json", records)
     current_summary = read_json(run_dir / "summary.json") if (run_dir / "summary.json").exists() else {}
     current_summary["summary"] = summarize(records)
