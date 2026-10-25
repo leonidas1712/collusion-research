@@ -4,6 +4,8 @@ Working list of everything promised to an appendix, so nothing gets lost before 
 
 Main-text "in passing" mentions are listed under **Main-text pointer** so the paper says it in one line and points here.
 
+**Update (25 Oct, claude-4):** the final structure is **9 appendices, A–I**, per `private/appendix_plan.md` (F merged into E = "Detectors and Evaluation"). The skeleton for all nine is now in `report/paper.md`, each item slotted into its appendix; items still shown as **[TODO]** in `paper.md` are the unwritten analyses and tables. The per-row "Appendix" column below predates the merge; the live letters are: A Limitations and Dual-Use; B Experimental Pipeline; C Scenarios, an Example, and Model Choice; D Labels and Judges; E Detectors and Evaluation; F Second Target (gpt-oss); G Behaviour Screening; H Robustness and Diagnostics; I Prompts.
+
 | # | Item | Appendix | Main-text pointer | Source | Status |
 |---|------|----------|-------------------|--------|--------|
 | 1 | Limitations list, dual-use reasoning | A. Limitations and Dual-Use | Discussion | `docs/report_plan_outline.md` §5 | TODO in paper |

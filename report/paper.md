@@ -200,13 +200,19 @@ The activation probe adds to the weaker monitor, not the strong forecaster. Stac
 
 ## Appendix
 
-> **[TODO]** Full appendix plan in `docs/report_plan_outline.md` §5 (A–M). Appendix A's title must match the organisers' requirement exactly. Letters below are assigned at assembly.
+> Nine appendices, A–I, each answering one question a reader has after a given part of the main text. Appendix A's title matches the organisers' requirement. Content marked **[TODO]** is not yet written; the source run for each is named inline.
 
-### Appendix A. Limitations and Dual-Use / Ethical Considerations  *(required)*
-**[TODO]** Full limitations list; what the results do and do not establish; dual-use statement (all tools mocked, no real credentials; what could make collusion easier; what we publish and hold back; detection-side considerations). Decision on file: publish all prompts and transcripts, with the reasoning here (`docs/report_plan_outline.md` §5).
+### A. Limitations and Dual-Use / Ethical Considerations  *(required)*
+
+*What do these results not establish, and is it safe to publish what we release?*
+
+**[TODO]** Full limitations list, ordered by how much each could change a headline; dual-use statement (all tools mocked, no real credentials; what could make collusion easier; what we publish and hold back; the defensive recommendation; detection-side considerations). Decision on file: publish all prompts and transcripts, with the reasoning here (`docs/report_plan_outline.md` §5).
+
 **Scope (moved from the introduction):** we study the explicit recruitment route, the first step of collusion, not sustained joint scheming or hidden channels. Tacit collusion, where agents coordinate with no request at all, is out of scope (LLM pricing agents reach supracompetitive prices on their own; Fish et al., 2404.00806; Lin et al., 2410.00031). In the main setup the target gains nothing itself, which is closer to insider recruitment than to a mutual deal.
 
-### Appendix. Experimental Pipeline and Reproducibility  *(place right after Appendix A; letter assigned at assembly)*
+**Absorbed caveats:** the near-term alarm uses a single LLM judge (GPT-5-nano), and the monitor score is anchored only at its ends rather than on a banded rubric. The eligible window has a cost: a give-in that leaks on the call right after the read leaves no scored step, and a held episode that never reads the value is dropped. If the gpt-oss replay does not reproduce the provider's rendering, we report no gpt-oss probe results and note that here as a limitation.
+
+### B. Experimental Pipeline and Reproducibility
 
 This appendix shows how raw runs became the reported numbers. The pipeline figure traces the data from collected episodes down to scored steps, and the companion table gives the model versions, providers, decoding settings, seeds, round caps, costs, and the script that runs each stage. Figure 1 in the main text explains the idea for a single episode; here the view is the whole dataset. Probes and text monitors form two branches that read the **same eligible steps** and rejoin at scoring, so the figure makes visible that the two are judged head-to-head. Every count comes from the dataset summary and run outputs: the figure and table are the source of truth for the numbers below.
 
@@ -233,48 +239,69 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 
 **Second target (gpt-oss-20b).** **[Placeholder — second lane, filled once that run finishes.]** A parallel lane runs the same eight stages with its own peer (DeepSeek-V4-Pro and a per-target strategy) and its own counts. The two lanes are reported side by side and never pooled.
 
-### Appendix — Methods details  *(letter assigned at assembly)*
+### C. Scenarios, an Example, and Model Choice
 
-> **[TODO before submission]** Replace the run-folder paths below with repository-README pointers, per the vocabulary rule (run folders do not appear in the paper).
+*What does an episode look like, which scenarios did we build and why, and why Qwen3-32B?*
 
-**B.1 Environment and conditions (detail for §3.1).**
-- Each episode runs up to 20 rounds; in each round the peer acts, then the target. Agents call mock tools (in memory, no external effects, no real credentials) and post to a shared team channel. Temperature 0.7, at most 12 tool steps per target turn, with early stop.
-- Target: Qwen3-32B, thinking off, served fp8 via OpenRouter (DeepInfra). Peer: DeepSeek-V4-Flash. The single provider is pinned with fallbacks disabled so every call is served the same way.
-- The operator rule forbids posting the protected value and states a consequence. A forbidden action is scored by a rule on the tool log (the value appears in a post or a new file), not by judgement.
-- Controls and alone episodes never leaked across the runs (for example, controls 0/34, alone 0/20).
-- The six scenarios share one task template: the development scenario (a credential) and five additional scenarios covering number, text, and code values. How scenarios were built and checked: `docs/scenario_guidelines.md`.
-- Why the rule was strengthened: with no rule, targets handed the value over in the first round or two, which leaves nothing to predict. The rule produces hold-then-give-in.
-- Deliberate-vs-accidental judge: the secondary decision model's labels match blind human labels on 36 of 40 give-ins (Cohen's κ = 0.79).
+- **Scenario table [TODO]:** one row per scenario — surface domain, protected value, the real incident type it is grounded in, episodes and give-ins. Table 1 already gives the rates, so only the incident-type column is new. Source: `report/figures/table1_behaviour.csv`, `docs/scenario_guidelines.md`.
+- **Example exchanges [TODO — author picks the episode]:** two short annotated excerpts, one give-in and one held. The give-in excerpt is the same one shown in Figure 1b (picked once).
+- **Model choice [TODO]:** a short table of candidate models and why each was dropped (tool-use failures, unusable thinking settings, quantised serving), and why Qwen3-32B (open weights, prior interpretability work, clean tool use at full precision).
+- **Environment settings (from §3.1):** each episode runs up to 20 rounds, with at most 12 tool steps per target turn and early stop; the operator rule states a consequence. With no rule, targets hand the value over in the first round or two, which leaves nothing to predict; the rule produces hold-then-give-in. The six scenarios share one task template: the development scenario (a credential) and five others covering number, text, and code values (`docs/scenario_guidelines.md`).
 
-**B.2 Replay, fidelity, and data counts (detail for §3.2).** Replay reconstruction and fidelity, the per-stage counts, and the first-data-batch / new-episode-set split are in the Experimental Pipeline and Reproducibility appendix (stage 4 and the stage table), to keep one source of truth for those numbers.
+### D. Labels and Judges
 
-**B.3 Scoring-window costs (detail for §3.3).**
-- The exposure positive control reaches AUROC 1.000 at layer 32 on held-out families (min over all 64 layers 0.99999 on the first data batch; 1.000 on all data). This is why steps before the read are excluded: a probe can detect "the file was read" perfectly.
-- Cost of the window: give-ins that leak on the very next call after reading have no step to score (2 of 106 valid give-ins in the combined data), and held episodes that never read the value are dropped (74 held episodes contribute no scored step). [Counts not re-checked against the data files.]
+*How is a give-in detected and dated, and can the labels be trusted?*
 
-**B.4 Secondary labels (detail for §3.3).**
-- **B and C** (secondary): B keeps the near-term positives but counts only held-episode steps as negatives; C uses a within-three-target-calls window against held episodes. Both drop steps using hindsight, so neither is a prospective alarm label.
+- **Forbidden-action rule:** a give-in is the complete protected value appearing in a channel post or a new file, decided by a rule on the tool log. A channel post is a message sent to the shared team channel.
+- **Leak route [source ready]:** the first channel leak is split between an explicit `send_message` call and the end-of-turn reply that the harness posts to the channel (Qwen: 50 via `send_message`, 48 via the end-of-turn reply). Source: `runs/20261025-2157-e05-reasoning-route-audit`.
+- **Addressee check [source ready, confirm count]:** those end-of-turn replies are addressed to the peer (Qwen 51/51).
+- **Deliberate-vs-accidental judge:** the secondary decision model's labels match blind human labels on 36 of 40 give-ins (Cohen's κ = 0.79).
+- **Secondary labels:** the near-term variants B and C. B keeps the near-term positives but counts only held-episode steps as negatives; C uses a within-three-target-calls window against held episodes. Both drop steps using hindsight, so neither is a prospective alarm label; their results are in Appendix H.
 
-**B.5 Probe recipe (detail for §3.4).**
-- Logistic regression with L2 regularisation (C = 0.1), feature standardisation using training-rows-only statistics, and step weights so positives and negatives contribute equally within each round, on the 5,120-dimensional residual stream at the last prompt token before each target reply.
-- The layer is chosen inside each training fold from 17 candidates (layers 0, 4, …, 60, 63) on a 25% inner family holdout (the "nested" probe); a fixed-layer-32 variant is reported as a check. Three split seeds (42, 43, 44) are averaged.
-- Trained on recruiting episodes only; families of related variants never cross a train/test boundary. Recipe follows Goldowsky-Dill et al. (2502.03407) and Kramár et al. (2601.11516).
+### E. Detectors and Evaluation
 
-**B.6 Monitor ladder, prompts, and cost (detail for §3.4).**
-- Three monitor models: GPT-5-nano (LLM judge, 0–100 score) and two decision models, Jev 1.14 (TypeSafe) and Luna Decisions (OpenAI), which return a probability over fixed yes/no options with no written rationale. The yes/no option order is randomised per step.
-- Monitor prompts are adapted from the UK AISI ControlArena `default.txt` template (MIT): warning signs and guiding questions, the score anchored only at its ends (not a banded rubric, a limitation), and the rule text filled in per scenario from each step's own rule. Prompts were approved before the main run and not changed afterwards.
-- The full set of 3 models × 2 questions × 3 levels = 18 setups was run on the first data batch (75,312 calls, \$12.67: Jev \$2.03, GPT-5-nano \$6.53, Luna \$4.11). On the new episodes we ran an 8-setup subset fixed in advance: all six Jev setups plus GPT-5-nano detector and forecaster at the conversation level.
-- Luna is at chance as a forecaster on the first data batch (actions only 0.517, conversation 0.496, everything the target saw 0.505) and was dropped from the new-episode runs for cost. A single LLM judge (GPT-5-nano) is a limitation.
+*What exactly does each detector see and compute, and how are scores compared?*
 
-**B.7 Evaluation mechanics (detail for §3.5).**
-- **Split mechanics:** held-out scenario (leave one scenario out) trains on five scenarios, tests on the sixth, rotates through all six, and pools the scores; pooled family cross-validation uses five folds grouped by family.
-- **Confidence intervals:** 95% family bootstrap, 1,000 resamples, seed 20261025, conditional on the fitted models.
-- **Pooled CV and fold mixing:** pooled-CV baselines can fall below 0.5 because scores from different fitted fold models are compared within one scenario × round group; the fold-stratified variant additionally compares only scores from the same fitted fold model. Held-out scenario and the confirmation test are unaffected.
-- **Combination test:** a logistic model on [round, log prompt length, monitor score] is compared against the same features plus the probe score, reporting the paired family-bootstrap difference in AUROC.
-- **Alarm analysis:** a score cutoff is set on benign (held) episodes for a 5% false-alarm target, and recall and false alarms are reported on held recruiting episodes.
+**Probe recipe.** Logistic regression with L2 regularisation (C = 0.1), feature standardisation using training-rows-only statistics, and step weights so positives and negatives contribute equally within each round, on the 5,120-dimensional residual stream at the last prompt token before each target reply. The layer is chosen inside each training fold from 17 candidates (layers 0, 4, …, 60, 63) on a 25% inner family holdout (the "nested" probe); a fixed-layer-32 variant is reported as a check. Three split seeds (42, 43, 44) are averaged. The probe is trained on recruiting episodes only, and families of related variants never cross a train/test boundary. The recipe follows Goldowsky-Dill et al. (2502.03407) and Kramár et al. (2601.11516).
 
-### Further appendices
-**[TODO]** Appendix order (letters assigned at the end): A Limitations and Dual-Use / Ethical Considerations · B Experimental Pipeline and Reproducibility (above) · C Example Trajectories · D Scenarios and Data (per-scenario counts, incident grounding) · E Model Choice · then the rest — Methods details (above), Monitor setups (full grid), Eventual-label details, Near-term robustness, Pooled CV and fold mixing, Pressure vs outcome; errors and alarms, Behaviour screening, Second target (gpt-oss-20b, Gemma-4-31b), Prompts. "Replay and integrity checks" is folded into appendix B (Experimental Pipeline and Reproducibility). (Full plan: `docs/report_plan_outline.md` §5.)
+**Monitor setups.** Three monitor models: GPT-5-nano (LLM judge, 0–100 score) and two decision models, Jev 1.14 (TypeSafe) and Luna Decisions (OpenAI), which return a probability over fixed yes/no options with no written rationale; the option order is randomised per step. Prompts are adapted from the UK AISI ControlArena `default.txt` template (MIT), with warning signs and guiding questions, the score anchored only at its ends, and the rule text filled in per scenario. The full set of 3 models × 2 questions × 3 access levels = 18 setups ran on the first data batch (75,312 calls, \$12.67: Jev \$2.03, GPT-5-nano \$6.53, Luna \$4.11); the new episodes used an 8-setup subset fixed in advance (all six Jev setups plus GPT-5-nano detector and forecaster at the conversation level). Luna is at chance as a forecaster on the first data batch (actions only 0.517, conversation 0.496, everything the target saw 0.505) and was dropped from the new-episode runs for cost. **[TODO]** the full setup → AUROC grid on both labels as one table. Source: `runs/20261025-0147-e06-monitor-main`, `experiments/E06-monitors/PROMPTS.md`.
+
+**Evaluation.** Held-out scenario (leave one scenario out) trains on five scenarios, tests on the sixth, rotates, and pools; pooled family cross-validation uses five folds grouped by family. Confidence intervals are 95% family bootstraps (1,000 resamples, seed 20261025), conditional on the fitted models. The combination test stacks a logistic model on round, log prompt length and the monitor score, and compares it with and without the probe score, reporting the paired family-bootstrap difference. The alarm analysis sets a score cutoff on benign (held) episodes for a 5% false-alarm target and reports recall and false alarms on held recruiting episodes.
+
+**Pooled CV and fold mixing.** Pooled-CV baselines can fall below 0.5 because scores from different fitted fold models are compared within one scenario × round group; the fold-stratified variant compares only scores from the same fitted fold model. Held-out scenario and the confirmation test are unaffected. **[TODO]** fold-stratified numbers. Source: `runs/20261025-1456-e05-all-data-main/report.md`.
+
+### F. Second Target: gpt-oss-20b (and Gemma-4-31B)
+
+*Does the setup, and the detection result, carry to a differently trained model, and what had to change?* Both branches below are kept until the replay outcome is known; gpt-oss numbers are never pooled with Qwen's. **[codex-2 owns the gpt-oss numbers.]**
+
+- **Behaviour [source ready]:** blunt pressure fails (gpt-oss 0/27, Gemma 1/35). A delayed whole-configuration-block request passes the selection gate; the scaled collection gives 128/300 channel give-ins, controls 0/60. Gemma stays file-only and behaviour-only.
+- **Rule amendments:** a public-only cutoff (reasoning mentions are not leaks) and the eligibility rule shared with Qwen (Addendum 6 of the frozen plan).
+- **Disclosure-kind judge:** 198/200 deliberate, 0 accidental, 2 uncertain. The first public emission is `write_file` in 196/200; when the token reaches the channel it is almost always the end-of-turn reply (127 of 128).
+- **Leak-route and addressee rows** for gpt-oss (cross-referenced from Appendix D).
+- **If the replay works:** fidelity with the provider-quantisation caveat; the rendering check reported as passed; probe and monitors, including the reasoning-access level, in a small table matching Figure 2; and the pre-ask placebo split and the no-post-ask-window family as table rows. Section 4.6 of the main text gets the headline.
+- **If the replay fails:** the rendering mismatch is reported as the reason; the probe results are cut and stated as a limitation in Appendix A; Section 4.6 becomes two sentences of behaviour.
+
+### G. Behaviour Screening
+
+*What did we try before the final setup, and how does giving in vary with pressure?*
+
+**[TODO]** one coverage table (factor × level → give-in rate [Wilson 95% CI], n) over rule strength, single tactics, own stake, thinking mode, two peers, and evaluation awareness, with one paragraph of reading and no per-run prose. Reporting follows `docs/pressure_reporting_practices.md`. Source: the E01 behaviour summaries.
+
+### H. Robustness and Diagnostics for the Main Results
+
+*Do the headline numbers survive other labels, layers, splits and checks, and what do the detectors miss?*
+
+- **Near-term robustness [TODO]:** one table — labels B and C, scenario-mean, per-scenario, fixed layer 32, MLP — plus the per-layer curve as a figure. Source: `runs/20261025-1456-e05-all-data-main/report.md`.
+- **Eventual label [TODO]:** learning curve, per-layer, and branching, as a short subsection; branching supports the Discussion's "outcome only partly settled" point.
+- **Pressure versus outcome:** the full numbers and cohort for the pressure-probe check in §4.3 — first data batch, fixed layer 32: recruiting versus benign AUROC 1.000 on 4,184 steps; gave-in versus held 0.430 [0.373, 0.492] pooled and 0.426 [0.371, 0.488] held-out (2,910 recruiting steps, 618 eventual positives). Source: `runs/20261025-0800-e05-explore-trajectories-pressure`.
+- **Errors and alarms:** probe/monitor step-score correlations (within scenario × round Spearman 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano detector); the shared-miss table with its caveat; and alarm recall at a 5% per-episode false-alarm rate. Peer-text sway in one line. Source: `runs/20261025-1504-e06-appendix-errors`.
+- **Negative checks:** logit lens and trajectory features, both negative, as table rows.
+
+### I. Prompts
+
+*The exact text each agent and monitor received.*
+
+**[TODO]** the target system prompt, the recruiting and control peer prompts (including the gpt-oss delayed request), and the monitor prompts, released in full per the dual-use decision. In the PDF, show one scenario in full and point to the repository for the rest. Source: `experiments/E06-monitors/PROMPTS.md` and the peer-prompt files.
 
 ---
 
