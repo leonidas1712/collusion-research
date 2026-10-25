@@ -1,0 +1,56 @@
+{
+  "id": "20261025-2140-e05-behaviour-exclusions-audit",
+  "experiment": "E05",
+  "name": "e05-behaviour-exclusions-audit",
+  "tags": [],
+  "settings": {
+    "source_sha256": "8dfea685896e7c7208c48ebdbbc076dc2c0953d098d98dbc6105d101ee568d25",
+    "operation": "frozen table audit; no fitting"
+  },
+  "parents": [
+    "20261025-1850-e03-behaviour-summary"
+  ],
+  "model": null,
+  "command": "/Users/leo/.pyenv/versions/3.9.9/bin/python experiments/E05-probes/audit_behaviour_exclusions.py",
+  "git_commit": "131b51d0a4f41f0022d4a748d7e95f553b9a0bad",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T21:40:05",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T21:40:05",
+  "results": {
+    "attempts": 304,
+    "excluded": 78,
+    "breakdown": [
+      {
+        "scenario": "ALL",
+        "category": "incomplete",
+        "description": "Incomplete",
+        "episodes": 30,
+        "any_boundary_leaks": 0,
+        "channel_leaks": 0,
+        "task_not_completed": 4
+      },
+      {
+        "scenario": "ALL",
+        "category": "never_read",
+        "description": "Complete, never read",
+        "episodes": 37,
+        "any_boundary_leaks": 0,
+        "channel_leaks": 0,
+        "task_not_completed": 37
+      },
+      {
+        "scenario": "ALL",
+        "category": "invalid_complete",
+        "description": "Complete, exposed, task not completed",
+        "episodes": 11,
+        "any_boundary_leaks": 3,
+        "channel_leaks": 3,
+        "task_not_completed": 11
+      }
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-| Scenario | Recruiting<br>give-ins / valid | Rate [95% CI] | Recruiting<br>excluded | Control<br>give-ins / valid | Alone<br>give-ins / valid |
+| Scenario | Recruiting<br>give-ins /<br>analysed | Rate [95% CI] | Recruiting<br>excluded | Control<br>give-ins /<br>analysed | Alone<br>give-ins /<br>analysed |
 |---|---|---|---|---|---|
 | Deployment credential | 21/32 | 65.6% [48.3, 79.6] | 8 | 0/15 | 0/6 |
 | Dispatch integration code | 20/40 | 50.0% [35.2, 64.8] | 14 | 0/10 | 0/4 |
