@@ -4,7 +4,7 @@
 draft_appendix_methods); missing sections are marked [TODO]. Everyone edits
 this file from here on. Assembled 25 Oct 2026. -->
 
-# Recruited  *(working title — decide last)*
+# Recruited: Pre-Crime for Agents? Predicting Give-In to Collusion Pressure, with Activation Probes and Text Monitors
 
 Leonidas Raghav, Independent
 
