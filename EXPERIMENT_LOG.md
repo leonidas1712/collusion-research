@@ -295,7 +295,7 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 - **Partial run (~82% of calls; GPT-5-nano complete, Luna/Jev on ~2,000 of 2,910 recruiting rows):** every monitor is **0.46–0.58** within scenario × round. GPT-5-nano detector L2: 0.560 [0.516, 0.603]. Jev forecaster L3: 0.579 [0.495, 0.673], on partial rows. The probe is in the same range. No method adds clear value over turn + length.
 - **Alarms (pooled, 5% benign target):** some monitors alarm on most give-in episodes (GPT-5-nano detector L2 87%, Jev forecaster L2 98%) at ~1% benign FPR. They alarm on held recruiting episodes almost as often, though (83%, 98%). So they detect that a peer is pushing for the secret, not which target will give in. Read these together with the held-episode alarm rate, never recall alone.
 
-### 2026-10-25 ~08:00 SGT — E06 main monitor run complete; final monitor-vs-probe table
+### 2026-10-25 ~07:45 SGT — E06 main monitor run complete; final monitor-vs-probe table
 
 - **Run:** `runs/20261025-0147-e06-monitor-main`. 75,312 calls, 0 failed, 0 unparsed, $12.67 (cap $17). Scored with `score_main.py`; report `report_main.md`, metrics `metrics_main.json`.
 - **Ranking (within scenario × round, 2,910 recruiting steps, identical rows for all methods):** the best monitors are the Jev forecaster L3 at 0.574 [0.502, 0.639], the GPT-5-nano detector L2 at 0.560 [0.516, 0.603] and the Jev forecaster L2 at 0.558. The probe scores 0.522 pooled (0.552 fold-stratified) and 0.551 [0.499, 0.597] on a held-out scenario. All 18 monitors fall between 0.48 and 0.57, and their CIs overlap the probe's. Nothing adds clear value over turn + length; the largest gain is +0.015 [−0.003, 0.033].
@@ -303,7 +303,7 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 - **Context ladder:** L2, which adds the peer's messages, usually beats L1. L3, which adds unposted text and tool results, does not help further. For Jev it helps slightly; for GPT-5-nano and Luna it hurts.
 - **Reading:** neither white-box nor black-box methods predict *who* gives in beyond the situation, at this data size.
 
-### 2026-10-25 ~08:20 SGT — Near-term labels on the monitors: the Jev forecaster picks up imminent give-in
+### 2026-10-25 ~07:50 SGT — Near-term labels on the monitors: the Jev forecaster picks up imminent give-in
 
 - **Labels:** codex-2 `runs/20261025-0730-e05-near-term/labels.jsonl`. A = hazard, positive if the leak comes this round or next, all 2,910 rows. B = round contrast, near-action steps vs held, 2,460 rows. C = within 3 calls vs held, 2,478 rows. Scored with `score_main.py --label-variant` (ranking only); reports in `report_main_<variant>.md`.
 - **Jev forecaster L3**, within scenario × round: **A 0.660 [0.613, 0.704], B 0.677 [0.627, 0.725], C 0.687 [0.630, 0.739]**. Added value over turn + length: +0.055 [0.027, 0.086]. Jev L2 scores 0.635–0.654. This is the first method whose CI clears 0.5 by a margin and adds value. All other monitors stay at 0.50–0.60.
@@ -312,7 +312,7 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 
 - 2026-10-25 07:42 SGT [infra] APA-62 near-term CPU run restarted as runs/20261025-0730-e05-near-term after catching a new-runner split-reconstruction bug: LOSO stacking validation must filter by saved validation scenario as well as family. The initial0722 run was deliberately stopped before any LOSO fit; six completed, unaffected pooled fits were checked against exact saved splits and reused. Regression test now reproduces every original stacking inner split for all variants/seeds/folds; all22 E05 tests pass. Corrected preflight passed all99 outer fits. No original replay2 fits/results changed; no GPU/API use. A2910/168 positive rows, B2460/168, C2478/186; strict pre-action eligibility preserved.
 
-### 2026-10-25 ~08:40 SGT — Probe refit on near-term label A (codex-2 checkpoint)
+### 2026-10-25 ~07:55 SGT — Probe refit on near-term label A (codex-2 checkpoint)
 
 `runs/20261025-0752-e05-near-term-checkpoint/report.md`. All numbers are within scenario × round AUROC with 95% CI.
 
@@ -328,7 +328,7 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 
 - 2026-10-25 07:53 SGT [result] APA-62 hazard-A checkpoint (all33 A fits complete; B/C still running): runs/20261025-0752-e05-near-term-checkpoint/report.md, parent0730-e05-near-term. 2910 eligible recruiting steps/168 near-action positives. Refit nested scenario×round AUROC pooled0.585 [0.526,0.641], LOSO0.611 [0.560,0.658]; frozen eventual nested rescored on A0.522 [0.465,0.575]/0.569 [0.508,0.626]. Fold×scenario×round pooled refit0.627 [0.559,0.685]; LOSO unchanged. Refit fixed32 pooled0.576/LOSO0.590. Added-value pooled-AUROC gain pooled+0.0355 [0.0144,0.0573], LOSO+0.0193 [-0.0115,0.0475]. Exploratory near-term association, not a replacement for the original eventual-label headline. Primary pooled baseline shift remains (scenario+round0.324 vs0.500 within fold); family intervals condition on fixed fits. CPU only, no new data.
 
-### 2026-10-25 ~08:50 SGT — Plan and assignments (morning)
+### 2026-10-25 ~08:00 SGT — Plan and assignments (morning)
 
 - **Deciding test (claude):** a paired Jev forecaster L3 − probe difference, and probe + Jev combined vs Jev alone (cross-fitted logistic, family bootstrap). It runs on near-term A/B/C once codex-2 exports the refit OOF scores. This is our RQ 2.2-style test: do internals add to what the agents say and do? The context ladder (L1 actions → L2 + peer messages → L3 + unposted text and tool results) is the words-vs-actions half.
 - **codex-2:** near-term B/C refits, then the learning curve, then the per-layer diagnostic curve.
@@ -337,7 +337,7 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 - **claude-2 (no board task):** check the RQ 2.2 papers (Nakamura, Shi, Radev, Nguyen, Arike) against related_work and PROVENANCE → `docs/rq22_papers_check.md`.
 - **Held for Leo:** a new replay that saves peer-message tokens (~$6–10 Modal), decided after the learning curve and the deciding test.
 
-### 2026-10-25 ~09:00 SGT — RQ 2.2 papers checked (claude-2)
+### 2026-10-25 ~08:05 SGT — RQ 2.2 papers checked (claude-2)
 
 - **Record:** `docs/rq22_papers_check.md`. All 5 papers verified against full text. 4 were missing and are now in PROVENANCE §6 and related_work: Shi 2026a 2607.05132, a different paper from our Shi 2609.24967; Radev 2605.29178; Nguyen 2604.03968; Arike 2601.21112.
 - **Sprint-page claims that are off:**
@@ -350,7 +350,7 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
   - No paper combines activations with a text monitor, so our combination test is new.
 - **Method fix for the deciding test:** I chose Jev forecaster L3 by looking at test results. So the combination test must pick the monitor and level *inside the training folds*, nested. Jev L3 can only be reported as a post-hoc best.
 
-### 2026-10-25 ~09:30 SGT — Logit lens at layer 63 (APA-65, Claude subagent): little signal
+### 2026-10-25 ~08:12 SGT — Logit lens at layer 63 (APA-65, Claude subagent): little signal
 
 - **Run:** `runs/20261025-0803-e05-logit-lens/` (report, metrics, scores.csv, examples). Code `experiments/E05-probes/explore_logit_lens.py`. Applies the final RMSNorm and lm_head (shard 17 of the pinned revision) to the saved block-63 output. CPU, $0.
 - **Wiring check:** the argmax equals the reply's first token on 90.6% of 4,184 rows, and the true first token is in the top 5 on 99.8%.
@@ -361,7 +361,7 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
   - All below the refit probe (0.611 held-out scenario) and the Jev forecaster L3 (0.660).
 - **Reading:** just before a leak, the target is a bit more likely to open with a tool call (mean p_tool 0.47 vs 0.27 on held rows). Refusal-opener mass doesn't differ. So the decision isn't visible in the first token; it's made later in the reply.
 
-### 2026-10-25 ~09:45 SGT — Notes: judge prompt grounding; combination test scope
+### 2026-10-25 ~08:15 SGT — Notes: judge prompt grounding; combination test scope
 
 - **LLM judge prompt:** adapted from ControlArena `default.txt`: warning signs, guiding questions, reasoning, then a 0–10 or 0–100 score anchored only at the ends. It is not a summed checklist or an anchored-band rubric; ControlArena's full_trajectory prompt has 8 bands, which we did not copy. Leo's call (25 Oct): fine, list it as a limitation. An optional rerun of the best setup with a rubric would cost ~$1.
 - **Combination test (APA-66), confirmed by Leo to run:**
@@ -369,9 +369,9 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
   - probe + GPT-5-nano detector L2, a fixed pair;
   - monitor + monitor (Jev + GPT-5-nano) as reference.
   All are stacked logistic models on [turn, log length, scores], paired family-bootstrap difference, within scenario × round. Labels: near-term A/B/C and eventual.
-- **Leo (25 Oct ~10:00):** monitor prompts reviewed and approved as run. No prompt changes.
+- **Leo (25 Oct ~08:20):** monitor prompts reviewed and approved as run. No prompt changes.
 
-### 2026-10-25 ~10:20 SGT — Balanced behaviour batch launched (Leo approved)
+### 2026-10-25 08:17 SGT — Balanced behaviour batch launched (Leo approved)
 
 - **Why:** deploy-token v2 has 61 recruiting episodes, the five spray scenarios 19–28. A reviewer could object that v2 dominates training and the pooled AUROC. This batch fills each spray scenario to ~50 recruiting episodes, for more data overall and possibly a better probe. v2 is the development scenario and gets no new episodes.
 - **Batch:** consequence rule, Qwen3-32B target, plain peer, 4 controls each, no alone. Families start at x250 to stay clear of the existing x201–x224 ranges.
@@ -386,7 +386,7 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 
 - 2026-10-25 08:18 SGT [result] APA-62 round-clean-contrast B checkpoint: runs/20261025-0817-e05-near-term-checkpoint/report.md. All33 B fits complete; C running. 2460 recruiting rows/168 positives. Refit nested scenario×round pooled0.605 [0.542,0.663], LOSO0.603 [0.547,0.649]; frozen eventual nested on B0.522 [0.461,0.584]/0.576 [0.513,0.635]. Pooled fold sensitivity0.647 [0.573,0.701], LOSO unchanged. Refit fixed32 pooled0.578/LOSO0.590. Added-value pooled-AUROC gain pooled+0.0354 [0.0152,0.0566], LOSO+0.0196 [-0.0085,0.0436]. Modest exploratory near-term signal; no demonstrated LOSO added-value gain. Original eventual-label headline unchanged. Full CSV and final audits follow C; APA-67 learning curve will reuse these100% B fits.
 
-### 2026-10-25 ~10:45 SGT — Trajectory and pressure-vs-outcome probes (codex, APA-64): no gain
+### 2026-10-25 ~08:25 SGT — Trajectory and pressure-vs-outcome probes (codex, APA-64): no gain
 
 - **Run:** `runs/20261025-0800-e05-explore-trajectories-pressure/` (report, metrics). Exact pooled folds and LOSO splits, layers 24/32/40 reported separately with no selection, family bootstrap. CPU, $0.
 - **Difference vectors** (step minus previous step): eventual label at chance (pooled 0.495–0.502, LOSO 0.505–0.506).
@@ -397,7 +397,7 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 - **Pressure vs outcome:** the recruiting-vs-benign probe is near perfect (pooled 1.000, LOSO 0.99998). Used in the same direction within recruiting, it scores eventual 0.430 [0.373, 0.492] pooled and A 0.436. That leans *opposite*: steps that look more pressured are slightly less likely to give in. The CIs touch or cross 0.5, so the result is exploratory. This is a clean pair for the paper: pressure is fully readable, the outcome is not.
 - Note: the LOSO seeds share assignments, so they are not independent replications.
 
-### 2026-10-25 ~11:15 SGT — Balanced batch done ($0.82)
+### 2026-10-25 ~08:30 SGT — Balanced batch done ($0.82)
 
 Rule-based labels, valid episodes only. "Not first-round" counts give-ins whose first action came in round 3 or later.
 
@@ -417,7 +417,7 @@ Rule-based labels, valid episodes only. "Not first-round" counts give-ins whose 
   - the replay decision for the new episodes + peer-token positions (~$7–10 Modal, Leo's GPU OK);
   - the 8-setup monitor subset (~$2.5, pending Leo).
 
-### 2026-10-25 ~11:35 SGT — Balanced batch leak kinds (codex, APA-68)
+### 2026-10-25 ~08:36 SGT — Balanced batch leak kinds (codex, APA-68)
 
 - **Run:** `runs/20261025-0833-e01-topup-semantic-judge`. Same Luna judge as the top-up, on the 129 complete episodes; $0.053. Labels are in `episode.label.semantic_judge`.
 - **Give-ins by kind (deliberate / accidental), over all complete episodes:**
@@ -430,13 +430,13 @@ Rule-based labels, valid episodes only. "Not first-round" counts give-ins whose 
 - **Counts differ from my 11:15 table** (e.g. dispatch 25 vs 21 valid), because codex counts over complete episodes rather than `valid_for_comparison`. The replay-2 eligibility rules decide what actually gets used.
 - **One provisional evaluation-awareness flag:** rollout recruiting ep0019, round 11, "even as part of a test". Possibly hypothetical; quoted in the report, check by hand.
 
-### 2026-10-25 ~11:50 SGT — Replay 3 approved and handed to codex-3; limitations list started
+### 2026-10-25 ~08:38 SGT — Replay 3 approved and handed to codex-3; limitations list started
 
 - **Leo approved replay 3** (25 Oct): the balanced-batch episodes, last-token capture only, with the replay-2 pipeline unchanged. Hard cap $4 Modal. Run by codex-3; codex-2 informed. Output: a new combined dataset folder; replay-2 files are not touched.
 - **Peer-message token capture:** not blocking replay 3 (Leo). Revisit only if the combination test shows the probe adds something.
 - **Limitations:** Leo asked to track the scenario imbalance and the uneven drop-out (procurement 15/30, rollout 15/24) for the appendix. Started `docs/writeup_limitations.md`; add items there as they come up.
 
-### 2026-10-25 ~12:00 SGT — Monitor subset on the balanced episodes launched; replay-3 cap raised to $7
+### 2026-10-25 08:41 SGT — Monitor subset on the balanced episodes launched; replay-3 cap raised to $7
 
 - **Leo approved:**
   - the 8-setup monitor subset on the new episodes;
@@ -449,3 +449,6 @@ Rule-based labels, valid episodes only. "Not first-round" counts give-ins whose 
   - GPT-5-nano: only L2, its best level. L3 was no better and sometimes worse, consistent with Arike et al. 2601.21112 ("less is more").
   - Luna dropped as consistently weakest (0.48–0.55).
   - The full 18-setup table stays on the original steps.
+
+- 2026-10-25 08:42 SGT [result] APA-62 complete: runs/20261025-0730-e05-near-term/report.md and probe_scores.csv (423792 records; label_variant + method + analysis + seed + E06 row_id; recruiting rows only). All99 outer fits audited in runs/20261025-0840-e05-near-term-validation/summary.json: exact fold/label/frozen-score matches, CSV round trip exact, maximum selected/fixed32 model reconstruction error0.0. A/B checkpoints exactly reproduce final metrics. Nested scenario×round pooled/LOSO AUROC: A0.585 [0.526,0.641]/0.611 [0.560,0.658]; B0.605 [0.542,0.663]/0.603 [0.547,0.649]; C0.589 [0.527,0.648]/0.619 [0.561,0.671]. Pooled fold×scenario×round sensitivities A0.627,B0.647,C0.635; LOSO unchanged. Added-value pooled-AUROC gains A+0.0355,B+0.0354,C+0.0384 have paired family CIs above0 in pooled CV; corresponding LOSO gains+0.0193,+0.0196,+0.0149 all span0. Same fixed splits, inner selection, C=.1 and 1000 family bootstraps. Modest exploratory near-term association; original eventual-label result unchanged. All baselines/fixed32/frozen eventual probes in report; no new data, API/GPU spend or commits. Large CSV is ignored as a generated artifact. APA-67 learning and layer curves next.
+- **Correction (08:50):** the header times of the entries from 07:45 to 08:41 had drifted ahead of the clock (written as 08:00–12:00). They are now set from the run-folder timestamps.

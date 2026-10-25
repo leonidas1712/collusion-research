@@ -105,4 +105,16 @@ experiments/E05-probes/.venv/bin/python experiments/E05-probes/near_term.py --wo
 experiments/E05-probes/.venv/bin/python experiments/E05-probes/near_term_validate.py <run-id>
 ```
 
-Status: CPU fits running in `runs/20261025-0730-e05-near-term`; no new episodes or GPU use. The initial run was stopped before LOSO fitting to correct reconstruction of a shared-family validation scenario; completed pooled fits were verified and reused. `test_near_term.py` checks exact reproduction of the saved stacking splits.
+Status: complete. [Report](../../runs/20261025-0730-e05-near-term/report.md), [validation](../../runs/20261025-0840-e05-near-term-validation/summary.json). Nested scenario × round AUROC (pooled/LOSO): A 0.585/0.611; B 0.605/0.603; C 0.589/0.619. These are exploratory near-term results; the eventual-label headline is unchanged. The run contains `probe_scores.csv` (423,792 records, generated local artifact) with all methods, `label_variant`, E06 row IDs and new labels. All 99 fits and the CSV audit passed; no new episodes or GPU use. The initial run was stopped before LOSO fitting to correct reconstruction of a shared-family validation scenario; completed pooled fits were verified and reused. `test_near_term.py` checks exact reproduction of the saved stacking splits.
+
+### Learning and per-layer curves (APA-67)
+
+`learning_curve.py` compares eventual outcome and near-term B under pooled CV and LOSO. It samples 25/50/75/100% of the recruiting training families, with three nested draws per seed and unchanged test and inner-validation assignments. Only class/comparability failures cause a draw retry; the plan was frozen in `runs/20261025-0731-e05-learning-curve` before B's scores were evaluated. The 100% predictions are reused. It reports family-bootstrap scenario × round AUROC and the paired 75%→100% increment. The current CPU run is `runs/20261025-0842-e05-learning-curve`.
+
+```sh
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/learning_curve.py 20261025-0730-e05-near-term --workers 3 --plan-run 20261025-0731-e05-learning-curve
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/learning_curve_validate.py <curve-run> 20261025-0730-e05-near-term
+experiments/E05-probes/.venv/bin/python experiments/E05-probes/layer_diagnostic.py 20261025-0730-e05-near-term --workers 3
+```
+
+The per-layer diagnostic follows the learning curve. It shows all 17 candidate layers with pointwise family confidence intervals, reusing saved scores/coefficients where available. It does not select a replacement for the inner-selected headline probe.

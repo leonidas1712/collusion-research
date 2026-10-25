@@ -9,8 +9,8 @@ from metrics import position_weights
 
 MLP_SETTINGS={'hidden_units':32,'epochs':80,'batch_size':256,'learning_rate':.001,'weight_decay':.01}
 
-def fit_mlp(x,y,rounds,seed):
-    torch.set_num_threads(4);torch.manual_seed(seed)
+def fit_mlp(x,y,rounds,seed,*,threads=4):
+    torch.set_num_threads(threads);torch.manual_seed(seed)
     weights=position_weights(y,rounds);keep=weights>0;y=np.asarray(y)[keep];weights=weights[keep]
     scaler=StandardScaler().fit(np.asarray(x[keep],dtype=np.float64));z=torch.from_numpy(scaler.transform(x[keep]).astype('float32'));labels=torch.tensor(y,dtype=torch.float32);w=torch.tensor(weights,dtype=torch.float32)
     network=torch.nn.Sequential(torch.nn.Linear(z.shape[1],32),torch.nn.ReLU(),torch.nn.Linear(32,1)).to('cpu')
