@@ -629,3 +629,11 @@ Data: 6,404 steps, 338 episodes. The metric is within scenario × round AUROC [9
   - **Small sample:** the confirmation set is small (±0.08), so its "level with Jev" result was probably partly luck.
   - **Fold mixing:** the confirmation test scores one final model, whereas pooled CV mixes fold models; the fold-stratified figure is 0.618.
 - **Headline for the paper:** the probe reads near-term give-in above chance on unseen scenarios and on new episodes, and it adds to the LLM judge within known scenarios. The Jev forecaster remains the best single method.
+
+### 2026-10-25 ~15:15 SGT — Appendix rerun on the all-data probe scores (exploratory)
+`runs/20261025-1504-e06-appendix-errors/` (commit 3b9d051a). It covers 4,697 near-term A steps in 241 episodes (101 give-ins, 140 held). Luna is excluded because it only has the older rows.
+- **Episode catches** at a 5% false-alarm threshold on the held-episode maximum: probe 8/101, Jev 10/101, GPT-5-nano 0/101.
+- **False alarms on held episodes:** probe 8/140, Jev 6/140.
+- **Shared misses:** probe and Jev both miss 0.822, against 0.830 if their misses were independent. They never catch the same episode, and only 0.79 joint catches would be expected by chance, so this is not evidence either way.
+- **Step-score correlation** within scenario × round: probe–Jev 0.23, probe–nano 0.09, Jev–nano 0.17. All are low, so the methods carry partly different information.
+- **Authority/approval claims:** 21 tagged steps, 12 of them held. No reliable shift in scores. GPT-5-nano shows a nominal +0.15 on non-positive steps, which is not causal.
