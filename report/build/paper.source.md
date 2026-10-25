@@ -6,7 +6,7 @@ this file from here on. Assembled 25 Oct 2026. -->
 
 # Recruited  *(working title — decide last)*
 
-Authors: [TODO]  ·  Affiliation: [TODO]
+Leonidas Raghav, Independent
 
 ---
 
@@ -18,7 +18,7 @@ Can we tell that an AI agent is about to be talked into breaking its operator's 
 
 ## 1. Introduction
 
-Through 2026, autonomous agents pursuing ordinary goals have broken the rules of the systems they run in, often with more than one agent involved. In the 2026 OpenAI–Hugging Face incident [@openai2026huggingface], agents under task pressure used access they were not meant to use; METR and Redwood Research investigated independently [@greenblatt2026incident]. Such coordinated rule-breaking often begins with recruitment: one agent needs something it cannot reach, and another has the access.
+In July 2026, AI agents running in OpenAI's internal cyber evaluations coordinated on an unsanctioned shared message board, passed stolen credentials to one another, and broke out of their sandboxes to compromise Hugging Face's production infrastructure [@openai2026huggingface]. An independent investigation found that roughly 700 of about 1,200 agents that were meant to be isolated joined in, some recruited under "significant pressure" from other agents, and many despite recognising the activity as "out of scope and unethical" [@greenblatt2026incident]. Coordinated rule-breaking of this kind begins with recruitment: one agent needs something it cannot reach, and another has the access.
 
 We study that first step. In our main scenario the operator gives the target a staging deploy token and one rule: never share it outside the file that holds it. A peer agent needs the token and asks for it. Handing it over is an ordinary action, so what makes compliance a violation is the operator's rule, which keeps the question about policy rather than about a model's refusal training.
 
@@ -56,23 +56,21 @@ No prior work reads the activations of an agent being recruited by a peer, at ev
 
 ### 3.1 Setup
 
-A **target agent** works in a mocked workspace: tools act in memory, with no real system, credential, or network. Its operator task is ordinary, to read a small configuration file and write a short status report, under one rule: do not share a protected value outside the file that holds it. In the main scenario that value is a staging deploy token. A **peer agent** shares a team channel, needs the value for its own task, but cannot read the file. Each episode runs up to 20 rounds. In every round the peer posts first, then the target takes a turn of tool calls (read a file, write a file, send a channel message) and an optional message. The forbidden action is the protected value appearing in a channel post or a new file, decided by a rule on the tool log rather than by judgement. A **give-in** is scored only when the complete value is published; partial disclosures do not count, so the rate is conservative. A secondary decision model labels each give-in deliberate or accidental (validation against blind human labels in the appendix).
+A **target agent** works in a mocked workspace (tools act in memory, with no real system, credential, or network). Its operator task is ordinary (read a small configuration file, write a short status report) under one rule: do not share a protected value outside the file that holds it. In the main scenario that value is a staging deploy token. A **peer agent** shares a team channel and needs the value but cannot read the file. Each episode runs up to 20 rounds; the peer posts first, then the target takes a turn of tool calls (read a file, write a file, send a channel message). The forbidden action is the complete value appearing in a channel post or a new file, decided by a rule on the tool log rather than by judgement; partial disclosures do not count. A secondary decision model labels each give-in deliberate or accidental (Appendix D).
 
-Each scenario runs in three conditions, each with a purpose: **recruiting** (the peer asks for the value) is the test; a **control** peer (same scenario, normal collaboration, no forbidden ask) shows that leaks need the ask; and the **target alone** (no peer) is the floor. Controls and alone episodes never leaked. The peer is not told the operator's rule. It is a blocked teammate pushing for what it needs, not an agent scripted to cause a violation, so we study recruitment that arises from an ordinary conflict of goals.
+Each scenario runs in three conditions: **recruiting** (the peer asks for the value), a **control** peer (no forbidden ask), and the **target alone**. Controls and alone episodes never leaked, and the purpose of each condition is in Appendix C. The peer is not told the rule, so we study recruitment that arises from an ordinary conflict of goals. In 17 of the 241 scored recruiting episodes the peer also carried a single persuasion tactic (three tactics, in 5, 6 and 6 episodes; defined in Appendix G).
 
-Six scenarios are built from one task template, which fixes the structure while varying the surface domain (a credential, a number, a text value, or code); each is grounded in a real incident type (appendix scenario table). Repeated rounds follow prior multi-round persuasion setups: @shi2026 use ten rounds and @agrawal2025 15–30. We use custom scenarios because existing agent environments are games and markets, whereas we study ordinary agent workflows. The target is Qwen3-32B [@yang2025qwen3] with thinking disabled; the peer is DeepSeek-V4-Flash [@deepseek2026v4flash]. Both run via OpenRouter at temperature 0.7 on one pinned provider. In 17 of the 241 scored recruiting episodes the peer also carried a single persuasion tactic (three tactics, in 5, 6 and 6 episodes); the tactics are defined in Appendix G. Figure 1b shows the setup and what each detector reads.
-
-A real exchange from one give-in episode appears in Figure 1a: the target refuses and cites the operator's policy, the peer reframes its request as a routine inter-agent handoff, and the target then posts the token. The full annotated version is in Appendix C.
+Six scenarios are built from one task template that fixes the structure while varying the surface domain (a credential, a number, a text value, or code), each grounded in a real incident type (Appendix C). The target is Qwen3-32B [@yang2025qwen3] with thinking disabled; the peer is DeepSeek-V4-Flash [@deepseek2026v4flash]. Why these scenarios and models, the repeated-round precedent [@shi2026; @agrawal2025], and the serving details are in Appendices C and B. Figure 1b shows the setup and what each detector reads; a real exchange from one give-in episode is in Figure 1a, annotated in full in Appendix C.
 
 ### 3.2 Data
 
-To read the target's internal activations we **replay** every saved target request through the open-weight Qwen3-32B checkpoint on an A100-80GB GPU, reading the **residual stream** (the model's running internal representation) at the last prompt token before each reply. The replay reproduces the served replies closely (high reply likelihood and top-5 token agreement), so the activations reflect the model that acted (fidelity numbers in the Experimental Pipeline and Reproducibility appendix). Across a **first data batch** and a later **new-episode set**, the combined data is **6,404 eligible steps from 338 episodes**, of which **4,697 steps from 241 recruiting episodes** are scored (control and target-alone steps are used only for fold assignment); the new-episode set serves first as a held-out confirmation set and is then pooled (§3.5, §4). The full pipeline from collected episodes to scored steps, with per-batch and per-scenario counts and the settings at each stage, is in the Experimental Pipeline and Reproducibility appendix.
+To read the target's internal activations we **replay** every saved target request through the open-weight Qwen3-32B checkpoint on a GPU, reading the **residual stream** (the model's running internal representation) at the last prompt token before each reply; the replay reproduces the served replies closely, so the activations reflect the model that acted. The combined data is **6,404 eligible steps from 338 episodes**, of which **4,697 steps from 241 recruiting episodes** are scored (control and target-alone steps are used only for fold assignment). A later **new-episode set** serves first as a held-out confirmation set and is then pooled (§3.5, §4). The full pipeline, per-batch and per-scenario counts, and replay fidelity are in Appendix B.
 
 ### 3.3 What gets scored
 
-Every detector is scored only on **eligible steps**: steps where the target has read the protected value (the deploy token, in the main scenario) and has not yet disclosed it. Steps before the read cannot produce a give-in. Including them would let a detector win by detecting that the file was read: an activation probe does exactly this, reaching an exposure-detection AUROC of 1.000 on held-out scenario families (positive control; appendix). Steps after disclosure are detection after the fact. The eligible window isolates the question we care about: given that the target could give in, can a detector see it coming? A few immediate give-ins, and episodes that never read the value, contribute no eligible step (counts in the appendix).
+Every detector is scored only on **eligible steps**: steps where the target has read the protected value and has not yet disclosed it. Steps before the read cannot produce a give-in, and including them lets a detector win by detecting that the file was read: an activation probe reaches an exposure-detection AUROC of 1.000 (positive control; Appendix B). Steps after disclosure are detection after the fact. The window isolates the question we care about: given that the target could give in, can a detector see it coming?
 
-On these steps we score two labels. Under the **eventual** label, every eligible step of an episode that eventually gives in is positive. Under the **near-term** label, the target gives in this round or the next: a step is positive only if the first forbidden action falls in the current round or the next, and earlier steps are negative. The near-term label is our primary one, the question a live alarm must answer. Two secondary near-term variants appear only in the appendix. We defined the near-term label after seeing the eventual result, so we validate it on the new-episode set (§3.5, §4). Figure 1c shows both labels on a toy episode.
+We score two labels (Figure 1c). Under the **eventual** label, every eligible step of an episode that eventually gives in is positive. Under the **near-term** label, our primary one, a step is positive only if the first forbidden action falls in the current round or the next. We defined the near-term label after seeing the eventual result, so we validate it on the new-episode set (§3.5, §4). Secondary label variants and the window's cost are in Appendix D.
 
 ![Figure 1](figures/figure1_setup.png)
 
@@ -80,41 +78,27 @@ On these steps we score two labels. Under the **eventual** label, every eligible
 
 ### 3.4 Detectors
 
-A **probe** is a linear classifier (logistic regression) on the residual-stream vector at the last prompt token before each target reply. The layer is chosen inside each training fold on an inner holdout; the probe is trained on recruiting episodes only, and families of related variants never cross a train/test boundary (recipe and remaining settings in the appendix). The recipe follows standard linear-probe practice [@goldowskydill2025] with layer selection on validation [@kramar2026].
+A **probe** is a linear classifier (logistic regression) on the residual-stream vector at the last prompt token before each target reply; the layer is chosen inside each training fold, the probe is trained on recruiting episodes only, and families of related variants never cross a train/test boundary (full recipe in Appendix E). It follows standard linear-probe practice [@goldowskydill2025] with layer selection on validation [@kramar2026].
 
-A **text monitor** reads what the agents say and do, with no access to activations. We use three monitor models: GPT-5-nano as an LLM judge that returns a 0–100 score, and two **decision models** (Jev 1.14, TypeSafe [@typesafe2026jev], and Luna Decisions, OpenAI [@openai2026luna]), which return a probability over a fixed set of answer options rather than free text. Each monitor is asked two questions: a **detector** question ("is the target breaking the rule now?") and a **forecaster** question ("will it break the rule at any later point?"). Each runs at three levels of access: **actions only** (the target's tool calls and posted messages); **the conversation**, which adds the peer's messages; and **everything the target saw**, which adds the target's unposted text and tool results (there is no reasoning trace, as thinking is off). Prompt wording, the full setup ladder, and costs are in the appendix.
+A **text monitor** reads what the agents say and do, with no access to activations: an LLM judge (GPT-5-nano) and two **decision models** (Jev 1.14 and Luna Decisions), which return a probability over fixed options and are defined in Appendix E. Each monitor is asked a **detector** question ("is the target breaking the rule now?") or a **forecaster** question ("will it break the rule at any later point?"), at three levels of access: **actions only**; **the conversation**, which adds the peer's messages; and **everything the target saw**, which adds the target's unposted text and tool results (there is no reasoning trace, as thinking is off).
 
 ### 3.5 Evaluation
 
-Our primary metric is **within scenario × round AUROC** (area under the ROC curve; 0.5 = chance): each positive step is compared only with negative steps from the same scenario and the same round, and the per-group scores are averaged weighted by positives. For example, a give-in step at round 7 of one scenario is ranked only against held steps at round 7 of that scenario, never against other rounds or scenarios. We stratify this way because round number alone scores 0.71 pooled (later rounds mostly belong to episodes that give in) and base rates differ across scenarios; within a group both confounds are 0.5 by construction.
+Our primary metric is **within scenario × round AUROC** (area under the ROC curve; 0.5 = chance): each positive step is compared only with negatives from the same scenario and round (for example, a give-in at round 7 is ranked only against held steps at round 7 of that scenario). We stratify because round number alone scores 0.71 pooled, and base rates differ across scenarios.
 
-We report a **held-out scenario** evaluation (leave one scenario out: train on five scenarios, test on the sixth, rotate, and pool), our headline for an unseen scenario. The **new-episode confirmation set** is scored once under the frozen plan. We fixed the label, probe recipe, monitors and success criteria in writing before collecting that set, so a result on it cannot come from choices made after seeing it. A **combination test** asks whether the probe adds to a text monitor, comparing a model built on round, prompt length, and the monitor score against the same plus the probe score. Pooled cross-validation, confidence-interval construction (95% family bootstraps), and an alarm analysis are in the appendix.
+We report a **held-out scenario** evaluation (leave one scenario out, rotate, and pool), our headline for an unseen scenario, and a **new-episode confirmation set** scored once under a plan fixed in advance, so a result on it cannot come from choices made after seeing it. A **combination test** asks whether the probe adds to a text monitor. Confidence intervals (95% family bootstraps), pooled cross-validation, and the alarm analysis are in Appendices E and B.
 
 ### 3.6 Second target
 
-**[Placeholder — pending the second-target run.]** To test whether the pipeline carries to another model, we apply it unchanged to a second target (gpt-oss-20b [@openai2025gptoss]) under a fixed-versus-varied protocol. Held fixed across targets: the scenario template, operator rule, and protected value; the forbidden-action rule decided from the tool log; the eligible-step window; the labels and the within scenario × round metric; the detector recipes; and the matched controls. Allowed to vary per target: the peer model (DeepSeek-V4-Flash for the main target, V4-Pro for the second) and its system prompt and strategy, and the amount of exploratory prompt development. The peer strategy for each target is chosen on behaviour alone and frozen before any probe or monitor sees the data; a strategy qualifies only if the target reads the value before any disclosure, there is at least one eligible step between the read and the leak, some episodes give in and some hold, and the matched controls never leak. [Results and the full fixed-versus-varied table: §4 and appendix.]
+The same pipeline is applied, unchanged, to gpt-oss-20b [@openai2025gptoss]. Only the peer's model and strategy vary, chosen on behaviour alone and frozen before any detector sees the data; the fixed-versus-varied protocol and the second-target results are in Appendix F and §4.6.
 
 ---
 
 ## 4. Results
 
-> Headline scores are within scenario × round AUROC and carry their denominators; every number traces to a `report/figures/*.csv` or a run report. Figures 1 and 2 are placed together near the top of page 2 at render.
-
 ### 4.1 The setup produces mixed outcomes
 
-Under a recruiting peer, Qwen3-32B gives in on 100 of 226 analysed episodes (44.2%, Wilson 95% [37.9, 50.8]), and the rate ranges from 36.1% to 65.6% across the six scenarios (Table 1). The setup is a behavioural positive control: control-peer and target-alone episodes never leak (0 of 66 and 0 of 25). These behaviour counts come from the plain-peer episodes and differ from the 241 recruiting episodes scored for prediction, for the reasons given in the Pipeline appendix.
-
-| Scenario | Recruiting give-ins / analysed | Rate [95% CI] | Control | Alone |
-|---|---|---|---|---|
-| Deployment credential | 21/32 | 65.6% [48.3, 79.6] | 0/15 | 0/6 |
-| Dispatch integration code | 20/40 | 50.0% [35.2, 64.8] | 0/10 | 0/4 |
-| Handoff exception note | 18/45 | 40.0% [27.0, 54.5] | 0/10 | 0/4 |
-| Procurement reserve price | 12/29 | 41.4% [25.5, 59.3] | 0/11 | 0/3 |
-| Service capacity figure | 16/44 | 36.4% [23.8, 51.1] | 0/12 | 0/4 |
-| Service rollout threshold | 13/36 | 36.1% [22.5, 52.4] | 0/8 | 0/4 |
-| **Total** | **100/226** | **44.2% [37.9, 50.8]** | **0/66** | **0/25** |
-
-**Table 1.** Under the same peer pressure, give-in rates range from 36% to 66% across six scenarios, while controls never leak. Give-ins over analysed episodes (plain-peer slice), with Wilson 95% intervals for the recruiting rate; accidental disclosures count. The behaviour slice and the smaller scored cohort (4,697 recruiting steps from 241 episodes) differ, for the reasons in the Pipeline appendix.
+Under a recruiting peer, Qwen3-32B gives in on 100 of 226 episodes (44%), from 36% to 66% across the six scenarios; control and target-alone episodes never leak (0 of 66 and 0 of 25). Per-scenario rates and the scored cohort are in Appendix C.
 
 ### 4.2 Eventual give-in is barely predictable from one step
 
@@ -126,7 +110,7 @@ For the near-term label, on the same held-out steps (250 near-term positives), t
 
 ![Figure 2. Predicting eventual and near-term give-in](figures/figure2_prediction.png)
 
-**Figure 2.** Whether the target gives in eventually is barely predictable; whether it gives in this round or the next is modestly predictable, and best by a text forecaster. Within scenario × round AUROC (0.5 = chance) on 4,697 recruiting steps from 241 episodes; whiskers are 95% family-bootstrap intervals. Filled markers: held-out scenarios, all data; text monitors are fixed and scored on the same steps. Hollow markers: the new-episode set (1,787 steps from 89 episodes, 82 near-term positives), scored once under a plan fixed in advance (near-term only, so panel (a) has no hollow markers). The all-data set includes the confirmation episodes, so filled and hollow estimates are not independent replications.
+**Figure 2.** Eventual give-in is barely predictable; near-term give-in is modestly predictable, and best by a text forecaster. Within scenario × round AUROC (0.5 = chance) on 4,697 recruiting steps from 241 episodes; whiskers are 95% family-bootstrap intervals. Filled: held-out scenarios, all data. Hollow: the new-episode confirmation set (near-term only). The two sets overlap, so they are not independent replications.
 
 ### 4.4 The near-term result holds on new episodes
 
@@ -134,24 +118,9 @@ We collected 89 new episodes after the analysis plan was fixed and scored them o
 
 ### 4.5 Forecasting monitors with the conversation work best; probes help weaker monitors
 
-For the near-term label on the same steps, asking Jev to forecast ("will it break the rule?") beats asking it to detect ("is it breaking the rule now?") at the same access: 0.650 versus 0.578 with everything the target saw. The gain comes from the peer's messages. On the first data batch, the only one with the full three-monitor access ladder (2,910 steps, 168 positives), adding the conversation to Jev's actions-only view adds +0.123 [0.063, 0.176], while adding everything else the target saw adds only +0.025 [-0.004, 0.054] (interval includes zero). More access does not help every monitor: GPT-5-nano and Luna do not gain from it (monitor-design figure).
+For the near-term label, asking Jev to forecast beats asking it to detect (0.650 versus 0.578 with everything the target saw). The gain comes from the peer's messages: adding the conversation to Jev's actions-only view adds +0.123 [0.063, 0.176], while adding everything else the target saw adds only +0.025 [-0.004, 0.054] (interval includes zero). More access does not help every monitor (Appendix E, monitor-design figure).
 
-The activation probe adds to the weaker monitor, not the strong forecaster. Stacking the probe on GPT-5-nano (detector with the conversation) lifts near-term AUROC by +0.081 [0.038, 0.126] in pooled cross-validation and +0.113 [0.025, 0.203] on the confirmation set, but the held-out-scenario gain is +0.022 [-0.013, 0.059] (interval includes zero). It does not clearly add to the Jev forecaster (held-out gain +0.003 [-0.011, 0.018]; Table 2). This agrees with the closest precedent, where combining an activation monitor with forecasts gave no clear gain over a strong forecaster [@gao2026], and extends it with a gain over a weaker judge. The probe and the monitors rank steps differently (within scenario × round Spearman 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano detector; exploratory), consistent with the probe adding most to the weaker monitor.
-
-![Monitor-design figure](figures/figure_monitor_design.png)
-
-**Monitor-design figure.** A forecasting question and the peer's messages make the biggest difference; more access does not help every monitor. Near-term within scenario × round AUROC on Qwen3-32B, with 95% family-bootstrap intervals and a chance line at 0.5. Panel (a) compares the Jev detector and forecaster questions on all data (4,697 steps, 250 positives). Panel (b) compares forecasters on the first data batch only (2,910 steps, 168 positives), the only batch with the full three-monitor ladder. Actions-only input is the target's tool calls and posted messages; the conversation adds the peer's messages; everything the target saw also adds unposted target text and tool results. The two panels use different cohorts and are not paired.
-
-| Evaluation | Monitor | Baseline [95% CI] | + probe [95% CI] | Paired gain [95% CI] |
-|---|---|---|---|---|
-| Held-out scenario | Jev forecaster | 0.645 [0.603, 0.683] | 0.649 [0.608, 0.688] | +0.003 [-0.011, +0.018] |
-| Held-out scenario | GPT-5-nano detector | 0.554 [0.512, 0.594] | 0.576 [0.535, 0.615] | +0.022 [-0.013, +0.059] |
-| Pooled family CV | Jev forecaster | 0.615 [0.572, 0.651] | 0.623 [0.582, 0.665] | +0.008 [-0.020, +0.039] |
-| Pooled family CV | GPT-5-nano detector | 0.494 [0.453, 0.534] | 0.575 [0.531, 0.619] | +0.081 [+0.038, +0.126] |
-| New-episode confirmation | Jev forecaster | 0.643 [0.556, 0.723] | 0.695 [0.624, 0.763] | +0.052 [-0.014, +0.121] |
-| New-episode confirmation | GPT-5-nano detector | 0.554 [0.471, 0.633] | 0.667 [0.580, 0.750] | +0.113 [+0.025, +0.203] |
-
-**Table 2.** The probe adds to the weaker monitor in pooled cross-validation and on confirmation, but not to the strong forecaster. Near-term within scenario × round AUROC on Qwen3-32B. The baseline is a cross-fitted model of round, log prompt length and the monitor score; the combined model adds the probe score. Jev uses the forecaster question with everything the target saw; GPT-5-nano uses the detector question with the conversation. Held-out-scenario and pooled family cross-validation use all data (4,697 steps, 250 positives); the frozen-plan confirmation trains on the first batch and evaluates 89 new episodes (1,787 steps, 82 positives). Gains use paired resamples. The confirmation episodes are part of the all-data pool, so these estimates are not independent.
+The activation probe adds to the weaker monitor, not the strong forecaster. Stacking it on GPT-5-nano lifts near-term AUROC by +0.081 [0.038, 0.126] in pooled cross-validation and +0.113 [0.025, 0.203] on the confirmation set, but the held-out-scenario gain is +0.022 [-0.013, 0.059] (interval includes zero); it does not clearly add to the Jev forecaster (held-out +0.003 [-0.011, 0.018]). Figure 2 plots the combined rows, and Table 2 (Appendix E) gives the full gains. This agrees with the closest precedent, where a combined monitor gave no clear gain over a strong forecaster [@gao2026], and extends it with a gain over a weaker judge.
 
 ### 4.6 Does it transfer to a second target?
 **[TODO — conditional on the gpt-oss run.]** Only if the second-target pipeline produces a result; otherwise one sentence in 4.1 or Discussion plus an appendix.
@@ -160,23 +129,23 @@ The activation probe adds to the weaker monitor, not the strong forecaster. Stac
 
 ## 5. Discussion and Limitations
 
-Two patterns organise these results. First, prediction depends on the horizon. Whether an episode will eventually give in is close to unreadable from a single step, while whether it will give in within a round or two is modestly readable. One reading, consistent with the branching check (Appendix H), is that the outcome is not yet settled at most steps: the same held state can still go either way, and a signal appears only as the decision approaches. The alternative is that an early signal exists but our probes and text monitors miss it. This is also why a useful warning arrives only shortly before the act. Second, what a detector reads matters more than which detector it is. The largest single gain came from giving a text monitor the peer's messages and asking it to forecast rather than to judge the current step, and the activation probe helped a weak monitor in pooled and new-episode tests but not a strong one. For an overseer, the first lever is the monitor's framing and inputs, with internal signals as a complement where the text is weak.
+Two patterns organise these results. First, prediction depends on the horizon: eventual give-in is close to unreadable from a single step, while near-term give-in is modestly readable. One reading, consistent with the branching check (Appendix H), is that the outcome is not yet settled at most steps, so a signal appears only as the decision approaches; the alternative is that an early signal exists but our detectors miss it. Either way, a useful warning arrives only shortly before the act. Second, what a detector reads matters more than which detector it is: the largest gain came from giving a text monitor the peer's messages and asking it to forecast, and the probe helped a weak monitor but not a strong one. For an overseer, the first lever is the monitor's framing and inputs, with internal signals as a complement where the text is weak.
 
 **For monitor builders.** Ask the monitor a forecasting question rather than a detection one. Give it the other agent's messages, not only the target's own actions. And expect an activation probe to help most when the text monitor is weak, and little when it is already strong.
 
 ### Limitations
-This is one target model (Qwen3-32B) on six scenarios built from a single task template, so the rates and the predictability are specific to this setting, not a claim about agents in general. Probes read the last prompt token, so a decision that forms within the reply would be understated. The deliberate-versus-accidental split relies on a single automated judge (validated against hand labels on 36 of 40 give-ins), and the near-term labels were defined after seeing the eventual result, which the confirmation set guards against. The full list, with the dual-use statement, is in Appendix A.
+One target model (Qwen3-32B) on six scenarios from one task template. Probes read the last prompt token, so a decision that forms within the reply is understated. The deliberate/accidental split relies on one automated judge (36 of 40 against hand labels). The near-term label was chosen after seeing the eventual result, which the confirmation set guards against. The environment is synthetic. Full list and dual-use statement: Appendix A.
 
 ### Future Work
-The clearest next step is a second target with a different route to giving in; our second-target lane (Appendix F) begins this. Beyond that: warning signals that hold across models and settings, probes read at the decision token rather than the last prompt token, and a stronger ensemble of text monitors, so the probe's complementary value can be tested against the best available judge rather than only a weak one.
+A second target with a different route to giving in (Appendix F begins this). Then: warning signals that transfer across models and settings, probes read at the decision token rather than the last prompt token, and a stronger monitor ensemble, to test the probe's complement against the best judge rather than a weak one.
 
 ---
 
 ## 6. Conclusion
 
-A peer agent can push a target into breaking its operator's rule, and we asked whether that break can be forecast. On Qwen3-32B across six scenarios, eventual give-in is barely predictable from a single step, but near-term give-in is modestly predictable, and the result held on new episodes under a plan fixed in advance. A probe that detects the pressure almost perfectly still cannot say who gives in, so near-term prediction reads more than the pressure alone.
+A peer agent can push a target into breaking its operator's rule. On Qwen3-32B across six scenarios, eventual give-in is barely predictable from a single step, but near-term give-in is modestly predictable, and it held on new episodes under a plan fixed in advance. A probe that detects the pressure still cannot say who gives in.
 
-For building monitors, framing and inputs matter most: a forecasting question and the peer's side of the conversation carry the gain, and an activation probe adds to a weak monitor in pooled and new-episode tests though not to a strong one. Earlier, transferable warning signals would let an overseer interrupt recruitment before it succeeds; the setup and matched scoring here are a step toward building them.
+For monitors, a forecasting question and the peer's messages carry the gain, and a probe helps a weak monitor but not a strong one. Earlier, transferable warning signals would let an overseer interrupt recruitment before it succeeds; the setup and matched scoring here are a step toward building them.
 
 ---
 
@@ -186,13 +155,13 @@ The code, prompts, scoring scripts, saved activations and transcripts are releas
 
 ---
 
-> Generated by pandoc citeproc from `report/references.bib` (built by claude-2), author–year per `report/CITATIONS.md`. In-text citations are being converted from inline arXiv IDs to pandoc author–year keys as they land.
+## References
+
+<!-- Generated by pandoc --citeproc from report/references.bib; the list renders here. -->
 
 ---
 
 ## Appendix
-
-> Nine appendices, A–I, each answering one question a reader has after a given part of the main text. Appendix A's title matches the organisers' requirement. Content marked **[TODO]** is not yet written; the source run for each is named inline.
 
 ### A. Limitations and Dual-Use / Ethical Considerations  *(required)*
 
@@ -235,7 +204,19 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 
 *What does an episode look like, which scenarios did we build and why, and why Qwen3-32B?*
 
-- **Scenario table [TODO]:** one row per scenario — surface domain, protected value, the real incident type it is grounded in, episodes and give-ins. Table 1 already gives the rates, so only the incident-type column is new. Source: `report/figures/table1_behaviour.csv`, `docs/scenario_guidelines.md`.
+- **Scenario table (Table 1, moved from §4.1).** Per-scenario give-in rates for the plain-peer behaviour slice; the incident-type and protected-value columns are still to be added [TODO].
+
+  | Scenario | Recruiting give-ins / analysed | Rate [95% CI] | Control | Alone |
+  |---|---|---|---|---|
+  | Deployment credential | 21/32 | 65.6% [48.3, 79.6] | 0/15 | 0/6 |
+  | Dispatch integration code | 20/40 | 50.0% [35.2, 64.8] | 0/10 | 0/4 |
+  | Handoff exception note | 18/45 | 40.0% [27.0, 54.5] | 0/10 | 0/4 |
+  | Procurement reserve price | 12/29 | 41.4% [25.5, 59.3] | 0/11 | 0/3 |
+  | Service capacity figure | 16/44 | 36.4% [23.8, 51.1] | 0/12 | 0/4 |
+  | Service rollout threshold | 13/36 | 36.1% [22.5, 52.4] | 0/8 | 0/4 |
+  | **Total** | **100/226** | **44.2% [37.9, 50.8]** | **0/66** | **0/25** |
+
+  **Table 1.** Give-in rates range from 36% to 66% across six scenarios, while controls never leak. Give-ins over analysed episodes (plain-peer slice), with Wilson 95% intervals; accidental disclosures count. The behaviour slice differs from the smaller scored cohort (4,697 recruiting steps from 241 episodes; see Appendix B): not every episode was replayed, and invalid episodes and those with no scored step are dropped.
 - **Example give-in (episode-0032; deploy-token scenario, recruiting, plain peer).** The target reads the token in round 1 and refuses in rounds 2–5, citing the operator's policy; in round 5 it even refuses to confirm the token's prefix. In round 6 the peer reframes the request as a routine inter-agent handoff, and the target posts the token. Eligible steps are rounds 2–6; the near-term label is positive in rounds 5–6. The same excerpt is panel (a) of Figure 1.
 
   | Round | Speaker | Line |
@@ -267,16 +248,36 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 
 **Probe recipe.** Logistic regression with L2 regularisation (C = 0.1), feature standardisation using training-rows-only statistics, and step weights so positives and negatives contribute equally within each round, on the 5,120-dimensional residual stream at the last prompt token before each target reply. The layer is chosen inside each training fold from 17 candidates (layers 0, 4, …, 60, 63) on a 25% inner family holdout (the "nested" probe); a fixed-layer-32 variant is reported as a check. Three split seeds (42, 43, 44) are averaged. The probe is trained on recruiting episodes only, and families of related variants never cross a train/test boundary. The recipe follows @goldowskydill2025 and @kramar2026.
 
-**Monitor setups.** Three monitor models: GPT-5-nano (LLM judge, 0–100 score) and two decision models, Jev 1.14 (TypeSafe) and Luna Decisions (OpenAI), which return a probability over fixed yes/no options with no written rationale; the option order is randomised per step. Prompts are adapted from the UK AISI ControlArena `default.txt` template (MIT) [@controlarena2026], with warning signs and guiding questions, the score anchored only at its ends, and the rule text filled in per scenario. The full set of 3 models × 2 questions × 3 access levels = 18 setups ran on the first data batch (75,312 calls, \$12.67: Jev \$2.03, GPT-5-nano \$6.53, Luna \$4.11); the new episodes used an 8-setup subset fixed in advance (all six Jev setups plus GPT-5-nano detector and forecaster at the conversation level). Luna is at chance as a forecaster on the first data batch (actions only 0.517, conversation 0.496, everything the target saw 0.505) and was dropped from the new-episode runs for cost. **[TODO]** the full setup → AUROC grid on both labels as one table. Source: `runs/20261025-0147-e06-monitor-main`, `experiments/E06-monitors/PROMPTS.md`.
+**Monitor setups.** Three monitor models: GPT-5-nano (LLM judge, 0–100 score) and two decision models, Jev 1.14 (TypeSafe) [@typesafe2026jev] and Luna Decisions (OpenAI) [@openai2026luna], which return a probability over fixed yes/no options with no written rationale; the option order is randomised per step. Prompts are adapted from the UK AISI ControlArena `default.txt` template (MIT) [@controlarena2026], with warning signs and guiding questions, the score anchored only at its ends, and the rule text filled in per scenario. The full set of 3 models × 2 questions × 3 access levels = 18 setups ran on the first data batch (75,312 calls, \$12.67: Jev \$2.03, GPT-5-nano \$6.53, Luna \$4.11); the new episodes used an 8-setup subset fixed in advance (all six Jev setups plus GPT-5-nano detector and forecaster at the conversation level). Luna is at chance as a forecaster on the first data batch (actions only 0.517, conversation 0.496, everything the target saw 0.505) and was dropped from the new-episode runs for cost. **[TODO]** the full setup → AUROC grid on both labels as one table. Source: `runs/20261025-0147-e06-monitor-main`, `experiments/E06-monitors/PROMPTS.md`.
 
 **Evaluation.** Held-out scenario (leave one scenario out) trains on five scenarios, tests on the sixth, rotates, and pools; pooled family cross-validation uses five folds grouped by family. Confidence intervals are 95% family bootstraps (1,000 resamples, seed 20261025), conditional on the fitted models. The combination test stacks a logistic model on round, log prompt length and the monitor score, and compares it with and without the probe score, reporting the paired family-bootstrap difference. The alarm analysis sets a score cutoff on benign (held) episodes for a 5% false-alarm target and reports recall and false alarms on held recruiting episodes.
 
 **Pooled CV and fold mixing.** Pooled-CV baselines can fall below 0.5 because scores from different fitted fold models are compared within one scenario × round group; the fold-stratified variant compares only scores from the same fitted fold model. Held-out scenario and the confirmation test are unaffected. **[TODO]** fold-stratified numbers. Source: `runs/20261025-1456-e05-all-data-main/report.md`.
 
+**Monitor-design figure (moved from §4.5).**
+
+![Monitor-design figure](figures/figure_monitor_design.png)
+
+**Monitor-design figure.** A forecasting question and the peer's messages make the biggest difference; more access does not help every monitor. Near-term within scenario × round AUROC on Qwen3-32B, 95% family-bootstrap intervals, chance line at 0.5. Panel (a) compares the Jev detector and forecaster questions on all data (4,697 steps, 250 positives); panel (b) compares forecasters on the first data batch only (2,910 steps, 168 positives), the only batch with the full three-monitor ladder. The two panels use different cohorts and are not paired.
+
+**Combination test (Table 2, moved from §4.5).**
+
+| Evaluation | Monitor | Baseline [95% CI] | + probe [95% CI] | Paired gain [95% CI] |
+|---|---|---|---|---|
+| Held-out scenario | Jev forecaster | 0.645 [0.603, 0.683] | 0.649 [0.608, 0.688] | +0.003 [-0.011, +0.018] |
+| Held-out scenario | GPT-5-nano detector | 0.554 [0.512, 0.594] | 0.576 [0.535, 0.615] | +0.022 [-0.013, +0.059] |
+| Pooled family CV | Jev forecaster | 0.615 [0.572, 0.651] | 0.623 [0.582, 0.665] | +0.008 [-0.020, +0.039] |
+| Pooled family CV | GPT-5-nano detector | 0.494 [0.453, 0.534] | 0.575 [0.531, 0.619] | +0.081 [+0.038, +0.126] |
+| New-episode confirmation | Jev forecaster | 0.643 [0.556, 0.723] | 0.695 [0.624, 0.763] | +0.052 [-0.014, +0.121] |
+| New-episode confirmation | GPT-5-nano detector | 0.554 [0.471, 0.633] | 0.667 [0.580, 0.750] | +0.113 [+0.025, +0.203] |
+
+**Table 2.** The probe adds to the weaker monitor in pooled cross-validation and on confirmation, but not to the strong forecaster. Near-term within scenario × round AUROC on Qwen3-32B. The baseline is a cross-fitted model of round, log prompt length and the monitor score; the combined model adds the probe score. Jev uses the forecaster question with everything the target saw; GPT-5-nano uses the detector question with the conversation. Held-out-scenario and pooled family cross-validation use all data (4,697 steps, 250 positives); the frozen-plan confirmation evaluates 89 new episodes (1,787 steps, 82 positives). Gains use paired resamples. The confirmation episodes are part of the all-data pool, so these estimates are not independent. The probe and the monitors rank steps differently (within scenario × round Spearman 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano detector; exploratory).
+
 ### F. Second Target: gpt-oss-20b (and Gemma-4-31B)
 
 *Does the setup, and the detection result, carry to a differently trained model, and what had to change?* Both branches below are kept until the replay outcome is known; gpt-oss numbers are never pooled with Qwen's. **[codex-2 owns the gpt-oss numbers.]**
 
+- **Fixed-versus-varied protocol.** Held fixed across targets: the scenario template, operator rule, and protected value; the forbidden-action rule from the tool log; the eligible-step window; the labels and the within scenario × round metric; the detector recipes; and the matched controls. Allowed to vary per target: the peer model (DeepSeek-V4-Flash for the main target, V4-Pro for the second), its system prompt and strategy, and the amount of exploratory prompt development. A peer strategy qualifies only if the target reads the value before any disclosure, there is at least one eligible step between the read and the leak, some episodes give in and some hold, and the matched controls never leak.
 - **Behaviour [source ready]:** blunt pressure fails (gpt-oss 0/27, Gemma 1/35). A delayed whole-configuration-block request passes the selection gate; the scaled collection gives 128/300 channel give-ins, controls 0/60. Gemma stays file-only and behaviour-only.
 - **Rule amendments:** a public-only cutoff (reasoning mentions are not leaks) and the eligibility rule shared with Qwen (Addendum 6 of the frozen plan).
 - **Disclosure-kind judge:** 198/200 deliberate, 0 accidental, 2 uncertain. The first public emission is `write_file` in 196/200; when the token reaches the channel it is almost always the end-of-turn reply (127 of 128).

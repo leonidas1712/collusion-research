@@ -1,25 +1,27 @@
 # Render the full paper
 
-From the repository root, use the bundled Python runtime (the root project environment does not include python-docx):
+Install Python 3.11 or later, [uv](https://docs.astral.sh/uv/), Pandoc, LibreOffice, and Poppler. The commands `pandoc`, `soffice` (or `libreoffice`), `pdftoppm`, and `pdftotext` must be on PATH. Install the Old Standard TT font for consistent pagination; the reference document also contains embedded fonts.
+
+From the repository root:
 
 ```sh
-~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python report/build_paper.py
+uv run --with python-docx --with lxml --with pillow --with pypdf python report/build_paper.py
 ```
 
-Pandoc must be on PATH. The builder uses `--citeproc`, `report/references.bib`, the vendored `report/apa.csl`, and `--reference-doc=report/template.docx`. The CSL comes from https://github.com/citation-style-language/styles/blob/master/apa.csl (CC BY-SA 3.0; license is recorded in the file). It then formats native tables, restores the template's Old Standard TT font, and invokes the documents plugin's `render_docx.py` with the bundled LibreOffice renderer. It repairs Pandoc's missing content-type declaration for the template's embedded TTFs.
+This command installs the Python dependencies in a temporary uv environment. It uses system LibreOffice in headless mode with an isolated temporary profile and Poppler for page images. It does not require Codex or a private runtime. Tested with Pandoc 3.12.1 and LibreOffice 26.2.5.2 on macOS. Font availability and renderer versions can change line breaks; check the generated page count and images on the submission machine.
 
-Outputs are `report/build/paper.docx` and `paper.pdf`. The build also saves the exact Markdown snapshot, source and image hashes, Pandoc log, page images for visual checks, extracted page text, and `paper.pagination.json`. Main-body pages are physical pages containing Title through Conclusion; a partially occupied final page counts. References and Appendix begin on fresh pages. Code and Data is reported separately. No prose is removed or shortened; source TODOs and editorial notes remain visible. Figures remain at their Markdown positions.
+Outputs are `report/build/paper.docx` and `paper.pdf`. The build also saves the exact Markdown snapshot, source and image hashes, Pandoc log, page images, extracted page text, and `paper.pagination.json`. Main-body pages are physical pages containing Title through Conclusion; a partially occupied final page counts. The fractional count measures the final body's occupied text-area height. References and Appendix begin on fresh pages. No prose is removed or shortened; source TODOs remain visible. Figures remain at their Markdown positions.
 
-The build fails on missing references or unresolved citation markers. `--allow-missing-bibliography` is only for provisional layout work; it is not a submission-ready citation check. `--no-render` builds the DOCX only. Source, bibliography, CSL, template, output and renderer paths can be overridden with CLI arguments.
+The builder uses Pandoc `--citeproc`, `report/references.bib`, the vendored `report/apa.csl`, and `--reference-doc=report/template.docx`. The CSL comes from https://github.com/citation-style-language/styles/blob/master/apa.csl (CC BY-SA 3.0; license recorded in the file). It formats native tables and restores the template's Old Standard TT font. It also repairs Pandoc's missing content-type declaration for the template's embedded TTFs. Visible reference URLs are preserved as ordinary text because one LibreOffice build adds a stray `X` to OOXML hyperlinks; they are not clickable DOCX links.
 
-`build_docx.py` remains the earlier Methods-only layout exercise; use `build_paper.py` for the whole manuscript. The renderer reads a snapshot of the shared manuscript and records if another editor changes the source during the build. Rebuild after prose or figure changes and visually inspect the resulting pages before submission.
+The build fails on missing references or unresolved citation markers. `--allow-missing-bibliography` is for provisional layout work only. `--no-render` builds DOCX only. Source, bibliography, CSL, template and output paths can be overridden. `--renderer /path/to/render_docx.py` optionally uses a compatible external renderer accepting `INPUT --output_dir DIR --emit_pdf`; its dependencies must be available to the same Python interpreter.
 
-Visible reference URLs are retained as ordinary text because this bundled LibreOffice version adds a stray `X` when rendering OOXML hyperlinks. They are not clickable DOCX links. This changes no citation wording or URL.
-
-For a section-by-section page budget after rendering:
+For the section-by-section page budget after rendering:
 
 ```sh
-~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python report/page_budget.py
+uv run --with python-docx --with lxml --with pillow --with pypdf python report/page_budget.py
 ```
 
-This uses `pdftotext` and writes `build/page_budget.md` and `.json`; its section spans include figures, tables and page-break whitespace. These spans estimate occupied space, not guaranteed savings from cuts.
+This writes `build/page_budget.md` and `.json`; section spans include figures, tables and page-break whitespace. These estimate occupied space, not guaranteed savings from cuts.
+
+`build_docx.py` is the Methods-only layout exercise; use `build_paper.py` for the whole manuscript. The builder records whether the source changed while building. Rebuild after prose or figure changes and visually inspect the pages before submission.

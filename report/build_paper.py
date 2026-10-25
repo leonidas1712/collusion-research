@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from xml.etree import ElementTree as ET
 from pathlib import Path
 from zipfile import ZipFile
 from lxml import etree
@@ -22,7 +23,7 @@ from pypdf import PdfReader
 from build_docx import (ROOT, set_cell_margins, set_cell_shading, set_table_borders,
                         set_repeat_header, set_run_font)
 
-RENDERER = Path.home()/'.codex/plugins/cache/openai-primary-runtime/documents/26.1020.11348/skills/documents/render_docx.py'
+RENDERER = None
 
 
 def digest(path):
@@ -176,14 +177,57 @@ def render(output,renderer):
     qa=output.parent/(output.stem+'-pages')
     if qa.exists():
         for old in qa.glob('page-*.png'):old.unlink()
-    subprocess.run([sys.executable,str(renderer),str(output),'--output_dir',str(qa),'--emit_pdf'],check=True)
+    if renderer is not None:
+        subprocess.run([sys.executable,str(renderer),str(output),'--output_dir',str(qa),'--emit_pdf'],check=True)
+    else:
+        qa.mkdir(parents=True, exist_ok=True)
+        soffice = shutil.which('soffice') or shutil.which('libreoffice')
+        if not soffice or not shutil.which('pdftoppm'):
+            raise RuntimeError('Install LibreOffice (soffice) and Poppler (pdftoppm) on PATH; see report/BUILD.md')
+        rendered_pdf = qa/output.with_suffix('.pdf').name
+        rendered_pdf.unlink(missing_ok=True)
+        with tempfile.TemporaryDirectory(prefix='paper-lo-') as profile:
+            subprocess.run([soffice, f'-env:UserInstallation={Path(profile).as_uri()}',
+                            '--headless', '--norestore', '--convert-to', 'pdf',
+                            '--outdir', str(qa), str(output)], check=True, timeout=180)
+        if not rendered_pdf.is_file():
+            raise RuntimeError('LibreOffice did not produce a PDF')
+        subprocess.run(['pdftoppm', '-r', '120', '-png', str(rendered_pdf), str(qa/'page')], check=True)
+        for png in qa.glob('page-*.png'):
+            normalized = qa/f'page-{int(png.stem.split("-")[-1])}.png'
+            if png != normalized:
+                png.rename(normalized)
     pdf=output.with_suffix('.pdf');shutil.copy2(qa/pdf.name,pdf)
+    return measure_pages(output)
+
+
+def measure_pages(output):
+    pdf = output.with_suffix('.pdf')
     pages=[p.extract_text() for p in PdfReader(pdf).pages]
     marker=re.compile(r'^Code and Data\s*$',re.M)
     boundary=next(i for i,p in enumerate(pages) if marker.search(p))
     before=marker.split(pages[boundary])[0].strip()
     body_pages=boundary+bool(before)
-    result={'total_pages':len(pages),'main_body_pages':body_pages,'main_body_limit':8,
+    bbox = ET.fromstring(subprocess.check_output(['pdftotext', '-bbox-layout', str(pdf), '-']))
+    ns = {'x': 'http://www.w3.org/1999/xhtml'}
+    body_words = []
+    for page_number, page in enumerate(bbox.findall('.//x:page', ns), 1):
+        words = page.findall('.//x:word', ns)
+        stop = next((i for i in range(len(words)-2)
+                     if [w.text for w in words[i:i+3]] == ['Code', 'and', 'Data']), None)
+        body_words.extend((page_number, float(w.get('yMax'))) for w in words[:stop])
+        if stop is not None:
+            break
+    last_page = body_words[-1][0]
+    last_y = max(y for page, y in body_words if page == last_page)
+    section = Document(output).sections[0]
+    top = section.top_margin.pt
+    text_height = section.page_height.pt-top-section.bottom_margin.pt
+    page_equivalents = last_page-1+(last_y-top)/text_height
+    result={'main_body_page_equivalents':round(page_equivalents, 3),
+            'main_body_last_text_y_pt':last_y,
+            'fraction_definition':'Whole preceding pages plus occupied text-area height on the final body page.',
+            'total_pages':len(pages),'main_body_pages':body_pages,'main_body_limit':8,
             'within_limit':body_pages<=8,'code_and_data_starts_page':boundary+1,
             'references_starts_page':next((i+1 for i,p in enumerate(pages) if re.search(r'^References\s*$',p,re.M)),None),
             'count_definition':'Physical pages containing Title through Conclusion, inclusive; partial final page counts.',
