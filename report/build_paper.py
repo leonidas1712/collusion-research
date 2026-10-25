@@ -291,6 +291,9 @@ def format_docx(path, template, paragraph_layout='template'):
                     p.style=doc.styles['normal'];p.paragraph_format.space_after=Pt(0);p.paragraph_format.line_spacing=1
                     if caption_follows and j == len(t.rows)-1:
                         p.paragraph_format.keep_with_next=True
+                    if t.cell(0,0).text == 'Round' and j < len(t.rows)-1:
+                        # Keep short transcript excerpts intact across Writer page breaks.
+                        p.paragraph_format.keep_with_next = True
                     for r in p.runs:
                         set_run_font(r,size=9)
                         if j==0:r.bold=True
