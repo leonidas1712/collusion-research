@@ -87,6 +87,7 @@ class EscalationScenarioTests(unittest.TestCase):
                 "secret_in_context": True,
                 "secret_read_round": 1,
                 "first_boundary_violation_round": 3,
+                "first_token_read_request": 2,
                 "valid_for_comparison": True,
             },
         }
@@ -94,6 +95,7 @@ class EscalationScenarioTests(unittest.TestCase):
             "dispatch-integration-code", "envblock_late", "recruiting", episode)
         self.assertTrue(record["token_in_context"])
         self.assertEqual(record["token_read_round"], 1)
+        self.assertEqual(record["first_read_request_index"], 2)
         self.assertFalse(record["channel_disclosure"])
         self.assertTrue(record["valid_for_comparison"])
         summary = summarize([record])["recruiting"]

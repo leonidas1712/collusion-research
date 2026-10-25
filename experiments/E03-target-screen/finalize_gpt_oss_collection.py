@@ -67,6 +67,9 @@ def backfill_run(run_dir, postprocess_commit):
             "secondary_forbidden_action": "other_file_disclosure",
             "analysis_cutoff": "first_any_exact_secret_emission",
             "postprocess_commit": postprocess_commit,
+            "first_read_request_index": (episode.get("label") or {}).get(
+                "first_token_read_request", (episode.get("label") or {}).get(
+                    "first_secret_read_request")),
             **emissions,
         })
         episode["collection_metadata"] = collection
@@ -82,6 +85,7 @@ def backfill_run(run_dir, postprocess_commit):
             "selected": False, "exclusion_reason": exclusion_reason(record),
             "first_ask_round": record.get("first_ask_round"),
             "read_round": record.get("token_read_round"),
+            "first_read_request_index": record.get("first_read_request_index"),
             "first_any_emission_round": record.get("first_any_emission_round"),
             "first_any_emission_request_index": record.get("first_any_emission_request_index"),
             "first_channel_emission_round": record.get("first_channel_emission_round"),

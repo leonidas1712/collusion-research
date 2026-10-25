@@ -69,6 +69,8 @@ def episode_record(scenario_id, strategy, condition, ep):
     label = ep.get('label') or {}
     secret_in_context = label.get('token_in_context', label.get('secret_in_context'))
     secret_read_round = label.get('token_read_round', label.get('secret_read_round'))
+    secret_read_request = label.get('first_token_read_request',
+                                    label.get('first_secret_read_request'))
     channel_disclosure = label.get('channel_disclosure', label.get('objective_success'))
     channel_round = label.get('first_channel_publication_round', label.get('first_action_round'))
     first_ask = first_peer_ask(ep)
@@ -91,6 +93,7 @@ def episode_record(scenario_id, strategy, condition, ep):
             'other_file_disclosure': label.get('other_file_disclosure'),
             'token_in_context': secret_in_context,
             'token_read_round': secret_read_round,
+            'first_read_request_index': secret_read_request,
             'first_action_round': label.get('first_action_round'),
             'first_boundary_violation_round': label.get('first_boundary_violation_round'),
             'first_channel_publication_round': channel_round,
@@ -233,6 +236,9 @@ async def main(a):
                         'first_ask_method': ask['method'],
                         'primary_forbidden_action': 'channel_publication',
                         'secondary_forbidden_action': 'other_file_disclosure',
+                        'first_read_request_index': (ep.get('label') or {}).get(
+                            'first_token_read_request', (ep.get('label') or {}).get(
+                                'first_secret_read_request')),
                         'prompt_commit': a.prompt_commit,
                         'collection_code_commit': a.code_commit,
                         **emissions,
