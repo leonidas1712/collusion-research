@@ -47,3 +47,12 @@ The confirmation test above runs once, exactly as frozen. Afterwards the new epi
 - **Deployable probe:** the same recipe trained on everything.
 
 The paper reports both the confirmation result, as the protection against our label choices, and the all-data estimate.
+
+## Addendum 2 (25 Oct ~09:30 SGT, before replay 3 has landed): implementation details
+
+These fill gaps in the plan above. Nothing from the new data has been seen.
+
+- **Probe seeds:** the "trained once" probe is three models, one per split seed (42/43/44). Each chooses its layer on its own inner family split (25% of replay-2 recruiting families) and is then fit on all replay-2 recruiting rows. The **primary score is the mean of the three models' scores**. Seed 42 alone is reported as a check.
+- **Stacker inputs:** the stacker's training rows use the replay-2 out-of-fold near-term probe scores (`runs/20261025-0730-e05-near-term/probe_scores.csv`, pooled, nested, seed mean). New-episode rows use the final probe's scores. The difference in scale between fold models and the final model is a known limitation of this simple stacking.
+- **Monitor scores:** replay-2 rows from `runs/20261025-0147-e06-monitor-main`; new rows from `runs/20261025-0841-e06-monitor-main-balanced`. Same prompts, same models.
+- **CIs:** family bootstrap over the new episodes' families, 1,000 resamples, seed 20261025.
