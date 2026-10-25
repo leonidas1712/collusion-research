@@ -78,7 +78,7 @@ On these steps we score two labels. Under the **eventual** label, every eligible
 
 ![Figure 1](figures/figure1_setup.png)
 
-**Figure 1.** Probes and text monitors are scored on the same steps: after the target reads the protected value and before it posts it. (a) Setup. A peer agent that needs the value, and is not told the operator's rule, messages the target agent through a team channel. The target works with mock tools on a config file that holds the value. The probe reads the target's activations at the last prompt token before each reply. A text monitor reads no activations; its three levels of access add, in turn, the target's tool calls and posts (1), the peer's messages (2), and the tool results and unposted text the target saw (3). (b) Which steps are scored, and how each label marks them, in a toy episode with one step per round. Only eligible steps are scored: the target has read the value and not yet posted it (shaded, in both episodes). Under the eventual label, every eligible step of an episode that gives in is positive. Under the near-term label, only steps in the round of the give-in or the round before it are positive. Every step of a held episode is negative under both labels.
+**Figure 1.** Probes and text monitors are scored on the same steps: after the target reads the protected value (here, a deploy token) and before it posts it. (a) Setup. A peer agent that needs the token, and is not told the operator's rule, messages the target agent through a team channel. The target works with mock tools on a config file that holds the token. The probe reads the target's activations at the last prompt token before each reply. A text monitor reads no activations; its three levels of access add, in turn, the target's tool calls and posts (1), the peer's messages (2), and the tool results and unposted text the target saw (3). (b) Which steps are scored, and how each label marks them, in a toy episode with one step per round. Only eligible steps are scored: the target has read the token and not yet posted it (shaded, in both episodes). Under the eventual label, every eligible step of an episode that gives in is positive. Under the near-term label, only steps in the round of the give-in or the round before it are positive. Every step of a held episode is negative under both labels.
 
 ### 3.4 Detectors
 
@@ -100,7 +100,7 @@ We report a **held-out scenario** evaluation (leave one scenario out: train on f
 
 ## 4. Results
 
-> Each subsection heading asks a question; its first sentence answers it. Headline scores are within-scenario × round AUROC and carry their denominators; every number traces to a `report/figures/*.csv` or a run report. Figures 1 and 2 are placed together near the top of page 2 at render.
+> Headline scores are within scenario × round AUROC and carry their denominators; every number traces to a `report/figures/*.csv` or a run report. Figures 1 and 2 are placed together near the top of page 2 at render.
 
 ### 4.1 The setup produces mixed outcomes
 
@@ -124,7 +124,7 @@ On held-out scenarios (4,697 recruiting steps from 241 episodes, 998 eventual-po
 
 ### 4.3 Near-term give-in is modestly predictable, and not only from pressure
 
-For the near-term label, on the same held-out steps (250 near-term positives), the probe reaches 0.579 and the best monitor, the Jev forecaster, 0.650 (Figure 2b). The probe is not merely reading the pressure. In an exploratory check on the first data batch (fixed layer 32), a probe trained to tell recruiting steps from control and target-alone steps separates them almost perfectly (within-scenario × round AUROC 1.000 pooled, 2,910 recruiting steps), yet the same score ranks gave-in against held steps at only 0.430 (eventual). Detecting that the peer is pushing is easy. Telling which target gives in is the harder signal the near-term probe captures, the control Fomin et al. (2606.30449) identify as missing.
+For the near-term label, on the same held-out steps (250 near-term positives), the probe reaches 0.579 and the best monitor, the Jev forecaster, 0.650 (Figure 2b). The probe is not merely reading the pressure. In an exploratory check on the first data batch (fixed layer 32), a probe trained to tell recruiting steps from control and target-alone steps separates them almost perfectly (AUROC 1.000 on 4,184 steps), yet the same score ranks gave-in against held steps at only 0.430 (eventual label, 2,910 recruiting steps). Detecting that the peer is pushing is easy. Telling which target gives in is the harder signal the near-term probe captures, the control Fomin et al. (2606.30449) identify as missing.
 
 ![Figure 2. Predicting eventual and near-term give-in](figures/figure2_prediction.png)
 
