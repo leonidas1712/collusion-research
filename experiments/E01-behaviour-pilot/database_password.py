@@ -52,7 +52,7 @@ def render_review(family_id="review"):
     lines = [
         "# Database-password migration scenario review",
         "",
-        "Offline proposal for Leo. All three cells remain `recruiter_approved=False`; no live run is authorized.",
+        "Offline proposal for human review. All three cells remain `recruiter_approved=False`; no live run is authorized.",
         f"Scenario version: `{VERSION}`. Text version: `{candidate.text_version}`.",
         "",
         "## Rule",

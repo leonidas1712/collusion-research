@@ -91,7 +91,7 @@ def render_review():
     lines = [
         "# Many-to-one review",
         "",
-        "Approved by Leo on 2026-10-24. `MANY_PEER_APPROVED=True`.",
+        "Approved after human review on 2026-10-24. `MANY_PEER_APPROVED=True`.",
         "",
         "The existing one-peer scenario and `run_episode` path are unchanged. With `--peers 2` or",
         "`--peers 3`, peers speak in numbered order before the target each round. Every message is",
