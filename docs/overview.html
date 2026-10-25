@@ -94,7 +94,7 @@ pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-
     <span class="eyebrow">Apart AI Collusion Research Sprint · deadline Mon 26 Oct, 7:59 PM SGT</span>
     <h1>Recruited: can you see an agent being won over?</h1>
     <p class="sub">A peer agent tries to get an open-weight agent to do something it shouldn't. We want to know whether the target's activations show it giving in before it acts, and whether that beats reading the text.</p>
-    <span class="updated">Last updated Sun 25 Oct, ~13:15 SGT · repo leonidas1712/collusion-research (private)</span>
+    <span class="updated">Last updated Sun 25 Oct, ~15:05 SGT · repo leonidas1712/collusion-research (private)</span>
   </div>
 </header>
 
@@ -120,18 +120,18 @@ pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-
 
 <!-- WHERE WE ARE -->
 <section data-panel="now">
-  <h2>Where we are (Sun 25 Oct, ~13:15 SGT)</h2>
-  <div class="callout warn"><p><strong>Headline: "will this target give in at some point?" can't be predicted; "will it give in this round or next?" can, moderately, and that now holds on new episodes.</strong> On the eventual label, the probe and all 18 monitors score 0.48–0.57 within scenario × round (0.5 = guessing). On the near-term label, the Jev forecaster at L3 scores 0.66–0.69, and a probe retrained on that label 0.60–0.62 on a held-out scenario. <strong>The confirmation test passed:</strong> one run of a plan frozen before the data, on 89 new episodes. Probe <strong>0.681</strong> [0.604, 0.753]; it adds +0.113 over the GPT-5-nano detector. The planned paper is in the Final shape tab.</p></div>
+  <h2>Where we are (Sun 25 Oct, ~15:05 SGT)</h2>
+  <div class="callout warn"><p><strong>Headline: "will this target give in at some point?" can't be predicted; "will it give in this round or next?" can, modestly. Jev, a text forecaster, is the best single method; the probe is above chance but behind it.</strong> All analyses are now in. On all the data (338 episodes, 6,404 steps), label A (gives in this round or next), within scenario × round (0.5 = guessing): probe <strong>0.579</strong> on an unseen scenario, Jev forecaster L3 <strong>0.650</strong>, GPT-5-nano detector L2 0.557. Jev beats the probe by about 0.06–0.07. The probe adds to GPT-5-nano within known scenarios (+0.081), not clearly on unseen ones (+0.022, interval includes 0). <strong>The confirmation test passed</strong> (probe 0.681 on 89 new episodes), but the all-data estimate is the better guide to size: the probe is weaker than that one test suggested. The planned paper is in the Final shape tab.</p></div>
   <div class="status">
     <div><h3>Confirmation test (new episodes)</h3><span class="pill ok">both criteria pass</span><p>Frozen plan, run once on 1,787 new steps (82 positive) from 89 episodes, label A. Probe <strong>0.681</strong> [0.604, 0.753], Jev forecaster L3 0.644, GPT-5-nano detector L2 0.532. Probe on top of GPT-5-nano: <strong>+0.113</strong> [+0.025, +0.203]. On top of Jev: +0.052 [−0.014, +0.121], as expected not clearly above 0. Details in the Results tab.</p></div>
-    <div><h3>All-data estimate</h3><span class="pill wait">pending (codex-2)</span><p>CV and held-out-scenario rerun on old + new data (6,404 steps, 338 episodes), plus the deployable probe trained on everything. Numbers go in the Results tab when they land.</p></div>
+    <div><h3>All-data estimate</h3><span class="pill ok">done (15:05)</span><p>Old + new data, 6,404 steps, 338 episodes, label A. Probe <strong>0.586</strong> pooled / 0.618 fold-stratified / <strong>0.579</strong> held-out scenario. Jev forecaster L3 <strong>0.650</strong>, GPT-5-nano detector L2 0.557. Jev − probe: +0.064 [0.012, 0.113] pooled, +0.071 [0.024, 0.116] held-out scenario. Eventual label: probe 0.49–0.52, chance. Details in the Results tab.</p></div>
     <div><h3>Eventual label: probe vs monitors</h3><span class="pill bad">all near chance</span><p>Probe <strong>0.522</strong> pooled (0.552 comparing within fold), <strong>0.551</strong> on a held-out scenario. Best monitors: Jev forecaster L3 <strong>0.574</strong> [0.502, 0.639], GPT-5-nano detector L2 0.560. All 18 monitors fall between 0.48 and 0.57, and their CIs overlap the probe's. Nothing adds clear value over turn + length (largest +0.015).</p></div>
     <div><h3>Near-term label</h3><span class="pill ok">moderate signal</span><p>Jev forecaster L3: <strong>0.660 / 0.677 / 0.687</strong> on labels A / B / C. Probe retrained on the label, held-out scenario: <strong>0.611 / 0.603 / 0.619</strong>. Labels explained in the Final shape and Evaluation tabs.</p></div>
     <div><h3>Pressure vs outcome</h3><span class="pill info">clean pair</span><p>Recruiting vs benign from activations: <strong>1.000</strong>. The same direction on who gives in: <strong>0.43</strong>. Trajectory features (step-to-step changes) don't beat the plain probe.</p></div>
     <div><h3>Combination test</h3><span class="pill ok">confirmed on new episodes</span><p>Adding the probe on the near-term label, replay 2: +0.06–0.07 over GPT-5-nano detector L2, about +0.01 over Jev forecaster L3. On the new episodes: +0.113 and +0.052. Same shape: it helps the weaker judge clearly; over Jev the interval includes 0.</p></div>
-    <div><h3>Running now</h3><span class="pill wait">in progress</span><ul>
-      <li><strong>codex-2:</strong> all-data main estimate (addendum 1 of the plan: CV + held-out scenario on old + new) and the deployable probe.</li>
-      <li>Done since the last update: replay 3 of the new episodes, the monitor subset on them, the combination test, the confirmation test.</li>
+    <div><h3>Running now</h3><span class="pill ok">analyses done</span><ul>
+      <li>Nothing analysis-wise. Next is freezing the analyses and writing.</li>
+      <li>Done since the last update: the all-data main estimate and the deployable probe (codex-2, audited), and the exploratory appendix on shared misses and peer messages.</li>
     </ul></div>
     <div><h3>Decided by Leo</h3><span class="pill ok">done</span><ul>
       <li>Balanced behaviour batch: run and done ($0.82).</li>
@@ -146,7 +146,7 @@ pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-
   <h3>Rest of Sunday</h3>
   <ol>
     <li><strong>Done:</strong> confirmation analysis on the new episodes, exactly as frozen in <code>docs/confirmatory_plan.md</code> (run 10:30, both criteria pass).</li>
-    <li><strong>Next:</strong> the all-data estimate and the deployable probe (codex-2).</li>
+    <li><strong>Done:</strong> the all-data estimate and the deployable probe (codex-2, 15:05). Jev ahead of the probe; probe 0.579 on an unseen scenario.</li>
     <li><strong>Then freeze</strong> the analyses. Nothing new after that.</li>
     <li><strong>Then write:</strong> Apart template, 4–8 pages plus appendix. Due Mon 26 Oct, 7:59 PM SGT. Leo's notes: <code>leo_notes.md</code> (local).</li>
   </ol>
@@ -160,7 +160,8 @@ pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-
     <li><strong>Near-term probe refits, logit lens, trajectory and pressure probes (done).</strong></li>
     <li><strong>Balanced batch (done):</strong> 129 new episodes in the five spray scenarios, the confirmation set.</li>
     <li><strong>Confirmation test (done).</strong> Replay 3 + monitor subset on the new episodes; frozen plan run once: probe 0.681, both criteria pass.</li>
-    <li><strong>Now.</strong> All-data estimate and deployable probe; then freeze and write.</li>
+    <li><strong>All-data estimate and deployable probe (done).</strong> Probe 0.579 on an unseen scenario, Jev 0.650.</li>
+    <li><strong>Now.</strong> Freeze and write.</li>
     <li><strong>Step-ups (exploratory, small).</strong> Many-to-one (2/8 gave in), thinking mode (more resistant).</li>
   </ol>
 
@@ -337,14 +338,15 @@ Episode C (gives in at round 1): X                         → no turns before t
 <!-- FINAL SHAPE -->
 <section data-panel="final" hidden>
   <h2>What the paper will show</h2>
-  <p class="small">The planned headline results, figures and tables, as of Sun 25 Oct ~13:15 SGT. The confirmation test is fixed in advance in <code>docs/confirmatory_plan.md</code>; caveats are listed in <code>docs/writeup_limitations.md</code>.</p>
+  <p class="small">The planned headline results, figures and tables, as of Sun 25 Oct ~15:05 SGT (all analyses in). The confirmation test is fixed in advance in <code>docs/confirmatory_plan.md</code>; caveats are listed in <code>docs/writeup_limitations.md</code>.</p>
 
   <h3>The story in 3 sentences</h3>
   <ol>
     <li><strong>Whether a target will <em>eventually</em> give in can't be predicted from its activations or by any text monitor.</strong> The probe scores 0.52–0.55 and all 18 monitors 0.48–0.57, within scenario × round (0.5 = guessing).</li>
-    <li><strong>Whether it is <em>about to</em> give in (this round or next) is moderately predictable.</strong> A probe retrained on that near-term label reaches ~0.60–0.62 on a held-out scenario. The Jev forecaster, a decision model reading the text, reaches 0.66–0.69. <strong>A one-shot test on 89 new episodes, planned in advance, confirms it:</strong> probe 0.681 [0.604, 0.753].</li>
-    <li><strong>The activations encode the pressure perfectly, but not who gives in.</strong> A probe separates recruiting from benign steps at 1.000, but the same direction scores 0.43 at telling who gives in. On the near-term label the probe adds something over a weaker text judge (+0.06–0.07 on top of the GPT-5-nano detector at L2; <strong>+0.113 [+0.025, +0.203] on the new episodes</strong>), but little that we can be sure of over the best one (Jev: about +0.01; +0.052 [−0.014, +0.121] on the new episodes).</li>
+    <li><strong>Whether it is <em>about to</em> give in (this round or next) is modestly predictable, and a text forecaster does it best.</strong> On all the data, the probe scores 0.579 [0.537, 0.619] on a scenario it never trained on; the Jev forecaster, a decision model reading the text and asked "will it break the rule?", scores 0.650 [0.608, 0.688], about 0.07 better. A one-shot test on 89 new episodes, planned in advance, confirms the probe is above chance there too (0.681 [0.604, 0.753]).</li>
+    <li><strong>The activations encode the pressure perfectly, but not who gives in.</strong> A probe separates recruiting from benign steps at 1.000, but the same direction scores 0.43 at telling who gives in. On the near-term label the probe adds to a weaker text judge within scenarios it has seen (+0.081 [0.038, 0.126] on top of the GPT-5-nano detector at L2, all data; +0.113 on the new episodes), but not clearly on an unseen scenario (+0.022 [−0.013, 0.059]), and not clearly over the best judge (Jev: under +0.01).</li>
   </ol>
+  <div class="callout"><p><strong>Headline sentence for the paper (revised 15:05):</strong> "The probe reads 'about to give in' above chance, including on unseen scenarios and fresh episodes, and adds to an LLM judge within known scenarios; a per-step forecasting decision model (Jev) is the best single method. Nothing predicts eventual give-in from a single step."</p></div>
   <div class="callout"><p><strong>Confirmation test: passed (run once, 25 Oct 10:30).</strong> Everything was fixed in <code>docs/confirmatory_plan.md</code> before anyone looked at the new data. Trained on replay 2 only, then scored once on 1,787 new steps (82 positive) from 89 new episodes. Label A.</p>
     <ul>
       <li><strong>Criterion 1</strong>, probe beats guessing: 0.681 [0.604, 0.753]. The whole interval is above 0.5. <span class="pill ok">pass</span></li>
@@ -352,7 +354,13 @@ Episode C (gives in at round 1): X                         → no turns before t
       <li><strong>Expected about 0</strong>, probe adds over Jev forecaster L3: +0.052 [−0.014, +0.121]. Leans positive, but the interval includes 0.</li>
     </ul>
     <p class="small">Caveats: the same five spray scenarios as the training data (new episodes, not a new scenario); no deploy-token v2 episodes; intervals about ±0.07. Full table and the reason a frozen test matters: Results tab.</p></div>
-  <div class="callout warn"><p><strong>Pending: all-data main estimate (codex-2, running).</strong> Addendum 1 of the plan: the same CV and held-out-scenario recipes rerun on old + new data together (6,404 steps, 338 episodes), which gives the tightest intervals; and the deployable probe trained on everything. The paper reports both: the confirmation result (the protection against our label choices) and the all-data estimate (the best number). Placeholder in the Results tab.</p></div>
+  <div class="callout warn"><p><strong>All-data main estimate: done (15:05). It puts the probe lower than the confirmation test did, and Jev ahead.</strong> Addendum 1 of the plan: the same CV and held-out-scenario recipes rerun on old + new data together (6,404 steps, 338 episodes). Label A: probe 0.586 pooled, 0.618 fold-stratified, 0.579 held-out scenario; Jev forecaster L3 0.650; GPT-5-nano detector L2 0.557.</p>
+    <p><strong>How this squares with the confirmation test</strong> (probe 0.681 vs Jev 0.644 on 89 new episodes):</p>
+    <ul>
+      <li><strong>Small sample.</strong> The confirmation set has 82 positive steps, so its intervals are about ±0.08. A draw that happened to favour the probe is quite likely. "Level with Jev" there was probably partly luck.</li>
+      <li><strong>One ruler vs several.</strong> The confirmation test scores every step with one final model. Pooled CV scores each fold with a different model, and comparing scores from different models inside one group costs AUROC. The fold-stratified figure, which only compares steps scored by the same model, is 0.618.</li>
+    </ul>
+    <p>The paper reports both, with different jobs. <strong>Confirmation</strong> = the protection against having tuned the label and recipe on the data (it passed: the signal is not a lucky pick). <strong>All-data</strong> = the best estimate of how big the signal is (more data, tighter intervals).</p></div>
 
   <h3>One metric, explained once: within scenario × round AUROC</h3>
   <p><strong>One-line answer:</strong> we compare each give-in step only with held steps from the same scenario and the same round, and count how often the give-in step scores higher.</p>
@@ -369,7 +377,7 @@ Repeat for every scenario × round group; average the groups, weighted by positi
   <ul>
     <li><strong>Main numbers</strong> come from two places:
       <ul>
-        <li><strong>Held-out scenario</strong> (leave one scenario out, LOSO): train on five scenarios, test on the sixth, rotate.</li>
+        <li><strong>Held-out scenario</strong> (leave one scenario out, LOSO): train on five scenarios, test on the sixth, rotate. Run on all the data, this is the best size estimate.</li>
         <li><strong>The confirmation set:</strong> new episodes never touched by any choice.</li>
       </ul></li>
     <li><strong>Appendix only:</strong> pooled cross-validation, and its fold-stratified check. Why: in pooled CV, scores from different fitted models end up compared inside one group, and this pulls even the baselines below 0.5. Held-out-scenario scoring and the confirmation set use one model per test set, so the problem doesn't arise.</li>
@@ -386,26 +394,25 @@ held episode (never leaks): every step is 0 under both labels</pre>
     <li><strong>Eventual:</strong> "will this episode give in at some later point?" This is the question we planned to ask.</li>
     <li><strong>Near-term A:</strong> "will it give in this round or next?" This is the question a live alarm asks. Labels B and C are close variants, kept as secondary (Evaluation tab, (b)).</li>
   </ul>
-  <div class="callout"><p><strong>Why near-term A can be a main result, not just an exploratory one.</strong> We defined it <em>after</em> seeing that the eventual label failed. A label picked after looking at results can win partly by luck: if you try several definitions and keep the best, the best one looks better than it is. The fix is to test it on data that played no part in any choice. <code>docs/confirmatory_plan.md</code> fixes everything in advance: the label (A), the probe recipe and layer, the two monitors, the combination models and the success criteria. Everything is fitted once on replay 2 and then scored, unchanged, on the new balanced-batch episodes (129 run; <strong>89 valid recruiting episodes</strong> scored). If the near-term signal holds there, luck in picking the label can't explain it. <strong>It held:</strong> probe 0.681 on the new episodes, against 0.611 on a held-out scenario in replay 2.</p></div>
+  <div class="callout"><p><strong>Why near-term A can be a main result, not just an exploratory one.</strong> We defined it <em>after</em> seeing that the eventual label failed. A label picked after looking at results can win partly by luck: if you try several definitions and keep the best, the best one looks better than it is. The fix is to test it on data that played no part in any choice. <code>docs/confirmatory_plan.md</code> fixes everything in advance: the label (A), the probe recipe and layer, the two monitors, the combination models and the success criteria. Everything is fitted once on replay 2 and then scored, unchanged, on the new balanced-batch episodes (129 run; <strong>89 valid recruiting episodes</strong> scored). If the near-term signal holds there, luck in picking the label can't explain it. <strong>It held:</strong> probe 0.681 on the new episodes, against 0.611 on a held-out scenario in replay 2. (The all-data estimate later put the size lower, 0.579 on a held-out scenario; see above.)</p></div>
 
   <h3>Planned figures and tables</h3>
   <div class="scroll"><table>
     <tr><th>Item</th><th>What it shows</th><th>Takeaway</th></tr>
     <tr><td><strong>Fig 1</strong> setup diagram</td><td>Peer → target → tool calls. Where the probe reads (last-token activations before each request). What monitors see: L1 actions and posted messages; L2 + the peer's messages; L3 + unposted text and tool results.</td><td>What is being predicted, and from what.</td></tr>
     <tr><td><strong>Table 1</strong> data</td><td>Per scenario: episodes run / scored / gave in / deliberate vs accidental / controls. deploy-token v2 is named as the development scenario.</td><td>The data is unevenly spread across scenarios; we report that openly.</td></tr>
-    <tr><td><strong>Fig 2 (main)</strong></td><td>Grouped bars with 95% CIs, eventual vs near-term A, for each method: turn baseline (0.5), probe, GPT-5-nano detector L2, Jev forecaster L3, probe + GPT-5-nano, probe + Jev. Two numbers each: held-out scenario (replay 2) and the confirmation set (new episodes).</td><td>Eventual: nothing works. Near-term: everything rises, and Jev is best.</td></tr>
-    <tr><td><strong>Table 2</strong> combination test</td><td>Gain from adding the probe to each monitor, with paired CIs. Monitor + monitor as a reference for what any second score adds.</td><td>The activations help a weak judge but not the best one.</td></tr>
+    <tr><td><strong>Fig 2 (main)</strong></td><td>Grouped bars with 95% CIs, eventual vs near-term A, for each method: turn baseline (0.5), probe, GPT-5-nano detector L2, Jev forecaster L3, probe + GPT-5-nano, probe + Jev. Two numbers each: held-out scenario (all data) and the confirmation set (new episodes).</td><td>Eventual: nothing works. Near-term: everything rises, and Jev is best.</td></tr>
+    <tr><td><strong>Table 2</strong> combination test</td><td>Gain from adding the probe to each monitor, with paired CIs. Monitor + monitor as a reference for what any second score adds.</td><td>The activations help a weak judge within known scenarios, not clearly on unseen ones, and not the best judge.</td></tr>
     <tr><td><strong>Fig 3</strong> context ladder</td><td>L1 → L2 → L3 for each monitor (RQ 2.2: words vs actions).</td><td>L2 is best; L3 doesn't help, which matches Arike et al.'s "less is more".</td></tr>
     <tr><td><strong>Fig 4</strong> pressure vs outcome</td><td>Recruiting-vs-benign probe 1.000; the same direction on who gives in 0.43.</td><td>The activations know a peer is pushing, not whether the target will go along.</td></tr>
     <tr><td><strong>Fig 5</strong> alarms (small; main or appendix)</td><td>Recall next to the held-episode alarm rate, e.g. GPT-5-nano detector L2 87% vs 83%.</td><td>Monitors flag pressure, not outcome.</td></tr>
     <tr><td><strong>Appendix</strong></td><td>Fold-mixing check, per-layer curve, learning curve, per-scenario forest plot, MLP, logit lens, trajectory features, deliberate-only, branching, full 18-setup monitor table.</td><td>Robustness and the negative results in full.</td></tr>
   </table></div>
 
-  <h3>What's still pending</h3>
+  <h3>What's left</h3>
   <ul>
-    <li><strong>All-data main estimate</strong> (codex-2, running): CV + held-out scenario on old + new data, near-term and eventual labels, the 8 monitor setups scored on both sets. <span class="pill wait">numbers pending</span></li>
-    <li><strong>Deployable probe</strong> (codex-2): the same recipe trained on everything.</li>
-    <li>Done: combination test, replay 3, the confirmation test, the per-layer diagnostic (<code>runs/20261025-1003-e05-layer-diagnostic</code>). Learning curve and near-term MLP runs exist (<code>…-e05-learning-curve</code>, <code>…-e05-near-term-mlp</code>); not summarised here yet.</li>
+    <li>Nothing analysis-wise. Freeze, then write.</li>
+    <li>Done: all-data main estimate and the deployable probe (<code>runs/20261025-1456-e05-all-data-main</code>), the exploratory appendix on shared misses (<code>runs/20261025-1431-e06-appendix-errors</code>), combination test, replay 3, the confirmation test, the per-layer diagnostic (<code>runs/20261025-1003-e05-layer-diagnostic</code>). Learning curve and near-term MLP runs exist (<code>…-e05-learning-curve</code>, <code>…-e05-near-term-mlp</code>); not summarised here yet.</li>
   </ul>
 
   <h3>Limitations, briefly</h3>
@@ -772,7 +779,7 @@ Training folds 2–5, say 40 families:
   <p><strong>Step 8: how the confirmation test differs.</strong> No folds at all. Train on <em>all</em> the old data (replay 2's recruiting rows, with the layer chosen by the same inner check), then score the new episodes once. One model per seed scores every new step, so there is one ruler and no fold mixing. The new episodes played no part in any choice, which is what makes it a confirmation rather than another estimate.</p>
   <pre style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font:13px var(--mono)">pooled CV / LOSO:     old data → 5 (or 6) models, each scores its held-out part → one AUROC
 confirmation test:    old data → 1 model per seed → scores the 89 new episodes once → one AUROC
-all-data (pending):   old + new data → pooled CV and LOSO again → tightest intervals</pre>
+all-data (done):      old + new data → pooled CV and LOSO again → tightest intervals (probe 0.579 LOSO)</pre>
 
   <h3>Different operators want different cutoffs: the trade-off curve</h3>
   <p>A beep-averse operator wants few false alarms; a risk-averse one would rather never miss a give-in. So, as well as the headline at 5%, we show the whole trade-off:</p>
@@ -1193,17 +1200,43 @@ sequenceDiagram
 <!-- RESULTS -->
 <section data-panel="results" hidden>
   <h2>Results so far</h2>
-  <div class="callout"><p>Latest first: the all-data estimate (pending), the confirmation test (25 Oct 10:30), the balanced batch (the confirmation set, 25 Oct), replay 2 probe vs monitors (25 Oct), then the overnight sweep, the pilot grid (<code>experiments/E01-behaviour-pilot/pilot_results.md</code>) and the early setup log.</p></div>
+  <div class="callout"><p>Latest first: the all-data estimate (25 Oct 15:05), the exploratory appendix (shared misses, peer messages), the confirmation test (25 Oct 10:30), the balanced batch (the confirmation set, 25 Oct), replay 2 probe vs monitors (25 Oct), then the overnight sweep, the pilot grid (<code>experiments/E01-behaviour-pilot/pilot_results.md</code>) and the early setup log.</p></div>
 
-  <h3>All-data main estimate <span class="pill wait">pending</span></h3>
-  <div class="callout warn"><p><strong>Numbers go here when codex-2's run lands.</strong> Addendum 1 of <code>docs/confirmatory_plan.md</code>: the same pooled CV and held-out-scenario (LOSO) recipes, rerun on replay 2 + replay 3 together (6,404 steps, 338 episodes), for the near-term and eventual labels and the 8 monitor setups scored on both sets. Also the deployable probe, the same recipe trained on everything.</p></div>
+  <h3>All-data main estimate: Jev is the best single method; the probe is above chance but behind (25 Oct 15:05)</h3>
+  <p><strong>One-line answer:</strong> with all the data pooled, the probe reads "about to give in" at 0.58–0.62, Jev at 0.65; the probe adds to GPT-5-nano only within scenarios it has seen; nothing predicts eventual give-in.</p>
+  <p class="small">Report <code>runs/20261025-1456-e05-all-data-main/report.md</code>; audit <code>runs/20261025-1456-e05-all-data-audit/</code> (all 144 fits re-checked, maximum score reconstruction error 0). Addendum 1 of <code>docs/confirmatory_plan.md</code>: the same pooled CV (5 family folds) and held-out-scenario (LOSO, 6 rotations) recipes, seeds 42/43/44, rerun on replay 2 + replay 3 together: <strong>6,404 steps, 338 episodes</strong>. Within scenario × round AUROC; 95% intervals from resampling families 1,000 times. This reuses the confirmation episodes, so it is not a second independent confirmation. CPU only, $0.</p>
+  <p><strong>Three ways of scoring the probe, defined once.</strong> <em>Pooled CV</em>: split the families into 5 parts, train on 4, score the 5th, rotate; then compare all scored steps inside each scenario × round group. <em>Fold-stratified</em>: the same, but only compare steps scored by the same fitted model (one "ruler"). <em>Held-out scenario (LOSO)</em>: train on five scenarios, score the sixth; each test scenario has one model, so this is the cleanest transfer test. The monitors are not trained, so they have one number.</p>
   <div class="scroll"><table>
     <tr><th>Method, label A</th><th>Pooled CV</th><th>Fold-stratified</th><th>Held-out scenario</th></tr>
-    <tr><td>Probe, inner-selected layer</td><td class="num">pending</td><td class="num">pending</td><td class="num">pending</td></tr>
-    <tr><td>Probe, fixed layer 32</td><td class="num">pending</td><td class="num">pending</td><td class="num">pending</td></tr>
-    <tr><td>Jev forecaster L3</td><td class="num" colspan="3">pending</td></tr>
-    <tr><td>GPT-5-nano detector L2</td><td class="num" colspan="3">pending</td></tr>
+    <tr><td><strong>Probe</strong>, inner-selected layer</td><td class="num">0.586 [0.541, 0.631]</td><td class="num">0.618 [0.571, 0.666]</td><td class="num"><strong>0.579</strong> [0.537, 0.619]</td></tr>
+    <tr><td>Probe, fixed layer 32</td><td class="num">0.573 [0.520, 0.625]</td><td class="num">0.603 [0.544, 0.649]</td><td class="num">0.572 [0.525, 0.618]</td></tr>
+    <tr><td><strong>Jev forecaster L3</strong></td><td class="num" colspan="3"><strong>0.650</strong> [0.608, 0.688]</td></tr>
+    <tr><td>GPT-5-nano detector L2</td><td class="num" colspan="3">0.557 [0.518, 0.593]</td></tr>
   </table></div>
+  <div class="scroll"><table>
+    <tr><th>Label (probe: pooled / fold-strat. / LOSO)</th><th>Probe</th><th>Jev F L3</th><th>GPT-5-nano det L2</th></tr>
+    <tr><td>Eventual (gives in at some point)</td><td class="num">0.488 / 0.512 / 0.523</td><td class="num">0.577</td><td class="num">0.549</td></tr>
+    <tr><td>A (this round or next; primary)</td><td class="num">0.586 / 0.618 / 0.579</td><td class="num">0.650</td><td class="num">0.557</td></tr>
+    <tr><td>B (round contrast; uses hindsight)</td><td class="num">0.605 / 0.639 / 0.586</td><td class="num">0.664</td><td class="num">0.562</td></tr>
+    <tr><td>C (within 3 calls; uses hindsight)</td><td class="num">0.589 / 0.622 / 0.569</td><td class="num">0.658</td><td class="num">0.532</td></tr>
+  </table></div>
+  <p><strong>Head-to-head and combinations, label A</strong> (paired differences: the same steps, the same resamples):</p>
+  <div class="scroll"><table>
+    <tr><th>Comparison</th><th>Pooled CV</th><th>Held-out scenario</th><th>Reading</th></tr>
+    <tr><td>Jev − probe</td><td class="num">+0.064 [0.012, 0.113]</td><td class="num">+0.071 [0.024, 0.116]</td><td>Jev better. On the fold-stratified comparison (+0.040 [−0.017, 0.090]) the interval includes 0.</td></tr>
+    <tr><td>Gain: probe on top of GPT-5-nano</td><td class="num"><strong>+0.081</strong> [0.038, 0.126]</td><td class="num">+0.022 [−0.013, 0.059]</td><td>Helps within known scenarios; not clearly on unseen ones.</td></tr>
+    <tr><td>Gain: probe on top of Jev</td><td class="num">+0.008 [−0.020, 0.039]</td><td class="num">+0.003 [−0.011, 0.018]</td><td>No clear gain.</td></tr>
+  </table></div>
+  <p class="small">"Gain" = AUROC of a small stacked model [round, log length, monitor, probe] minus the same model without the probe. Eventual label: probe 0.488 [0.438, 0.537] pooled, 0.523 [0.486, 0.560] held-out scenario, both intervals include 0.5. Deployable probe (the same recipe trained on everything): <code>runs/20261025-1456-e05-all-data-main/deployable/README.md</code>.</p>
+  <div class="callout"><p><strong>Why this is lower than the confirmation test (probe 0.681, Jev 0.644).</strong> Two reasons, both ordinary. (1) <strong>Small sample:</strong> the confirmation set has 82 positive steps, so its intervals are about ±0.08; a draw that favoured the probe is quite plausible, and the all-data estimate pools far more steps. (2) <strong>One ruler vs several:</strong> the confirmation test scores every step with one final model; pooled CV mixes fold models, which costs AUROC. Comparing only within one fold model gives 0.618. Both numbers go in the paper with different jobs: the confirmation test shows the signal isn't a product of our label and recipe choices (passed); the all-data estimate is the best guess at its size.</p></div>
+
+  <h3>Exploratory appendix: do the methods miss the same give-ins, and does peer text sway them? (25 Oct 14:31)</h3>
+  <p><strong>One-line answer:</strong> the probe and Jev miss the same give-ins no more often than chance would predict, and the data can't say whether persuasive peer messages sway the scores.</p>
+  <p class="small">Report <code>runs/20261025-1431-e06-appendix-errors/report.md</code>. Exploratory, no new data or calls: 2,910 replay-2 steps from 152 episodes. Each method gets an alarm cutoff allowing at most 5% false alarms on held episodes; a give-in counts as caught if the alarm fires on a step labelled A.</p>
+  <ul>
+    <li><strong>Shared misses.</strong> At that cutoff all methods miss most give-ins: the probe and Jev both miss 0.841 [0.738, 0.921] of them, against 0.832 expected if their misses were independent; excess 0.009 [−0.010, 0.041], about 0. So their errors don't visibly overlap beyond what their miss rates imply. GPT-5-nano catches no near-term give-in at this cutoff, so its comparisons say nothing. Within scenario × round, probe and Jev scores correlate weakly (Spearman 0.22).</li>
+    <li><strong>Peer-text sway: inconclusive.</strong> An "authority / approval" keyword tag hits only 13 steps (4 in held episodes); score changes there have intervals spanning roughly ±0.4. Assigned tactics have only 5–6 episodes each, and none of this is randomised, so a higher score after a persuasive message can't be told apart from correctly spotting a riskier moment.</li>
+  </ul>
 
   <h3>Confirmation test: the near-term signal holds on new episodes (25 Oct 10:30)</h3>
   <p><strong>One-line answer:</strong> we wrote down every choice before looking at the new episodes, ran it once, and both pre-stated success criteria passed. The probe scores 0.681 on new episodes and adds clearly over the GPT-5-nano detector; over Jev the gain leans positive but its interval includes 0.</p>
@@ -1242,7 +1275,7 @@ sequenceDiagram
   </ul>
 
   <div class="callout warn"><p><strong>Caveats.</strong></p><ul>
-    <li><strong>Same five scenarios as training.</strong> These are new episodes, not a new scenario, so this confirms "it works on fresh episodes of familiar scenarios", not transfer. Transfer is the held-out-scenario number (0.611 on replay 2).</li>
+    <li><strong>Same five scenarios as training.</strong> These are new episodes, not a new scenario, so this confirms "it works on fresh episodes of familiar scenarios", not transfer. Transfer is the held-out-scenario number (0.611 on replay 2; 0.579 on all data).</li>
     <li><strong>No deploy-token v2</strong> in the new set (it was the development scenario and got no new episodes).</li>
     <li><strong>Wide intervals:</strong> about ±0.07 on the probe, ±0.09 on the gains. 82 positive steps from 38 give-in episodes.</li>
     <li>Alarm metrics aren't part of the claim: the new set has only 19 benign episodes (appendix).</li>
