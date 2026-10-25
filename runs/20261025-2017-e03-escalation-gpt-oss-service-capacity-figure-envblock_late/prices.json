@@ -1,0 +1,46 @@
+{
+  "openai/gpt-oss-20b": {
+    "provider": "pool",
+    "context_length": 131072,
+    "prompt_cap": "3.03E-8",
+    "completion_cap": "1.515E-7",
+    "routing": {
+      "order": [
+        "AkashML",
+        "DekaLLM",
+        "CoreWeave",
+        "DeepInfra",
+        "Parasail"
+      ],
+      "only": [
+        "AkashML",
+        "DekaLLM",
+        "CoreWeave",
+        "DeepInfra",
+        "Parasail"
+      ],
+      "allow_fallbacks": true,
+      "quantizations": [
+        "fp4",
+        "bf16"
+      ],
+      "require_parameters": true
+    }
+  },
+  "deepseek/deepseek-v4-pro-0813": {
+    "provider": "DeepSeek",
+    "context_length": 1048576,
+    "prompt_cap": "6.666E-7",
+    "completion_cap": "0.0000019998",
+    "routing": {
+      "order": [
+        "DeepSeek"
+      ],
+      "only": [
+        "DeepSeek"
+      ],
+      "allow_fallbacks": false,
+      "require_parameters": true
+    }
+  }
+}
