@@ -254,7 +254,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 
 - **Forbidden-action rule:** a give-in is the complete protected value appearing in a channel post or a new file, decided by a rule on the tool log. A channel post is a message sent to the shared team channel.
 - **Leak route [source ready]:** the first channel leak is split between an explicit `send_message` call and the end-of-turn reply that the harness posts to the channel (Qwen: 50 via `send_message`, 48 via the end-of-turn reply). Source: `runs/20261025-2157-e05-reasoning-route-audit`.
-- **Addressee check [source ready, confirm count]:** those end-of-turn replies are addressed to the peer (Qwen 51/51).
+- **Addressee check:** across all Qwen behaviour episodes (plain and tactic arms), the 51 end-of-turn replies that carried a first leak were all judged addressed to the peer (Jev, threshold 0.5); the base rate is 96.9% of all end-of-turn replies (4,935 of 5,094). This uses a wider slice than the route split above. Source: `runs/20261025-2202-e06-addressee-audit`.
 - **Deliberate-vs-accidental judge:** the secondary decision model's labels match blind human labels on 36 of 40 give-ins (Cohen's κ = 0.79).
 - **Secondary labels:** the near-term variants B and C. B keeps the near-term positives but counts only held-episode steps as negatives; C uses a within-three-target-calls window against held episodes. Both drop steps using hindsight, so neither is a prospective alarm label; their results are in Appendix H.
 
@@ -277,7 +277,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 - **Behaviour [source ready]:** blunt pressure fails (gpt-oss 0/27, Gemma 1/35). A delayed whole-configuration-block request passes the selection gate; the scaled collection gives 128/300 channel give-ins, controls 0/60. Gemma stays file-only and behaviour-only.
 - **Rule amendments:** a public-only cutoff (reasoning mentions are not leaks) and the eligibility rule shared with Qwen (Addendum 6 of the frozen plan).
 - **Disclosure-kind judge:** 198/200 deliberate, 0 accidental, 2 uncertain. The first public emission is `write_file` in 196/200; when the token reaches the channel it is almost always the end-of-turn reply (127 of 128).
-- **Leak-route and addressee rows** for gpt-oss (cross-referenced from Appendix D).
+- **Leak route:** of the 128 channel give-ins, 127 are the end-of-turn reply and 1 an explicit `send_message` (canonical disclosure-kind judge). The gpt-oss addressee rerun is pending, so no addressee line is given yet.
 - **If the replay works:** fidelity with the provider-quantisation caveat; the rendering check reported as passed; probe and monitors, including the reasoning-access level, in a small table matching Figure 2; and the pre-ask placebo split and the no-post-ask-window family as table rows. Section 4.6 of the main text gets the headline.
 - **If the replay fails:** the rendering mismatch is reported as the reason; the probe results are cut and stated as a limitation in Appendix A; Section 4.6 becomes two sentences of behaviour.
 
