@@ -38,3 +38,12 @@ We defined the near-term labels after seeing the eventual-label result, so on th
 
 - Alarm metrics on the new data. There are few benign episodes (19), so they go in the appendix only.
 - Eventual-label results on the new data: reported, but not part of the confirmatory claim.
+
+## Addendum (25 Oct ~09:20 SGT, before any new-data grading): after the confirmation test
+
+The confirmation test above runs once, exactly as frozen. Afterwards the new episodes join the old ones:
+
+- **Main estimate:** the same family-grouped CV recipe and held-out-scenario (LOSO) recipe, rerun on **all** data (replay 2 + replay 3, ~240 recruiting episodes) for the near-term and eventual labels and for the 8 monitor setups scored on both sets. This gives the headline numbers with the tightest intervals.
+- **Deployable probe:** the same recipe trained on everything.
+
+The paper reports both the confirmation result, as the protection against our label choices, and the all-data estimate.

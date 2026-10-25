@@ -115,6 +115,7 @@ def main(args):
     run=start_run('e05-layer-diagnostic',experiment='E05',parents=[DATA,FIT,args.near_run],settings=dict(layers=CANDIDATES,diagnostic_only=True,bootstrap_reps=args.reps,no_gpu=True))
     try:
         assert json.loads((ROOT/'runs'/args.near_run/'meta.json').read_text())['status']=='finished'
+        assert json.loads((ROOT/'runs'/FIT/'meta.json').read_text())['settings']['candidate_layers']==CANDIDATES
         jobs=[(run.dir,args.near_run,name,mode,seed,fold) for name in LABELS for mode in MODES for seed in SEEDS for fold in range(5 if mode=='pooled' else 6)]
         refits=0
         with ProcessPoolExecutor(max_workers=args.workers) as pool:
