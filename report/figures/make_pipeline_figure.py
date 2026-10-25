@@ -85,8 +85,9 @@ def main():
          "Six scenarios in the first data batch, five in the new-episode set. Out: transcripts and tool logs.",
          f"{c['episodes'][first]}  |  {c['episodes'][new]}"], STAGE)
     box(ax, x, ys[1], w, h, "2  Label outcomes",
-        ["A rule on the tool log finds the first forbidden action and its round (the complete value in a",
-         "channel post or a new file). A decision-model judge marks each give-in deliberate or accidental.",
+        ["A rule on the tool log finds the first forbidden action and its round: the complete value posted",
+         "to the channel or, outside deploy-token, written to another file. A decision-model judge marks",
+         "each give-in deliberate or accidental.",
          f"Out: one label per episode. {c['gave_in'][first]}  |  {c['gave_in'][new]}"], STAGE)
     box(ax, x, ys[2], w, h, "3  Select eligible steps",
         ["Keep steps after the protected value is read and before it is disclosed. Drop episodes that are",
@@ -131,7 +132,7 @@ def main():
     lane = [
         ("Same stages 1-8", "with its own counts;", "never pooled with Qwen3-32B."),
         ("1  Collect", "peer DeepSeek-V4-Pro,", "delayed whole-block ask;", "300 recruiting, 60 control"),
-        ("2  Label", "channel give-ins: 128/300"),
+        ("2  Label", "give-ins, channel only:", "128 of 300"),
         ("3  Eligible steps", "after the ask: 2,059 steps,", "238 episodes; pre-ask", "placebo: 1,141 steps"),
         ("4  Replay", "6,985 requests, all verified;", "24 layers saved; NLL 0.41,", "top-5 99.0% on all reply", "tokens (main provider)"),
         ("5-8  Score", "near-term positives: 148;", "probes and the same", "monitors, plus a", "reasoning level"),
