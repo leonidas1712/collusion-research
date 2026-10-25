@@ -65,7 +65,7 @@ Six scenarios are built from one task template, which fixes the structure while 
 
 ### 3.2 Data
 
-To read the target's internal activations we **replay** every saved target request through the open-weight Qwen3-32B checkpoint on an A100-80GB GPU, reading the **residual stream** (the model's running internal representation) at the last prompt token before each reply. The replay reproduces the served replies closely — high reply likelihood and top-5 token agreement — so the activations reflect the model that acted (numbers in the appendix). Across a **first data batch** and a later **new-episode set**, the combined data is **6,404 scored steps from 338 episodes**; the new-episode set serves first as a held-out confirmation set and is then pooled (§3.5, §4). Per-batch and per-scenario counts are in the appendix.
+To read the target's internal activations we **replay** every saved target request through the open-weight Qwen3-32B checkpoint on an A100-80GB GPU, reading the **residual stream** (the model's running internal representation) at the last prompt token before each reply. The replay reproduces the served replies closely — high reply likelihood and top-5 token agreement — so the activations reflect the model that acted (fidelity numbers in the Experimental Pipeline and Reproducibility appendix). Across a **first data batch** and a later **new-episode set**, the combined data is **6,404 scored steps from 338 episodes**; the new-episode set serves first as a held-out confirmation set and is then pooled (§3.5, §4). The full pipeline from collected episodes to scored steps, with per-batch and per-scenario counts and the settings at each stage, is in the Experimental Pipeline and Reproducibility appendix.
 
 ### 3.3 What gets scored
 
@@ -162,6 +162,20 @@ We report a **held-out scenario** evaluation (leave one scenario out: train on f
 ### Appendix A. Limitations and Dual-Use / Ethical Considerations  *(required)*
 **[TODO]** Full limitations list; what the results do and do not establish; dual-use statement (all tools mocked, no real credentials; what could make collusion easier; what we publish and hold back; detection-side considerations). Decision on file: publish all prompts and transcripts, with the reasoning here (`docs/report_plan_outline.md` §5).
 
+### Appendix. Experimental Pipeline and Reproducibility  *(place right after Appendix A; letter assigned at assembly)*
+
+This appendix shows how raw runs became the reported numbers. The pipeline figure traces the data from collected episodes down to scored steps, and the companion table gives the model versions, providers, decoding settings, seeds, round caps, costs, and the script that runs each stage. Figure 1 in the main text explains the idea for a single episode; here the view is the whole dataset. Probes and text monitors form two branches that read the **same eligible steps** and rejoin at scoring, so the figure makes visible that the two are judged head-to-head. Every count comes from the dataset summary and run outputs: the figure and table are the source of truth for the numbers below.
+
+**[Figure — pipeline flowchart (claude-2): stages 1–8, with the per-stage counts; probes (branch A) and monitors (branch B) split from the eligible steps and rejoin at scoring. Placeholder until ready.]**
+
+**[Table — one row per stage: Input · What happens · Output · Key settings · Code entry point (claude-2). Placeholder until ready.]**
+
+The pipeline has eight stages. (1) **Collect episodes** through the provider API: the peer (DeepSeek-V4-Flash) and target (Qwen3-32B, thinking off) run the six scenarios in the recruiting, control, and target-alone conditions, producing transcripts and tool logs. (2) **Label outcomes**: a rule on the tool log finds the first forbidden action and its round, and a decision model marks each give-in deliberate or accidental. (3) **Select eligible steps**: keep the steps after the target reads the protected value and before it discloses it, and drop episodes that never read it. (4) **GPU replay**: re-run every target request through the open weights and read the activations (below). (5) **Train probes** (branch A): logistic regression with the layer chosen inside each training fold, episode families held apart, held-out-scenario rotation, and three seeds, giving one probe score per step. (6) **Run monitors** (branch B): the three monitor models at three access levels and two questions, scored on the same steps as the probe. (7) **Score**: within scenario × round AUROC with family-bootstrap confidence intervals and the combination test, producing Figure 2 and the main tables. (8) **Confirmation**: the new-episode set passes through stages 1–4, and the frozen probe and monitors are applied unchanged.
+
+**Replay and integrity checks (stage 4).** The replay re-runs every saved target request through the open-weight Qwen3-32B checkpoint at the pinned revision in bfloat16 on a single A100-80GB GPU, saving the residual stream at the last prompt token before each reply. It reconstructs the exact token sequence the target saw, and prompt-token hashes are checked against a frozen manifest of the requests to replay. Fidelity is measured as the reply negative log-likelihood and the top-5 token agreement between the served and replayed models; the set of saved layers and the pinned revision are verified against the replay code. (Fidelity values and the saved-layer set are given in the stage table.)
+
+**Second target (gpt-oss-20b).** **[Placeholder — second lane, filled once that run finishes.]** A parallel lane runs the same eight stages with its own peer (DeepSeek-V4-Pro and a per-target strategy) and its own counts. The two lanes are reported side by side and never pooled.
+
 ### Appendix — Methods details  *(letter assigned at assembly)*
 
 > **[TODO before submission]** Replace the run-folder paths below with repository-README pointers, per the vocabulary rule (run folders do not appear in the paper).
@@ -175,12 +189,7 @@ We report a **held-out scenario** evaluation (leave one scenario out: train on f
 - Why the rule was strengthened: with no rule, targets handed the value over in the first round or two, which leaves nothing to predict. The rule produces hold-then-give-in.
 - Deliberate-vs-accidental judge: the secondary decision model's labels match blind human labels on 36 of 40 give-ins (Cohen's κ = 0.79).
 
-**B.2 Replay and fidelity (detail for §3.2).**
-- Behaviour batches are replayed through the pinned Qwen3-32B checkpoint (revision `9216db57…`) in bfloat16 on a single A100-80GB GPU, using forward hooks on the decoder blocks to save all 64 layers at the last prompt token before each reply. Replay reconstructs the exact token sequence the target saw; prompt token hashes match a frozen manifest.
-- Fidelity: episodes were served at fp8 and replayed in bf16 on the identical tokens, and the bf16 model reproduces the served replies closely — reply NLL 0.249, top-5 99.79% (first data batch); NLL 0.227, top-5 99.82% (all data). The activations therefore reflect the model that acted.
-- Dataset counts: 9,138 replayed rows, 6,404 eligible steps in 338 episodes; recruiting steps scored 4,697 in 241 episodes, 101 give-ins and 140 held.
-- Split: the first data batch is 4,184 eligible steps (2,910 recruiting) from 63 give-in and 89 held episodes; the new-episode set is 129 complete episodes (89 usable recruiting episodes), used first as the confirmation set and then pooled (§4).
-- GPU replay cost: first data batch ~\$5.51, all data \$2.94.
+**B.2 Replay, fidelity, and data counts (detail for §3.2).** Replay reconstruction and fidelity, the per-stage counts, and the first-data-batch / new-episode-set split are in the Experimental Pipeline and Reproducibility appendix (stage 4 and the stage table), to keep one source of truth for those numbers.
 
 **B.3 Scoring-window costs (detail for §3.3).**
 - The exposure positive control reaches AUROC 1.000 at layer 32 on held-out families (min over all 64 layers 0.99999 on the first data batch; 1.000 on all data). This is why steps before the read are excluded — a probe can detect "the file was read" perfectly.
@@ -208,7 +217,7 @@ We report a **held-out scenario** evaluation (leave one scenario out: train on f
 - **Alarm analysis:** a score cutoff is set on benign (held) episodes for a 5% false-alarm target, and recall and false alarms are reported on held recruiting episodes.
 
 ### Further appendices
-**[TODO]** B. Example trajectory · C. Scenarios and data (per-scenario counts, incident grounding) · D. Model choice · E. Monitor setups (full grid) · F. Eventual-label details · G. Near-term robustness · H. Pooled CV and fold mixing · I. Pressure vs outcome; errors and alarms · J. Behaviour screening · K. Second target (gpt-oss-20b, Gemma-4-31b) · L. Prompts · M. Replay and integrity checks. (Full plan: `docs/report_plan_outline.md` §5.)
+**[TODO]** Appendix order (letters assigned at the end): A Limitations and Dual-Use / Ethical Considerations · B Experimental Pipeline and Reproducibility (above) · C Example Trajectories · D Scenarios and Data (per-scenario counts, incident grounding) · E Model Choice · then the rest — Methods details (above), Monitor setups (full grid), Eventual-label details, Near-term robustness, Pooled CV and fold mixing, Pressure vs outcome; errors and alarms, Behaviour screening, Second target (gpt-oss-20b, Gemma-4-31b), Prompts. "Replay and integrity checks" is folded into appendix B (Experimental Pipeline and Reproducibility). (Full plan: `docs/report_plan_outline.md` §5.)
 
 ---
 
