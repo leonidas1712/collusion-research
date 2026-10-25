@@ -416,3 +416,16 @@ Rule-based labels, valid episodes only. "Not first-round" counts give-ins whose 
   - viewer rebuild;
   - the replay decision for the new episodes + peer-token positions (~$7–10 Modal, Leo's GPU OK);
   - the 8-setup monitor subset (~$2.5, pending Leo).
+
+### 2026-10-25 ~11:35 SGT — Balanced batch leak kinds (codex, APA-68)
+
+- **Run:** `runs/20261025-0833-e01-topup-semantic-judge`. Same Luna judge as the top-up, on the 129 complete episodes; $0.053. Labels are in `episode.label.semantic_judge`.
+- **Give-ins by kind (deliberate / accidental), over all complete episodes:**
+  - dispatch 11 (5/6)
+  - handoff 8 (8/0)
+  - procurement 7 (4/3)
+  - capacity 8 (4/4; 3 file-only)
+  - rollout 6 (5/1)
+  - The judge agrees with the rule-based boundary label on every episode.
+- **Counts differ from my 11:15 table** (e.g. dispatch 25 vs 21 valid), because codex counts over complete episodes rather than `valid_for_comparison`. The replay-2 eligibility rules decide what actually gets used.
+- **One provisional evaluation-awareness flag:** rollout recruiting ep0019, round 11, "even as part of a test". Possibly hypothetical; quoted in the report, check by hand.
