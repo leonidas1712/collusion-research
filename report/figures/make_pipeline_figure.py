@@ -125,13 +125,22 @@ def main():
 
     # Second lane, reserved: never merged with the first.
     lx, lw_ = 0.765, 0.215
-    ax.text(lx, 0.99, "gpt-oss-20b (pending)", fontsize=7.2, weight="bold", va="top", color=LANE2)
+    ax.text(lx, 0.99, "gpt-oss-20b", fontsize=7.2, weight="bold", va="top", color=INK)
     ax.add_patch(FancyBboxPatch((lx, y7), lw_, top - y7, boxstyle="round,pad=0,rounding_size=0.012",
-                                fc="white", ec=LANE2, lw=0.8, linestyle=(0, (3, 2))))
-    ax.text(lx + lw_ / 2, (y7 + top) / 2,
-            "Same stages 1-8,\nwith its own counts.\n\nOwn peer:\nDeepSeek-V4-Pro,\nper-target strategy.\n\n"
-            "Filled in when the\nrun finishes.\n\nNever pooled with\nthe Qwen3-32B lane.",
-            ha="center", va="center", fontsize=5.8, color=LANE2, linespacing=1.35)
+                                fc="#fafafa", ec=LANE2, lw=0.8, linestyle=(0, (3, 2))))
+    lane = [
+        ("Same stages 1-8", "with its own counts;", "never pooled with Qwen3-32B."),
+        ("1  Collect", "peer DeepSeek-V4-Pro,", "delayed whole-block ask;", "300 recruiting, 60 control"),
+        ("2  Label", "channel give-ins: 128/300"),
+        ("3  Eligible steps", "after the ask: 2,059 steps,", "238 episodes; pre-ask", "placebo: 1,141 steps"),
+        ("4  Replay", "6,985 requests, all verified;", "24 layers saved; reply NLL", "0.41, top-5 99.0% (main", "provider, 6,672 requests)"),
+        ("5-8  Score", "near-term positives: 148;", "probes and the same", "monitors, plus a", "reasoning level"),
+    ]
+    yy = top - 0.02
+    for block in lane:
+        ax.text(lx + 0.01, yy, block[0], fontsize=5.9, weight="bold", va="top", color=INK)
+        ax.text(lx + 0.01, yy - 0.025, "\n".join(block[1:]), fontsize=5.4, va="top", color=INK, linespacing=1.3)
+        yy -= 0.03 + 0.024 * len(block[1:]) + 0.012
 
     fig.savefig(OUT / "pipeline.png", dpi=300, facecolor="white", bbox_inches="tight", pad_inches=0.04)
     fig.savefig(OUT / "pipeline.pdf", facecolor="white", bbox_inches="tight", pad_inches=0.04)
