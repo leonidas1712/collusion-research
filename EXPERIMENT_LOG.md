@@ -504,3 +504,14 @@ Report: `runs/20261025-0147-e06-monitor-main/combine.md` and `combine.json`. Cod
   - seed models averaged after z-scoring;
   - the stacker's OOF and final probe scores put on a common z-scale (prompted by a side review).
 - **Leo (25 Oct ~09:45), write-up placement:** the pressure-vs-outcome result (one recruiting-vs-benign probe: 1.000 on its own task, 0.43 at ranking give-in vs held) goes in the **main text**, with details in the appendix. The learning curve and per-layer curve go in the appendix.
+
+- 2026-10-25 09:49 SGT [result] E05 APA-67 near-term B pooled learning checkpoint: `runs/20261025-0948-e05-learning-checkpoint/report.md`; nested25/50/75/100% AUROC .533/.557/.572/.605, paired75→100 +.033 [.003,.066]; fixed32 .536/.560/.565/.578, gain +.013 [−.013,+.038]. Three seeds × three draws, 1,000 family resamples; conditional evidence of a final-size nested gain, with pooled cross-fold score-calibration caveat. B LOSO continues; CPU only, frozen replay2 data.
+
+### 2026-10-25 ~09:50 SGT — Learning curve, near-term B (pooled): still rising
+
+`runs/20261025-0948-e05-learning-checkpoint/report.md`.
+
+- **Nested probe** at 25/50/75/100% of training families: 0.533 / 0.557 / 0.572 / 0.605. The 75 → 100% step gains **+0.033 [0.003, 0.066]**.
+- **Fixed layer 32:** 0.536 / 0.560 / 0.565 / 0.578; final step +0.013 [−0.013, 0.038].
+- Unlike the eventual label, the near-term probe still improves with more data. So the replay-3 episodes should help it, both in the all-data estimate and in the deployable probe.
+- LOSO B is still running.
