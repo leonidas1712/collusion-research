@@ -194,7 +194,7 @@ Sources: `docs/llm_activations_lit.md` (author), `archive/internal/docs/probe_ta
 |---|---|---|---|
 | Running per-token probe score: sliding-window mean of logits in training, softmax-weighted token loss, EMA at inference; probe-first cascade | Paper App. J.8; exploratory streaming probe on gpt-oss reasoning tokens | Cunningham et al. 2026, Constitutional Classifiers++, arXiv 2601.04603 (§5.1–5.2) | Our labels are reply-level horizons, not exchange labels; our all-layer view is a random 256-dim projection per layer |
 | Streaming classifier that stops a reply at the first flagged token (truncate-at-first-flag evaluation) | Paper App. J.8; exploratory blocking-point check | Sharma et al. 2025, Constitutional Classifiers, arXiv 2501.18837 | Our block point is just before the protected value's first character |
-| Prompt-token probes; maximum of rolling means as the aggregate | Paper App. J.8; exploratory aggregate | Kramár et al. 2026, Building Production-Ready Probes for Gemini, arXiv 2601.11516 | |
+| Prompt-token probes; maximum of rolling means as the aggregate | Paper App. J.8; exploratory aggregate | Kramár et al. 2026, Building Production-Ready Probes for Gemini, arXiv 2601.11516 (§3.2.2, adds attention weighting); the uniform max-of-rolling-means aggregate is from McKenzie et al. 2026, Detecting High-Stakes Interactions with Activation Probes, arXiv 2506.10805 | Distinct from CC++'s softmax-weighted loss: McKenzie's softmax probes pool logits |
 
 ## 5. Datasets, models and tools
 
