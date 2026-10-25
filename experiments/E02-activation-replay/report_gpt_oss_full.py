@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -12,6 +13,22 @@ from collusion.runs import start_run, write_json_atomic
 
 def read(path):
     return json.loads(path.read_text())
+
+
+def preemptions(log):
+    events = []
+    active = None
+    completed = 0
+    for line in log.splitlines():
+        match = re.search(r'\[run\] (\S+) -> /outputs/runs/', line)
+        if match:
+            active, completed = match.group(1), 0
+        match = re.search(r'^PROGRESS (\d+) ', line)
+        if match:
+            completed = int(match.group(1))
+        if 'Container terminated due to preemption' in line:
+            events.append(dict(partial_run=active, completed_requests_logged=completed))
+    return events
 
 
 def main(args):
@@ -45,11 +62,15 @@ def main(args):
             reason='Correct availability wording for the separately saved judgment metadata; no data or numbers changed'))
         seconds = sum(v['summary']['wall_seconds'] for v in shards.values())
         tokens = plan['counts']['prompt_tokens']+plan['counts']['reply_tokens']
+        interruptions = preemptions((client/'modal.log').read_text())
+        write_json_atomic(run.dir/'preemptions.json', interruptions)
         versions = read(Path(next(iter(copies.values()))['local'])/'summary.json').get('versions')
         result = dict(requests=summary['rows'], episodes=summary['episodes'], shards=len(shards),
             prompt_tokens=plan['counts']['prompt_tokens'], reply_tokens=plan['counts']['reply_tokens'],
-            reasoning_positions=plan['counts']['reasoning_tokens'], forward_wall_seconds=seconds,
+            reasoning_positions=plan['counts']['reasoning_tokens'], completed_shard_wall_seconds=seconds,
             input_tokens_per_second=tokens/seconds, client_wall_seconds=budget['client_wall_seconds'],
+            client_input_tokens_per_second=tokens/budget['client_wall_seconds'],
+            worker_preemptions=interruptions,
             budget=budget, downloaded_bytes=sum(v['bytes'] for v in copies.values()),
             fidelity=summary['fidelity'], prompt_counts=summary['prompt_counts'],
             eligible_counts=summary['eligible_counts'], versions=versions,
@@ -86,13 +107,19 @@ def main(args):
             'This differs from a monitor without private-reasoning access and from a feature taken before all reasoning '
             'in the turn. Reasoning-position probing remains optional; it is not used in the primary last-prompt feature.', '',
             '## Time and cost', '',
-            f'Forward passes processed {tokens:,} prompt+reply tokens in {seconds/60:.2f} minutes '
-            f'({tokens/seconds:.1f} input tokens/s). Client wall time was {budget["client_wall_seconds"]/60:.2f} minutes. '
+            f'Completed shards processed {tokens:,} prompt+reply tokens in {seconds/60:.2f} minutes '
+            f'({tokens/seconds:.1f} input tokens/s, including capture and artifact writes). '
+            f'Client wall time was {budget["client_wall_seconds"]/60:.2f} minutes, equivalent to '
+            f'{tokens/budget["client_wall_seconds"]:.1f} unique input tokens/s including reloads, retries and other overhead. '
             f'The full app billing snapshot is USD{budget["billed_so_far_usd"]:.6f}; billing can lag. '
             f'The conservative shared total, including the preceding paired diagnostic and USD0.50 overhead reserve, '
             f'is USD{budget["total_upper_usd"]:.6f}, below the USD20 cap. '
             'The watchdog carried earlier client costs forward and checked the projection after every shard. '
-            'The GPU loaded cached weights and did not download a checkpoint.', '',
+            'The GPU loaded cached weights and did not download a checkpoint. '
+            f'Modal automatically retried {len(interruptions)} worker preemptions within the same app. '
+            f'The interrupted attempts logged {sum(v["completed_requests_logged"] for v in interruptions)} completed requests '
+            'before preemption, plus any unlogged in-flight work. Only successful completed shards enter the dataset; '
+            'all app wall time and billed resources remain in cost accounting. Details are in preemptions.json.', '',
             '## Data and analysis checks', '',
             'Episode eligibility requires complete execution, exposure and a successfully written correct summary at least once. '
             'Steps are strictly after the read and before first public emission; returned private reasoning does not censor them. '

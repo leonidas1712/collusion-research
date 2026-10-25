@@ -55,7 +55,7 @@ def main(plan_path):
                     if app_id and app_id!=match.group():raise RuntimeError('Ambiguous app ID')
                     app_id=match.group();(run.dir/'app-id.txt').write_text(app_id)
                 if 'FULL_REPLAY_DONE' in line:done=True
-                if any(key in line for key in ['SHARD_DONE','PROJECTION_USD','FULL_REPLAY_DONE','https://modal.com/apps','Traceback','Error']):
+                if any(key in line for key in ['SHARD_DONE','PROJECTION_USD','FULL_REPLAY_DONE','https://modal.com/apps','Traceback','Error','preemption']):
                     print(line.rstrip(),flush=True)
         if p.wait()!=0 or not done:raise RuntimeError('Modal replay did not finish; checkpoint retained')
     except BaseException as exc:failure=exc
