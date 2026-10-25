@@ -183,6 +183,66 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(episode["label"])
         self.assertEqual(len([r for r in episode["requests"] if r["actor"] == "target"]), 1)
 
+    async def test_empty_resends_keep_exact_payload_and_collapse_request_index(self):
+        from request_labels import completed_target_requests
+        client = ScriptedClient([answer(None), answer(""), answer("Finished.")], [answer()])
+        episode = await self.run_case(client, empty_response_retries=2)
+        self.assertEqual(episode['status'], 'complete')
+        target = [r for r in episode['requests'] if r['actor'] == 'target']
+        self.assertEqual([r['empty_resend_number'] for r in target], [0, 1, 2])
+        self.assertEqual(target[0]['request'], target[1]['request'])
+        self.assertEqual(target[1]['request'], target[2]['request'])
+        self.assertEqual(len(completed_target_requests(episode)), 1)
+        self.assertEqual([m.get('content') for m in episode['histories']['target']
+                          if m['role'] == 'assistant'], ['Finished.'])
+
+    async def test_exhausted_empty_resends_are_incomplete(self):
+        episode = await self.run_case(ScriptedClient([answer(None)] * 3, [answer()]),
+                                      empty_response_retries=2)
+        self.assertEqual(episode['status'], 'incomplete')
+        self.assertEqual(episode['stop_reason'], 'empty_assistant_message')
+        self.assertIsNone(episode['label'])
+        self.assertEqual(len([r for r in episode['requests'] if r['actor'] == 'target']), 3)
+
+    async def test_empty_default_still_stops_without_resend(self):
+        episode = await self.run_case(ScriptedClient([answer(None)], [answer()]))
+        self.assertEqual(episode['stop_reason'], 'empty_assistant_message')
+        self.assertEqual(len([r for r in episode['requests'] if r['actor'] == 'target']), 1)
+
+    async def test_empty_peer_resend_uses_same_policy(self):
+        episode = await self.run_case(ScriptedClient([answer()], [answer(None), answer()]),
+                                      empty_response_retries=2)
+        self.assertEqual(episode['status'], 'complete')
+        peer = [r for r in episode['requests'] if r['actor'] == 'recruiter']
+        self.assertEqual([r['empty_resend_number'] for r in peer], [0, 1])
+        self.assertEqual(peer[0]['request'], peer[1]['request'])
+
+    async def test_empty_after_delivered_send_ends_both_turns_without_duplicate(self):
+        client = ScriptedClient(
+            [calls(('target-post', 'send_message', {'content': 'Notes ready.'})), answer(None)],
+            [calls(('peer-post', 'send_message', {'content': 'Please update notes.'})), answer(None)])
+        ep = await self.run_case(client, empty_response_retries=2, empty_after_send_ends_turn=True)
+        self.assertEqual(ep['status'], 'complete')
+        self.assertEqual(len(ep['channel']), 2)
+        self.assertEqual(sum(r.get('empty_after_send_end_turn', False) for r in ep['requests']), 2)
+        self.assertFalse(any(r.get('empty_resend_number') for r in ep['requests']))
+        self.assertFalse(any(m['role'] == 'assistant' and not m.get('content') and not m.get('tool_calls')
+                             for history in ep['histories'].values() for m in history))
+
+    async def test_other_actor_post_does_not_authorize_empty_turn(self):
+        ep = await self.run_case(ScriptedClient([answer(None)] * 3, [answer('Peer posted.')]),
+                                 empty_response_retries=2, empty_after_send_ends_turn=True)
+        self.assertEqual(ep['stop_reason'], 'empty_assistant_message')
+        self.assertIsNone(ep['label'])
+
+    async def test_previous_round_post_does_not_authorize_empty_turn(self):
+        client = ScriptedClient([calls(('post', 'send_message', {'content': 'Ready.'})),
+                                 answer(None), answer(None), answer(None), answer(None)],
+                                [answer(), answer()])
+        ep = await self.run_case(client, rounds=2, empty_response_retries=2, empty_after_send_ends_turn=True)
+        self.assertEqual(ep['stop_reason'], 'empty_assistant_message')
+        self.assertEqual(sum(r.get('empty_after_send_end_turn', False) for r in ep['requests']), 1)
+
     async def test_peer_length_finish_retries_once_and_records_link(self):
         length = Response({"role": "assistant", "content": "repeated"}, finish_reason="length")
         client = ScriptedClient([answer()], [length, answer("Please report your progress.")])

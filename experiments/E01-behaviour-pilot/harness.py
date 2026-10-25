@@ -62,6 +62,8 @@ class Settings:
     }})
     recruiter_request_options: dict = field(default_factory=lambda: {"extra_body": {"reasoning": {"enabled": False}}})
     early_stop: bool = True
+    empty_response_retries: int = 0
+    empty_after_send_ends_turn: bool = False
 
 
 @dataclass
@@ -186,6 +188,8 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
     if min(settings.rounds, settings.max_tool_steps, settings.max_tokens,
            settings.parallelism) < 1:
         raise ValueError("rounds, tool steps, tokens and parallelism must be positive")
+    if settings.empty_response_retries not in (0, 1, 2):
+        raise ValueError("empty_response_retries must be 0, 1 or 2")
     if not episode_id or Path(episode_id).name != episode_id:
         raise ValueError("episode_id must be a filename stem")
     if not getattr(client, "is_fake", False) and not scenario.recruiter_approved:
@@ -239,14 +243,14 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
         existing = json.loads(final_path.read_text())
         if existing.get("status") != "complete":
             raise ValueError("final episode file is not complete")
-        if (existing.get("settings") != asdict(settings) or not _same_scenario_spec(existing.get("scenario_spec"), scenario_spec)
+        if ({"empty_response_retries": 0, "empty_after_send_ends_turn": False, **existing.get("settings", {})} != asdict(settings) or not _same_scenario_spec(existing.get("scenario_spec"), scenario_spec)
                 or existing.get("fake") != bool(getattr(client, "is_fake", False))):
             raise ValueError("existing episode settings or scenario differ; use a new output directory")
         return existing
     if partial_path.exists():
         # Keep the failed attempt when restarting the episode from its initial state.
         previous = json.loads(partial_path.read_text())
-        if (previous.get("settings") != asdict(settings) or not _same_scenario_spec(previous.get("scenario_spec"), scenario_spec)
+        if ({"empty_response_retries": 0, "empty_after_send_ends_turn": False, **previous.get("settings", {})} != asdict(settings) or not _same_scenario_spec(previous.get("scenario_spec"), scenario_spec)
                 or previous.get("fake") != bool(getattr(client, "is_fake", False))):
             raise ValueError("partial episode settings or scenario differ")
         attempt = 1
@@ -295,7 +299,7 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                 "result": {"delivered": True, "origin": origin, "publication_id": publication_id},
             })
 
-    async def request(actor, round_number):
+    async def request(actor, round_number, empty_resend_number=0):
         payload = {"model": getattr(settings, f"{actor}_model"),
                    "messages": copy.deepcopy(histories[actor]),
                    "max_tokens": settings.max_tokens, "temperature": settings.temperature}
@@ -318,6 +322,8 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                       "requested_routing": copy.deepcopy(extra_body.get("provider")),
                       "served_provider": None, "served_quantization": None,
                       "response": None, "usage": None}
+            if settings.empty_response_retries:
+                record["empty_resend_number"] = empty_resend_number
             episode["requests"].append(record)
             _save(partial_path, episode)
             try:
@@ -347,8 +353,38 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                 _save(partial_path, episode)
                 await asyncio.sleep(delay)
 
-    async def request_with_peer_length_retry(actor, round_number):
+    async def request_with_empty_retry(actor, round_number):
         response = await request(actor, round_number)
+        for resend in range(settings.empty_response_retries + 1):
+            choices = response.get("choices") or []
+            choice = choices[0] if choices else {}
+            message = choice.get("message") or {}
+            content = message.get("content")
+            if (choice.get("finish_reason") != "stop" or message.get("tool_calls")
+                    or isinstance(content, str) and content.strip()):
+                break
+            if settings.empty_after_send_ends_turn and any(
+                    event["actor"] == actor and event["round"] == round_number
+                    and event["name"] == "send_message" and isinstance(event.get("result"), dict)
+                    and event["result"].get("delivered") is True
+                    for event in episode["tool_log"]):
+                episode["requests"][-1]["empty_after_send_end_turn"] = True
+                _save(partial_path, episode)
+                break
+            if resend == settings.empty_response_retries:
+                break
+            previous_index = len(episode["requests"]) - 1
+            episode["requests"][previous_index]["empty_retry_scheduled"] = True
+            _save(partial_path, episode)
+            response = await request(actor, round_number, empty_resend_number=resend + 1)
+            retry_index = len(episode["requests"]) - 1
+            episode["requests"][retry_index]["retry_of_request_index"] = previous_index
+            episode["requests"][retry_index]["retry_reason"] = "empty_assistant_message"
+            _save(partial_path, episode)
+        return response
+
+    async def request_with_peer_length_retry(actor, round_number):
+        response = await request_with_empty_retry(actor, round_number)
         choices = response.get("choices") or []
         if actor != "recruiter" or not choices or choices[0].get("finish_reason") != "length":
             return response
@@ -388,6 +424,8 @@ async def run_episode(scenario: Scenario, settings: Settings, client, output_dir
                     if choice.get("finish_reason") not in ("stop", "tool_calls"):
                         raise EpisodeIncomplete(f"finish_reason:{choice.get('finish_reason')}")
                     raw_message = choice.get("message") or {}
+                    if episode["requests"][-1].get("empty_after_send_end_turn"):
+                        break
                     message = {key: copy.deepcopy(value) for key, value in raw_message.items()
                                if key in ("role", "content", "tool_calls", "reasoning", "reasoning_details", "refusal")
                                and value is not None}
@@ -513,7 +551,9 @@ async def _main(args):
                  for index in range(args.family_start, args.family_start + args.episodes)]
     settings = Settings(args.target_model, args.recruiter_model, args.rounds,
                         args.max_tool_steps, args.max_tokens, args.temperature, args.parallelism,
-                        early_stop=not getattr(args, "no_early_stop", False))
+                        early_stop=not getattr(args, "no_early_stop", False),
+                        empty_response_retries=getattr(args, "empty_response_retries", 0),
+                        empty_after_send_ends_turn=getattr(args, "empty_after_send_ends_turn", False))
     for actor in ("target", "recruiter"):
         provider = getattr(args, f"{actor}_provider", None)
         quantization = getattr(args, f"{actor}_quantization", None)
@@ -585,6 +625,10 @@ if __name__ == "__main__":
     parser.add_argument("--no-early-stop", action="store_true",
                         help="Run to the round limit even after the designated action")
     parser.add_argument("--max-tokens", type=int, default=1536)
+    parser.add_argument("--empty-response-retries", type=int, choices=(0, 1, 2), default=0,
+                        help="Maximum exact-payload resends for an empty stop response")
+    parser.add_argument("--empty-after-send-ends-turn", action="store_true",
+                        help="Accept an empty stop after this actor already delivered a message this turn")
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--target-reasoning", action="store_true")
     parser.add_argument("--recruiter-reasoning", action="store_true")

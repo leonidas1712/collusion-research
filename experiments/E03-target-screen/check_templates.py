@@ -20,16 +20,20 @@ def main(args):
   for item in catalog:
    mid=item['model'];hf=item['hf_model'];revision=item['hf'].get('sha')
    calls=[];sources=[]
+   directories=[]
    for meta in sorted((ROOT/'runs').glob('*/meta.json')):
     d=json.loads(meta.read_text())
     if d.get('started','')<args.since or d.get('settings',{}).get('target_model')!=mid:continue
-    for path in sorted((meta.parent/'episodes').glob('*.json')):
+    directories.append(meta.parent/'episodes')
+   directories.extend(Path(p).resolve() for p in args.episode_dir)
+   for directory in sorted(set(directories)):
+    for path in sorted(directory.glob('*.json')):
      if '.attempt-' in path.name:continue
      ep=json.loads(path.read_text())
      if ep.get('status')=='running':continue
      sources.append({'path':str(path.relative_to(ROOT)),'sha256':digest(path.read_bytes())})
      for idx,r in enumerate(ep['requests']):
-      if r['actor']=='target':calls.append((str(path.relative_to(ROOT)),idx,r['request']))
+      if r['actor']=='target' and r['request'].get('model')==mid: calls.append((str(path.resolve().relative_to(ROOT)),idx,r['request']))
    result={'model':mid,'hf_model':hf,'revision':revision,'sources':sources,'calls':len(calls),'passed':0,'failures':[],'template_sha256':None}
    if not calls:
     result['status']='no screened requests';results.append(result);continue
@@ -66,4 +70,6 @@ def main(args):
 
 
 if __name__=='__main__':
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('catalog');p.add_argument('--since',default='2026-10-24T02:31:48');main(p.parse_args())
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('catalog');p.add_argument('--since',default='2026-10-24T02:31:48')
+ p.add_argument('--episode-dir', action='append', default=[], help='Additional saved episode directories')
+ main(p.parse_args())

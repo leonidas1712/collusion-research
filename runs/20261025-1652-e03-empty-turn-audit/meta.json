@@ -1,0 +1,35 @@
+{
+  "id": "20261025-1652-e03-empty-turn-audit",
+  "experiment": "E03",
+  "name": "e03-empty-turn-audit",
+  "tags": [
+    "serving-diagnostic",
+    "offline"
+  ],
+  "settings": {
+    "patterns": [
+      "*scaleup/episodes/*.json",
+      "*e01-gemma-screen*/episodes/*.json"
+    ]
+  },
+  "parents": [],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E03-target-screen/audit_empty_turns.py",
+  "git_commit": "e5c83e4d567b96f02dcc59b47a1cbce5ba3d87d5",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T16:52:55",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T16:52:55",
+  "results": {
+    "failures": 18,
+    "same_turn_delivered": 18,
+    "immediately_after_receipt": 18,
+    "by_empty_model": {
+      "deepseek/deepseek-v4-flash": 13,
+      "google/gemma-4-31b-it": 5
+    }
+  }
+}

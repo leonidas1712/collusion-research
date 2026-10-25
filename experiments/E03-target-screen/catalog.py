@@ -1,4 +1,5 @@
 """Snapshot public serving endpoints and HF model metadata for target selection."""
+import argparse
 import json
 import sys
 import urllib.request
@@ -40,10 +41,15 @@ def collect(item):
          'hf_url':hf_url,'hf':metadata,'config':fetch('https://huggingface.co/'+hf+'/resolve/'+commit+'/config.json')}
 
 if __name__=='__main__':
- run=start_run('e03-target-catalog',experiment='E03',settings={'models':MODELS},tags=['model-selection'])
+ parser=argparse.ArgumentParser(description=__doc__)
+ parser.add_argument('--model', nargs=2, action='append', metavar=('API_ID','HF_ID'),
+                     help='Catalog this pair; repeat for several. Omit for the original screen.')
+ args=parser.parse_args()
+ selected=dict(args.model) if args.model else MODELS
+ run=start_run('e03-target-catalog',experiment='E03',settings={'models':selected},tags=['model-selection'])
  try:
   with ThreadPoolExecutor(max_workers=6) as pool:
-   entries=list(pool.map(collect,MODELS.items()))
+   entries=list(pool.map(collect,selected.items()))
   write_json_atomic(run.dir/'catalog.json',entries)
   for entry in entries:
    hf=entry['hf'];print(entry['model'],'HF',hf.get('sha'),hf.get('safetensors',{}).get('total'),'gated',hf.get('gated'))
