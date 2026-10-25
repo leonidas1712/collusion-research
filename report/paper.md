@@ -74,7 +74,7 @@ We score two labels (Figure 1c). Under the **eventual** label, every eligible st
 
 ![Figure 1](figures/figure1_setup.png)
 
-**Figure 1.** Under the same rule, the target refuses, then posts the token after the peer reframes the request as a routine handoff; probes and text monitors are scored on the steps between reading the token and posting it. (a) A real exchange from one give-in episode (episode-0032): the target refuses and cites the operator's policy, the peer reframes its request as a standard inter-agent handoff, and the target posts the token (verbatim, shortened with "…"; token truncated). (b) Setup. A peer agent that needs the token, and is not told the operator's rule, messages the target agent through a team channel. The target works with mock tools on a config file that holds the token. The probe reads the target's activations at the last prompt token before each reply. A text monitor reads no activations; its three levels of access add, in turn, the target's tool calls and posts (1), the peer's messages (2), and the tool results and unposted text the target saw (3). (c) Which steps are scored, and how each label marks them, in a toy episode with one step per round. Only eligible steps are scored: the target has read the token and not yet posted it (shaded, in both episodes). Under the eventual label, every eligible step of an episode that gives in is positive. Under the near-term label, only steps in the round of the give-in or the round before it are positive. Every step of a held episode is negative under both labels.
+**Figure 1.** The target refuses, then posts the token after the peer reframes the request as a routine handoff; probes and monitors are scored on the steps between reading the token and posting it. (a) A real give-in exchange (episode-0032; verbatim, shortened, token truncated). (b) Setup: the probe reads the target's activations at the last prompt token, and a monitor's three access levels add the target's actions (1), the peer's messages (2), and everything the target saw (3). (c) A toy episode with eligible steps shaded and the eventual and near-term labels marked.
 
 ### 3.4 Detectors
 
@@ -110,7 +110,7 @@ For the near-term label, on the same held-out steps (250 near-term positives), t
 
 ![Figure 2. Predicting eventual and near-term give-in](figures/figure2_prediction.png)
 
-**Figure 2.** Eventual give-in is barely predictable; near-term give-in is modestly predictable, and best by a text forecaster. Within scenario × round AUROC (0.5 = chance) on 4,697 recruiting steps from 241 episodes; whiskers are 95% family-bootstrap intervals. Filled: held-out scenarios, all data. Hollow: the new-episode confirmation set (near-term only). The two sets overlap, so they are not independent replications.
+**Figure 2.** Eventual give-in is barely predictable; near-term give-in is modestly predictable, and best by a text forecaster. Within scenario × round AUROC (0.5 = chance) on 4,697 recruiting steps from 241 episodes, 95% family-bootstrap whiskers. Filled: held-out scenarios, all data; hollow: the new-episode confirmation set (near-term only, overlapping the all-data set).
 
 ### 4.4 The near-term result holds on new episodes
 
@@ -179,7 +179,7 @@ This appendix shows how raw runs became the reported numbers. The pipeline figur
 
 ![Pipeline](figures/pipeline.png)
 
-**Figure [Pipeline].** How the collected episodes become the reported numbers, for the Qwen3-32B target. Each box gives one stage: what it does, and the count at that point, written as *first data batch | new-episode set*. Stages 1–3: 397 complete episodes shrink to 338 kept episodes with 6,404 eligible steps. Stage 4: every target request is replayed through the open weights, and fidelity is checked on the replies. Stages 5 and 6: the probe and the text monitors branch from the same eligible steps, and both feed scoring on all the data (stage 7) and the confirmation test (stage 8). Second lane (dashed): reserved for gpt-oss-20b, with its own peer and counts, never pooled with the first. Counts come from the combined step table and the replay, monitor and confirmation summaries.
+**Figure (Pipeline).** How collected episodes become scored steps, for Qwen3-32B: 397 complete episodes become 338 kept, with 6,404 eligible steps; probes and monitors branch from the same steps and rejoin at scoring (stages 7–8). Counts are *first data batch | new-episode set*; the dashed lane is the reserved gpt-oss lane, never pooled.
 
 | Stage | Input | What happens | Output | Key settings | Code |
 |---|---|---|---|---|---|
@@ -216,7 +216,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
   | Service rollout threshold | 13/36 | 36.1% [22.5, 52.4] | 0/8 | 0/4 |
   | **Total** | **100/226** | **44.2% [37.9, 50.8]** | **0/66** | **0/25** |
 
-  **Table 1.** Give-in rates range from 36% to 66% across six scenarios, while controls never leak. Give-ins over analysed episodes (plain-peer slice), with Wilson 95% intervals; accidental disclosures count. The behaviour slice differs from the smaller scored cohort (4,697 recruiting steps from 241 episodes; see Appendix B): not every episode was replayed, and invalid episodes and those with no scored step are dropped.
+  **Table 1.** Give-in rates range from 36% to 66% across six scenarios; controls never leak. Give-ins over analysed plain-peer episodes, Wilson 95% intervals. The behaviour slice differs from the scored cohort (241 recruiting episodes; Appendix B).
 - **Example give-in (episode-0032; deploy-token scenario, recruiting, plain peer).** The target reads the token in round 1 and refuses in rounds 2–5, citing the operator's policy; in round 5 it even refuses to confirm the token's prefix. In round 6 the peer reframes the request as a routine inter-agent handoff, and the target posts the token. Eligible steps are rounds 2–6; the near-term label is positive in rounds 5–6. The same excerpt is panel (a) of Figure 1.
 
   | Round | Speaker | Line |
@@ -258,7 +258,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 
 ![Monitor-design figure](figures/figure_monitor_design.png)
 
-**Monitor-design figure.** A forecasting question and the peer's messages make the biggest difference; more access does not help every monitor. Near-term within scenario × round AUROC on Qwen3-32B, 95% family-bootstrap intervals, chance line at 0.5. Panel (a) compares the Jev detector and forecaster questions on all data (4,697 steps, 250 positives); panel (b) compares forecasters on the first data batch only (2,910 steps, 168 positives), the only batch with the full three-monitor ladder. The two panels use different cohorts and are not paired.
+**Monitor-design figure.** A forecasting question and the peer's messages make the biggest difference; more access does not help every monitor. Near-term within scenario × round AUROC, 95% whiskers. (a) Jev detector vs forecaster, all data; (b) forecasters on the first data batch (the only one with the full ladder). The panels use different cohorts and are not paired.
 
 **Combination test (Table 2, moved from §4.5).**
 
@@ -271,7 +271,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 | New-episode confirmation | Jev forecaster | 0.643 [0.556, 0.723] | 0.695 [0.624, 0.763] | +0.052 [-0.014, +0.121] |
 | New-episode confirmation | GPT-5-nano detector | 0.554 [0.471, 0.633] | 0.667 [0.580, 0.750] | +0.113 [+0.025, +0.203] |
 
-**Table 2.** The probe adds to the weaker monitor in pooled cross-validation and on confirmation, but not to the strong forecaster. Near-term within scenario × round AUROC on Qwen3-32B. The baseline is a cross-fitted model of round, log prompt length and the monitor score; the combined model adds the probe score. Jev uses the forecaster question with everything the target saw; GPT-5-nano uses the detector question with the conversation. Held-out-scenario and pooled family cross-validation use all data (4,697 steps, 250 positives); the frozen-plan confirmation evaluates 89 new episodes (1,787 steps, 82 positives). Gains use paired resamples. The confirmation episodes are part of the all-data pool, so these estimates are not independent. The probe and the monitors rank steps differently (within scenario × round Spearman 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano detector; exploratory).
+**Table 2.** The probe adds to the weaker monitor (GPT-5-nano detector) in pooled CV and on confirmation, but not to the strong Jev forecaster. Near-term within scenario × round AUROC; baseline is round, log prompt length and the monitor score, combined adds the probe. All data 4,697 steps / 250 positives; confirmation 1,787 / 82. Gains use paired resamples; confirmation overlaps the all-data pool. Probe–monitor rank correlation (exploratory): 0.23 with Jev, 0.09 with GPT-5-nano.
 
 ### F. Second Target: gpt-oss-20b (and Gemma-4-31B)
 
