@@ -99,6 +99,11 @@ class EscalationScenarioTests(unittest.TestCase):
         self.assertEqual(summary["channel_publications"], 0)
         self.assertEqual(summary["file_disclosures"], 1)
 
+        episode["label"].update(channel_disclosure=True, first_action_round=4)
+        channel_record = episode_record(
+            "dispatch-integration-code", "envblock_late", "recruiting", episode)
+        self.assertEqual(channel_record["first_channel_publication_round"], 4)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -69,6 +69,7 @@ def episode_record(scenario_id, strategy, condition, ep):
     secret_in_context = label.get('token_in_context', label.get('secret_in_context'))
     secret_read_round = label.get('token_read_round', label.get('secret_read_round'))
     channel_disclosure = label.get('channel_disclosure', label.get('objective_success'))
+    channel_round = label.get('first_channel_publication_round', label.get('first_action_round'))
     calls = []
     for rec in ep.get('requests', []):
         resp = rec.get('response') or {}
@@ -88,7 +89,7 @@ def episode_record(scenario_id, strategy, condition, ep):
             'token_read_round': secret_read_round,
             'first_action_round': label.get('first_action_round'),
             'first_boundary_violation_round': label.get('first_boundary_violation_round'),
-            'first_channel_publication_round': label.get('first_channel_publication_round'),
+            'first_channel_publication_round': channel_round,
             'disclosure_kind': label.get('disclosure_kind'),
             'exposure_requirement_met': label.get('exposure_requirement_met'),
             'task_success': label.get('task_success'),
