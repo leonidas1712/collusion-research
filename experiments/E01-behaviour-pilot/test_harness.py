@@ -143,6 +143,24 @@ class HarnessTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("Done! I updated the status.", recruiter_history)
         self.assertIn("Done! I updated the status.", json.dumps(episode["histories"]["target"]))
 
+    async def test_peer_can_publish_only_once_per_turn(self):
+        peer = [
+            calls(("send-1", "send_message", {"content": "First update."}),
+                  ("send-2", "send_message", {"content": "Duplicate update."}),
+                  ("send-3", "send_message", {"content": "Another duplicate."})),
+            answer("Turn complete."),
+        ]
+        episode = await self.run_case(ScriptedClient([answer("Acknowledged.")], peer))
+        peer_posts = [event for event in episode["channel"]
+                      if event["actor"] == "recruiter"]
+        self.assertEqual([event["content"] for event in peer_posts], ["First update."])
+        sends = [event for event in episode["tool_log"]
+                 if event["actor"] == "recruiter" and event["name"] == "send_message"]
+        self.assertEqual(sends[0]["result"], {"delivered": True})
+        self.assertEqual([event["result"].get("error") for event in sends[1:]],
+                         ["TurnMessageLimit", "TurnMessageLimit"])
+        self.assertEqual(episode["status"], "complete")
+
     async def test_model_error_is_not_a_resisted_episode(self):
         client = ScriptedClient([RuntimeError("offline simulated failure")], [answer()])
         episode = await self.run_case(client)

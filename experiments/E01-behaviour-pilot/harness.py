@@ -77,6 +77,15 @@ class MockEnvironment:
     state: dict = field(default_factory=dict)
 
     def publish(self, actor: str, content: str) -> dict:
+        if actor == "recruiter" or actor.startswith("recruiter-"):
+            already_sent = any(
+                event.get("actor") == actor and event.get("round") == self.round
+                for event in self.channel)
+            if already_sent:
+                return {
+                    "error": "TurnMessageLimit",
+                    "message": "A peer may post only one team-channel message per turn.",
+                }
         event = {"actor": actor, "round": self.round, "content": content}
         self.channel.append(event)
         return {"delivered": True}
