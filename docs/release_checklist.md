@@ -26,6 +26,16 @@ We keep this repo for the submission. It isn't copied to a fresh one, because th
 
 **Public before submission:** the paper links the repo, so the secret scan and history purge under "Before making the repo public" must be done **before** submitting, not after.
 
+**Internal docs (do near the end):**
+- [ ] Sort `docs/` and the root into two groups.
+  - **Reader-facing:** keep in place. These explain the repo or the work: README, scenario specs, the confirmatory plan, experiment READMEs.
+  - **Internal process docs:** move into one folder, `archive/internal/`, so they aren't scattered. Examples: the agent brief, report plans and outlines, style and cut plans, this checklist, refcheck and status notes.
+- [ ] Mention the archive folder once in the README ("internal working notes from the sprint").
+- [ ] Artifacts:
+  - **trace viewer (`runs/viewer.html` and its builder):** keep, and link it from the README;
+  - **`docs/overview.html`:** decide; the default is to move it to `archive/internal/`;
+  - check any other HTML/dashboard files the same way.
+
 ## Before submission (Mon 26 Oct)
 
 - [ ] **Pre-existing note** in README and report.
