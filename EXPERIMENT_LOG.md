@@ -336,3 +336,16 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 - **Claude subagent:** logit lens at layer 63, on CPU, $0.
 - **claude-2 (APA-64):** check the RQ 2.2 papers (Nakamura, Shi, Radev, Nguyen, Arike) against related_work and PROVENANCE → `docs/rq22_papers_check.md`.
 - **Held for Leo:** a new replay that saves peer-message tokens (~$6–10 Modal), decided after the learning curve and the deciding test.
+
+### 2026-10-25 ~09:00 SGT — RQ 2.2 papers checked (claude-2, APA-64)
+
+- **Record:** `docs/rq22_papers_check.md`. All 5 papers verified against full text. 4 were missing and are now in PROVENANCE §6 and related_work: Shi 2026a 2607.05132, a different paper from our Shi 2609.24967; Radev 2605.29178; Nguyen 2604.03968; Arike 2601.21112.
+- **Sprint-page claims that are off:**
+  - Shi's ">90%" holds only in the highest-deception conditions (range 0–98.6%).
+  - Nguyen's "0% → >70%" is really 0% → 95% for an untrusted monitor, n = 20.
+  - Nakamura's anti-correlation is r = −0.243/−0.143, n = 19, flagged by the authors as not significant.
+- **Bearing on our results:**
+  - Arike's "less is more" matches our L3 ≤ L2.
+  - Radev's code → code + messages (68 → 81%) matches our L1 → L2.
+  - No paper combines activations with a text monitor, so our combination test is new.
+- **Method fix for the deciding test:** I chose Jev forecaster L3 by looking at test results. So the combination test must pick the monitor and level *inside the training folds*, nested. Jev L3 can only be reported as a post-hoc best.

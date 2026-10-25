@@ -211,7 +211,11 @@ Sources: `docs/related_work.md`, `docs/probe_takeaways.md`, `docs/external_trace
 | Das et al., "You Can't Escape Your Own Activations" | AUROC vs fixed-threshold recall | arXiv 2609.03035 | |
 | Kortukov et al. 2026, "Predicting Future Behaviors in Reasoning Models Enables Better Steering" | Closest methodological precedent: prediction probes (64–91%) vs detection features, single-turn reasoning models; positioning line in `docs/probe_takeaways.md` | arXiv 2606.11172 (full text read; venue not stated on arXiv); code github.com/kortukov/future_probes | We extend to multi-turn, multi-agent, tool use, monitor comparison; borrow the detection-vs-prediction control |
 | Apollo deception probes | Probe baseline; scenario-raises-scores caution | arXiv 2502.03407 | |
-| Colosseum (Nakamura et al.) | Say-vs-do motivation; tactic source | arXiv 2602.15198 | |
+| Colosseum (Nakamura et al.) | Say-vs-do motivation; tactic source | arXiv 2602.15198 | Checked 2026-10-25 (`docs/rq22_papers_check.md`): judge-score vs coalition-advantage r = −0.243 / −0.143, n = 19, not significant per their own footnote |
+| When Agents Lie (Shi, Zhang, Schölkopf, Conitzer, Jin; "Shi et al. 2026a") | RQ 2.2: private plans vs public announcements; analogue of our L3 unposted text | arXiv 2607.05132 | Checked 2026-10-25. >90% premeditation only in the highest-deception conditions; 0–98.6% across games. Not the same paper as Shi 2026b |
+| The Best-Laid SCHEMEs (Radev, Haas, Arnav, Bernabeu-Pérez) | RQ 2.2: joint code + messages monitor; matches our L1 → L2 gain | arXiv 2605.29178 | Checked 2026-10-25. Codex TPR@2% FPR: code only 68% → code + messages 81%; per-agent 61%. Monitors the saboteurs, not a recruited target |
+| TraceGuard (Nguyen, Nghiem, Tran) | RQ 2.2: multi-dimension monitor rubric (action-trace consistency) | arXiv 2604.03968 | Checked 2026-10-25. Sprint page's "0% → >70%" is misquoted: paper has 0% → 95% safety for an *untrusted* monitor, n = 20; 70.8% is another monitor. Hackathon preprint |
+| Arike et al., information access and sabotage monitors | RQ 2.2: "less-is-more effect"; explains L3 not beating L2; EaE monitor idea | arXiv 2601.21112 | Checked 2026-10-25. Filtering helps in 7/8 monitor-environment pairs; EaE +16.8 pp |
 | Shi et al. 2026b | L1/L5 evidence; backup data | arXiv 2609.24967 | |
 | Dong et al. (IPI exposure) | Closest paper overall | arXiv 2608.02657; [code](https://github.com/jianshuod/IPI-exposure-signal) | Their effect probe is weaker than exposure |
 | LAD | Attempt detection; drift baseline | arXiv 2604.28129 | |

@@ -384,6 +384,18 @@ Sources from `docs/prior_work_check.md`, each checked by claude-2 against the ab
 | Persuade Me if You Can (Bozdag et al., arXiv 2503.01829, ACM CAIS 2026) | Multi-turn persuader/persuadee LLM conversations, measuring persuasiveness and susceptibility | Text only; no rule, tools or activations. Scoring method (self-reported agreement?) not confirmed |
 | Seeing is Believing? / MMPersuade (Qiu et al., arXiv 2510.22768) | Agent-to-agent multimodal persuasion of VLMs, effects measured via function calls | Behaviour only, no activations; persuasion of opinions, not of a rule-breaking action |
 
+## RQ 2.2 papers (2026-10-25)
+
+The sprint page's RQ 2.2 citations, checked by claude-2; full notes and how each bears on our results are in `docs/rq22_papers_check.md`.
+
+| Paper | What it shows | How we differ |
+|---|---|---|
+| Colosseum (Nakamura et al., arXiv 2602.15198), already above | LLM-judge conversation score vs action-level coalition advantage: r = −0.243 / −0.143, n = 19, not significant | Our monitors show the same gap sharper: they fire on held episodes as often as on give-ins |
+| When Agents Lie (Shi et al. 2026a, arXiv 2607.05132) | Deviations from public announcements are often already in private plans: >90% in the highest-deception conditions, 0–98.6% overall | Our L3 unposted text doesn't beat L2, so our targets mostly don't write the plan down first |
+| The Best-Laid SCHEMEs (Radev et al., arXiv 2605.29178) | A monitor on joint code + messages beats code alone (Codex 68% → 81% at FPR ≤ 2%); per-agent slices lose 20 pp | They detect saboteurs' attempts; we predict which recruited target gives in |
+| TraceGuard (Nguyen et al., arXiv 2604.03968) | Five-dimension structured scoring keeps an untrusted monitor at 95% safety vs 0% for single-score (small n, hackathon) | Our monitors are trusted; only the action-trace consistency rubric is reusable |
+| Arike et al. (arXiv 2601.21112) | "Less-is-more effect": monitors often do better with less of the trace; extract-and-evaluate helps | Same shape as our ladder (L3 ≤ L2), but they detect sabotage, we forecast giving in |
+
 ## At a glance
 
 Summary of everything above, added 2026-10-24 by claude-2. Details and caveats per paper are in the sections above; numbers marked *(summary)* there still need checking against the PDFs.
