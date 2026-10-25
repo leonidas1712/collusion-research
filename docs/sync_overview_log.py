@@ -31,6 +31,8 @@ def rows() -> list[str]:
         if m:
             current = list(m.groups())
             entries.append(current)
+        elif line.startswith("#"):  # a section header ends the previous entry
+            current = None
         elif current and line.strip():  # continuation line of the previous entry
             current[3] += " " + line.strip()
     out = []
