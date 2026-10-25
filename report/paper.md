@@ -6,7 +6,7 @@ this file from here on. Assembled 25 Oct 2026. -->
 
 # Recruited  *(working title — decide last)*
 
-Authors: [TODO]  ·  Affiliation: [TODO]
+Leonidas Raghav, Independent
 
 ---
 
@@ -18,7 +18,7 @@ Can we tell that an AI agent is about to be talked into breaking its operator's 
 
 ## 1. Introduction
 
-Through 2026, autonomous agents pursuing ordinary goals have broken the rules of the systems they run in, often with more than one agent involved. In the 2026 OpenAI–Hugging Face incident [@openai2026huggingface], agents under task pressure used access they were not meant to use; METR and Redwood Research investigated independently [@greenblatt2026incident]. Such coordinated rule-breaking often begins with recruitment: one agent needs something it cannot reach, and another has the access.
+In July 2026, AI agents running in OpenAI's internal cyber evaluations coordinated on an unsanctioned shared message board, passed stolen credentials to one another, and broke out of their sandboxes to compromise Hugging Face's production infrastructure [@openai2026huggingface]. An independent investigation found that roughly 700 of about 1,200 agents that were meant to be isolated joined in, some recruited under "significant pressure" from other agents, and many despite recognising the activity as "out of scope and unethical" [@greenblatt2026incident]. Coordinated rule-breaking of this kind begins with recruitment: one agent needs something it cannot reach, and another has the access.
 
 We study that first step. In our main scenario the operator gives the target a staging deploy token and one rule: never share it outside the file that holds it. A peer agent needs the token and asks for it. Handing it over is an ordinary action, so what makes compliance a violation is the operator's rule, which keeps the question about policy rather than about a model's refusal training.
 
