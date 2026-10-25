@@ -56,3 +56,7 @@ These fill gaps in the plan above. Nothing from the new data has been seen.
 - **Stacker inputs:** the stacker's training rows use the replay-2 out-of-fold near-term probe scores (`runs/20261025-0730-e05-near-term/probe_scores.csv`, pooled, nested, seed mean). New-episode rows use the final probe's scores. The difference in scale between fold models and the final model is a known limitation of this simple stacking.
 - **Monitor scores:** replay-2 rows from `runs/20261025-0147-e06-monitor-main`; new rows from `runs/20261025-0841-e06-monitor-main-balanced`. Same prompts, same models.
 - **CIs:** family bootstrap over the new episodes' families, 1,000 resamples, seed 20261025.
+
+## Addendum 3 (25 Oct ~09:45 SGT, after a dry run on replay-2 families only; replay 3 has still not landed)
+
+The dry run treated 25% of the replay-2 families as "new" and never touched the confirmation set. It showed that the three seed models choose very different layers (4, 60, 63), and their raw scores sit on very different scales, so a plain mean is dominated by one model. Fix: before averaging, each seed model's scores are z-scored against that model's own training-row scores (mean and SD). This uses no test information. Everything else is unchanged. Note that the CIs will be wide: the dry run's 31 episodes gave ±0.2. The real set has ~129 episodes.
