@@ -32,6 +32,6 @@ Main-text "in passing" mentions are listed under **Main-text pointer** so the pa
 | 22 | gpt-oss probe + monitors (incl. + reasoning level) | Second target | §4.6 | replay analysis | pending |
 | 23 | Reasoning-token probe (optional; else Future Work) | Second target or Future Work | Future Work | none | optional |
 | 24 | Exposure positive control (AUROC 1.000) | Methods details | §3.3 (in paper) | E05 report | main text done |
-| 25 | Prompts (peer, target, monitor) | Prompts | Appendix A | experiments/ | TODO |
+| 25 | Prompts (peer, target, monitor) | I. Prompts | Appendix A | `report/appendix_drafts/I.md` (from experiments/ and episode specs) | draft ready (claude-2), awaiting merge |
 | 26 | **gpt-oss disclosure-kind judge** (frozen Qwen question, Luna Decisions): 198/200 deliberate, 0 accidental, 2 uncertain. First public emission is write_file in 196/200 (final reply 4); among channel-positive episodes the first channel leak is the end-of-turn reply in 127/128 (send_message 1) | Second target | §4.6 | `runs/20261025-2228-e03-gpt-oss-disclosure-kind-judge` | source ready |
 | 27 | **gpt-oss replay rendering check:** does our prompt rendering reproduce the provider's tokens? Gates #20–22. Rendering gate numbers (AkashML 68%→98.9%; DekaLLM ~4.5% unresolved) now in F | F. Second Target | §3.6 | `runs/20261025-2236-e02-gpt-oss-rendering-gate` | in paper (F); replay still on hold over the mismatch |
