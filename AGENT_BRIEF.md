@@ -14,6 +14,7 @@ Readers of the report, README, docs, code comments and run reports will not have
 - Name things by what they are, and define each term where it first appears. If you refer to a run, give its folder path and say what it is.
 - Build up from first principles in the report: setup → method → result → what it means, with the numbers needed to check each step.
 - Process history (who decided what, when) belongs in `EXPERIMENT_LOG.md`, not in code or docs.
+- **Who writes the report:** Claude agents write all report prose. Codex/GPT agents review it for technical accuracy and render the final Markdown into .docx, but do not write it. The Markdown file in `report/` is the source of truth; the .docx is only a rendering.
 
 ---
 
