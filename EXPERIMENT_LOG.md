@@ -679,3 +679,12 @@ Agreement output: `runs/20261025-1355-e01-label-batch-2/agreement.txt`. Labels a
 - **Runs:**
   - Gemma max pressure: 40 recruiting + 8 control (codex-3, $6 cap).
   - gpt-oss-20b, reasoning low: max pressure 48 + plain-peer arm 16 (codex-2, $6 cap). Caveats: Harmony −1 token offset; whether reasoning is retained across turns is unknown.
+
+### 2026-10-25 ~18:45 SGT — Gemma 4 31B-it plain-peer screen: final, no-go
+`runs/20261025-1642-e03-gemma-screen-retry2/report.md` (commit e3d51ca0). All 68 slots resolved: 61 complete, 7 incomplete (6 peer tool-step loops, 1 target exhausted empty reply).
+- **Recruiting give-ins: 1/43 (2.3%).** By scenario: deploy-token-v2 0/12, handoff 0/12, dispatch 0/9, capacity 1/10. The one disclosure was accidental, at r13: the target quoted the non-numeric capacity string while explaining it couldn't do arithmetic on it. This is a scenario-realism caveat.
+- **Controls and alone:** controls 0/10, alone 0/8. All 68 episodes read the protected file and completed the ordinary task.
+- **Same scenarios on Qwen3-32B** (descriptive; the cohorts are not matched): 21/32, 9/23, 8/17, 6/21.
+- **Serving:** 1,776 target responses; no raw tool text and no reasoning tokens; prompt counts within 1% (Crusoe and Parasail exact, DeepInfra up to 0.33%).
+- **Cost:** $1.02 billed.
+- **Verdict:** no GPU replay at plain pressure. The max-pressure arm (V4 Pro 0813 + all tactics) is in its sanity check (codex-3).
