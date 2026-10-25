@@ -118,11 +118,20 @@ def ranking(rows, per_seed, test):
         key = np.array([f'{test[seed][e]}|{c}' for e, c in zip(eps, scen)])
         v, d = within_round(y, s, rounds, stratum_key=key)
         fold_strat.append(v); coverage.append(d['positive_coverage'])
+    # Balanced weight: each scenario's within-round AUROC averaged with equal weight (seed mean per scenario).
+    per_scen = {}
+    for c in sorted(set(scen)):
+        m = scen == c
+        v = [within_round(y[m], s[m], rounds[m])[0] for s in S]
+        v = [x for x in v if x is not None and np.isfinite(x)]
+        if v:
+            per_scen[c] = float(np.mean(v))
     mean = S.mean(axis=0)
     lengths = np.array([r['n_tokens'] for r in rows], dtype=float)[keep]
     return {'rows': int(keep.sum()), 'missing': int((rec & ~keep).sum()), 'positives': int(y.sum()),
             'within_round_auc': float(np.mean(pre)), 'within_round_ci95': summary['within_round_ci95'],
             'fold_stratified_auc': float(np.mean(fold_strat)), 'fold_stratified_coverage': [float(c) for c in coverage],
+            'per_scenario_auc': per_scen, 'balanced_auc': float(np.mean(list(per_scen.values()))) if per_scen else None,
             'pooled_auc': float(np.mean([auc(y, s) for s in S])), 'pooled_ci95': summary['pooled_ci95'],
             'added_value': added_value(y, mean, rounds, lengths, fam)}
 
@@ -241,7 +250,7 @@ def main():
 def write_report(run, rows, results, names, cost, tag=''):
     rec = [r for r in rows if r['condition'] == 'recruiting']
     n_give = len({r['episode'] for r in rec if r['label'] == 1})
-    n_held = len({r['episode'] for r in rec if r['label'] == 0})
+    n_held = len({r['episode'] for r in rec} - {r['episode'] for r in rec if r['label'] == 1})
     n_ben = len({r['episode'] for r in rows if r['condition'] != 'recruiting'})
     title = f'# E06 main run, near-term label {tag[1:]}: monitors vs probe' if tag else '# E06 main run: monitors vs probe on the replay-2 rows'
     L = [title, '',
@@ -255,11 +264,11 @@ def write_report(run, rows, results, names, cost, tag=''):
          'Added value: pooled AUROC gain from adding the score to turn + log length (cross-fitted, family-bootstrap CI). '
          'This base has no scenario term, so the probe gain differs from the E05 report (base scenario + turn + length). '
          'Probe scores are seed means here.', '',
-         '| Method | Within-round AUROC [95% CI] | Fold-stratified | Pooled AUROC [95% CI] | Added value [95% CI] | Rows |',
-         '|---|---|---|---|---|---|']
+         '| Method | Within-round AUROC [95% CI] | Fold-stratified | Balanced (scenario mean) | Pooled AUROC [95% CI] | Added value [95% CI] | Rows |',
+         '|---|---|---|---|---|---|---|']
     for n, r in results.items():
         k = r['ranking']; av = k['added_value']
-        L.append(f"| {n} | {fmt(k['within_round_auc'])} {ci(k['within_round_ci95'])} | {fmt(k['fold_stratified_auc'])} | "
+        L.append(f"| {n} | {fmt(k['within_round_auc'])} {ci(k['within_round_ci95'])} | {fmt(k['fold_stratified_auc'])} | {fmt(k['balanced_auc'])} | "
                  f"{fmt(k['pooled_auc'])} {ci(k['pooled_ci95'])} | {fmt(av['gain'])} {ci(av['gain_ci95'])} | {k['rows']} |")
     if tag:
         L += ['', 'Probe rows here are the eventual-label probe scored against the near-term label (no refit); '

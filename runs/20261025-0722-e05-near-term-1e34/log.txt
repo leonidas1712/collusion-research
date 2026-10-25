@@ -1,0 +1,38 @@
+[run] 20261025-0722-e05-near-term-1e34 -> runs/20261025-0722-e05-near-term-1e34
+PREFLIGHT PASSED 99 outer fits
+FIT 1 / 99 A_hazard pooled 42 0 seconds 154.5
+FIT 2 / 99 A_hazard pooled 42 1 seconds 147.5
+FIT 3 / 99 A_hazard pooled 42 2 seconds 142.0
+FIT 4 / 99 A_hazard pooled 42 3 seconds 143.5
+FIT 5 / 99 A_hazard pooled 42 4 seconds 172.7
+FIT 6 / 99 A_hazard pooled 43 0 seconds 168.9
+Exception in thread Thread-1:
+Traceback (most recent call last):
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/threading.py", line 1045, in _bootstrap_inner
+    self.run()
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/concurrent/futures/process.py", line 347, in run
+    self.terminate_broken(cause)
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/concurrent/futures/process.py", line 499, in terminate_broken
+    work_item.future.set_exception(bpe)
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/concurrent/futures/_base.py", line 559, in set_exception
+    raise InvalidStateError('{}: {!r}'.format(self._state, self))
+concurrent.futures._base.InvalidStateError: CANCELLED: <Future at 0x11e17df10 state=cancelled>
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E05-probes/near_term.py", line 301, in <module>
+    p.add_argument('--preflight-only',action='store_true');main(p.parse_args())
+                                                           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E05-probes/near_term.py", line 288, in main
+    for variant,mode,seed,fold,record in executor.map(fit_case,jobs):
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/concurrent/futures/process.py", line 620, in _chain_from_iterable_of_lists
+    for element in iterable:
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/concurrent/futures/_base.py", line 451, in result
+    self._condition.wait(timeout)
+  File "/Users/leo/.local/share/uv/python/cpython-3.11.12-macos-aarch64-none/lib/python3.11/threading.py", line 327, in wait
+    waiter.acquire()
+KeyboardInterrupt

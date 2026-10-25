@@ -383,3 +383,16 @@ Report: `runs/20261025-0536-e05-replay2-analysis/report.md` (fits `runs/20261025
 - **Cost and code:** cap $0.45 per scenario; the earlier top-up cost ~$0.20 per 35 episodes. The harness is unchanged since the top-up except for added request-index labels (cd9d1b4).
 - **Runs:** `runs/20261025-0817-e01-scaleup-spray-*`. Launcher: scratchpad `run_balance.sh`.
 - **Afterwards:** semantic-judge labels, a validity check, and the balanced-weight AUROC (macro average over scenarios). The replay of the new episodes plus peer-message positions (~$7–10 Modal) stays conditional on the learning curve / combination test.
+
+- 2026-10-25 08:18 SGT [result] APA-62 round-clean-contrast B checkpoint: runs/20261025-0817-e05-near-term-checkpoint/report.md. All33 B fits complete; C running. 2460 recruiting rows/168 positives. Refit nested scenario×round pooled0.605 [0.542,0.663], LOSO0.603 [0.547,0.649]; frozen eventual nested on B0.522 [0.461,0.584]/0.576 [0.513,0.635]. Pooled fold sensitivity0.647 [0.573,0.701], LOSO unchanged. Refit fixed32 pooled0.578/LOSO0.590. Added-value pooled-AUROC gain pooled+0.0354 [0.0152,0.0566], LOSO+0.0196 [-0.0085,0.0436]. Modest exploratory near-term signal; no demonstrated LOSO added-value gain. Original eventual-label headline unchanged. Full CSV and final audits follow C; APA-67 learning curve will reuse these100% B fits.
+
+### 2026-10-25 ~10:45 SGT — Trajectory and pressure-vs-outcome probes (codex, APA-64): no gain
+
+- **Run:** `runs/20261025-0800-e05-explore-trajectories-pressure/` (report, metrics). Exact pooled folds and LOSO splits, layers 24/32/40 reported separately with no selection, family bootstrap. CPU, $0.
+- **Difference vectors** (step minus previous step): eventual label at chance (pooled 0.495–0.502, LOSO 0.505–0.506).
+- **Near-term A, layer 24:**
+  - scalar drift features: pooled 0.556 [0.508, 0.603], LOSO 0.561 [0.515, 0.610];
+  - difference vector: pooled 0.530, LOSO 0.576 [0.537, 0.615].
+  - Neither beats the plain refit probe (0.585 / 0.611).
+- **Pressure vs outcome:** the recruiting-vs-benign probe is near perfect (pooled 1.000, LOSO 0.99998). Used in the same direction within recruiting, it scores eventual 0.430 [0.373, 0.492] pooled and A 0.436. That leans *opposite*: steps that look more pressured are slightly less likely to give in. The CIs touch or cross 0.5, so the result is exploratory. This is a clean pair for the paper: pressure is fully readable, the outcome is not.
+- Note: the LOSO seeds share assignments, so they are not independent replications.

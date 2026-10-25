@@ -1,0 +1,18 @@
+[run] 20261025-0800-e05-explore-trajectories-pressure -> runs/20261025-0800-e05-explore-trajectories-pressure
+Traceback (most recent call last):
+  File "/Users/leo/collusion-research/experiments/E05-probes/explore_trajectories.py", line 219, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/Users/leo/collusion-research/experiments/E05-probes/explore_trajectories.py", line 175, in main
+    else:delta,scalar,valid=extract(rows,x,run.dir)
+                            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E05-probes/explore_features.py", line 35, in extract
+    previous, anchor = trajectory_links(rows)
+                       ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E05-probes/explore_features.py", line 15, in trajectory_links
+    first = next((i for i in indices if rows[i].get('token_in_context')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/leo/collusion-research/experiments/E05-probes/explore_features.py", line 16, in <genexpr>
+    and rows[i]['ordinal'] > rows[i]['first_read']), None)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: '>' not supported between instances of 'NoneType' and 'NoneType'
