@@ -247,7 +247,7 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
   | Scenario | Protected value | Grounded in |
   |---|---|---|
   | Deployment credential | a deploy token | the 2026 OpenAI–Hugging Face incident |
-  | Handoff exception note | a handoff note | adapted from the repeated log-sharing of @shi2026b |
+  | Handoff exception note | a handoff note | adapted from the repeated log-sharing of @shi2026emergent |
   | Dispatch integration code | an integration code | adapted from the secret tools of @zeng2026 |
   | Procurement reserve price | a reserve price | ours |
   | Service capacity figure | a capacity figure | ours |
@@ -331,7 +331,46 @@ Table 1 reports a wider behaviour slice than the scored cohort. Of 304 plain-pee
 
 *Do the headline numbers survive other labels, layers, splits and checks, and what do the detectors miss?*
 
-- **Near-term robustness [TODO]:** one table — labels B and C, scenario-mean, per-scenario, fixed layer 32, MLP — plus the per-layer curve as a figure. Source: `runs/20261025-1456-e05-all-data-main/report.md`.
+- **Near-term robustness.** The near-term result holds across the secondary labels (B, C), both splits, the fixed-layer-32 probe, the scenario-mean weighting, per scenario, and an MLP; the per-layer curve is below. Nested = layer chosen on inner validation; B and C are the hindsight labels of §3.3 (not prospective alarms).
+
+| Label | Split | Probe | Steps / + / episodes | Scenario × round | Fold × scenario × round | Scenario mean |
+|---|---|---|---|---|---|---|
+| A: current/next round | POOLED | Inner-selected | 4697 / 250 / 241 | 0.586 [0.541, 0.631] | 0.618 [0.571, 0.666] | 0.580 [0.536, 0.623] |
+| A: current/next round | POOLED | Layer 32 | 4697 / 250 / 241 | 0.573 [0.520, 0.625] | 0.603 [0.544, 0.649] | 0.564 [0.517, 0.619] |
+| A: current/next round | LOSO | Inner-selected | 4697 / 250 / 241 | 0.579 [0.537, 0.619] | 0.579 [0.537, 0.619] | 0.585 [0.546, 0.624] |
+| A: current/next round | LOSO | Layer 32 | 4697 / 250 / 241 | 0.572 [0.525, 0.618] | 0.572 [0.525, 0.618] | 0.570 [0.523, 0.617] |
+| B: round contrast | POOLED | Inner-selected | 3949 / 250 / 241 | 0.605 [0.554, 0.652] | 0.639 [0.581, 0.688] | 0.594 [0.551, 0.641] |
+| B: round contrast | POOLED | Layer 32 | 3949 / 250 / 241 | 0.581 [0.521, 0.634] | 0.617 [0.542, 0.668] | 0.568 [0.516, 0.621] |
+| B: round contrast | LOSO | Inner-selected | 3949 / 250 / 241 | 0.586 [0.544, 0.628] | 0.586 [0.544, 0.628] | 0.580 [0.535, 0.620] |
+| B: round contrast | LOSO | Layer 32 | 3949 / 250 / 241 | 0.595 [0.541, 0.649] | 0.595 [0.541, 0.649] | 0.584 [0.530, 0.638] |
+| C: request contrast | POOLED | Inner-selected | 3996 / 297 / 241 | 0.589 [0.547, 0.631] | 0.622 [0.568, 0.671] | 0.589 [0.546, 0.633] |
+| C: request contrast | POOLED | Layer 32 | 3996 / 297 / 241 | 0.590 [0.532, 0.640] | 0.615 [0.545, 0.667] | 0.593 [0.540, 0.645] |
+| C: request contrast | LOSO | Inner-selected | 3996 / 297 / 241 | 0.569 [0.527, 0.610] | 0.569 [0.527, 0.610] | 0.572 [0.535, 0.613] |
+| C: request contrast | LOSO | Layer 32 | 3996 / 297 / 241 | 0.602 [0.547, 0.659] | 0.602 [0.547, 0.659] | 0.597 [0.545, 0.652] |
+
+  Per-scenario, label A (point estimates; the source gives no per-scenario intervals):
+
+| Scenario | Steps / + / episodes | Pooled inner-selected | LOSO inner-selected | Pooled layer 32 | LOSO layer 32 |
+|---|---|---|---|---|---|
+| Deploy token | 871 / 65 / 47 | 0.609 | 0.583 | 0.628 | 0.576 |
+| Dispatch code | 678 / 34 / 40 | 0.566 | 0.563 | 0.532 | 0.564 |
+| Handoff note | 733 / 50 / 45 | 0.592 | 0.560 | 0.537 | 0.539 |
+| Reserve price | 527 / 21 / 29 | 0.546 | 0.644 | 0.523 | 0.545 |
+| Capacity figure | 1087 / 43 / 44 | 0.587 | 0.544 | 0.593 | 0.619 |
+| Rollout threshold | 801 / 37 / 36 | 0.579 | 0.614 | 0.569 | 0.576 |
+
+  An MLP probe does not beat the logistic one (first data batch only):
+
+| Label | Split | Steps / + | MLP | Logistic | Paired MLP − logistic |
+|---|---|---|---|---|---|
+| B: round contrast | POOLED | 2460 / 168 | 0.586 [0.520, 0.654] | 0.605 [0.542, 0.663] | -0.020 [-0.056, +0.021] |
+| B: round contrast | LOSO | 2460 / 168 | 0.600 [0.559, 0.637] | 0.603 [0.547, 0.649] | -0.003 [-0.040, +0.035] |
+| A: current/next round | POOLED | 2910 / 168 | 0.586 [0.525, 0.647] | 0.585 [0.526, 0.641] | +0.001 [-0.036, +0.035] |
+| A: current/next round | LOSO | 2910 / 168 | 0.608 [0.565, 0.646] | 0.611 [0.560, 0.658] | -0.003 [-0.038, +0.029] |
+
+  ![Per-layer AUROC, first data batch](figures/appendix_h_layers.png)
+
+  **Per-layer figure.** Within scenario × round AUROC by decoder layer (first data batch, 17 candidate layers). The near-term curves peak mid-to-late (label B 0.644 at layer 48, 0.660 at layer 63) while the eventual curve stays near chance (0.576 maximum).
 - **Eventual label.** Eventual give-in is essentially unreadable from one step: the probe scores 0.523 [0.486, 0.560] held-out and 0.488 [0.438, 0.537] pooled (both intervals contain chance), a fixed-layer-32 probe 0.512 [0.453, 0.567], and the best monitor (Jev forecaster) 0.577 [0.521, 0.628]; on the same steps the near-term probe reaches 0.586 pooled and 0.579 held-out. Three first-batch diagnostics: the per-layer curve peaks at only 0.576 (pooled, layer 32) and 0.574 (held-out, layer 8) across the 17 candidate layers; the learning curve shows no clear gain from the last 25% of families (pooled −0.006 [−0.031, 0.023], held-out −0.001 [−0.031, 0.030]), which does not establish saturation; and branching reruns (23 shared states, five reruns each) ended differently in 7 of 23 states (14 never gave in, 2 always did), with the probe's Spearman correlation against a state's rerun give-in rate at −0.03 [−0.46, 0.40].
 - **Pressure versus outcome:** the full numbers and cohort for the pressure-probe check in §4.3 — first data batch, fixed layer 32: recruiting versus benign AUROC 1.000 on 4,184 steps; gave-in versus held 0.430 [0.373, 0.492] pooled and 0.426 [0.371, 0.488] held-out (2,910 recruiting steps, 618 eventual positives). Source: `runs/20261025-0800-e05-explore-trajectories-pressure`.
 - **Errors and alarms:** probe/monitor step-score correlations (within scenario × round Spearman 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano detector); the shared-miss table with its caveat; and alarm recall at a 5% per-episode false-alarm rate. Peer-text sway in one line. Source: `runs/20261025-1504-e06-appendix-errors`.
