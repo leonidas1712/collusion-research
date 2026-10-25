@@ -528,3 +528,11 @@ Report: `runs/20261025-0147-e06-monitor-main/combine.md` and `combine.json`. Cod
 | A · held-out scenario | 0.608 | 0.611 | −0.003 |
 
 All paired CIs include 0, including the fold-stratified ones. Logistic stays the method; the MLP check goes in the appendix.
+
+### 2026-10-25 ~10:05 SGT — Learning curve complete (codex-2, APA-67)
+
+`runs/20261025-0842-e05-learning-curve/report.md`; validated (594 fits, exact reconstruction, no family leakage).
+
+- **Near-term B, LOSO,** at 25/50/75/100% of training families: 0.592 / 0.602 / 0.611 / 0.603; last step −0.008 [−0.037, 0.019]. Fixed layer 32: −0.003.
+- So only near-term B *pooled* still rises at the end (+0.033). On held-out scenarios the curve is flat from about 50%: more episodes from the same scenarios help within-scenario prediction, but not transfer to a new scenario.
+- Per-layer diagnostic started.
