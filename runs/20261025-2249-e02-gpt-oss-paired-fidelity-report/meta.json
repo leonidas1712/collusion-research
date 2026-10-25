@@ -1,0 +1,148 @@
+{
+  "id": "20261025-2249-e02-gpt-oss-paired-fidelity-report",
+  "experiment": "E02",
+  "name": "e02-gpt-oss-paired-fidelity-report",
+  "tags": [],
+  "settings": {
+    "offline_verification": true
+  },
+  "parents": [
+    "20261025-1444-e02-gpt-oss-full-shard",
+    "20261025-2243-e02-gpt-oss-paired-diagnostic-plan",
+    "20261025-2243-e02-gpt-oss-full-client"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E02-activation-replay/report_gpt_oss_diagnostic.py",
+  "git_commit": "8132a5e5c0b68d8986aee03d052c77879a571415",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T22:49:50",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T22:49:51",
+  "results": {
+    "metrics": [
+      {
+        "provider": "AkashML",
+        "mode": "drop_all",
+        "segment": "all",
+        "requests": 30,
+        "tokens": 2146,
+        "mean_token_nll": 0.5136395129508473,
+        "top5_fraction": 0.9794967381174278
+      },
+      {
+        "provider": "AkashML",
+        "mode": "drop_all",
+        "segment": "reasoning",
+        "requests": 30,
+        "tokens": 361,
+        "mean_token_nll": 0.725753499530359,
+        "top5_fraction": 0.96398891966759
+      },
+      {
+        "provider": "AkashML",
+        "mode": "drop_all",
+        "segment": "answer",
+        "requests": 30,
+        "tokens": 1436,
+        "mean_token_nll": 0.32258983455702284,
+        "top5_fraction": 0.9825905292479109
+      },
+      {
+        "provider": "AkashML",
+        "mode": "current_turn",
+        "segment": "all",
+        "requests": 30,
+        "tokens": 2146,
+        "mean_token_nll": 0.4234311628215598,
+        "top5_fraction": 0.9860205032618826
+      },
+      {
+        "provider": "AkashML",
+        "mode": "current_turn",
+        "segment": "reasoning",
+        "requests": 30,
+        "tokens": 361,
+        "mean_token_nll": 0.6063050183563021,
+        "top5_fraction": 0.9778393351800554
+      },
+      {
+        "provider": "AkashML",
+        "mode": "current_turn",
+        "segment": "answer",
+        "requests": 30,
+        "tokens": 1436,
+        "mean_token_nll": 0.2556071456656405,
+        "top5_fraction": 0.9881615598885793
+      },
+      {
+        "provider": "DekaLLM",
+        "mode": "drop_all",
+        "segment": "all",
+        "requests": 20,
+        "tokens": 998,
+        "mean_token_nll": 0.49553233789457246,
+        "top5_fraction": 0.9839679358717435
+      },
+      {
+        "provider": "DekaLLM",
+        "mode": "drop_all",
+        "segment": "reasoning",
+        "requests": 20,
+        "tokens": 208,
+        "mean_token_nll": 0.8099317527734317,
+        "top5_fraction": 0.9519230769230769
+      },
+      {
+        "provider": "DekaLLM",
+        "mode": "drop_all",
+        "segment": "answer",
+        "requests": 20,
+        "tokens": 572,
+        "mean_token_nll": 0.35960047391985733,
+        "top5_fraction": 0.9912587412587412
+      },
+      {
+        "provider": "DekaLLM",
+        "mode": "current_turn",
+        "segment": "all",
+        "requests": 20,
+        "tokens": 998,
+        "mean_token_nll": 0.5190954621658113,
+        "top5_fraction": 0.9829659318637275
+      },
+      {
+        "provider": "DekaLLM",
+        "mode": "current_turn",
+        "segment": "reasoning",
+        "requests": 20,
+        "tokens": 208,
+        "mean_token_nll": 0.9209156984893175,
+        "top5_fraction": 0.9519230769230769
+      },
+      {
+        "provider": "DekaLLM",
+        "mode": "current_turn",
+        "segment": "answer",
+        "requests": 20,
+        "tokens": 572,
+        "mean_token_nll": 0.380023362722339,
+        "top5_fraction": 0.9895104895104895
+      }
+    ],
+    "verified_requests": 100,
+    "cost": {
+      "app_id": "ap-df5P5l0EgS0go4sI529BHP",
+      "app_stopped": true,
+      "client_wall_seconds": 185.376037125,
+      "conservative_compute_upper_usd": 0.16683843341250001,
+      "billed_so_far_usd": 0.10308139,
+      "billing_may_lag": true,
+      "total_upper_usd": 0.6668384334125,
+      "journal": "/Users/leo/collusion-research/runs/20261025-2243-e02-gpt-oss-paired-diagnostic-plan/completed-shards.json",
+      "error": null
+    }
+  }
+}

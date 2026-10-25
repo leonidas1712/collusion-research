@@ -1,6 +1,7 @@
 """Independent Harmony adapter and teacher-forced gpt-oss replay; no generation."""
 import argparse
 import hashlib
+from functools import lru_cache
 import importlib.metadata
 import json
 from pathlib import Path
@@ -31,19 +32,28 @@ def assistant_messages(raw, h, include_reasoning=True):
     return messages
 
 
-def render(record, date, keep_reasoning=False):
+@lru_cache(maxsize=1)
+def harmony_encoding():
     import openai_harmony as h
-    enc=h.load_harmony_encoding(h.HarmonyEncodingName.HARMONY_GPT_OSS)
+    return h.load_harmony_encoding(h.HarmonyEncodingName.HARMONY_GPT_OSS)
+
+
+def render(record, date, keep_reasoning=False, history_reasoning=None):
+    import openai_harmony as h
+    enc=harmony_encoding()
+    mode=history_reasoning or ('keep_all' if keep_reasoning else 'drop_all')
+    assert mode in ('drop_all','keep_all','current_turn')
     req=record['request']; effort=(req.get('reasoning') or req.get('extra_body',{}).get('reasoning') or {}).get('effort','low')
     system=h.SystemContent.new().with_reasoning_effort(h.ReasoningEffort[effort.upper()]).with_conversation_start_date(date)
     developer=h.DeveloperContent.new().with_instructions(req['messages'][0]['content'])
     developer.with_function_tools([h.ToolDescription.new(t['function']['name'],t['function'].get('description',''),t['function'].get('parameters')) for t in req.get('tools',[])])
     messages=[h.Message.from_role_and_content(h.Role.SYSTEM,system),h.Message.from_role_and_content(h.Role.DEVELOPER,developer)]
     names={}
-    for raw in req['messages'][1:]:
+    last_user=max((i for i,m in enumerate(req['messages']) if m['role']=='user'),default=-1)
+    for message_index,raw in enumerate(req['messages'][1:],1):
         if raw['role']=='user':messages.append(h.Message.from_role_and_content(h.Role.USER,raw['content']))
         elif raw['role']=='assistant':
-            messages.extend(assistant_messages(raw,h,keep_reasoning))
+            messages.extend(assistant_messages(raw,h,mode=='keep_all' or (mode=='current_turn' and message_index>last_user)))
             for call in raw.get('tool_calls') or []:names[call['id']]='functions.'+call['function']['name']
         elif raw['role']=='tool':
             messages.append(h.Message.from_author_and_content(h.Author.new(h.Role.TOOL,names[raw['tool_call_id']]),raw['content']).with_recipient('assistant').with_channel('commentary'))
@@ -135,14 +145,14 @@ def score_positions(model,hidden,ids,positions):
     return dict(n_tokens=len(positions),mean_token_nll=nll/len(positions),top5_fraction=hits/len(positions))
 
 
-def execute(payload, output_root, tiny=False, checkpoint=None, model=None):
+def execute(payload, output_root, tiny=False, checkpoint=None, model=None, run_name='e02-gpt-oss-fidelity'):
     import numpy as np
     import torch
     from transformers import AutoModelForCausalLM,GptOssConfig,Mxfp4Config
     import collusion.runs as rh
     from fidelity import score_hidden
     rh.RUNS=Path(output_root);rh.INDEX=rh.RUNS/'index.jsonl'
-    run=rh.start_run('e02-gpt-oss-fidelity',experiment='E02',model=MODEL,settings={'revision':REVISION,'tiny_random':tiny,'requests':len(payload['rows']),'history_reasoning':payload['history_reasoning']})
+    run=rh.start_run(run_name,experiment='E02',model=MODEL,settings={'revision':REVISION,'tiny_random':tiny,'requests':len(payload['rows']),'history_reasoning':payload['history_reasoning']})
     start=time.monotonic()
     reused_model=model is not None
     if reused_model:
@@ -160,7 +170,9 @@ def execute(payload, output_root, tiny=False, checkpoint=None, model=None):
     for i,row in enumerate(payload['rows']):
         if time.monotonic()-start>1200:raise TimeoutError('Replay wall guard reached')
         prompt=row['prompt_ids'];reply=row['reply_ids'];ids=prompt+reply
+        assert len(prompt)==row.get('n_tokens',len(prompt))
         assert digest(prompt)==row['prompt_sha256']
+        if 'input_ids_sha256' in row:assert digest(ids)==row['input_ids_sha256']
         assert len(ids)<=16384
         last,reasoning,hidden=capture(model,ids,len(prompt),row['reasoning_positions'],device)
         expected=(model.config.num_hidden_layers,model.config.hidden_size)

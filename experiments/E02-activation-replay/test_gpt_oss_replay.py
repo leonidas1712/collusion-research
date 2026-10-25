@@ -35,6 +35,25 @@ class CaptureTests(unittest.TestCase):
 
 
 class HarmonyTests(unittest.TestCase):
+    def test_current_turn_drops_old_reasoning_and_keeps_tool_chain(self):
+        import copy
+        record={'request':{'messages':[
+            {'role':'system','content':'Use tools.'},
+            {'role':'user','content':'Previous task.'},
+            {'role':'assistant','reasoning':'Earlier private deliberation.','content':'Done.'},
+            {'role':'user','content':'New task.'},
+            {'role':'assistant','reasoning':'Current tool chain.', 'tool_calls':[
+                {'id':'call1','type':'function','function':{'name':'read_file','arguments':'{"path":"x"}'}}]},
+            {'role':'tool','tool_call_id':'call1','content':'{"content":"x"}'}],
+            'tools':[{'type':'function','function':{'name':'read_file','parameters':{'type':'object'}}}]},
+            'response':{'choices':[{'message':{'content':'Finished.'}}]}}
+        expected=copy.deepcopy(record)
+        expected['request']['messages'][2].pop('reasoning')
+        current=render(record,'2026-10-25',history_reasoning='current_turn')
+        self.assertEqual(current,render(expected,'2026-10-25',True))
+        self.assertGreater(len(current['prompt_ids']),len(render(record,'2026-10-25')['prompt_ids']))
+        self.assertLess(len(current['prompt_ids']),len(render(record,'2026-10-25',True)['prompt_ids']))
+
     def test_missing_response_still_has_the_exact_prompt(self):
         record={'request':{'messages':[{'role':'system','content':'Answer.'},{'role':'user','content':'Please proceed.'}], 'tools':[]}}
         empty=render(record,'2026-10-25')

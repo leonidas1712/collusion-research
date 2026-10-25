@@ -1,0 +1,565 @@
+{
+  "id": "20261025-2236-e02-gpt-oss-rendering-gate",
+  "experiment": "E02",
+  "name": "e02-gpt-oss-rendering-gate",
+  "tags": [],
+  "settings": {
+    "offline_only": true,
+    "no_token_stream_fix": true,
+    "matching_tolerance": 1,
+    "primary_window": "ever-correct complete exposed; strictly post-read/pre-public emission; post-ask",
+    "input_hashes": {
+      "runs/20261025-2229-e02-gpt-oss-provider-template-audit/rows.json": "dfe3896fc6861bffab7bd0425e95771345311f1da7a74765b764ab83ca7a027e",
+      "runs/20261025-2226-e02-gpt-oss-full-plan/rows.jsonl": "94e8eda2300151207bd4e477afc50fea84476b20c346f9710c44dda6a86964e9",
+      "runs/20261025-2226-e02-gpt-oss-full-plan/episodes.json": "4ed277db1a940c23a64db377095098c792160d6e2840a0245ffc2b04f5f3d5ba"
+    }
+  },
+  "parents": [
+    "20261025-2229-e02-gpt-oss-provider-template-audit",
+    "20261025-2226-e02-gpt-oss-full-plan"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E02-activation-replay/report_gpt_oss_rendering_gate.py",
+  "git_commit": "53c92738a62eb5215c251fc7ff671d0f2c7168c5",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-25T22:36:58",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-25T22:37:03",
+  "results": {
+    "distributions": [
+      {
+        "provider": "AkashML",
+        "scope": "all",
+        "mode": "drop_all",
+        "n": 6672,
+        "cumulative": {
+          "1": {
+            "n": 4534,
+            "fraction": 0.6795563549160671
+          },
+          "5": {
+            "n": 4577,
+            "fraction": 0.6860011990407674
+          },
+          "20": {
+            "n": 5049,
+            "fraction": 0.7567446043165468
+          },
+          "50": {
+            "n": 5778,
+            "fraction": 0.8660071942446043
+          }
+        },
+        "median_absolute": 0.0,
+        "p90_absolute": 62.0,
+        "beyond50": 894,
+        "min_gap": -320,
+        "max_gap": 0,
+        "bins": {
+          "within1": 4534,
+          "2_to_5": 43,
+          "6_to_20": 472,
+          "21_to_50": 729,
+          "beyond50": 894
+        }
+      },
+      {
+        "provider": "AkashML",
+        "scope": "all",
+        "mode": "current_turn",
+        "n": 6672,
+        "cumulative": {
+          "1": {
+            "n": 6598,
+            "fraction": 0.9889088729016786
+          },
+          "5": {
+            "n": 6671,
+            "fraction": 0.9998501199040767
+          },
+          "20": {
+            "n": 6672,
+            "fraction": 1.0
+          },
+          "50": {
+            "n": 6672,
+            "fraction": 1.0
+          }
+        },
+        "median_absolute": 0.0,
+        "p90_absolute": 1.0,
+        "beyond50": 0,
+        "min_gap": -6,
+        "max_gap": 0,
+        "bins": {
+          "within1": 6598,
+          "2_to_5": 73,
+          "6_to_20": 1,
+          "21_to_50": 0,
+          "beyond50": 0
+        }
+      },
+      {
+        "provider": "AkashML",
+        "scope": "intra_turn",
+        "mode": "drop_all",
+        "n": 2100,
+        "cumulative": {
+          "1": {
+            "n": 4,
+            "fraction": 0.0019047619047619048
+          },
+          "5": {
+            "n": 5,
+            "fraction": 0.002380952380952381
+          },
+          "20": {
+            "n": 477,
+            "fraction": 0.22714285714285715
+          },
+          "50": {
+            "n": 1206,
+            "fraction": 0.5742857142857143
+          }
+        },
+        "median_absolute": 43.0,
+        "p90_absolute": 105.10000000000014,
+        "beyond50": 894,
+        "min_gap": -320,
+        "max_gap": 0,
+        "bins": {
+          "within1": 4,
+          "2_to_5": 1,
+          "6_to_20": 472,
+          "21_to_50": 729,
+          "beyond50": 894
+        }
+      },
+      {
+        "provider": "AkashML",
+        "scope": "intra_turn",
+        "mode": "current_turn",
+        "n": 2100,
+        "cumulative": {
+          "1": {
+            "n": 2068,
+            "fraction": 0.9847619047619047
+          },
+          "5": {
+            "n": 2099,
+            "fraction": 0.9995238095238095
+          },
+          "20": {
+            "n": 2100,
+            "fraction": 1.0
+          },
+          "50": {
+            "n": 2100,
+            "fraction": 1.0
+          }
+        },
+        "median_absolute": 0.0,
+        "p90_absolute": 1.0,
+        "beyond50": 0,
+        "min_gap": -6,
+        "max_gap": 0,
+        "bins": {
+          "within1": 2068,
+          "2_to_5": 31,
+          "6_to_20": 1,
+          "21_to_50": 0,
+          "beyond50": 0
+        }
+      },
+      {
+        "provider": "AkashML",
+        "scope": "not_intra_turn",
+        "mode": "drop_all",
+        "n": 4572,
+        "cumulative": {
+          "1": {
+            "n": 4530,
+            "fraction": 0.9908136482939632
+          },
+          "5": {
+            "n": 4572,
+            "fraction": 1.0
+          },
+          "20": {
+            "n": 4572,
+            "fraction": 1.0
+          },
+          "50": {
+            "n": 4572,
+            "fraction": 1.0
+          }
+        },
+        "median_absolute": 0.0,
+        "p90_absolute": 1.0,
+        "beyond50": 0,
+        "min_gap": -5,
+        "max_gap": 0,
+        "bins": {
+          "within1": 4530,
+          "2_to_5": 42,
+          "6_to_20": 0,
+          "21_to_50": 0,
+          "beyond50": 0
+        }
+      },
+      {
+        "provider": "AkashML",
+        "scope": "not_intra_turn",
+        "mode": "current_turn",
+        "n": 4572,
+        "cumulative": {
+          "1": {
+            "n": 4530,
+            "fraction": 0.9908136482939632
+          },
+          "5": {
+            "n": 4572,
+            "fraction": 1.0
+          },
+          "20": {
+            "n": 4572,
+            "fraction": 1.0
+          },
+          "50": {
+            "n": 4572,
+            "fraction": 1.0
+          }
+        },
+        "median_absolute": 0.0,
+        "p90_absolute": 1.0,
+        "beyond50": 0,
+        "min_gap": -5,
+        "max_gap": 0,
+        "bins": {
+          "within1": 4530,
+          "2_to_5": 42,
+          "6_to_20": 0,
+          "21_to_50": 0,
+          "beyond50": 0
+        }
+      },
+      {
+        "provider": "DekaLLM",
+        "scope": "all",
+        "mode": "drop_all",
+        "n": 313,
+        "cumulative": {
+          "1": {
+            "n": 18,
+            "fraction": 0.05750798722044728
+          },
+          "5": {
+            "n": 58,
+            "fraction": 0.1853035143769968
+          },
+          "20": {
+            "n": 153,
+            "fraction": 0.48881789137380194
+          },
+          "50": {
+            "n": 298,
+            "fraction": 0.952076677316294
+          }
+        },
+        "median_absolute": 21.0,
+        "p90_absolute": 43.0,
+        "beyond50": 15,
+        "min_gap": -74,
+        "max_gap": 11,
+        "bins": {
+          "within1": 18,
+          "2_to_5": 40,
+          "6_to_20": 95,
+          "21_to_50": 145,
+          "beyond50": 15
+        }
+      },
+      {
+        "provider": "DekaLLM",
+        "scope": "all",
+        "mode": "current_turn",
+        "n": 313,
+        "cumulative": {
+          "1": {
+            "n": 6,
+            "fraction": 0.019169329073482427
+          },
+          "5": {
+            "n": 45,
+            "fraction": 0.14376996805111822
+          },
+          "20": {
+            "n": 132,
+            "fraction": 0.4217252396166134
+          },
+          "50": {
+            "n": 270,
+            "fraction": 0.8626198083067093
+          }
+        },
+        "median_absolute": 24.0,
+        "p90_absolute": 63.80000000000001,
+        "beyond50": 43,
+        "min_gap": -74,
+        "max_gap": 277,
+        "bins": {
+          "within1": 6,
+          "2_to_5": 39,
+          "6_to_20": 87,
+          "21_to_50": 138,
+          "beyond50": 43
+        }
+      },
+      {
+        "provider": "DekaLLM",
+        "scope": "intra_turn",
+        "mode": "drop_all",
+        "n": 123,
+        "cumulative": {
+          "1": {
+            "n": 18,
+            "fraction": 0.14634146341463414
+          },
+          "5": {
+            "n": 28,
+            "fraction": 0.22764227642276422
+          },
+          "20": {
+            "n": 61,
+            "fraction": 0.4959349593495935
+          },
+          "50": {
+            "n": 118,
+            "fraction": 0.959349593495935
+          }
+        },
+        "median_absolute": 21.0,
+        "p90_absolute": 43.0,
+        "beyond50": 5,
+        "min_gap": -68,
+        "max_gap": 6,
+        "bins": {
+          "within1": 18,
+          "2_to_5": 10,
+          "6_to_20": 33,
+          "21_to_50": 57,
+          "beyond50": 5
+        }
+      },
+      {
+        "provider": "DekaLLM",
+        "scope": "intra_turn",
+        "mode": "current_turn",
+        "n": 123,
+        "cumulative": {
+          "1": {
+            "n": 6,
+            "fraction": 0.04878048780487805
+          },
+          "5": {
+            "n": 15,
+            "fraction": 0.12195121951219512
+          },
+          "20": {
+            "n": 40,
+            "fraction": 0.3252032520325203
+          },
+          "50": {
+            "n": 90,
+            "fraction": 0.7317073170731707
+          }
+        },
+        "median_absolute": 35.0,
+        "p90_absolute": 75.0,
+        "beyond50": 33,
+        "min_gap": -37,
+        "max_gap": 277,
+        "bins": {
+          "within1": 6,
+          "2_to_5": 9,
+          "6_to_20": 25,
+          "21_to_50": 50,
+          "beyond50": 33
+        }
+      },
+      {
+        "provider": "DekaLLM",
+        "scope": "not_intra_turn",
+        "mode": "drop_all",
+        "n": 190,
+        "cumulative": {
+          "1": {
+            "n": 0,
+            "fraction": 0.0
+          },
+          "5": {
+            "n": 30,
+            "fraction": 0.15789473684210525
+          },
+          "20": {
+            "n": 92,
+            "fraction": 0.4842105263157895
+          },
+          "50": {
+            "n": 180,
+            "fraction": 0.9473684210526315
+          }
+        },
+        "median_absolute": 21.0,
+        "p90_absolute": 43.19999999999999,
+        "beyond50": 10,
+        "min_gap": -74,
+        "max_gap": 11,
+        "bins": {
+          "within1": 0,
+          "2_to_5": 30,
+          "6_to_20": 62,
+          "21_to_50": 88,
+          "beyond50": 10
+        }
+      },
+      {
+        "provider": "DekaLLM",
+        "scope": "not_intra_turn",
+        "mode": "current_turn",
+        "n": 190,
+        "cumulative": {
+          "1": {
+            "n": 0,
+            "fraction": 0.0
+          },
+          "5": {
+            "n": 30,
+            "fraction": 0.15789473684210525
+          },
+          "20": {
+            "n": 92,
+            "fraction": 0.4842105263157895
+          },
+          "50": {
+            "n": 180,
+            "fraction": 0.9473684210526315
+          }
+        },
+        "median_absolute": 21.0,
+        "p90_absolute": 43.19999999999999,
+        "beyond50": 10,
+        "min_gap": -74,
+        "max_gap": 11,
+        "bins": {
+          "within1": 0,
+          "2_to_5": 30,
+          "6_to_20": 62,
+          "21_to_50": 88,
+          "beyond50": 10
+        }
+      }
+    ],
+    "episode_coverage": [
+      {
+        "window": "eligible",
+        "outcome": "gave_in",
+        "mode": "drop_all",
+        "total_episodes": 128,
+        "with_eligible_requests": 96,
+        "zero_eligible_requests": 32,
+        "all_requests_matched": 61,
+        "any_request_unmatched": 35,
+        "eligible_requests": 169,
+        "unmatched_requests": 59
+      },
+      {
+        "window": "eligible",
+        "outcome": "gave_in",
+        "mode": "current_turn",
+        "total_episodes": 128,
+        "with_eligible_requests": 96,
+        "zero_eligible_requests": 32,
+        "all_requests_matched": 88,
+        "any_request_unmatched": 8,
+        "eligible_requests": 169,
+        "unmatched_requests": 10
+      },
+      {
+        "window": "eligible",
+        "outcome": "held",
+        "mode": "drop_all",
+        "total_episodes": 172,
+        "with_eligible_requests": 142,
+        "zero_eligible_requests": 30,
+        "all_requests_matched": 48,
+        "any_request_unmatched": 94,
+        "eligible_requests": 1890,
+        "unmatched_requests": 289
+      },
+      {
+        "window": "eligible",
+        "outcome": "held",
+        "mode": "current_turn",
+        "total_episodes": 172,
+        "with_eligible_requests": 142,
+        "zero_eligible_requests": 30,
+        "all_requests_matched": 119,
+        "any_request_unmatched": 23,
+        "eligible_requests": 1890,
+        "unmatched_requests": 126
+      },
+      {
+        "window": "window_eligible",
+        "outcome": "gave_in",
+        "mode": "drop_all",
+        "total_episodes": 128,
+        "with_eligible_requests": 128,
+        "zero_eligible_requests": 0,
+        "all_requests_matched": 0,
+        "any_request_unmatched": 128,
+        "eligible_requests": 658,
+        "unmatched_requests": 428
+      },
+      {
+        "window": "window_eligible",
+        "outcome": "gave_in",
+        "mode": "current_turn",
+        "total_episodes": 128,
+        "with_eligible_requests": 128,
+        "zero_eligible_requests": 0,
+        "all_requests_matched": 110,
+        "any_request_unmatched": 18,
+        "eligible_requests": 658,
+        "unmatched_requests": 42
+      },
+      {
+        "window": "window_eligible",
+        "outcome": "held",
+        "mode": "drop_all",
+        "total_episodes": 172,
+        "with_eligible_requests": 164,
+        "zero_eligible_requests": 8,
+        "all_requests_matched": 0,
+        "any_request_unmatched": 164,
+        "eligible_requests": 2542,
+        "unmatched_requests": 782
+      },
+      {
+        "window": "window_eligible",
+        "outcome": "held",
+        "mode": "current_turn",
+        "total_episodes": 172,
+        "with_eligible_requests": 164,
+        "zero_eligible_requests": 8,
+        "all_requests_matched": 137,
+        "any_request_unmatched": 27,
+        "eligible_requests": 2542,
+        "unmatched_requests": 168
+      }
+    ]
+  }
+}
