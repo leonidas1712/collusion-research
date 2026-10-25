@@ -60,7 +60,7 @@ def main(args):
             '--manifest', str(Path(args.manifest).resolve())], 'PREPARED')
         paths['addressee'] = addressee
         write_json_atomic(run.dir/'paths.json', paths)
-        command(run, 'addressee', [python, 'experiments/E06-monitors/addressee_audit.py', '--run', addressee,
+        command(run, 'addressee', [str(ROOT/'.venv/bin/python'), 'experiments/E06-monitors/addressee_audit.py', '--run', addressee,
             '--reuse', 'runs/20261025-2202-e06-addressee-audit'], 'RESULT')
         run.result(**paths)
         run.finish()
