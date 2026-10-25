@@ -14,6 +14,13 @@ We keep this repo for the submission. It isn't copied to a fresh one, because th
 - [ ] **Dead ends:** list them in the README, or move them to `archive/`. Don't delete them; history is evidence.
 - [ ] **Self-contained text pass:** remove the "because Leo…" remarks, Aboard task IDs and references to chat context from code, READMEs and docs; state the reason itself. `EXPERIMENT_LOG.md` stays as a dated lab notebook. Internal-only files (`AGENT_BRIEF.md`, `docs/overview.html`, `.claude/`) are either moved to `archive/internal/` or labelled internal in the README.
 - [ ] **Report read cold:** a fresh agent with no project context reads the report and lists every term, step or reference it can't follow. Fix those.
+- [ ] **Reproducibility table** (paper appendix and README):
+  - **Target:** `qwen/qwen3-32b` via OpenRouter, pinned to DeepInfra with fp8 requested and no fallbacks. All 10,939 target calls were served by DeepInfra; the served quantization isn't reported back, so fp8 is the requested filter, not a verified fact.
+  - **Peer:** `deepseek/deepseek-v4-flash`, same pinning (8,438 calls).
+  - Temperature 0.7.
+  - **Replay:** HF `Qwen/Qwen3-32B` at revision `9216db5781bf21249d130ec9da846c4624c16137`, bf16, A100-80GB on Modal, transformers version as pinned in `requirements-lock.txt`.
+  - **Fidelity:** reply NLL about 0.23–0.25 and top-5 about 99.8%. This bounds the gap between the fp8-served and bf16-replayed model.
+  - **Monitors:** model IDs, prompt hashes and caches in the run folders. Probe seeds 42/43/44; bootstrap seed 20261025.
 - [ ] **Licence** file. MIT is suggested for code; data terms are a separate decision.
 
 ## Before making the repo public
