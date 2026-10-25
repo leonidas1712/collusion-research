@@ -579,3 +579,9 @@ All paired CIs include 0, including the fold-stratified ones. Logistic stays the
   - only the 5 spray scenarios, no deploy-token v2;
   - 89 episodes, so CIs ~±0.08;
   - same scenarios as training (not a new-scenario test).
+
+### 2026-10-25 ~13:20 SGT — All-data main estimate handed out; viewer monitor panel; overview update
+- APA-73 to codex-2: confirmatory plan addendum 1. Probe CV + LOSO on the combined data (`runs/20261025-1026-e05-replay3-data-1d95`, 6,404 steps, 338 episodes) for eventual and near-term A/B/C. Also the 8 monitor setups scored the same way, the combination test on all data, and the deployable probe. CPU only, no spend.
+- Claude subagent: trace viewer gets a per-step monitor panel (real inputs and outputs, toggled per monitor family), loaded lazily from a sidecar.
+- Claude subagent: overview gets the confirmation result and a cross-validation explainer, plus a placeholder for the all-data numbers.
+- APA-70 (replay 3) closed.
