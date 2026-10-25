@@ -24,7 +24,7 @@ uv run --with python-docx --with lxml --with pillow --with pypdf python report/p
 
 This writes `build/page_budget.md` and `.json`; section spans include figures, tables and page-break whitespace. These estimate occupied space, not guaranteed savings from cuts.
 
-`build_docx.py` is the Methods-only layout exercise; use `build_paper.py` for the whole manuscript. The builder records whether the source changed while building. Rebuild after prose or figure changes and visually inspect the pages before submission.
+`build_docx.py` holds the table and cell formatting helpers that `build_paper.py` imports, so keep it next to the builder. Run on its own, it builds only an early Methods draft for layout testing; use `build_paper.py` for the whole manuscript. The builder records whether the source changed while building. Rebuild after prose or figure changes and visually inspect the pages before submission.
 
 
 ## Template fidelity checks
