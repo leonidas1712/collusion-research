@@ -18,3 +18,4 @@ A running list for the appendix and limitations section. Add an item whenever on
 - **Only last-token activations** were saved. Peer-message token positions were not replayed.
 - **Near-term labels are post hoc,** defined on 25 Oct after the eventual-label result.
 - **The forecaster prompt** asks about "any later point", yet tracks near-term risk better.
+- **Stacking leak (replay-2 combination test):** the stacker's training rows use out-of-fold probe scores from probes that saw the test fold's labels. That tilts slightly towards "the probe adds value", plausibly ~0.01 (claude-3, 25 Oct). The GPT-5-nano + probe gains are +0.05 to +0.08, but the lower CI bounds for B and C on held-out scenarios are +0.004 and +0.007, so those two are borderline. The frozen confirmation test has no such leak; nested stacking is the fallback if it is borderline.
