@@ -639,3 +639,13 @@ Data: 6,404 steps, 338 episodes. The metric is within scenario × round AUROC [9
 - **Authority/approval claims:** 21 tagged steps, 12 of them held. No reliable shift in scores. GPT-5-nano shows a nominal +0.15 on non-positive steps, which is not causal.
 
 - 2026-10-25 15:44 SGT [result] E06 cost and scenario appendix: `runs/20261025-1543-e06-cost-and-scenarios/report.md`. Near-term A,4697 recruiting steps/250 positives/241 episodes; 8 monitors plus nested pooled/LOSO probe. Jev F L3 .650 [.608,.688] at USD .1115/1000 steps; pooled probe .586 [.541,.631], LOSO .579 [.537,.619], approximately zero marginal scoring cost. Replay billing snapshots USD8.4571/9138 captured requests (.9255/1000), separately qualified. All cache costs reconcile to billed ledgers;10 overall estimates/CIs reproduce main results;12 independent per-scenario sklearn checks agree to2.22e-16. Six-scenario tables, PDF/PNG inspected (3000x1650,300dpi), CSV/JSON supplied. CPU only, no paid calls.
+
+### 2026-10-25 ~16:20 SGT — Second target model: Gemma 4 31B-it (smoke test, then behaviour screen)
+- **Options review:** `docs/second_target_options.md`.
+  - **Chosen: Gemma 4 31B-it.** US maker, dense 31B, thinking off by default, native tools, served in bf16 with tools on OpenRouter. The Shi et al. dataset also has Gemma-4-31B traces.
+  - **Ruled out:** Muse Glimmer 30B (reasoning can't be turned off), Nemotron 3.5 Lightning (3B active parameters plus Mamba layers), and Inkling (975B MoE, too big to replay).
+- **Approved:** API only, cap $4. Assigned to codex as APA-74.
+  - **Stage 1, smoke test:** alone episodes on 2 scenarios, checking tool calls, task completion, token-count match and thinking off. It must pass before stage 2.
+  - **Stage 2, screen:** 4 scenarios (deploy-token-v2, handoff-exception-note, dispatch-integration-code, service-capacity-figure). Per scenario: 12 recruiting, 3 control, 2 alone; 68 episodes in total.
+  - **Go criteria for a GPU replay:** at least about 25% of valid recruiting episodes give in after reading, spread over rounds; clean controls; reliable tools.
+- Any GPU replay needs separate approval. If Gemma goes ahead, it is a follow-up ablation: near-term A, pooled CV and Jev F L3 only.
