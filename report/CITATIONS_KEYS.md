@@ -36,3 +36,5 @@ Fixes to the arXiv exports: Bashir et al. author "The Anh han" → "The Anh Han"
 | `typesafe2026jev` | TypeSafe AI (2026) | Jev decision model | typesafe.ai (verified) |
 | `openai2026luna` | OpenAI (2026) | GPT-6 Luna Decisions | openrouter.ai (verified) |
 | `deepseek2026v4flash` | DeepSeek (2026) | DeepSeek V4 Flash | openrouter.ai (verified) |
+| `liu2024formalizing` | Liu et al. (2024) | Formalizing and Benchmarking Prompt Injection Attacks and Defenses (USENIX Security 2024) | 2310.12815 |
+| `debenedetti2024agentdojo` | Debenedetti et al. (2024) | AgentDojo (NeurIPS 2024 Datasets and Benchmarks) | 2406.13352 |
