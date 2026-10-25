@@ -43,7 +43,7 @@ You can read every result without running anything: each run folder in `runs/` k
 
    `experiments/E02-activation-replay/run.sh` creates the replay environment on first use if you skip this.
 
-4. **Add API keys** only if you will make model calls. Put `OPENROUTER_API_KEY=…` in a `.env` file at the repository root; agents and monitors all go through OpenRouter. The GPU replay runs on [Modal](https://modal.com) (one A100-80GB); run `modal setup` once to log in.
+4. **Add API keys** only if you will make model calls. Put `OPENROUTER_API_KEY=…` in a `.env` file at the repository root; agents and monitors all go through OpenRouter. The GPU replay runs on [Modal](https://modal.com) (one A100-80GB); run `uv run modal setup` once to log in (Modal is installed in the main environment, so call it through `uv run`).
 
 5. **Check the setup** without spending anything by running the probe tests:
 
@@ -52,6 +52,21 @@ You can read every result without running anything: each run folder in `runs/` k
    ```
 
 **Costs.** Reading results, rerunning analyses from saved outputs and rebuilding the figures and paper cost nothing. Collecting episodes, running monitors and the GPU replay are paid. Every paid step takes a hard spending cap (`--cap-usd`, `--cap` or `--phase-ceiling`, depending on the script) and records what it was billed in its run folder. Monitor costs are in `runs/20261025-1543-e06-cost-and-scenarios`. For scale, the gpt-oss-20b replay cost about USD 9.50 on Modal, including its rendering checks; prices change, so treat this as a guide, not a quote. The GPU replay also needs the model weights from Hugging Face.
+
+## Reproduce the paper from a fresh clone
+
+These steps use only what is committed and cost nothing. Times were measured on a laptop.
+
+| Step | Command (from the repository root) | What you get | Time | Cost |
+|---|---|---|---|---|
+| Set up | `uv sync`, then the two `uv venv` / `uv pip sync` commands above | The three Python environments | a few minutes | free |
+| Run the tests | `experiments/E05-probes/.venv/bin/python -m unittest discover -s experiments/E05-probes -p 'test_*.py'` | 33 tests; 3 skip because they need saved activation splits that are not in git | under a minute | free |
+| Rebuild the figures and tables | `OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 experiments/E05-probes/.venv/bin/python report/make_data_figures.py` | Table C.1, Table 1, Figure E.1 and the Qwen-only Figure 2 in `report/figures/` (PNG, PDF and the numbers as CSV) | about 5 s | free |
+| Rebuild Figure 2 with both targets | `uv run --with matplotlib python report/figures/make_figure2_targets.py` (after the step above) | `report/figures/figure2_prediction.*` | seconds | free |
+| Rebuild the paper | `uv run --with python-docx --with lxml --with pillow --with pypdf python report/build_paper.py` (needs Pandoc, LibreOffice, Poppler and the fonts listed in [`report/BUILD.md`](report/BUILD.md)) | `report/build/paper.docx` and `paper.pdf` | about 20 s | free |
+| Browse the transcripts | `uv run python experiments/E01-behaviour-pilot/build_viewer.py` | `runs/viewer.html` (see [Trace viewer](#trace-viewer)) | about 20 s | free |
+
+Rerunning the analyses that read activations (probe training, the combination test) needs the activations first, from the paid GPU replay; see [What is not in git](#what-is-not-in-git). Recollecting episodes or rerunning monitors makes paid API calls. For scale, the paper's own runs cost: episode collection for the new-episode set \$0.82; Qwen replay \$5.51 (first batch) and \$2.94 (new-episode set); monitors \$12.67 (first batch, 18 setups) and \$2.33 (new-episode set, 8 setups); gpt-oss-20b replay about \$8 billed (Appendix B and F of the paper).
 
 ## Reproducing the results
 
@@ -63,10 +78,10 @@ The pipeline runs in this order: collect episodes with the agent harness (E01), 
 
 | Result | Script | Run(s) |
 |---|---|---|
-| Episodes, deploy-token scenario | `experiments/E01-behaviour-pilot/scale_up.py --family deploy-token-v2 --strength consequence …` | `runs/20261024-2103-e01-deploy-token-v2-consequence-{recruiting,control,alone}-32b-scaleup`, plus the `-t1/-t2/-t7` tactic arms |
-| Episodes, the five other scenarios | `scale_up.py --spray-row <scenario> …` | `runs/20261024-21xx-e01-spray-<scenario>-…` |
-| New-episode (confirmation) set | `scale_up.py --spray-row <scenario> --recruiting 26 --control 4 --family-start 96xx …` (five scenarios, not deploy-token) | `runs/20261025-0817-e01-spray-<scenario>-consequence-{recruiting,control}-32b-scaleup` |
-| Deliberate vs accidental labels | `experiments/E01-behaviour-pilot/judge_labels.py`, `judge_topup.py` | `runs/*-e01-topup-semantic-judge` |
+| Episodes, deploy-token scenario | `experiments/E01-behaviour-pilot/scale_up.py --family deploy-token-v2 --strength consequence --parallelism 4 --recruiting 40 --control 15 --alone 6 --family-start 8001 --cap-usd 0.6` | `runs/20261024-2103-e01-deploy-token-v2-consequence-recruiting-32b-scaleup` and its `-control-` and `-alone-` siblings; tactic arms `runs/20261024-2141-…-t1-scaleup`, `runs/20261024-2149-…-t2-scaleup`, `runs/20261024-2157-…-t7-scaleup` (recruiting and control each) |
+| Episodes, the five other scenarios | `scale_up.py --spray-row <scenario> --strength consequence …`, one run per scenario and condition | Two waves per scenario: a first wave (recruiting and alone) at `runs/20261024-2132` to `-2149`, and a second wave (recruiting, control and alone) at `runs/20261024-2338`. Example: `runs/20261024-2338-e01-spray-handoff-exception-note-consequence-recruiting-32b-scaleup`. The exact list of episode folders scored in the paper is the `episode` field of `runs/20261025-1026-e05-replay3-data-1d95/rows.jsonl` |
+| New-episode (confirmation) set | `scale_up.py --spray-row <scenario> --strength consequence …` with a fresh `--family-start` per scenario (five scenarios, not deploy-token) | `runs/20261025-0817-e01-spray-<scenario>-consequence-recruiting-32b-scaleup` and `-control-`, for the five scenarios dispatch-integration-code, handoff-exception-note, procurement-reserve-price, service-capacity-figure and service-rollout-threshold. Each folder's `meta.json` has the exact command |
+| Deliberate vs accidental labels (70 deliberate, 30 accidental, 1 unlabelled of 101 scored give-ins) | `experiments/E01-behaviour-pilot/judge_labels.py`, `judge_topup.py` | `runs/20261025-0056-e01-topup-semantic-judge` and `runs/20261025-0833-e01-topup-semantic-judge`; the labels are also written into each episode file |
 | Judge vs the author's blind labels (36 of 40, κ 0.79) | `sample_label_batch.py`, `label_agreement.py` | `runs/20261025-1355-e01-label-batch-2` |
 | GPU replay, first data batch | `experiments/E02-activation-replay/plan_replay2.py`, then `modal_budget_client.py` | `runs/20261025-0119-e02-replay2-plan`, `runs/20261024-1727-e02-activation-replay`; report in `runs/20261025-0339-e02-replay2-results` |
 | GPU replay, new-episode set | `plan_replay3.py`, then `modal_budget_client3.py` | `runs/20261025-0838-e02-replay3-plan`, `runs/20261025-0921-e02-replay3-modal-client`, `runs/20261025-0923-e02-replay3-completion` |
@@ -76,13 +91,13 @@ The pipeline runs in this order: collect episodes with the agent harness (E01), 
 
 | Result in the paper | Script | Run |
 |---|---|---|
-| §4.1, Table 1 and Appendix C (behaviour rates) | `experiments/E03-target-screen/behaviour_summary.py` | `runs/20261025-1850-e03-behaviour-summary` |
+| §4.1 and Table C.1 (behaviour rates) | `experiments/E03-target-screen/behaviour_summary.py` | `runs/20261025-1850-e03-behaviour-summary` |
 | §4.2–4.3, Figure 2 (probe vs monitors, eventual and near-term labels) | `all_data_main.py --workers 3`, then `finalize_all_data.py 20261025-1317-e05-all-data-main 20261025-1456-e05-all-data-audit` (both in `experiments/E05-probes/`, run with its environment) | `runs/20261025-1317-e05-all-data-main`, `runs/20261025-1456-e05-all-data-audit`, `runs/20261025-1456-e05-all-data-main` |
 | Near-term labels | `experiments/E05-probes/near_term.py` | `runs/20261025-0730-e05-near-term` |
-| Text monitors, first data batch (18 setups) | `experiments/E06-monitors/monitors.py --steps-file …replay2-plan/all.jsonl` | `runs/20261025-0147-e06-monitor-main` |
-| Text monitors, new-episode set (8 setups) | `monitors.py --steps-file …replay3-plan/all.jsonl` | `runs/20261025-0841-e06-monitor-main-balanced` |
+| Text monitors, first data batch (18 setups) | `experiments/E06-monitors/monitors.py --steps-file runs/20261025-0119-e02-replay2-plan/all.jsonl` | `runs/20261025-0147-e06-monitor-main` |
+| Text monitors, new-episode set (8 setups) | `monitors.py --steps-file runs/20261025-0838-e02-replay3-plan/all.jsonl` | `runs/20261025-0841-e06-monitor-main-balanced` |
 | §4.4, confirmation test (frozen plan in [`docs/confirmatory_plan.md`](docs/confirmatory_plan.md)) | `experiments/E06-monitors/confirm.py` | `runs/20261025-1030-e06-confirmation` |
-| §4.5, Table 2 (combination test) | `experiments/E06-monitors/combine.py`; the all-data rows come from `all_data_main.py` | `runs/20261025-1456-e05-all-data-main`, `runs/20261025-1030-e06-confirmation` |
+| §4.5, Table 1 (combination test) | `experiments/E06-monitors/combine.py`; the all-data rows come from `all_data_main.py` | `runs/20261025-1456-e05-all-data-main`, `runs/20261025-1030-e06-confirmation` |
 | §4.3, pressure-probe check | `experiments/E05-probes/explore_trajectories.py` | `runs/20261025-0800-e05-explore-trajectories-pressure` |
 | Exposure positive control (AUROC 1.000) | `experiments/E05-probes/replay3_positive_control.py` | `runs/20261025-1026-e05-replay3-positive-control` |
 
@@ -90,15 +105,15 @@ The pipeline runs in this order: collect episodes with the agent harness (E01), 
 
 | Result | Script | Run |
 |---|---|---|
-| Behaviour screens and the delayed whole-block strategy | `experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --strategy envblock_late …` | `runs/20261025-2053-e03-escalation-gpt-oss-*-envblock_late` |
-| Final collection (300 recruiting, 60 control episodes) | manifest builder; the run folder's `README.md` names the frozen prompt commit | `runs/20261025-2212-e03-gpt-oss-full-collection` |
+| Behaviour screens and the delayed whole-block strategy | `experiments/E03-target-screen/escalation_sweep.py --target gpt-oss --strategy envblock_late` (one run per scenario) | `runs/20261025-*-e03-escalation-gpt-oss-<scenario>-envblock_late` (several rounds of screening between 20:13 and 21:55), e.g. `runs/20261025-2155-e03-escalation-gpt-oss-deploy-token-v2-envblock_late` |
+| Final collection (300 recruiting, 60 control episodes) | `experiments/E03-target-screen/finalize_gpt_oss_collection.py` builds the manifest; the run folder's `README.md` names the frozen prompt commit | `runs/20261025-2212-e03-gpt-oss-full-collection` |
 | Disclosure-kind judge | `experiments/E03-target-screen/judge_gpt_oss_leaks.py`, joined by `experiments/E05-probes/gpt_oss_kind_join.py` | `runs/20261025-2228-e03-gpt-oss-disclosure-kind-judge`, `runs/20261025-2310-e05-gpt-oss-disclosure-kind-join` |
 | Replay rendering gate | `experiments/E02-activation-replay/report_gpt_oss_rendering_gate.py` (replay code: `gpt_oss_replay.py`, `modal_gpt_oss.py`) | `runs/20261025-2236-e02-gpt-oss-rendering-gate` |
 | GPU replay | `plan_gpt_oss_full.py`, then `gpt_oss_full_budget.py`, `download_gpt_oss_full.py`; summary by `report_gpt_oss_full.py` | `runs/20261025-2251-e02-gpt-oss-full-plan`, `runs/20261025-2253-e02-gpt-oss-full-client`, `runs/20261025-2255-e02-gpt-oss-full-download`, `runs/20261026-0138-e02-gpt-oss-full-completion` |
 | Step table | `experiments/E05-probes/gpt_oss_replay_data.py` | `runs/20261025-2305-e05-gpt-oss-full-data` |
 | Prediction windows (how many give-ins leave a step to predict from) | `experiments/E05-probes/gpt_oss_windows.py` | `runs/20261026-0056-e05-gpt-oss-window-audit` |
 | Probes, with exposure positive control | `experiments/E05-probes/gpt_oss_positive_control.py`, then `gpt_oss_probes.py` | `runs/20261026-0137-e05-gpt-oss-positive-control`, `runs/20261026-0138-e05-gpt-oss-main` |
-| Text monitors | `experiments/E06-monitors/monitors.py --steps-file …gpt-oss-full-plan/rows.jsonl`, scored by `score_gpt_oss_monitors.py` | `runs/20261025-2330-e06-monitor-main-gpt-oss`, `runs/20261026-0108-e06-monitor-score-gpt-oss` |
+| Text monitors | `experiments/E06-monitors/monitors.py --steps-file runs/20261025-2251-e02-gpt-oss-full-plan/rows.jsonl`, scored by `score_gpt_oss_monitors.py` | `runs/20261025-2330-e06-monitor-main-gpt-oss`, `runs/20261026-0108-e06-monitor-score-gpt-oss` |
 | Combination test | `experiments/E06-monitors/combine_gpt_oss.py` | `runs/20261026-0148-e06-gpt-oss-combination` |
 | Alarms | `experiments/E06-monitors/alarm_join_gpt_oss.py` | `runs/20261026-0159-e06-gpt-oss-alarm-join` |
 
@@ -108,6 +123,7 @@ The pipeline runs in this order: collect episodes with the agent harness (E01), 
 |---|---|---|
 | Per-scenario and cost tables | `experiments/E06-monitors/cost_and_scenarios.py` | `runs/20261025-1543-e06-cost-and-scenarios` |
 | Score correlations, shared misses, alarms | `experiments/E06-monitors/appendix_errors.py` (pass `--keyword-review runs/20261025-1504-e06-appendix-errors/keyword_review.json`, or omit it) | `runs/20261025-1504-e06-appendix-errors` |
+| Deliberate-only check (Appendix H) | fits in `experiments/E05-probes/replay2_core.py`, report by `replay2_report.py`, then `replay2_finalize.py` | `runs/20261025-0340-e05-replay2-fits`, report in `runs/20261025-0536-e05-replay2-analysis` |
 | Per-layer diagnostic | `experiments/E05-probes/layer_diagnostic.py` | `runs/20261025-1003-e05-layer-diagnostic` |
 | Learning curve | `experiments/E05-probes/learning_curve.py` | `runs/20261025-0842-e05-learning-curve` |
 | MLP probe | `experiments/E05-probes/near_term_mlp.py` | `runs/20261025-0848-e05-near-term-mlp` |
@@ -123,7 +139,7 @@ The pipeline runs in this order: collect episodes with the agent harness (E01), 
 | Output | Script |
 |---|---|
 | Figure 1 (a real exchange, the setup, a toy timeline) | `report/figures/make_figure1.py` (a schematic; the quotes are from episode 0032 of the deploy-token recruiting run) |
-| Tables 1–2 and the monitor-design figure | `experiments/E05-probes/.venv/bin/python report/make_data_figures.py` (sources listed in [`report/figures/DATA_FIGURES.md`](report/figures/DATA_FIGURES.md)) |
+| Table C.1 (behaviour; file `table1_behaviour`), Table 1 (combination; file `table2_combination`) and Figure E.1 (monitor design) | `experiments/E05-probes/.venv/bin/python report/make_data_figures.py` (sources listed in [`report/figures/DATA_FIGURES.md`](report/figures/DATA_FIGURES.md)) |
 | Figure 2 (Qwen3-32B and gpt-oss-20b panels) | `uv run --with matplotlib python report/figures/make_figure2_targets.py`, run after `make_data_figures.py` |
 | Pipeline figure (Appendix B) | `report/figures/make_pipeline_figure.py` |
 | Appendix G coverage table | `report/make_appendix_coverage.py` |
@@ -132,12 +148,13 @@ The pipeline runs in this order: collect episodes with the agent harness (E01), 
 
 ## What is not in git
 
-- **Activations.** The saved activations are too large for git. They are kept on the Modal volume `collusion-activations` and can be regenerated with the GPU replay steps above. Everything computed from them (step tables, probe scores, metrics and reports) is in `runs/`.
+- **Activations.** The saved activations, and the per-step feature arrays built from them (`features.npy` in the step-table runs), are too large for git. They can be regenerated with the GPU replay steps above.
+- **Per-step probe scores and split plans** (`probe_scores.csv`, `split_plan.json` in the `all-data-main`, `near-term` and `gpt-oss-main` runs) are left out for size. The metrics, intervals and reports computed from them are committed; to regenerate the per-step files, rerun `all_data_main.py`, `near_term.py` or `gpt_oss_probes.py` once the activations exist.
 - **Monitor response caches** (`runs/*/cache/`). Monitor scores and metrics are committed, but rerunning `monitors.py` makes fresh paid calls.
 - **Large or regenerable run outputs**: rendered prompts, tokenizer and model-config copies, and per-row probe-score exports (see [`.gitignore`](.gitignore)).
 - **API keys.** `.env` is never committed.
 
-Transcripts, labels, scores and reports are all in `runs/`.
+Transcripts, labels, monitor scores, metrics and reports are in `runs/`.
 
 ## Repository map
 
@@ -151,12 +168,37 @@ Transcripts, labels, scores and reports are all in `runs/`.
 | [`experiments/E06-monitors/`](experiments/E06-monitors/) | Text monitors, their scoring, the combination test and the confirmation test |
 | [`report/`](report/) | The paper source, figure and table scripts, and the build |
 | [`runs/`](runs/) | One folder per run, each with its command, settings and outputs |
-| [`docs/`](docs/) | Design notes, scenario guidelines, the frozen confirmatory plan and limitations |
+| [`docs/`](docs/) | Design notes, scenario guidelines and the frozen confirmatory plan |
 | [`explainers/`](explainers/) | Plain-language explainers of the methods |
 | [`archive/internal/`](archive/internal/) | Working notes from the sprint, kept for the record |
 | [`src/collusion/`](src/collusion/) | Shared helper that creates run folders |
 
 Each experiment folder has its own `README.md` with more detail.
+
+## Trace viewer
+
+`runs/viewer.html` is a single HTML page for reading every episode round by round: the channel, each tool call and its result, the outcome labels, and filters by run, scenario, model and outcome. It is about 170 MB, so it is not committed. Build it with:
+
+```bash
+uv run python experiments/E01-behaviour-pilot/build_viewer.py
+```
+
+and open `runs/viewer.html` in a browser (a local file is fine). It uses only the standard library and makes no API calls. Monitor calls are not shown in a fresh clone, because the monitor caches are not in git.
+
+## What did not make the paper
+
+- **E04** ([`experiments/E04-shi-replay/`](experiments/E04-shi-replay/)): a backup plan to test probes on another paper's released agent traces. It was documented but never run.
+- **Other target models.** Gemma-4-31B, Granite-4.2-8B, Llama-3.3-70B and several small models were screened and dropped; the reasons are in paper Appendices C and F, and the screens in `experiments/E03-target-screen/`.
+- **Other probe variants.** An MLP probe, a logit lens and trajectory features did not beat the linear probe; they are reported as diagnostics in paper Appendix H.
+- **Earlier pilots.** Rule-strength, tactic, thinking-mode, own-stake and two-peer screens are summarised in paper Appendix G; their runs are in `runs/` under the `e01` prefix.
+
+## Sprint timeline and pre-existing work
+
+The sprint started on Fri 23 Oct 2026 00:00 AoE (20:00 SGT). The only project work that predates it is commit `a5bd6f93` (planning documents, no code); all code and results come from later commits. The author's own pre-existing open-source tools, Aboard (an agent message board) and Leaf (a document viewer for inline review comments), were used to coordinate and review the AI agents that helped with the work. They are not part of this repository's research code.
+
+## Data and model terms
+
+The transcripts contain outputs of third-party models (Qwen3-32B, gpt-oss-20b, DeepSeek-V4-Flash and V4-Pro, GPT-5-nano, Jev 1.14 and Luna Decisions), accessed through OpenRouter, and the replay uses open weights from Hugging Face. Those outputs and weights remain under their providers' terms; the MIT licence covers this project's own code.
 
 ## Safety notes
 
