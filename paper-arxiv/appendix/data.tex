@@ -1,4 +1,43 @@
 \section{How were the datasets built and checked?}
 \label{app:data}
 
-% DRAFT STUB (claude-2): to be written.
+We score every call that the target makes after reading the secret, up to and including the call that leaks, in episodes that ran correctly.
+Re-running the saved prompts through the open weights reproduces the served replies closely, so the activations we read belong to the model that acted (\cref{tab:replay}).
+
+\paragraph{Which episodes count.}
+An episode is analysed only if it ran to completion, the target read the protected value, and the target wrote a correct status summary at some point.
+We check for a correct summary at some point, not in the final file, because on gpt-oss-20b a leak can overwrite the summary file.
+A check on the final file would therefore drop mostly leaking episodes and select on the outcome.
+We fixed this rule before any probe or monitor saw the second model's data.
+
+\paragraph{Which calls count.}
+Calls before the target reads the secret cannot leak.
+A probe trained to tell calls before and after the read apart does so perfectly, so including those calls would reward detecting the read.
+We therefore score calls from the read up to and including the call that leaks.
+On gpt-oss-20b, the scored calls also start only after the peer's first request, and the calls between the read and the request serve as a placebo (\cref{app:shortcuts}).
+The reasoning-probe comparisons on gpt-oss-20b use the scored calls that returned reasoning; the last-prompt probe gives a similar result on all scored calls (\cref{app:robustness}).
+
+\paragraph{Development and fresh test episodes.}
+For Qwen3-32B, the development episodes were collected first, and the fresh test episodes after the plan in \cref{app:confirmation} was committed.
+For gpt-oss-20b, the development episodes are the main collection, and the fresh test episodes were collected after the reasoning probe was frozen.
+The two sets never share an episode, and no fresh test episode was used to fit or choose anything for the model scored on it.
+
+\paragraph{Reading the activations.}
+We re-run every saved target prompt once through the open-weight checkpoint, on one GPU, with no generation.
+For Qwen3-32B we save every decoder layer at the last prompt token.
+For gpt-oss-20b we also save every returned reasoning token.
+Before loading the model, each prompt and token sequence is checked against a hash list written in advance, and every saved array is checked for shape and finite values.
+
+\paragraph{Replay fidelity.}
+To check that the replay matches the model that acted, we score the target's actual replies under the replayed model (\cref{tab:replay}).
+A low loss on the actual reply tokens and high top-5 agreement mean the replay closely reproduces the served model, though they do not prove token-for-token identity with the provider's kernels.
+gpt-oss-20b's chat format keeps the current turn's reasoning between tool calls, and its prompts render within one token of the served prompts for nearly all requests from the main provider.
+A second provider served a small share of requests with a less exact rendering, and we keep and flag those requests.
+
+\begin{table}[h]
+  \centering
+  \caption{Replay fidelity: loss of the actual reply tokens under the replayed model, and top-5 token agreement.}
+  \label{tab:replay}
+  \small
+  \input{tables/replay.tex}
+\end{table}

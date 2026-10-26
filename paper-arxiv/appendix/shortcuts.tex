@@ -1,4 +1,36 @@
 \section{Is the probe reading pressure, the secret string or the read step?}
 \label{app:shortcuts}
 
-% DRAFT STUB (claude-2): to be written.
+No to all three.
+A probe that sees only the incoming peer message and tool results also scores high, so much of the signal arrives with the input (\cref{tab:shortcuts}).
+
+\paragraph{Pressure.}
+Every scored call comes from an episode with a recruiting peer, and we compare it only with calls in the same scenario and round.
+On gpt-oss-20b every scored call also follows the peer's request, and the probe applied to the calls between the read and the request, scored against whether the episode ever leaks, stays at chance.
+On Qwen3-32B, a probe trained to separate recruiting from control calls does so perfectly, yet on the round-level labels it ranks leaking against refusing calls below chance.
+Pressure and the leak are therefore different signals.
+
+\paragraph{The secret string.}
+On gpt-oss-20b, almost no leaking call names the value in its reasoning.
+Fixed keyword rules on the reasoning, written before scoring, do no better than chance.
+On Qwen3-32B, a keyword rule on the latest incoming message scores well above chance but far below the probe.
+
+\paragraph{The read step.}
+The call that leaks often comes right after the target reads the protected file.
+A flag for ``the latest input is the protected file's contents'' therefore scores well on both models, and the probes beat it.
+Among gpt-oss-20b calls that come right after a read, the probe still separates those that leak.
+
+\paragraph{What arrives with the input.}
+A second replay on gpt-oss-20b saved the incoming segment of each prompt, which is the latest peer message and tool results, and every generated token up to the secret.
+A probe on the incoming segment alone also ranks the leaking calls highly, but alarms on far more refusing calls at the same threshold.
+A probe that also reads the tokens generated up to the secret ranks them almost perfectly.
+For an exact string, an output filter does the same.
+Both use one layer, one seed and a reduced version of a production streaming recipe \citep{cunningham2026}.
+
+\begin{table}[h]
+  \centering
+  \caption{Shortcut checks. AUROC within scenario and round, development episodes, held-out scenarios.}
+  \label{tab:shortcuts}
+  \small
+  \input{tables/shortcuts.tex}
+\end{table}

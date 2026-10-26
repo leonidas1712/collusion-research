@@ -1,4 +1,33 @@
-\section{Does the probe warn before the call that leaks?}
+\section{Does the probe warn early, and how many false alarms would it raise?}
 \label{app:ahead}
 
-% DRAFT STUB (claude-2): to be written.
+The probe warns about the call that leaks, not earlier ones.
+At a threshold set for few false alarms per call, many refusing episodes still get at least one alarm (\cref{tab:alarms}).
+
+\paragraph{One call ahead.}
+Asked whether the next call will leak, with the leaking call removed, the probe is much weaker on both models.
+On gpt-oss-20b, nearly all of the calls just before a leak are reads of the protected file, and a flag for that read scores about as well as the probe.
+Among those reads, the probe still separates the ones followed by a leak.
+
+\paragraph{Where in the call.}
+gpt-oss-20b's reasoning is short, and most of the reasoning probe's first alarms on leaking calls fire at the first reasoning token.
+The signal is present when the call starts, which fits the result that the incoming message alone carries much of it (\cref{app:shortcuts}).
+This does not show a decision forming over the reasoning.
+
+\subsection{False alarms}
+\label{app:alarms}
+
+We set each threshold on control calls, so that about 5\% of them alarm.
+At that threshold the reasoning probe catches most leaking calls in development while few calls in refusing episodes alarm.
+Counted per episode, however, a sizeable share of refusing episodes get at least one alarm, because each episode has many calls.
+A threshold set so that about 5\% of control episodes alarm catches about a third of leaking episodes before the first leak.
+On the fresh test episodes, the frozen threshold caught about half of the leaking calls (\cref{app:confirmation}).
+A deployed alarm would need its threshold set per episode, as \citet{gao2026} also argue.
+
+\begin{table}[h]
+  \centering
+  \caption{Alarm rates at thresholds set on control calls or control episodes.}
+  \label{tab:alarms}
+  \small
+  \input{tables/alarms.tex}
+\end{table}

@@ -1,4 +1,41 @@
 \section{Does the per-call result hold under other evaluations and settings?}
 \label{app:robustness}
 
-% DRAFT STUB (claude-2): to be written.
+Yes.
+Cross-validation that mixes scenarios, the mean instead of the maximum over reasoning tokens, a channel-only leak label, excluding writes back to the protected file, and a fixed layer all give a similar ranking (\cref{tab:robust-call}).
+
+\paragraph{Other evaluations.}
+Pooled cross-validation splits families into five folds regardless of scenario, so the probe has seen every scenario in training.
+It gives scores close to the held-out-scenario ones.
+Because it compares scores from different fitted models within one group, it can fall below 0.5 for a weak score, so we use held-out scenarios as the main evaluation.
+
+\paragraph{Other aggregates and cuts.}
+Averaging the reasoning tokens instead of taking the maximum gives a slightly higher score.
+Dropping every reasoning token from the first exact mention of the secret onward leaves the result unchanged.
+Including the calls that returned no reasoning, the last-prompt probe on gpt-oss-20b scores slightly higher.
+
+\paragraph{Other labels.}
+On gpt-oss-20b, scoring the first channel post instead of the first public emission gives a similarly high score.
+That comparison uses a wider set of calls, and most of its positives repost a value that an earlier file write had already made public, so it says little about stopping the first leak.
+On Qwen3-32B, excluding the calls that write the value back into the protected file changes the score very little.
+
+\paragraph{Round-level robustness.}
+The round-level near-term result on Qwen3-32B holds across two label variants that use hindsight to choose negatives, a fixed middle layer, weighting scenarios equally, and a small neural network instead of logistic regression (\cref{tab:robust-round}).
+The per-layer curves peak in middle-to-late layers.
+On the eventual label, refitting on deliberate leaks only gives a similar ranking.
+
+\begin{table}[h]
+  \centering
+  \caption{Per-call robustness. AUROC within scenario and round, with 95\% bootstrap intervals, development episodes.}
+  \label{tab:robust-call}
+  \small
+  \input{tables/robust_call.tex}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{Round-level robustness on Qwen3-32B (near-term label).}
+  \label{tab:robust-round}
+  \small
+  \input{tables/robust_round.tex}
+\end{table}

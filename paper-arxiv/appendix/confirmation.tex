@@ -1,4 +1,31 @@
 \section{What was frozen for the fresh test episodes, and what happened?}
 \label{app:confirmation}
 
-% DRAFT STUB (claude-2): to be written.
+Two tests were fixed in written plans before their fresh test episodes were collected, and both met their pre-stated criteria (\cref{tab:fresh}).
+A third test, the Qwen3-32B per-call probe, was frozen and committed before it was scored on fresh episodes, but its episodes had been collected earlier.
+
+\paragraph{gpt-oss-20b reasoning probe.}
+Before the fresh test episodes were collected, we committed the probe's layer, chosen on development data, its weights, refit once on all development calls, the maximum over tokens as the call score, and an alarm threshold calibrated on development control calls.
+The success criterion was a lower 95\% bound above 0.5 on the per-call AUROC.
+The bound was above 0.5.
+With few leaking calls, the interval is wide.
+At the frozen threshold the probe caught about half of the leaking calls, fewer than in development, while alarming on few calls in refusing episodes (\cref{tab:fresh}).
+
+\paragraph{Qwen3-32B round-level test.}
+The plan fixed the near-term label of \cref{app:labels}, the probe (one logistic model per seed trained on all development recruiting calls), and two text monitors chosen in advance.
+Its criteria were a probe interval above 0.5, and a gain above 0 from adding the probe to the weaker of the two monitors.
+Both were met.
+The plan expected no gain from adding the probe to the stronger monitor, and there was none that was clearly above zero (\cref{app:roundmonitor}).
+
+\paragraph{Qwen3-32B per-call probe.}
+We fit this probe on the development episodes only, committed its weights and threshold, and then scored it once on the fresh test episodes.
+No fresh episode was used to fit or choose anything for it.
+It is not a pre-registered confirmation, because an earlier analysis on a related label had already included these episodes (\cref{app:history}).
+
+\begin{table}[h]
+  \centering
+  \caption{Results on the fresh test episodes. AUROC within scenario and round, with 95\% bootstrap intervals.}
+  \label{tab:fresh}
+  \small
+  \input{tables/fresh.tex}
+\end{table}

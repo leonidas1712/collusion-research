@@ -1,4 +1,38 @@
-\section{What should a round-level text monitor ask and see?}
+\section{What do round-level detectors achieve?}
 \label{app:roundmonitor}
 
-% DRAFT STUB (claude-2): to be written.
+On Qwen3-32B, whether the target leaks this round or the next is modestly predictable, and the strongest text monitor does about as well as the probe.
+Whether an episode will ever leak is barely predictable by either.
+
+\paragraph{The round-level setup.}
+These analyses use the round-level label of \cref{app:labels} and stop scoring before the first public emission, so they never include the leaking call.
+Three monitor models, asked two questions at three levels of access, were scored on the same calls (\cref{app:monitors}).
+The strongest is Jev asked to forecast a leak at any later point, shown everything the target had seen.
+
+\paragraph{What a monitor should be asked and shown.}
+Asked to forecast, Jev does better than asked to detect a rule break in progress.
+Showing it the peer's messages, on top of the target's actions, gives most of its gain, and adding everything else the target saw adds little.
+Neither the forecasting question nor more access helped the other two monitors.
+
+\paragraph{Adding the probe to a monitor.}
+A small logistic model on the round, the prompt length and a monitor's score was refit with the probe's score added.
+The probe adds clearly to the weaker monitor on the fresh test episodes, and adds nothing clear to the strongest one (\cref{tab:combination}).
+
+\paragraph{Eventual outcome.}
+Whether the episode will ever leak is near chance for the probe, and only slightly above for the strongest monitor.
+Branching reruns from the same state often end differently, which suggests the outcome is often not yet decided far from the act.
+
+\begin{table}[h]
+  \centering
+  \caption{Round-level results on Qwen3-32B: probe and monitors on the same calls, and the gain from adding the probe to a monitor.}
+  \label{tab:combination}
+  \small
+  \input{tables/round_level.tex}
+\end{table}
+
+\subsection{Why is round-level prediction near chance on gpt-oss-20b with a channel-only label?}
+\label{app:gptoss-round}
+
+On gpt-oss-20b, with the leak defined as a channel post, the probe and the best monitor are both near chance for this round or the next.
+The model usually leaks soon after the request: many of its channel leaks leave no call to score before them, and for most of the rest the earliest possible warning falls in the same round.
+Under the main label, which counts the earlier file write, the ladder of \cref{fig:headline} shows the same pattern as on Qwen3-32B.

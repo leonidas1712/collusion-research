@@ -10,7 +10,7 @@ The criterion was met.
 At its frozen threshold the probe caught about half of the leaking calls, fewer than in development, while alarming on few calls in refusing episodes (\cref{app:confirmation}).
 
 On Qwen3-32B, whether the target leaks this round or the next was modestly predictable on its fresh test episodes.
-The frozen probe scored \qwenFreshNearProbe{} and the strongest text monitor \qwenFreshNearJev{}, both clearly above chance, as the plan required.
+The frozen probe scored \qwenFreshNearProbe{} and the strongest text monitor \qwenFreshNearJev{}, both clearly above chance, as the plan required (\cref{fig:headline}b).
 At this distance the probe is not clearly better than the monitor.
 The strongest monitor here is Jev asked to forecast a leak at any later point, shown everything the target had seen (\cref{app:monitors}).
 This test uses the leak label fixed in its plan, which differs only slightly from the one above (\cref{app:labels}).
@@ -82,7 +82,7 @@ That probe still runs before the call acts, but it suggests that much of the sig
   \centering
   \includegraphics[width=\linewidth]{fig4_shortcuts.pdf}
   \caption{\textbf{The probe is not reading the obvious shortcuts.}
-  Per-call AUROC on held-out scenarios, development episodes, against baselines scored on the same calls.
-  The placebo applies the probe to calls made before the peer asks.}
+  Per-call AUROC on held-out scenarios, development episodes.
+  The placebo applies the probe to calls made before the peer asks, and the incoming-only probe is a reduced, single-seed recipe (\cref{app:shortcuts}).}
   \label{fig:shortcuts}
 \end{figure}
