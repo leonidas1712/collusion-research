@@ -28,18 +28,35 @@
   \end{tabular}
 \end{table}
 
-\subsection{Confirmed on fresh episodes}
-\label{sec:confirmed}
+\subsection{The call that leaks is readable before it acts}
+\label{sec:percall}
 
-\paragraph{Will this call leak? gpt-oss-20b.}
-The pre-registered reasoning probe ranked the calls that leak above the others on the fresh test episodes (AUROC~\gptossFreshReasoning{}), which met its success criterion of a lower interval bound above 0.5.
-At its frozen threshold it caught about half of the leaking calls while few calls in refusing episodes alarmed.
-Because each episode has many calls, about a quarter of refusing episodes still raised at least one alarm (\cref{app:confirmation}).
+The probe picks out the call that leaks on both models, before the call writes anything (\cref{tab:glance}).
+On gpt-oss-20b, the pre-registered reasoning probe ranked the calls that leak above the others on the fresh test episodes (AUROC~\gptossFreshReasoning{}), meeting its success criterion.
+At its frozen threshold it caught about half of the leaking calls, while few calls in refusing episodes alarmed (\cref{app:confirmation}).
+On Qwen3-32B, the last-prompt probe, fit on development episodes only and frozen, scored \qwenFreshCallProbe{} on the fresh test episodes.
+Apart from the two pre-registered tests, the analyses in this section were designed after earlier results, and we evaluate them on held-out scenarios and on the fresh test episodes.
 
-\paragraph{Will the target leak this round or the next? Qwen3-32B.}
-We also pre-registered one round-level test on Qwen3-32B.
-On fresh episodes the probe scored \qwenFreshNearProbe{} and the best text monitor \qwenFreshNearJev{}, and neither clearly beats the other (\cref{fig:round}).
-Its leak label differs slightly from ours (\cref{app:labels}).
+Most of the signal is present before the model starts to reason.
+On gpt-oss-20b, the last-prompt probe and the reasoning probe score about the same on development episodes, and the gap between them on the fresh episodes is within noise.
+
+The probe is not reading the obvious shortcuts.
+Every call that does not leak also faces the recruiting peer, in the same scenario and round, and on gpt-oss-20b it also comes after the peer's request.
+Keyword rules for the secret do no better than chance, and the probe beats a flag for ``the protected file was just read'', including among the calls that write the handoff file (\cref{app:shortcuts}).
+
+\subsection{The warning is short-range}
+\label{sec:ladder}
+
+On the same calls, the probe goes from near chance for the eventual outcome, to modest for this round or the next, to high for this call (\cref{fig:headline}).
+We refit the probe for each question, on the same calls, model and token, so only the question changes.
+gpt-oss-20b follows the same pattern, with the largest jump at the call itself, because it usually leaks within a round of the request (\cref{app:gptoss-round}).
+
+Even one call earlier the probe drops well below its score on the leaking call (\cref{tab:glance}).
+On gpt-oss-20b, what it detects there is mostly the read of the protected file that usually comes just before the leak (\cref{app:ahead}).
+
+The middle of the ladder held in a pre-registered test.
+On fresh Qwen3-32B episodes, whether the target leaks this round or the next was modestly predictable, for the probe (\qwenFreshNearProbe{}) and the best text monitor (\qwenFreshNearJev{}) alike (\cref{fig:round}).
+That test's leak label differs slightly from ours (\cref{app:labels}).
 
 \begin{figure}[t]
   \centering
@@ -48,31 +65,6 @@ Its leak label differs slightly from ours (\cref{app:labels}).
   Qwen3-32B fresh test episodes, scored once under the pre-registered plan, with its own leak label (\cref{app:labels}).
   Whiskers are 95\% bootstrap intervals.}
   \label{fig:round}
-\end{figure}
-
-The analyses below were designed after earlier results.
-We evaluate them on held-out scenarios and, where possible, on the fresh test episodes.
-
-\subsection{The probe picks out the call that leaks}
-\label{sec:percall}
-
-The last-prompt probe picks out the call that leaks on both models (\cref{tab:glance,fig:percall}).
-Fit on the Qwen3-32B development episodes only and frozen, it scored \qwenFreshCallProbe{} on the fresh test episodes, which were never used to fit or choose anything for it.
-
-On gpt-oss-20b the last-prompt probe and the reasoning probe score about the same on development episodes, so most of the signal is present before the model starts to reason.
-On the fresh episodes the reasoning probe scored a little higher, a gap within noise given the few leaking calls.
-
-The signal is specific to the call that leaks.
-Asked one call earlier, the probe drops well below its score on the leaking call, and on gpt-oss-20b what it detects there is mostly the read of the protected file that usually comes just before the leak (\cref{app:ahead}).
-Followed through an episode, the median score across leaking episodes stays low over the calls before the leak and jumps at the leaking call, on both models and on both sets of episodes, although individual episodes vary (\cref{fig:trajectories}).
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig6_trajectories.pdf}
-  \caption{\textbf{On average, the score jumps at the call that leaks.}
-  Last-prompt probe score, as a percentile among that model's scored calls, aligned on each episode's leaking call (top: median over all leaking episodes, with the middle 50\% shaded for fresh episodes).
-  Bottom: one example fresh episode per model, chosen by a fixed rule (\cref{app:ahead}); individual episodes vary.}
-  \label{fig:trajectories}
 \end{figure}
 
 \begin{figure}[t]
@@ -84,52 +76,17 @@ Followed through an episode, the median score across leaking episodes stays low 
   \label{fig:percall}
 \end{figure}
 
-\subsection{The nearer the act, the more predictable}
-\label{sec:ladder}
-
-On the same calls, the probe goes from near chance for the eventual outcome, to modest for this round or the next, to high for this call (\cref{fig:headline}).
-We refit the probe for each question, on the same calls, model and token, so only the question changes.
-
-gpt-oss-20b follows the same pattern, with the largest jump at the call itself.
-It usually leaks within a round of the request, so ``this round or the next'' adds little over ``ever'' (\cref{app:gptoss-round}).
-
-\subsection{The probe beats a text monitor on the same calls}
+\subsection{Who can read the signal}
 \label{sec:monitor}
 
-A text monitor shown the same conversation and tool results scores well below the probe on both models (\cref{fig:percall}).
-At thresholds set on control calls, on the fresh Qwen3-32B episodes the probe catches \qwenFreshProbeCaught{} of leaking calls and Jev \qwenFreshJevCaught{}, and Jev alarms on far more calls in refusing episodes (\cref{fig:alarm-tradeoff}).
-Even for the probe, at least one alarm fires in \qwenFreshRefusingEpisodeAlarm{} of refusing fresh episodes, because each episode has many calls.
+A zero-shot text monitor shown the same conversation and tool results scores well below the probe on both models (\cref{fig:percall}).
+On gpt-oss-20b, Jev flags nearly every call that leaks but also most calls in refusing episodes, so it cannot separate the calls that leak.
 
-On gpt-oss-20b, Jev flags nearly every call that leaks, but also most calls in refusing episodes, so it cannot separate the calls that leak.
-Within a scenario and round it ranks the leaking calls below the others, and even with its ranking reversed after the fact it stays below the probe (\cref{app:monitors}).
-
-A text classifier trained on the same input does much better than Jev.
+A text classifier trained on the same input comes much closer.
 On both models, a bag-of-words classifier trained on these labels comes close to the probe, which keeps a small edge (\cref{app:shortcuts}).
 Most of the probe's margin over Jev therefore comes from training on these labels, and reading activations adds a little on top.
 
-\subsection{What the probe is not reading}
 \label{sec:shortcuts}
-
-Detecting the request cannot explain the score.
-Every scored call comes from an episode with a recruiting peer, and we compare it only with calls from the same scenario and round, which face the same kind of pressure.
-On gpt-oss-20b, every scored call, leaking or not, also comes after the peer's request.
-As a sanity check, the probe applied to the calls made before the request, which is a placebo, does not separate the episodes that later leak (\cref{fig:shortcuts}).
-
-The probe is not matching the secret string or detecting the file read.
-On gpt-oss-20b, almost no leaking call names the secret in its reasoning, and keyword rules on the reasoning do no better than chance.
-A simple flag that fires when the call's latest input is the protected file's contents scores well, and the probe beats it on both models.
-Nearly every gpt-oss-20b leak is a write to the handoff file, but among the calls that write that file the probe still separates the leaks from the others (\cref{fig:shortcuts}).
-
-What the probe does read is open.
-On gpt-oss-20b, we trained a separate probe that reads only the tokens new to the call, which are the latest peer message and tool results.
-It also scores high, and the layers chosen for the last-prompt probe on gpt-oss-20b are early to middle ones, so much of the signal arrives with the input.
-This does not undo the result, because that probe also runs before the call acts, but it leaves open whether the probe reads a decision or the situation that prompts one (\cref{app:shortcuts}).
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig4_shortcuts.pdf}
-  \caption{\textbf{The probe is not reading the obvious shortcuts.}
-  Per-call AUROC on held-out scenarios, development episodes.
-  The placebo applies the probe to calls made before the peer asks, and the incoming-only probe reads only the tokens new to each call (\cref{app:shortcuts}).}
-  \label{fig:shortcuts}
-\end{figure}
+The signal sits largely in the input.
+On gpt-oss-20b, a separate probe that reads only the tokens new to the call, the latest peer message and tool results, also scores high, and the layers chosen for the last-prompt probe are early to middle ones.
+Whether the probe reads a decision or the situation that prompts one is open (\cref{app:shortcuts}).
