@@ -84,3 +84,20 @@ confirmed 0.68, with 0.58 moved to the robustness appendix. (Default taken for t
   pre-registered leak label. Separation verified clean: §4.1 references `fig:round` (no stale
   `fig:headline`(b)); no panel-b references to the ladder remain. This resolves the earlier Fig 1
   overload and the two-labels-on-one-axis risk.
+
+## Future work (for Leo / after tonight)
+
+- **Planned follow-ups (slots left in the draft, per PLAN.md §8):** causal **steering** on the probe
+  direction (tests causality), and **transfer to the Shi et al. environment** (tests robustness in a
+  less templated, emergent-collusion setting). Scopes in `private/followup_scope_steering.md` and
+  `private/followup_scope_shi.md`.
+- **A fair third detector arm (Leo's idea, #2491): a prompt-optimised LLM monitor** (e.g. GEPA on the
+  decision-model monitor), evaluated next to the trained probe and the trained text classifier. **Check
+  novelty first** before claiming this framing is new.
+- **A possible unifying story for the follow-ups:** "Where does the warning signal live, and who can
+  read it?" — trained probe vs trained text classifier vs optimised LLM monitor (who can read it), with
+  Shi transfer testing robustness and steering testing causality.
+- **Caveat to carry into that work:** the bag-of-words text classifier's strength may partly reflect the
+  **templated synthetic peer messages**; a less templated setting (Shi) is the test.
+- **Deferred baselines run only as quick checks tonight** (development, saved-score): a *tuned* text
+  monitor, and a full `write_file`-conditioned analysis beyond the quick version.
