@@ -51,6 +51,7 @@ def summarize(out):
         y=np.array([rows[i]['y_immediate'] for i in ids]);v=np.array([flags[byseed[42][i]['row_id']] for i in ids]);scores=np.array([[float(byseed[s][i]['score']) for i in ids] for s in [42,43,44]]);folds=np.array([[int(byseed[s][i]['fold']) for i in ids] for s in [42,43,44]])
         probe,pb=stream_metrics(rows,ids,y,scores,folds,1000);base,bb=stream_metrics(rows,ids,y,np.tile(v,(3,1)),folds,1000);delta=pb['within_round']-bb['within_round']
         subset=v==1;conditional,_=stream_metrics(rows,ids[subset],y[subset],scores[:,subset],folds[:,subset],1000)
+        conditional['episodes']=len({rows[i]['episode'] for i in ids[subset]})
         results[mode]=dict(probe=probe,structural_baseline=base,paired_probe_minus_structure=dict(estimate=probe['within_round_auc']-base['within_round_auc'],ci95=np.nanquantile(delta,[.025,.975]).tolist()),flag_positive_calls=int(((v==1)&(y==1)).sum()),flag_negative_calls=int(((v==1)&(y==0)).sum()),unflagged_positive_calls=int(((v==0)&(y==1)).sum()),unflagged_negative_calls=int(((v==0)&(y==0)).sum()),probe_within_immediately_post_read=conditional)
     write_json_atomic(out/'structural_check.json',dict(scope=f['scope'],definition=f['definition'],results=results))
     lines=['## Post hoc read-step structural diagnostic','',f['scope']+'. '+f['definition'],
@@ -60,7 +61,7 @@ def summarize(out):
     fmt=lambda m:f"{m['within_round_auc']:.3f} [{m['within_round_ci95'][0]:.3f}, {m['within_round_ci95'][1]:.3f}]"
     for mode,m in results.items():
         d=m['paired_probe_minus_structure'];lines.append(f"| {mode} | {fmt(m['structural_baseline'])} | {d['estimate']:+.3f} [{d['ci95'][0]:+.3f}, {d['ci95'][1]:+.3f}] | {fmt(m['probe_within_immediately_post_read'])} | {m['flag_positive_calls']}/{m['flag_negative_calls']} |")
-    lines+=['','Same OOF scores, labels and family-bootstrap draws as the primary result; no refits. Conditional AUROC only uses comparable scenario × round strata, with positive coverage retained in JSON. The structural baseline is constant inside its positive subset, so no within-subset baseline AUROC or paired subtraction is defined. This diagnostic tests one observable task-step cue, not every possible contextual explanation.']
+    lines+=['','Same OOF scores, labels and family-bootstrap draws as the primary result; no refits. Conditional AUROC only uses comparable scenario × round strata, 49 of the 66 flagged positive calls have a comparable negative in their stratum (74.2% coverage); the other 17 do not enter the conditional AUROC. The structural baseline is constant inside its positive subset, so no within-subset baseline AUROC or paired subtraction is defined. This diagnostic tests one observable task-step cue, not every possible contextual explanation.']
     text='\n'.join(lines)+'\n';(out/'structural_check.md').write_text(text);report=out/'report.md';base=report.read_text().split('\n## Post hoc read-step structural diagnostic')[0];report.write_text(base.rstrip()+'\n\n'+text)
     print(json.dumps({mode:{k:v for k,v in m.items() if k.startswith('flag')} for mode,m in results.items()},indent=2))
 
