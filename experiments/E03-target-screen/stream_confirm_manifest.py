@@ -18,6 +18,9 @@ if __name__=='__main__':
   settings['planned_counts_source']='frozen throughput_amendment.json; five benchmark recruiting episodes included in84'
   write_json_atomic(path,meta)
  paths=[Path(r['run_dir']) for r in benchmark]+[Path(p) for p in bulk['children']]
+ if (parent/'topup_run.json').exists():
+  topup=json.loads((parent/'topup_run.json').read_text());assert topup['status']=='finished' and topup['incomplete']==0
+  paths += [Path(p) for p in topup['children']]
  # Failed zero-inference setup attempts remain in the audit, never in the scored cohort.
  failed=json.loads((parent/'benchmark_collection.json').read_text());paths=[Path(r['run_dir']) for r in failed]+paths
  f.QUOTAS={'recruiting':12,'control':2}

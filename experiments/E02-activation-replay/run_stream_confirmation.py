@@ -37,14 +37,24 @@ def main(freeze):
             meta = json.loads((Path(bulk['run_dir']) / 'meta.json').read_text())
             assert meta['status'] == 'running', 'Collection stopped before completion'
             time.sleep(20)
-        assert bulk['incomplete'] == 0, 'Incomplete API attempts: preserve and review replacement plan before replay'
+        if bulk['incomplete']:
+            say(f"Fixed bulk finished with {bulk['incomplete']} incomplete attempts. Applying the predeclared "
+                "incomplete-only replacement rule once, with fresh reserved families, unchanged settings and shared USD5 ledger. "
+                "No replacement uses exposure, task correctness or leak outcome.")
+            run_logged([root_python, 'experiments/E03-target-screen/stream_confirm_topup.py',
+                        '--freeze', str(freeze)], run.dir / 'topup.log')
+            topup = json.loads((freeze / 'topup_run.json').read_text())
+            assert topup['status'] == 'finished' and topup['incomplete'] == 0, 'Replacement failed; stop for review'
+            cost_source = topup
+        else:
+            cost_source = bulk
         run_logged([root_python, 'experiments/E03-target-screen/stream_confirm_manifest.py',
                     '--freeze', str(freeze)], run.dir / 'manifest.log')
         manifest = json.loads((freeze / 'confirmation_manifest.json').read_text())
         assert manifest['selected'] == 84 and not manifest['deficits']
-        ledger = [{'charged_or_reserved_usd': bulk['charged_or_reserved_total_including_benchmark'],
-                   'billed_usd': bulk['billed_total_including_benchmark'],
-                   'source': str(Path(bulk['run_dir']) / 'budget.json'),
+        ledger = [{'charged_or_reserved_usd': cost_source['charged_or_reserved_total_including_benchmark'],
+                   'billed_usd': cost_source['billed_total_including_benchmark'],
+                   'source': str(Path(cost_source['run_dir']) / 'budget.json'),
                    'benchmark_included_once': True}]
         write_json_atomic(freeze / 'replay_api_ledger.json', ledger)
         assert float(ledger[0]['charged_or_reserved_usd']) <= 5
