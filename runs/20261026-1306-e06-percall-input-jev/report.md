@@ -23,3 +23,11 @@ Both methods use identical calls, labels, folds, and scenario×round strata. Fam
 |---|---:|---:|---|
 | pooled | 0.882 | 0.271 | +0.611 [+0.532, +0.697] |
 | loso | 0.906 | 0.271 | +0.635 [+0.557, +0.713] |
+
+## Post hoc reversal diagnostic
+
+Reversing Jev’s score after observing the result would give within-scenario×round AUROC **0.729 [0.677, 0.790]**. This is a post hoc diagnostic, not the declared monitor result; no primary score, threshold or alarm is changed.
+
+The identity reversed AUROC = 1 − original AUROC holds exactly for this aggregation: reversal complements each stratum AUROC, including ties; positive weights and eligible strata remain unchanged. It also complements every paired family-bootstrap draw, so the CI is [1 − upper, 1 − lower]. Direct recomputation from reversed saved scores verifies both point and CI to1e−12. Thus below-chance ranking does not imply absence of predictive information in the text.
+
+The matched last-prompt probe minus this post hoc reversed comparator is +0.176 [+0.116, +0.226] under LOSO, using the same paired family-bootstrap draws. This remains a post hoc direction diagnostic, not a revised primary comparator.
