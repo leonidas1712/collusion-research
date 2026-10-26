@@ -1,6 +1,6 @@
 # Streaming reasoning-token probe on gpt-oss-20b: consolidated report
 
-Written 26 October 2026. Updated the same day with the horizon fits (k = 1 to 3), the strictly-future evaluation and its read-step check, the onset audit, the combined-stream addendum, and the label-versus-position ablation. This is exploratory, post hoc work. A fresh confirmation run is being collected and its results are pending (Section 8).
+Written 26 October 2026. Updated the same day with the horizon fits (k = 1 to 3), the strictly-future evaluation and its read-step check, the onset audit, the combined-stream addendum, the label-versus-position ablation, the emission-route audit, and the status of pending work (Section 8). This is exploratory, post hoc work. A fresh confirmation run is being collected and its results are pending (Section 8).
 
 All numbers below come from files in this repository, cited by path relative to the repository root. Where a number was computed for this report from saved run outputs rather than copied from a report, the text says so and names the files. Anything that the run files do not contain is marked "not computed".
 
@@ -8,9 +8,11 @@ All numbers below come from files in this repository, cited by path relative to 
 
 ## 1. Summary
 
-- **Main result: asking per model call works.** On gpt-oss-20b, a linear probe on the model's activations recognises the model call that is about to leak the protected value, before that call's public output. A **reply** here is one model call. Results are on held-out scenarios over 1,995 calls with reasoning (121 leaking, 238 episodes); AUROC is 0.5 for chance and 1.0 for perfect.
-  - Reading the reasoning tokens: **0.933 [0.912, 0.952]**.
-  - Reading only the last prompt token, before any generated token: **0.906 [0.871, 0.936]**.
+- **Main result: asking per model call works.** On gpt-oss-20b, a linear probe on the model's activations recognises the model call that is about to emit the protected value in its answer or tool arguments. A **reply** here is one model call. Results are on held-out scenarios over 1,995 calls with reasoning (121 leaking, 238 episodes); AUROC is 0.5 for chance and 1.0 for perfect.
+  - Reading the reasoning tokens: **0.933 [0.912, 0.952]**. This probe fires before the public answer or tool output.
+  - Reading only the last prompt token: **0.906 [0.871, 0.936]**. This probe fires before the current call generates anything. A mid-turn prompt can include the target's earlier reasoning from the same turn.
+
+  Of the 146 leaking calls, 132 emit the value in a successful `write_file`, 11 in a malformed or errored write-like tool call, and 3 in a final reply (`runs/20261026-0526-e05-reasoning-stream/emission_execution_audit.md`).
 - **What changed was the label, not mainly the position.** Three steps decompose the result:
   - The paper's last-prompt probe, trained on its round-level label, scores 0.493 on these calls (0.528 on the paper's own cohort).
   - The same position, retrained on the per-call label, scores 0.906.
@@ -19,7 +21,7 @@ All numbers below come from files in this repository, cited by path relative to 
   The paper's gpt-oss null was therefore mostly a question of what was asked, not of where the probe looked. On all 2,205 calls, including the 25 leaking calls with no reasoning, the per-call last-prompt probe reaches 0.926 [0.900, 0.948]. (`runs/20261026-1221-e05-lastprompt-percall-6013/report.md`; `runs/20261026-0526-e05-reasoning-stream/report.md`)
 - **Streaming the reasoning adds a modest gain.**
   - **AUROC:** reasoning minus last prompt is +0.028 on held-out scenarios (the interval runs from 0.000 to +0.061, so it barely includes zero) and +0.067 [+0.037, +0.102] in pooled cross-validation.
-  - **Recall versus false alarms:** at the same 5% control-reply cutoff on held-out scenarios, the reasoning probe warns on 84.8% of leaking calls, with 4.4% of held-episode calls alarming. The last-prompt probe warns on 56.5%, with 1.6% alarming. Reasoning buys recall at the cost of more held-call alarms.
+  - **Recall versus false alarms:** at the same 5% control-reply cutoff on held-out scenarios, the reasoning probe catches more leaks with slightly more false alarms than the per-call last-prompt probe: 84.8% of leaking calls warned against 56.5%, with 4.4% of held-episode calls alarming against 1.6%. Against the incoming-only probe the reasoning probe is the more precise one: 4.4% against 19.1% of held calls alarm (different recipes; the matched-recipe figures are 1.9% against 6.2%, Section 7.4).
 
   (`runs/20261026-1221-e05-lastprompt-percall-6013/report.md`, `metrics.json`; `runs/20261026-0526-e05-reasoning-stream/alarms.json`)
 - **Both probes beat every baseline that reads the same material.** On the same calls:
@@ -36,7 +38,7 @@ All numbers below come from files in this repository, cited by path relative to 
   - Per-scenario held-out AUROCs range from 0.84 to 0.98. (Sections 6.2 and 6.7)
 - **The signal is present at the onset of the call.**
   - 72% of the reasoning probe's first alarms on leaking calls fire at the first reasoning token (`onset_audit.md`).
-  - The last-prompt result shows the signal is there before any token is generated.
+  - The last-prompt result shows the signal is there before the current call generates anything.
   - A probe on the incoming peer message and tool results alone also ranks at 0.927 (one seed, one layer).
   - What the signal represents, whether context, an early decision or another correlate, is not established (Section 6.6).
 - **One call ahead is mostly the read step.** With the leaking calls removed, the reasoning probe ranks the call just before the leak at 0.881 [0.843, 0.917]. That call is nearly always in the same round: 113 of 116. 108 of the 116 positives are calls that read the protected file, against 49 of the 1,758 negatives.
@@ -51,8 +53,10 @@ All numbers below come from files in this repository, cited by path relative to 
   (`held_episode_alarms.md`, `episode_calibrated_alarms.md`, `paired_comparisons.json`)
 - **Action-time and costs.**
   - A probe on generated tokens up to just before the value scores 1.000. That is an output filter: for an exact string, a regex does the same job.
-  - The work cost about USD 5.25 beyond the main replay.
-  - A frozen confirmation on 84 new episodes is running, with layer 15 and the threshold fixed in advance; results are pending. Figure 3 (`report/figures/figure3_streaming.png`, [link](../report/figures/figure3_streaming.png)) summarises the reasoning result.
+  - The work so far cost about USD 6.62 beyond the main replay, plus GPU time for the confirmation capture, which is still running (Section 12).
+  - Pending: the frozen gpt-oss confirmation (84 new episodes collected, GPU capture in progress), a Qwen3-32B per-call replication, a route split, and a Jev monitor reading the per-call input (Section 8).
+  - Figure 3 (`report/figures/figure3_streaming.png`, [link](../report/figures/figure3_streaming.png)) shows the result. Panel (a) shows each method's AUROC with a catch / false-alarm column. Panel (b) includes the retrained last-prompt point (0.91).
+- **How this differs from exposure detection.** Earlier probe work detects that a prompt injection has entered an agent's input (Dong et al. 2026). Related work recovers directions that separate hijacked from resisted trajectories (Yu et al. 2026). Here every call is already under the same kind of pressure. Within scenario × round AUROC holds the scenario and round fixed, so the probe has to predict whether *this* model call will comply, not whether pressure is present.
 
 ---
 
@@ -115,7 +119,9 @@ gpt-oss writes private reasoning (its "analysis" channel) before each answer or 
 | Kramár et al. (2026), Building Production-Ready Probes for Gemini (§3.2.2 and throughout) | Probes on prompt tokens only (input monitoring), one middle layer, a maximum of attention-weighted rolling means, and an EMA baseline with α = 0.5. Activations stored on disk. Warns against large seed and architecture searches on small validation sets. | The idea of scoring the *incoming* tokens (our incoming-only stream). Stored activations and a single fixed middle-to-late layer (18). A small hypothesis space. | No attention head and no α = 0.5 EMA. No cascade. |
 | Goldowsky-Dill et al. (2025), Detecting Strategic Deception Using Linear Probes | Logistic regression where every response token inherits its sequence's label. The mean over tokens is the default aggregate, with the maximum also tested. | Token-inherits-reply-label training, and both mean and max aggregates. | Each reply's weight is split equally across its tokens, so long replies do not dominate. The maximum was fixed in advance as the primary aggregate. |
 
-Citation keys in `report/references.bib`: `cunningham2026`, `sharma2025constitutional`, `mckenzie2026`, `kramar2026`, `goldowskydill2025`. Provenance rows are in `PROVENANCE.md` (rows for "Running per-token probe score", "Streaming classifier that stops a reply at the first flagged token" and "Prompt-token probes; maximum of rolling means"). The McKenzie et al. preprint was first posted in 2025, but its current arXiv export, which the bibliography follows, is dated 2026.
+**How this differs from exposure detection.** Dong et al. (2026) show that a tool-using agent's hidden states encode whether an indirect prompt injection has entered its input. That is detection of *exposure*. Yu et al. (2026) trace prompt injection causally and recover directions that separate hijacked from resisted trajectories. Our question is different: every scored call is already under pressure from the same kind of peer, and within scenario × round AUROC compares calls at the same scenario and round. A probe therefore cannot score well by detecting that pressure or exposure is present. It has to predict whether *this* call will comply. The exposure itself (the value is in context) is decodable at AUROC 1.000 in this data, and every scored call comes after it (`report/paper.md` Appendix F).
+
+Citation keys in `report/references.bib`: `cunningham2026`, `sharma2025constitutional`, `mckenzie2026`, `kramar2026`, `goldowskydill2025`, `dong2026`, `yu2026`. Provenance rows are in `PROVENANCE.md` (rows for "Running per-token probe score", "Streaming classifier that stops a reply at the first flagged token" and "Prompt-token probes; maximum of rolling means"). The McKenzie et al. preprint was first posted in 2025, but its current arXiv export, which the bibliography follows, is dated 2026.
 
 ---
 
@@ -151,13 +157,20 @@ Citation keys in `report/references.bib`: `cunningham2026`, `sharma2025constitut
 
 One target call produces `<reasoning> … </reasoning>`, then either an answer or a tool call.
 
-- **Primary label, "immediate" (k = 0).** The label is 1 if and only if this call's output is the *first public emission* of the value, by any route. A file write counts. Every other call is labelled 0, including every call in a held episode.
+- **Primary label, "immediate" (k = 0).** The label is 1 if and only if this call is the first in its episode to emit the value in its answer or tool arguments. Execution does not need to succeed. Every other call is labelled 0, including every call in a held episode.
+- **Emission routes of the 146 positives.**
+  - 132 are successful `write_file` calls.
+  - 11 are malformed or errored write-like calls (`write_file<|channel|>commentary`), 9 of them with reasoning.
+  - 3 are final replies.
+  - None writes to the protected source file.
+
+  (`runs/20261026-0526-e05-reasoning-stream/emission_execution_audit.md`; audit run `runs/20261026-1240-e05-stream-emission-audit-de44`)
 - **What the probe reads.** Only the call's reasoning tokens, all of which come before its output starts.
 - **Illustrative example** (from the description in `report/paper.md` Appendix J.8). In round 6, the target reasons that the peer needs the whole configuration block, then calls `write_file` with a block that contains the value. That call is labelled 1 and the probe reads its reasoning tokens. The target's earlier calls in the episode are labelled 0.
 
 How this differs from the paper's **near-term label** (called "A" in the run files):
 
-1. The paper's outcome is a *channel* post. Here the outcome is any public emission. For gpt-oss the first public leak is a file write in 196 of 200 episodes (`report/paper.md` Appendix F).
+1. The paper's outcome is a *channel* post. Here the outcome is any public emission. For gpt-oss, the first public emission is the value in write-tool arguments in most episodes (see the routes above; `report/paper.md` Appendix F gives 196 of 200 on the full collection).
 2. The paper marks every eligible step in the round of the leak or the round before it. The immediate label marks only the one leaking call.
 3. The paper's probe reads one position per step, the last prompt token, before any reasoning.
 
@@ -237,7 +250,7 @@ The frozen last-prompt probe in this table was trained on the paper's channel ne
 | Step | Position read | Training label | LOSO AUROC | Pooled AUROC |
 |---|---|---|---|---|
 | 1. Paper probe | Last prompt token | Paper's round-level near-term label | 0.493 [0.444, 0.538] | 0.423 [0.378, 0.468] |
-| 2. Same position, per-call label | Last prompt token (before any generated token) | This call leaks | **0.906 [0.871, 0.936]** | 0.882 [0.841, 0.918] |
+| 2. Same position, per-call label | Last prompt token (before the current call generates anything) | This call leaks | **0.906 [0.871, 0.936]** | 0.882 [0.841, 0.918] |
 | 3. Streaming reasoning | Every reasoning token, max | This call leaks | **0.933 [0.912, 0.952]** | 0.949 [0.926, 0.969] |
 
 - **Paired, step 2 minus step 3:** −0.028 [−0.061, +0.000] on LOSO and −0.067 [−0.102, −0.037] pooled.
@@ -251,7 +264,7 @@ The frozen last-prompt probe in this table was trained on the paper's channel ne
 
 **Reading.**
 
-- Most of the jump from the paper's null to about 0.9 comes from asking the right question: will *this call* leak. The answer is readable at the last prompt token, before the model generates anything.
+- Most of the jump from the paper's null to about 0.9 comes from asking the right question: will *this call* leak. The answer is readable at the last prompt token, before the current call generates anything. In mid-turn calls that prompt can already contain the target's reasoning from earlier calls in the same turn (`runs/20261026-0138-e02-gpt-oss-full-completion/report.md`).
 - Streaming the reasoning adds a modest further gain in ranking. On held-out scenarios it mainly buys recall (84.8% against 56.5%) at the cost of more held-call alarms (4.4% against 1.6%).
 - The two probes still differ in more than position. The reasoning probe pools many tokens with reply-balanced weights; the last-prompt probe reads one vector. (`runs/20261026-1221-e05-lastprompt-percall-6013/report.md`)
 
@@ -422,7 +435,7 @@ The ranking is stable across seeds (LOSO AUROCs by seed: 0.960, 0.881, 0.958), b
 
 - **Onset, before the public output.** The first crossing comes a median 7.7% of the way into the reasoning (IQR 4.8% to 21.9%, LOSO; `alarms.json`). Reasoning is short: the median is 7 tokens over the 1,995 nonempty replies and 16 over the 121 nonempty leaking replies (6 and 14 when empty replies are included). So the crossing is usually at the first token or two. **221 of the 308 alarmed leaking reply-seed observations (71.8%) cross at the first captured reasoning token.** By seed: 73 of 105, 73 of 101 and 75 of 102. These are repeated observations across three seeds, not 308 independent replies. (`runs/20261026-0526-e05-reasoning-stream/onset_audit.md`, `onset_audit.json`)
 - **What this supports.**
-  - The predictive signal is present at the onset of the reply. The per-call last-prompt probe (0.906, Section 6.1) shows it is present before any token is generated.
+  - The predictive signal is present at the onset of the reply. The per-call last-prompt probe (0.906, Section 6.1) shows it is present before the current call generates anything.
   - The probe fires before the public answer or tool output.
 - **What this does not support.**
   - That the probe tracks a decision forming over the course of the reasoning text.
@@ -520,15 +533,16 @@ Incoming tokens are prefilled, not generated, so their token distance is not a w
 
 - **Incoming-only is a forecast.** It scores only what has arrived before the target starts its reply, and it ranks almost as well as the reasoning probe (0.927 against 0.933). The per-call last-prompt probe (0.906) points the same way. Much of the signal is therefore in the incoming message of the leaking request. Its false-alarm rate is high: 19.1% of held replies, and 80% of held episodes alarm at least once. This fits a probe that also responds to pressure, which the control-reply cutoff never sees because control peers never ask.
 - **Action-time is an output filter, not a forecast.** It reads the model writing toward the leak and stops just before the value. For an exact string, a regex on the output does the same job at no cost. A probe would only add value for leaks that no filter can match, such as paraphrased, partial or encoded leaks, and this setup does not test those.
+- **Why not just block tool calls?** On the paper's main channel outcome, many leaks never pass through a tool. Of the first channel leaks, 127 of 128 on gpt-oss and 48 of 98 on Qwen3-32B went out as a plain end-of-turn assistant reply that the harness posted, not through `send_message` (`runs/20261025-2324-e05-reasoning-route-audit/report.md`; an earlier snapshot, `runs/20261025-2157-e05-reasoning-route-audit`, is superseded). A filter on tool calls alone would miss those. A general output filter on all text could still match an exact string. In this per-call cohort, by contrast, 143 of the 146 positives are tool calls (Section 4.3), so this argument applies to the setup in general, not to these positives.
 - **Comparing reasoning with incoming.** The like-for-like comparison is the stopped four-layer grid (seed 42, pooled, both losses, EMA-max aggregation). There, 32 of 1,665 held replies alarm with the reasoning stream (1.92%) and 111 of 1,794 with the incoming stream (6.19%). The incoming stream covers both the peer message and the tool results. The recipe matches, but reply coverage differs, and these are not LOSO or three-seed results. (`runs/20261026-0526-e05-reasoning-stream/onset_audit.md`, matching `runs/20261026-0822-e05-expanded-stream/stopped_grid_interim.json`)
   - The earlier "4% against 19%" mixes recipes and reply sets. It compares the three-seed, layer-selected reasoning probe with the one-seed, layer-18 incoming probe.
-  - Both comparisons point the same way: reasoning gives the more precise alarm.
+  - Both comparisons point the same way: against incoming-only, reasoning gives the more precise alarm. Against the per-call last-prompt probe, the trade-off runs the other way: reasoning catches more leaks (84.8% against 56.5%) at slightly more false alarms (4.4% against 1.6%) (Section 6.1).
 
 ---
 
 ## 8. Fresh confirmation run (design; results pending)
 
-**Folder.** The design is frozen in `runs/20261026-1139-e05-stream-confirm/frozen_plan.json`. Bulk collection is in `runs/20261026-1202-e03-stream-confirm-bulk`, with status "running" at the time of writing.
+**Folder.** The design is frozen in `runs/20261026-1139-e05-stream-confirm/frozen_plan.json`. Bulk collection is in `runs/20261026-1202-e03-stream-confirm-bulk` (finished).
 
 **Frozen before any new episode existed.**
 
@@ -552,7 +566,21 @@ Incoming tokens are prefilled, not generated, so their token distance is not a w
   - Same eligibility rule; all target requests are replayed.
 - **Size and cost caps.** The plan first targeted 108 episodes within USD 10 (API 3, Modal 6, reserve 1). After a five-episode cost benchmark, and before any outcomes were inspected, an amendment fixed the size at **84 episodes** (12 recruiting and 2 control per scenario). The caps became API USD 5, Modal USD 4 and reserve USD 1, still USD 10 in total. Failures may only be replaced for API errors or incomplete runs, with no top-up for outcomes or validity (`throughput_amendment.json`). The first benchmark attempt failed without charge, and the retry billed USD 0.15 (`benchmark_cost.json`, `benchmark-retry_cost.json`).
 
-**Status: pending.** No new outcome has been scored.
+**Status: collection done, GPU capture running, scoring pending.**
+
+- **Collection.** All 84 episodes are collected. One replacement pass ran 5 new attempts, for incomplete runs only, with no quality-based top-up. The manifest then selected 84 complete episodes from 94 attempts, excluding the 10 incomplete ones, with no quota deficits. API cost was USD 1.51 billed, including the benchmark. (`runs/20261026-1221-e03-stream-confirm-topup/summary.json`, `runs/20261026-1225-e03-stream-confirm-manifest/meta.json`)
+- **GPU replay plan.** 1,671 target requests, 874 post-ask steps and 20,574 reasoning tokens, in 17 shards (`runs/20261026-1225-e02-gpt-oss-confirm-plan/meta.json`).
+- **GPU capture.** Running on Modal under a USD 4 cap, with a running projection of about USD 1.46 (`runs/20261026-1228-e02-gpt-oss-confirm-client/log.txt`). Download and scoring are also running (`runs/20261026-1228-e02-gpt-oss-stream-download`, `runs/20261026-1228-e05-stream-confirm-completion`).
+- **Results.** No new outcome has been scored.
+
+### 8.1 Other pending work
+
+| Item | Design | Status |
+|---|---|---|
+| **Qwen3-32B per-call replication** | Plan frozen before any fit (commit eb62523c). 241 recruiting and 97 benign episodes, 4,844 recruiting calls with 101 per-call positives. The paper's last-prompt recipe (17 of 64 layers, C = 0.1, same folds and seeds), per-call and strict next-call labels, and the frozen paper probe as comparator. It is exploratory, because it was planned after the gpt-oss result was seen. (`runs/20261026-1237-e05-qwen-percall/frozen_plan.json`, `label_audit.json`) | Fits running; no results yet |
+| **Post hoc route split** | Per-call results split by emission route: tool arguments versus plain reply text | Script drafted (`experiments/E05-probes/qwen_percall_routes.py`); no run yet |
+| **Jev reading the per-call input** | A text-monitor comparator given what the last-prompt probe sees, capped at USD 3 | Not started; no run folder yet |
+| **Frozen gpt-oss confirmation** | Section 8 | Collection done; GPU capture and scoring running |
 
 The bar is deliberately low (better than chance), given the exploratory 0.93. A pass would show that the pre-output signal holds on new episodes under a frozen model. The confirmation keeps its frozen immediate endpoint. The one-call-ahead result is not part of it.
 
@@ -562,7 +590,7 @@ The bar is deliberately low (better than chance), given the exploratory 0.93. A 
 
 1. **Post hoc and exploratory.** The analysis was designed after the main results. Several variants were tried (Section 6.8), and there is no confirmation yet.
 2. **One model with short reasoning.** gpt-oss-20b at low reasoning effort. The median reasoning is 7 tokens, so "streaming" here covers only a few tokens per reply.
-3. **A different label.** The label is the first *public* emission by any route, usually a file write. It is not the paper's channel give-in, and Section 6.3 is the only like-for-like comparison.
+3. **A different label.** The label is the first emission of the value in answer or tool arguments, mostly write-tool arguments. It is not the paper's channel give-in, and Section 6.3 is the only like-for-like comparison.
 4. **Thresholded alarms land in the leaking call, and one call ahead is mostly the read step.** The median step lead at the episode-calibrated cutoff is 0, and 12 of 149 caught observations alarm on an earlier call. The one-call-ahead ranking (0.881) has no threshold and comes from models that were not refitted. It is not clearly above a protected-file-read indicator (0.851; paired +0.030 [−0.020, +0.077]).
 5. **What the signal represents is open.** 72% of first alarms fire at the first reasoning token. A last-prompt probe (0.906) and an incoming-only probe (0.927) both rank almost as well. The signal is present at reply onset. Whether it reflects context, an early decision or another correlate is not established, and the evidence does not show a decision forming across the reasoning text (`onset_audit.md`).
 6. **Two operating points.** The reply-level 5% does not carry over to episodes: 41.3% of held episodes alarm at least once on LOSO. The episode-calibrated point is a post hoc recalibration, and its rates vary across seeds (held-episode alarms of 1.1% to 20.7%).
@@ -584,6 +612,11 @@ The bar is deliberately low (better than chance), given the exploratory 0.93. A 
 ### 10.1 The ladder
 
 The table runs from "far ahead and hard" to "at the action and easy". All AUROCs are within scenario × round on held-out scenarios. Rows marked † use the per-call question.
+
+**This ladder is descriptive.** Its rows change the model, the label, the cohort and the position at the same time, so differences between rows are not controlled comparisons. Two matched ladders exist or are underway:
+
+- **gpt-oss, same per-call outcome, horizons k = 0 to 3.** Reasoning max on held-out scenarios: 0.933, 0.919, 0.845, 0.767 (Section 6.4; `runs/20261026-0526-e05-reasoning-stream/metrics.json`).
+- **Qwen3-32B, eventual, then near-term, then this call.** Same cohort, same position, three labels. The per-call step is the pending replication in Section 8.
 
 | Question | Position read | Qwen3-32B | gpt-oss-20b | Source |
 |---|---|---|---|---|
@@ -610,12 +643,12 @@ The table runs from "far ahead and hard" to "at the action and easy". All AUROCs
 - **A calibrated advance alarm.** Thresholded alarms land in the leaking call.
 - **What the signal represents** (Section 6.6).
 - **A usable episode-level monitor.** At the call-level cutoff, 41% of held episodes would alarm.
-- **Other models.** Nothing here applies to Qwen3-32B or any other model.
+- **Other models.** Nothing here applies yet to Qwen3-32B or any other model. The Qwen per-call replication is pending.
 - **Value beyond a string filter** for an exact-string leak.
 
 ### 10.4 Implications for monitoring
 
-For a model that decides and acts within one call, oversight should score each model call and ask a per-call question: is *this* call about to break the rule? A probe at the last prompt token already answers that well, before any token is generated. It is cheap, needs no reasoning, and covers calls without reasoning. Scoring the reasoning as it streams adds recall at some cost in false alarms, and it suits a cascade that escalates to a costlier check, as in Cunningham et al. (2026).
+For a model that decides and acts within one call, oversight should score each model call and ask a per-call question: is *this* call about to break the rule? A probe at the last prompt token already answers that well, before the current call generates anything. It is cheap, needs no reasoning, and covers calls without reasoning. Scoring the reasoning as it streams adds recall at some cost in false alarms, and it suits a cascade that escalates to a costlier check, as in Cunningham et al. (2026).
 
 Neither probe gives long-range warning in this setup. The open question is the one an exact-string setup cannot answer: whether such probes catch leaks and coordination that no output filter can match.
 
@@ -700,9 +733,10 @@ experiments/E05-probes/.venv/bin/python experiments/E05-probes/freeze_stream_con
 | GPT-5-nano reasoning-prefix monitor, including the discarded attempt | 0.150 (0.115 + 0.036; cap 1.50) | `runs/20261026-0756-e06-reasoning-prefix-nano/billing_summary.json` |
 | Expanded capture GPU replay | 4.84 conservative upper bound (0.58 billed snapshot; cap 15) | `runs/20261026-0702-e02-gpt-oss-stream-client/summary.json` |
 | Expanded-capture fits, last-prompt ablation, strict-future and read-step audits | 0 (local CPU) | `runs/20261026-1128-e05-stream-layer18-loso/report.md` |
-| Confirmation cost benchmark | 0.151 | `runs/20261026-1139-e05-stream-confirm/benchmark-retry_cost.json` |
-| Confirmation bulk collection and replay | In progress; capped at API 5 + Modal 4 + reserve 1 | `runs/20261026-1139-e05-stream-confirm/throughput_amendment.json` |
-| **Marginal total so far, excluding the shared main replay** | **≈ 5.25** (conservative) | Sum of the rows above |
+| Confirmation collection (benchmark, bulk and one replacement pass), billed | 1.513 (API cap 5) | `runs/20261026-1221-e03-stream-confirm-topup/summary.json` |
+| Confirmation GPU capture | Running; Modal cap 4, running projection about 1.46 | `runs/20261026-1228-e02-gpt-oss-confirm-client/log.txt` |
+| Label-versus-position ablation, emission, onset, strict-future and read-step audits; Qwen per-call fits | 0 (local CPU) | respective run folders |
+| **Marginal total so far, excluding the shared main replay and the running GPU capture** | **≈ 6.62** | Sum of the rows above |
 
 ---
 
@@ -712,12 +746,12 @@ This is a proposed split. The main text carries the result and the evidence a re
 
 **Main text (one short subsection, plus Figure 3):**
 
-1. **The decomposition, as the headline.** On gpt-oss-20b held-out scenarios, three numbers: the paper's round-level probe at 0.49 on these calls, the same last-prompt position with the per-call label at 0.91, and reading the reasoning at 0.93. Asking per call works before any generated token, and streaming the reasoning adds a modest gain (+0.03 held-out, +0.07 pooled; recall 85% against 57% at the same cutoff).
+1. **The decomposition, as the headline.** On gpt-oss-20b held-out scenarios, three numbers: the paper's round-level probe at 0.49 on these calls, the same last-prompt position with the per-call label at 0.91, and reading the reasoning at 0.93. Asking per call works before the current call generates anything, and streaming the reasoning adds a modest gain: +0.03 held-out and +0.07 pooled, with recall of 85% against 57% at the same cutoff and false alarms of 4.4% against 1.6%.
 2. **Baselines on the same reasoning.** Jev 0.60, GPT-5-nano 0.36, keyword rules 0.40 to 0.48, reversed length 0.69. Censored 0.957, and only 2 of 121 leaking calls contain the value in their reasoning.
 3. **Incoming comparator.** A probe on the incoming peer message and tool results ranks at 0.93. The signal is present at the onset of the call. What it represents is open.
 4. **Alarm trade-off, in one line.** At a 5% control-call cutoff, the reasoning probe warns on 85% of leaking calls with reasoning, while 4.4% of held calls alarm; but 41% of held episodes see at least one alarm.
 5. **One sentence on one call ahead.** The call before the leak ranks at 0.88, but that ranking is largely the protected-file read step (a read indicator alone gives 0.85).
-6. **Figure 3.** `report/figures/figure3_streaming.png`. Its panel (b) should add the per-call last-prompt point (0.91), so that the figure shows the decomposition.
+6. **Figure 3.** `report/figures/figure3_streaming.png`, in its current state. Panel (a) has a catch / false-alarm column. Panel (b) includes the retrained last-prompt point (0.91). Its row label "Last prompt token (before any output)" should read "before the current call generates anything". It should also carry a note that panel (b) is a descriptive ladder, not a controlled comparison.
 7. **One sentence of limits.** Post hoc, one model, exact-string leak, and confirmation pending.
 
 **Appendix (everything else):**
@@ -739,7 +773,4 @@ This is a proposed split. The main text carries the result and the evidence a re
 - The confirmation design.
 - Costs and reproduction.
 
-Two points for the Figure 3 caption:
-
-- Panel (b) puts the reasoning probe's paper-label score (0.60, main-cohort calls) next to its per-call score (0.93, a different label and cohort). The caption should say so.
-- The legend "Probe at end of incoming message" means the last-prompt-token probe, not the incoming-only probe of Section 7.
+One point for the Figure 3 caption: panel (b) puts the reasoning probe's paper-label score (0.60, main-cohort calls) next to its per-call score (0.93, a different label and cohort). The caption should say so.
