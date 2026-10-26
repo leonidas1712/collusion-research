@@ -21,8 +21,8 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 | 4.4 The further from the act, the less predictable | 333 | 7 | 0.85 |
 | 4.5 What a round-level monitor should ask and see | 92 | 7 | 0.17 |
 | 5. Discussion and Limitations | 222 | 8 | 0.35 |
-| Limitations | 58 | 8 | 0.12 |
-| Future Work | 59 | 8 | 0.14 |
+| Limitations | 59 | 8 | 0.07 |
+| Future Work | 62 | 8 | 0.20 |
 | 6. Conclusion | 92 | 8 | 0.17 |
 | Code and Data | 40 | 8 | 0.12 |
 
