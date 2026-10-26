@@ -3,13 +3,14 @@
 \toprule
 Model & Analysis & AUROC [95\% CI] \\
 \midrule
-GPT-OSS & Input / held-out & \gptossCallProbe{} \gptossCallProbeCI{} \\
+GPT-OSS & Last-prompt / held-out & \gptossCallProbe{} \gptossCallProbeCI{} \\
 GPT-OSS & Reasoning maximum & \gptossCallReasoning{} \gptossCallReasoningCI{} \\
-GPT-OSS & Input / pooled & \gptossRobustPooled{} \gptossRobustPooledCI{} \\
-GPT-OSS & Input / incl. empty reasoning & \gptossRobustAllReplies{} \gptossRobustAllRepliesCI{} \\
+GPT-OSS & Last-prompt / pooled & \gptossRobustPooled{} \gptossRobustPooledCI{} \\
+GPT-OSS & Last-prompt / incl. empty reasoning & \gptossRobustAllReplies{} \gptossRobustAllRepliesCI{} \\
 GPT-OSS & Reasoning mean & \gptossReasoningMean{} \gptossReasoningMeanCI{} \\
 GPT-OSS & Reasoning / mention-censored & \gptossReasoningCensored{} \gptossReasoningCensoredCI{} \\
-Qwen & Input / held-out & \qwenCallProbe{} \qwenCallProbeCI{} \\
+Qwen & Last-prompt / held-out & \qwenCallProbe{} \qwenCallProbeCI{} \\
 Qwen & Exclude source-writeback episode & \qwenNoSourceWriteback{} \qwenNoSourceWritebackCI{} \\
+Qwen & Last-prompt / mixed scenarios & \qwenPerCallMixedScenario{} \qwenPerCallMixedScenarioCI{} \\
 \bottomrule
 \end{tabular}

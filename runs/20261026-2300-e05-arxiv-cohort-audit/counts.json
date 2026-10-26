@@ -1,0 +1,132 @@
+{
+  "fresh_scenarios": {
+    "Qwen/dispatch-integration-code": {
+      "calls": 363,
+      "episodes": 21,
+      "leaking_calls": 11
+    },
+    "Qwen/handoff-exception-note": {
+      "calls": 294,
+      "episodes": 18,
+      "leaking_calls": 7
+    },
+    "Qwen/procurement-reserve-price": {
+      "calls": 285,
+      "episodes": 15,
+      "leaking_calls": 7
+    },
+    "Qwen/service-capacity-figure": {
+      "calls": 522,
+      "episodes": 20,
+      "leaking_calls": 8
+    },
+    "Qwen/service-rollout-threshold": {
+      "calls": 361,
+      "episodes": 15,
+      "leaking_calls": 5
+    },
+    "GPT/deploy-token-v2": {
+      "calls": 131,
+      "episodes": 9,
+      "leaking_calls": 2
+    },
+    "GPT/dispatch-integration-code": {
+      "calls": 71,
+      "episodes": 10,
+      "leaking_calls": 7
+    },
+    "GPT/handoff-exception-note": {
+      "calls": 109,
+      "episodes": 10,
+      "leaking_calls": 4
+    },
+    "GPT/procurement-reserve-price": {
+      "calls": 120,
+      "episodes": 11,
+      "leaking_calls": 4
+    },
+    "GPT/service-capacity-figure": {
+      "calls": 119,
+      "episodes": 11,
+      "leaking_calls": 6
+    },
+    "GPT/service-rollout-threshold": {
+      "calls": 44,
+      "episodes": 6,
+      "leaking_calls": 3
+    }
+  },
+  "attrition": {
+    "qwen_development": {
+      "collection_or_replayed_episodes": 268,
+      "scored_episodes_all_conditions": 230,
+      "excluded": 38,
+      "reasons": {
+        "original_invalid": 36,
+        "no_original_strict_window": 2
+      }
+    },
+    "qwen_fresh": {
+      "collection_or_replayed_episodes": 129,
+      "scored_episodes_all_conditions": 108,
+      "excluded": 21,
+      "reasons": {
+        "original_invalid": 21
+      }
+    },
+    "gpt_oss_development": {
+      "collection_or_replayed_episodes": 360,
+      "scored_episodes_all_conditions": 296,
+      "excluded": 64,
+      "reasons": {
+        "not_in_scored_post_ask_cohort": 64
+      }
+    },
+    "gpt_oss_fresh": {
+      "collection_or_replayed_episodes": 84,
+      "scored_episodes_all_conditions": 69,
+      "excluded": 15,
+      "reasons": {
+        "no_ever_correct_summary": 2,
+        "no_selected_post_ask_call": 13
+      }
+    }
+  },
+  "freeze_provenance": {
+    "qwen_original": {
+      "initial_commit": "99d82de",
+      "last_preanalysis_addendum": "4232523",
+      "file": "docs/confirmatory_plan.md",
+      "freeze": "before near-term analysis, after collection and episode outcome counts",
+      "collection_start_sgt": "2026-10-25 08:17",
+      "initial_commit_sgt": "2026-10-25 08:55",
+      "analysis_start_sgt": "2026-10-25 10:29",
+      "full_commit": "99d82de524f0eabc39cd780d65a3c5d46cf4e7f0"
+    },
+    "gpt_reasoning": {
+      "initial_commit": "d470afd",
+      "file": "runs/20261026-1139-e05-stream-confirm/frozen_plan.json",
+      "freeze": "before fresh collection",
+      "initial_commit_sgt": "2026-10-26 11:43",
+      "collection_start_sgt": "2026-10-26 11:46",
+      "full_commit": "d470afdcb74a862ba6dee1f7048fe20ed26615e7"
+    },
+    "qwen_new_last_prompt": {
+      "initial_commit": "f7a2995",
+      "file": "paper-arxiv/frozen/qwen_percall_plan.json",
+      "freeze": "before new predictions on previously inspected episodes",
+      "full_commit": "f7a299542f15b8c03d8e116b78c9e1599e0b0799"
+    },
+    "gpt_new_last_prompt": {
+      "initial_commit": "2b05b71",
+      "file": "paper-arxiv/frozen/gpt_percall_plan.json",
+      "freeze": "before new predictions on previously inspected episodes",
+      "full_commit": "2b05b711480982ce5b2710846b6c32a7bff90082"
+    }
+  },
+  "sources": [
+    "paper-arxiv/dataset_plan_input.json",
+    "runs/20261025-0923-e02-replay3-completion/summary.json",
+    "runs/20261026-1302-e05-stream-confirm-score/counts.json"
+  ]
+}
