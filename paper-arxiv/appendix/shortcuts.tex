@@ -33,7 +33,7 @@ A baseline that knows only whether the call's action is a file write scores well
 To test whether the input text alone carries the signal, we trained a bag-of-words classifier (TF-IDF features and logistic regression) on each call's input, with the secret masked, on the same calls, folds and weights as the probe.
 We report two views of the input: the full input, and only the latest incoming message and tool results.
 The full input is long and largely repeats a fixed template, which may dilute what a bag-of-words model can find in it.
-On both models a trained bag-of-words classifier comes close to the probe, and the probe keeps a small edge whose interval excludes zero (\cref{tab:text-baselines}).
+The latest-message classifier comes close to the probe on Qwen3-32B, and the full-input classifier on gpt-oss-20b; against every view the probe keeps an edge whose interval excludes zero (\cref{tab:text-baselines}).
 So most of the per-call signal is present in the text the model reads, and the probe's large margin over the zero-shot monitor comes mostly from training on these labels rather than from reading activations.
 
 \begin{table}[h]
@@ -48,8 +48,8 @@ So most of the per-call signal is present in the text the model reads, and the p
     Last-prompt probe & \qwenCallProbe{} & \gptossCallProbe{} \\
     Trained text classifier, full input & \qwenTextClassifier{} & \gptossTextClassifier{} \\
     Trained text classifier, latest message only & \qwenTextClassifierLatest{} & \gptossTextClassifierLatest{} \\
-    Probe minus full-input classifier, paired & \qwenTextGapFull{} & \gptossTextGapFull{} \\
-    Probe minus latest-message classifier, paired & \qwenTextGapLatest{} & \gptossTextGapLatest{} \\
+    Probe minus full-input classifier, paired & +\qwenProbeMinusTextFull{} \qwenProbeMinusTextFullCI{} & +\gptossProbeMinusTextFull{} \gptossProbeMinusTextFullCI{} \\
+    Probe minus latest-message classifier, paired & +\qwenProbeMinusTextLatest{} \qwenProbeMinusTextLatestCI{} & +\gptossProbeMinusTextLatest{} \gptossProbeMinusTextLatestCI{} \\
     Flag: the call's action is a file write & -- & \gptossWriteBaseline{} \\
     Last-prompt probe, handoff-file writes only & -- & \gptossHandoffProbe{} \\
     \bottomrule

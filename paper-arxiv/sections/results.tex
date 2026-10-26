@@ -37,10 +37,10 @@ On gpt-oss-20b, the pre-registered reasoning probe ranked the calls that leak ab
 At its frozen threshold it caught about half of the leaking calls, while few calls in refusing episodes alarmed (\cref{app:confirmation}).
 On Qwen3-32B, the last-prompt probe, fit on development episodes only and frozen, scored \qwenFreshCallProbe{} on the fresh test episodes.
 
-Most of the signal is present before the model starts to reason.
-On gpt-oss-20b, the last-prompt probe and the reasoning probe score about the same on development episodes, and the gap between them on the fresh episodes is within noise.
+On development episodes, most of the signal is present before the model starts to reason.
+There, the last-prompt probe and the reasoning probe score about the same on gpt-oss-20b, and on the fresh episodes the reasoning probe scored higher, a gap within noise.
 
-The probe is not reading the obvious shortcuts (\cref{app:shortcuts}).
+The probe is not explained by three simple shortcuts: the request, keywords for the secret, or the file read and write (\cref{app:shortcuts}).
 It is not detecting the request, because every call that does not leak also faces the recruiting peer in the same scenario and round.
 It is not matching the secret, because keyword rules that look for the secret's words in the model's reasoning do no better than chance.
 It is not detecting the file read, because it beats a flag for ``the protected file was just read'', including among the calls that write the handoff file, the shared status file that the target writes for the peer.
