@@ -232,6 +232,13 @@ The final rigour round flagged three framings needing Leo's decision; each ties 
   **templated synthetic peer messages**; a less templated setting (Shi) is the test.
 - **Deferred baselines run only as quick checks tonight** (development, saved-score): a *tuned* text
   monitor, and a full `write_file`-conditioned analysis beyond the quick version.
+- **#5 Policy counterfactual replay (E08; now RUNNING via codex-daybreak).** Spec:
+  `experiments/E08-policy-counterfactual/SPEC.md`. Leo-approved (#2632).
+- **#6 Real authorised-disclosure episodes (Leo-approved, #2632).** Collect episodes where emitting the
+  same value is *allowed* as well as ones where it is *forbidden*. Questions: can a probe be trained to
+  detect the difference, and does it still work? This tests the new Limitations point that no episode
+  writes the secret with permission, so the current probe may track emitting the value rather than
+  breaking the rule.
 
 ## Changed from the sprint version (accuracy audit, claude-4) — continued
 
