@@ -16,7 +16,8 @@ def render(entry,value):
     kind=entry.get('format','decimal')
     if kind=='integer':return str(int(value))
     if kind=='percent':return f'{100*value:.{entry.get("decimals",2)}f}'+r'\%'
-    return f'{value:.2f}'
+    precision=entry.get('decimals',2)
+    return format(value,('+' if kind=='signed' else '')+f'.{precision}f')
 
 def generate(check=False):
     registry=json.loads((HERE/'numbers.yaml').read_text()) # JSON is a YAML 1.2 subset.
