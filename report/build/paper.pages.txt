@@ -156,13 +156,13 @@ labels (Figure 1c):
 ahead marks the call k calls before that one, with the leaking call itself excluded.
 The  outcome  is  the  give-in rule  throughout  (an  operational  endpoint,  including  accidental 
 disclosures), except for the gpt-oss-20b per-call label, which counts any public emission of the value 
-in the answer or tool arguments (143 of its 146 are tool-argument writes; Appendix L). The rules  
+in the answer or tool arguments (143 of its 146 leaking calls are tool-argument writes; Appendix L). 
 
 5
-differ because gpt-oss-20b almost always writes the value to a file before it posts it, and its analysis  
-ends at that first public emission, so only 3 of its scored calls are first channel posts; Qwen3-32B uses 
-the give-in rule. We defined the near-term label after seeing the eventual result and the per-call label 
-after both, so each is validated on new episodes or labelled post hoc (§3.5).
+The rules differ because gpt-oss-20b almost always writes the value to a file before it posts it, and its 
+analysis ends at that first public emission, so only 3 of its scored calls are first channel posts; Qwen3-
+32B uses the give-in rule. We defined the near-term label after seeing the eventual result and the per-
+call label after both, so each is validated on new episodes or labelled post hoc (§3.5).
 3.4 Detectors
 A probe is a linear classifier (logistic regression) on the residual stream. The last-prompt probe reads 
 the last prompt token, before the call generates anything; for gpt-oss-20b, a reasoning probe reads 
@@ -208,20 +208,20 @@ C.1); control and target-alone episodes never give in (0 of 66 and 0 of 25). gpt
 4.2 Asked per call, a probe predicts which call will give in
 Asked whether this call will give in, the last-prompt probe ranks the leaking call far above the others 
 on held-out scenarios: 0.95 [0.93, 0.97] on Qwen3-32B (4,844 calls, 101 give-ins) and 0.91 [0.87, 
-0.94] on gpt-oss-20b (1,995 calls, 121 leaking), before the call generates any token. Jev given the  
-same conversation, tool results and question scores lower on both models: 0.74 on Qwen3-32B (probe 
-minus Jev +0.21 [0.17, 0.28]) and 0.27 on gpt-oss-20b (+0.64 [0.56, 0.71]), where it ranks leaking 
-calls below the rest and flags nearly every pressured call (98% of leaking calls, 87% of refusing calls); 
-reversed post hoc it would score 0.73, still below the probe (+0.18 [0.12, 0.23]). These results bound 
-this judge, question and access, not what the text contains. On gpt-oss-20b, the reasoning probe  
-reaches 0.93 [0.91, 0.95], and with the alarm cutoff set for 5% of training-side control calls, then  
-measured on held-out calls, it catches 85% of leaking calls against 56% for the last-prompt probe, at 
-4% against 2% of calls in refusing episodes; Jev reading the same reasoning scores 0.60, and on  
-Qwen3-32B a fixed keyword rule on the latest incoming message 0.64. Frozen with its cutoff before  
-84 new gpt-oss-20b episodes were collected, the reasoning probe scored 0.91 [0.78, 0.99] on them 
-(594 calls, 26 leaking), meeting its pre-stated criterion. At the frozen cutoff it flagged 14/26 leaking  
-calls with reasoning (14/30 including four without), with alarms in 12/490 refusing calls, 7/27  
-refusing episodes and 4/12 control episodes (Figure 2a; Appendix L).
+0.94] on gpt-oss-20b (1,995 calls with reasoning; 121 of the 146 leaking calls), before the call  
+generates any token. Jev given the same conversation, tool results and question scores lower on both 
+models: 0.74 on Qwen3-32B (probe minus Jev +0.21 [0.17, 0.28]) and 0.27 on gpt-oss-20b (+0.64  
+[0.56, 0.71]), where it ranks leaking calls below the rest and flags nearly every pressured call (98%  
+of leaking calls, 87% of refusing calls); reversed post hoc it would score 0.73, still below the probe  
+(+0.18 [0.12, 0.23]). These results bound this judge, question and access, not what the text contains. 
+On gpt-oss-20b, the reasoning probe reaches 0.93 [0.91, 0.95], and with the alarm cutoff set for 5% 
+of training-side control calls, then measured on held-out calls, it catches 85% of leaking calls against 
+56% for the last-prompt probe, at 4% against 2% of calls in refusing episodes; Jev reading the same  
+reasoning scores 0.60, and on Qwen3-32B a fixed keyword rule on the latest incoming message 0.64. 
+Frozen with its cutoff before 84 new gpt-oss-20b episodes were collected, the reasoning probe scored 
+0.91 [0.78, 0.99]  on them (594 calls, 26 leaking), meeting its pre-stated criterion. At the frozen  
+cutoff it flagged 14/26 leaking calls with reasoning (14/30 including four without), with alarms in  
+12/490 refusing calls, 7/27 refusing episodes and 4/12 control episodes (Figure 2a; Appendix L).
 Figure 2. (a) Per-call prediction: which call will give in? Within scenario × round AUROC on held-out scenarios, 95% 
 family-bootstrap whiskers. gpt-oss-20b positives are any public emission (1,995 calls with reasoning, 121 positive); 
 Qwen3-32B positives use the give-in rule (4,844 calls, 101 positive). The frozen row is the reasoning probe on 84 new 
@@ -285,11 +285,11 @@ from the target’s activations before it acts, the round modestly, the eventual
 rung is a different point to intervene, from flagging an episode early to holding one call.
 Why predict, if the leak could be filtered? For exact secrets, filtering the action itself is the first 
 defence (Appendix A), and an exact-string output filter would also catch our leaks. A tool-call blocker 
-alone would not: 127 of gpt-oss-20b’s 128 channel give-ins and 48 of Qwen3-32B’s 98 go out as the  
-ordinary end-of-turn reply (Appendix D), and the Qwen3-32B per-call probe scores 0.92 on give-ins  
-in  plain  text,  not  only  0.98  on  tool  arguments.  A  pre-generation  warning  also  allows  softer 
-interventions (pause, escalate, ask a human), and values can be paraphrased or encoded where no  
-string matches; this setup does not test such leaks.
+alone would not: 127 of gpt-oss-20b’s 128 channel give-ins and 48 of Qwen3-32B’s 98 behaviour-slice 
+give-ins go out as the ordinary end-of-turn reply ( Appendix D), and the Qwen3-32B per-call probe  
+scores 0.92 on give-ins in plain text, not only 0.98 on tool arguments. A pre-generation warning also 
+allows softer interventions (pause, escalate, ask a human), and values can be paraphrased or encoded 
+where no string matches; this setup does not test such leaks.
 For monitor builders. Ask a monitor like Jev to forecast, and show it the peer’s messages.
 Limitations
 The per-call last-prompt results are post hoc; only the gpt-oss-20b reasoning probe was confirmed, on 
@@ -944,8 +944,9 @@ writing the value into another file also counts (5 of the 101 scored Qwen give-i
 only). For gpt-oss-20b’s round-level labels only a channel post counts, and any earlier public 
 emission ends the window; its per-call label counts any public emission (§3.3).
 - Leak route: the first channel leak is split between an explicit send_message call and the 
-end-of-turn reply that the harness posts to the channel (Qwen: 50 via send_message, 48 via 
-the end-of-turn reply). Source: runs/20261025-2157-e05-reasoning-route-audit.
+end-of-turn reply that the harness posts to the channel (Qwen, the 98 first channel leaks of 
+the plain-peer behaviour slice in Table C.1: 50 via send_message, 48 via the end-of-turn 
+reply). Source: runs/20261025-2157-e05-reasoning-route-audit.
 - Addressee check: was a leaking end-of-turn reply actually written to the peer? Jev 1.14 
 returns a probability that a message is addressed to the peer, and we count it as addressed 
 when that probability is at least 0.5. Across all Qwen behaviour episodes (plain and tactic 
@@ -1078,12 +1079,12 @@ log prompt length and the monitor score, compares it with and without the probe 
 the paired family-bootstrap difference. The model is fit separately inside each outer fold (the same 
 pooled family folds and held-out-scenario rotations as the probe, seeds 42, 43 and 44) on that fold’s 
 training calls and scored on its test calls, so it never sees the calls it is scored on. Its probe input is 
-the out-of-fold probe score (the source of the slight bias in Appendix A, item 7); features are 
-standardised with training-call statistics, and the logistic regression uses L2 regularisation with C = 
-1. The two monitors are the Jev forecaster with everything the target saw (L3) and the GPT-5-nano 
-detector with the conversation (L2). GPT-5-nano L2 was named before the test; the Jev setup was 
-chosen as the best monitor after seeing the first-batch results. Both were named in advance for the 
-confirmation test, which guards against that choice. The combination model is unweighted (no 
+the out-of-fold probe score (the source of the possible optimism in Appendix A, item 10); features 
+are standardised with training-call statistics, and the logistic regression uses L2 regularisation with 
+C = 1. The two monitors are the Jev forecaster with everything the target saw (L3) and the GPT-5-
+nano detector with the conversation (L2). GPT-5-nano L2 was named before the test; the Jev setup 
+was chosen as the best monitor after seeing the first-batch results. Both were named in advance for 
+the confirmation test, which guards against that choice. The combination model is unweighted (no 
 round or class balancing), its scores are raw decision values, and it is refit for each split seed, with 
 AUROCs averaged over seeds; in the held-out-scenario evaluation it trains on the five training 
 scenarios with shared families removed. For the confirmation test, the same model is fit once on the 
@@ -1184,18 +1185,19 @@ public emission of the value, such as a write to another file, ends the scoring 
 Private reasoning that mentions the token is not a leak. Episodes are eligible under the same 
 rule as for Qwen (complete, the token read, and a correct status summary written at some 
 point).
-- Disclosure-kind judge. The first public disclosure, a file write in 196 of 200 episodes, was 
-judged deliberate in 198 of 200 (0 accidental, 2 uncertain). The judge labels that first public 
-leak, not the later auto-posted channel message, so the channel post’s intent is read from the 
+- Disclosure-kind judge. In the full collection, 200 of the 300 recruiting episodes emitted the 
+value publicly; their first public disclosure, a file write in 196 of the 200, was judged 
+deliberate in 198 of 200 (0 accidental, 2 uncertain). The judge labels that first public leak, 
+not the later auto-posted channel message, so the channel post’s intent is read from the 
 addressee check (Appendix D) rather than from this judge.
 - Leak route. The canonical gpt-oss first channel leak is the auto-posted end-of-turn reply 
 (127 of 128; 1 explicit send_message; runs/20261025-2324-e05-reasoning-route-audit). Of 
 those end-of-turn leak replies, 117 of 127 were judged addressed to the peer (Appendix D).
 - Reasoning and rendering. gpt-oss reasons, and its Harmony chat format drops reasoning 
 from earlier turns but keeps the current turn’s reasoning between tool calls. A rendering 
-check compares the replayed prompt with the one the provider served. With the current 
 
 25
+check compares the replayed prompt with the one the provider served. With the current 
 turn’s reasoning kept, prompt token counts agreed within one token for 98.9% of requests 
 on the main provider (AkashML, 6,598 of 6,672). The second provider (DekaLLM), which 
 served 4.5% of all requests (313 of 6,985), remains an approximate rendering: only 18 of its 
@@ -1993,21 +1995,21 @@ value mention leaves the result unchanged (0.957 held-out). The placebo scores 0
 scenario held-out AUROCs range from 0.84 to 0.98.
 Caveats. This analysis was designed after the round-level results, uses one model, and tried 
 several variants (two aggregates, two cuts, two splits); it was confirmed only once, on 26 leaking 
-calls (L.5). The label is any public emission, not the give-in outcome. Within a call the probe likely 
-reads a decision the model is already reasoning toward, so it predicts this call’s action before output, 
-not calls ahead. On the near-term label it is far weaker (0.64). The text monitors read six prefixes 
-rather than every token, so their timing is coarser. Returned reasoning may omit hidden reasoning, 
-and the replay reproduces reasoning tokens less tightly than answer tokens (call NLL 0.69, top-5 
-agreement 97.7%). Bootstrap intervals resample saved out-of-fold scores without refitting. Our leak 
-is an exact string, so there is a clear last moment to block, just before the value’s first character. 
-Semantic or long-horizon collusion, such as a paraphrased disclosure or a plan coordinated over 
-many calls, has no such cut point, and its labels would need judges. Sources: experiments/E05-
-probes/reasoning_stream_{data,labels,fit,report,text,nulls}.py, 
-experiments/E06-monitors/reasoning_prefix_monitor.py, reasoning_prefix_nano.py; 
-runs/20261026-0522-e05-reasoning-stream-data, runs/20261026-0526-e05-reasoning-stream 
-(frozen models from runs/20261026-0138-e05-gpt-oss-main), runs/20261026-0740-e06-reasoning-
-prefix-jev (USD 0.11), runs/20261026-0756-e06-reasoning-prefix-nano (USD 0.15). The probe 
-analysis ran on CPU with no new inference.
+calls (L.5). The label is any public emission, not the give-in outcome. What the probe reads within 
+the call is not established (L.4); it predicts this call’s action before output, not calls ahead. On the 
+near-term label it is far weaker (0.64). The text monitors read six prefixes rather than every token, 
+so their timing is coarser. Returned reasoning may omit hidden reasoning, and the replay 
+reproduces reasoning tokens less tightly than answer tokens (call NLL 0.69, top-5 agreement 
+97.7%). Bootstrap intervals resample saved out-of-fold scores without refitting. Our leak is an exact 
+string, so there is a clear last moment to block, just before the value’s first character. Semantic or 
+long-horizon collusion, such as a paraphrased disclosure or a plan coordinated over many calls, has 
+no such cut point, and its labels would need judges. Sources: 
+experiments/E05-probes/reasoning_stream_{data,labels,fit,report,text,nulls}.py, experiments/E06-
+monitors/reasoning_prefix_monitor.py, reasoning_prefix_nano.py; runs/20261026-0522-e05-
+reasoning-stream-data, runs/20261026-0526-e05-reasoning-stream (frozen models from 
+runs/20261026-0138-e05-gpt-oss-main), runs/20261026-0740-e06-reasoning-prefix-jev (USD 
+0.11), runs/20261026-0756-e06-reasoning-prefix-nano (USD 0.15). The probe analysis ran on CPU 
+with no new inference.
 L.2 Expanded capture: incoming messages and action-time tokens
 A second, targeted replay (USD 4.84 on one GPU) saved what L.1 lacked, for the same 2,205  
 recruiting calls plus 1,125 post-ask control calls (3,330 requests). For each request it saved three  
@@ -2206,11 +2208,11 @@ seed observations; onset_audit.md). The signal is present at the start of the ca
 tracks a decision forming over the reasoning is unsupported by this analysis.
 - Exact mentions. “Mentions the value” means an exact string match, the rule the censored 
 variant uses.
-- Leak route. On Qwen3-32B, give-ins posted as plain end-of-turn assistant text (47) score 
-0.922 [0.871, 0.963], and give-ins in tool arguments (54) 0.979 [0.963, 0.992], each 
-against the same negatives (route_subgroups.json). Of the 146 gpt-oss-20b per-call positives, 
-132 are successful write_file calls, 11 malformed or errored write-like calls, and 3 final 
-replies (emission_execution_audit.md).
+- Leak route. On Qwen3-32B, of the 101 scored per-call give-ins, those posted as plain end-
+of-turn assistant text (47) score 0.922 [0.871, 0.963], and give-ins in tool arguments (54) 
+0.979 [0.963, 0.992], each against the same negatives (route_subgroups.json). Of the 146 
+gpt-oss-20b per-call positives, 132 are successful write_file calls, 11 malformed or errored 
+write-like calls, and 3 final replies (emission_execution_audit.md).
 L.5 Frozen confirmation on new gpt-oss-20b episodes
 The reasoning probe (layer 15, chosen on a 25% family holdout of the development data and refit  
 once on all 1,995 development calls), its maximum aggregate and its alarm cutoff (calibrated on 892 

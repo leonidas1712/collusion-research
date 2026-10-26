@@ -10,17 +10,17 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 | 3. Methods | 0 | 3 | 0.05 |
 | 3.1 Setup | 252 | 3 | 0.38 |
 | 3.2 Data | 204 | 4 | 0.66 |
-| 3.3 What gets scored | 277 | 4 | 0.43 |
+| 3.3 What gets scored | 279 | 4 | 0.43 |
 | 3.4 Detectors | 211 | 5 | 0.34 |
 | 3.5 Evaluation | 178 | 5 | 0.28 |
 | 3.6 Second target | 72 | 5 | 0.14 |
 | 4. Results | 0 | 5 | 0.05 |
 | 4.1 Behaviour: the setup produces mixed outcomes | 47 | 5 | 0.09 |
-| 4.2 Asked per call, a probe predicts which call will give in | 442 | 6 | 0.83 |
+| 4.2 Asked per call, a probe predicts which call will give in | 448 | 6 | 0.83 |
 | 4.3 The ranking survives the obvious shortcuts | 183 | 6 | 0.26 |
 | 4.4 The further from the act, the less predictable | 332 | 7 | 0.91 |
 | 4.5 What a round-level monitor should ask and see | 92 | 8 | 0.16 |
-| 5. Discussion and Limitations | 172 | 8 | 0.27 |
+| 5. Discussion and Limitations | 174 | 8 | 0.27 |
 | Limitations | 59 | 8 | 0.07 |
 | Future Work | 62 | 8 | 0.20 |
 | 6. Conclusion | 103 | 8 | 0.17 |
