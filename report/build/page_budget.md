@@ -10,7 +10,7 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 | 3. Methods | 0 | 3 | 0.05 |
 | 3.1 Setup | 252 | 3 | 0.42 |
 | 3.2 Data | 202 | 4 | 0.66 |
-| 3.3 What gets scored | 272 | 4 | 0.43 |
+| 3.3 What gets scored | 271 | 4 | 0.43 |
 | 3.4 Detectors | 211 | 5 | 0.34 |
 | 3.5 Evaluation | 176 | 5 | 0.28 |
 | 3.6 Second target | 72 | 5 | 0.14 |

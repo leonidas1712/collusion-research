@@ -148,14 +148,14 @@ labels (Figure 1c):
 - near-term (round level): a call is positive if the give-in falls in its round or the next;
 - this call (call level): the call is positive if it is the first to make the value public. k calls 
 ahead marks the call k calls before that one, with the leaking call itself excluded.
-The outcome is the paper’s give-in rule throughout, except for the gpt-oss-20b per-call label, which  
-counts any public emission of the value in the answer or tool arguments (143 of its 146 are tool-
-argument writes; Appendix L). The rules differ because gpt-oss-20b almost always writes the value to 
+The outcome is the give-in rule throughout, except for the gpt-oss-20b per-call label, which counts  
+any public emission of the value in the answer or tool arguments (143 of its 146 are tool-argument 
+writes; Appendix L). The rules differ because gpt-oss-20b almost always writes the value to a file  
 
-a file before it posts it, and its analysis ends at that first public emission, so only 3 of its scored calls  
-are first channel posts; Qwen3-32B uses the give-in rule. We defined the near-term label after seeing 
-the eventual result and the per-call label after both, so each is validated on new episodes or labelled  
-post hoc (§3.5).
+before it posts it, and its analysis ends at that first public emission, so only 3 of its scored calls are first 
+channel posts; Qwen3-32B uses the give-in rule. We defined the near-term label after seeing the  
+eventual result and the per-call label after both, so each is validated on new episodes or labelled post 
+hoc (§3.5).
 3.4 Detectors
 A probe is a linear classifier (logistic regression) on the residual stream. The last-prompt probe reads 
 the last prompt token, before the call generates anything; for gpt-oss-20b, a reasoning probe reads 
@@ -447,13 +447,15 @@ and Data); each folder holds the exact command, settings and outputs of one run.
 a leak is the disclosure that counts as a give-in.
 A. Limitations and Dual-Use / Ethical Considerations
 What do these results not establish, and is it safe to publish what we release?
-What this work does and does not establish. It establishes that, for Qwen3-32B in six synthetic 
-scenarios built from one task template, whether the target gives in this round or the next is modestly 
-predictable from one call, by a text monitor asked to forecast and, less well, by an activation probe,  
-and that this held on new episodes scored under a plan fixed in advance. It does not establish that  
-eventual give-in can be predicted, that the signals transfer to other models (on gpt-oss-20b they do  
-not), that the detectors would work as deployed alarms, or anything about collusion beyond this first 
-recruitment call.
+What this work does and does not establish.  In six synthetic scenarios built from one task  
+template, it establishes that whether this call gives in is highly readable from the target’s activations  
+before the call acts, on both models (post hoc, except the gpt-oss-20b reasoning probe, confirmed on 
+new episodes), above a decision-model monitor given the same conversation; that predictability rises 
+toward the act; and that on Qwen3-32B give-in this round or the next is modestly predictable, which 
+held on new episodes. It does not establish advance warning across calls or rounds, what the probe  
+reads, how the detectors would perform as deployed alarms (per-episode false alarms are high),  
+prediction of leaks that are not exact strings, or anything beyond this first recruitment step. On gpt-
+oss-20b, round-level prediction of the channel give-in is near chance.
 Scope. We study the explicit recruitment route, the first step of collusion, not sustained joint  
 scheming or hidden channels. Tacit collusion, where agents coordinate with no request at all, is out  
 of scope: pricing agents reach supracompetitive prices (Fish et al., 2026) or divide markets (Lin et al., 
@@ -463,7 +465,8 @@ Limitations, ordered by how much each could change a headline.
 1. One main model and one task template. All main results come from one target, Qwen3-32B, 
 on six scenarios built from the same task. The give-in rates, and how predictable they are, 
 may differ for other models or tasks. The second target (Appendix F) shows one such 
-difference: it gives in faster, and nothing predicts it.
+difference: it gives in faster, and round-level prediction is near chance there, though the per-
+call probe still works.
 2. Activations from one position. The probe reads the model’s internal state only at the last 
 token of each prompt, before the reply. If the decision to give in forms while the reply is 
 being written, this probe understates what can be read; reading at the decision point is 
@@ -484,10 +487,10 @@ probe, and the metric compares scores across folds within one scenario and round
 can pull even simple baselines below chance. A check that compares only scores from the 
 same fold is in Appendix H. The held-out-scenario and confirmation results do not have this 
 problem.
+
 7. A possible bias toward the probe in the combination test. The combined model’s probe input 
 for training calls is the out-of-fold probe score, and the fold probes behind those scores were 
 trained on overlapping calls, including the combination model’s own test fold. This can 
-
 make the all-data combination gains optimistic; we have not measured by how much. The 
 new-episode confirmation test does not have this problem.
 8. The scoring window has edges. A give-in in the very first reply after the target reads the value 
@@ -507,12 +510,12 @@ Dual-use and ethics. We publish everything; the risks come first, then why we re
 - Risks. The released recruiting prompts and the whole-block copy strategy are reusable: they 
 could help someone elicit disclosures from other agents. Our findings also say where 
 monitoring is weak: a model that gives in fast, and a monitor that sees only the target’s 
-actions, leave little to forecast, which tells an attacker where pressure is least likely to be 
-caught. The per-call results add two more routes: knowing which calls a probe can read 
-could help an adversary spread pressure across calls or route a disclosure through plain text 
-or an encoding rather than a tool call, and a released probe could be used to tune pressure 
-until it evades the probe. Our probes are trained on these scenarios and are not hardened 
-against such adaptation.
+actions, leave little to forecast ahead of the call, which tells an attacker where pressure is 
+least likely to be caught. The per-call results add two more routes: knowing which calls a 
+probe can read could help an adversary spread pressure across calls or route a disclosure 
+through plain text or an encoding rather than a tool call, and a released probe could be used 
+to tune pressure until it evades the probe. Our probes are trained on these scenarios and are 
+not hardened against such adaptation.
 - Synthetic setup. Tools are mocked in memory; every protected value is a randomly generated 
 fake; no real system, credential, or network resource is touched.
 - What we release. All prompts (the recruiting and control peer prompts and the second-target 
@@ -531,10 +534,10 @@ a technique for evading them, and naming them is what lets monitor builders clos
 - Net benefit. With fake secrets, mocked tools and tactic classes already in the literature, the 
 added capability is small, while the defensive lessons and a matched benchmark for 
 detection research are new.
+
 B. Experimental Pipeline and Reproducibility
 This appendix shows how raw runs became the reported numbers. The pipeline figure traces the data 
 from collected episodes down to scored calls, and the companion table gives the model versions,  
-
 providers, decoding settings, seeds, round caps, costs, and the script that runs each stage. Figure 1 in 
 the main text explains the idea for a single episode; here the view is the whole dataset. Probes and  
 text monitors form two branches that read the same eligible calls and rejoin at scoring, so the figure 
@@ -1736,7 +1739,7 @@ with no tuning, so this is the fair comparison. Our small checks found no gain f
 MLP, Table H.3; trajectory features, App. H). What would change our conclusion: a tuned probe that 
 beats a tuned monitor on the locked test would reverse the finding that the conversation matters more 
 than activations. On gpt-oss-20b, any tuned detector clearly above chance would weaken our reading 
-of that model as a limit on when prediction is possible.
+of that model as a limit on when round-level prediction is possible.
 J.2 Rerun-based labels. A single outcome per state cannot separate “no signal” from “outcome  
 not yet decided”. Our branching check suggests the second is common: 7 of 23 shared states ended  
 differently across five three-round reruns (App. H). We would rerun each sampled state many times  
@@ -1811,16 +1814,16 @@ call, whether it will give in.
 Early warning and combined detectors.  Closest to our question, Saraogi et al. ( 2026) read 
 hidden states each turn as a user presses a model to drop a correct answer: an untrained signal peaks 
 near AUC 0.6, linear probes fail, prediction stays near chance under stronger labels, and probes do  
-not transfer between models, consistent with the weak, model-specific signal we find. SafeDream  
-measures how many turns before compliance a multi-turn jailbreak is flagged from hidden states (Yan 
-et al., 2026 ). Per-round probe AUROC among running episodes predicts task failure ( Ruan et al.,  
-2026), and probes paired with classifiers already filter jailbreaks and misuse ( Cunningham et al.,  
-2026; Kramár et al., 2026). The closest detector precedent, Gao (2026), fuses an activation monitor 
-with an observable monitor that includes LLM outcome forecasts on AgentDojo, and argues that row-
-level false-alarm rates understate per-trajectory ones. We differ: we use the same per-round metric  
-and count alarms per episode, and we test whether adding a probe to a text monitor helps (a  
-combination test, §3.5) in a new setting: a peer recruiting the agent, including scenarios that neither 
-detector saw in training.
+not transfer between models, consistent with the weak signal we find at the round level; our per-call 
+probe, by contrast, is strongly predictive on both models. SafeDream measures how many turns before 
+compliance a multi-turn jailbreak is flagged from hidden states ( Yan et al., 2026 ). Per-round probe 
+AUROC among running episodes predicts task failure ( Ruan et al., 2026 ), and probes paired with  
+classifiers already filter jailbreaks and misuse ( Cunningham et al., 2026 ; Kramár et al., 2026 ). The 
+closest detector precedent, Gao (2026), fuses an activation monitor with an observable monitor that 
+includes LLM outcome forecasts on AgentDojo, and argues that row-level false-alarm rates understate 
+per-trajectory ones. We differ: we use the same per-round metric and count alarms per episode, and  
+we test whether adding a probe to a text monitor helps (a combination test, §3.5) in a new setting: a 
+peer recruiting the agent, including scenarios that neither detector saw in training.
 In sum. Prior work detects that an agent is under attack, reads agents instructed to collude,  
 measures persuasion from text and outcomes, or warns of a failure before it happens in other settings. 
 To our knowledge, no prior work tries to predict, before it acts, whether an agent being recruited by 
