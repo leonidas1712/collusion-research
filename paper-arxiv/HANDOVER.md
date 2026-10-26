@@ -317,12 +317,13 @@ already states each fact; the question is how much of it the title and abstract 
 
 - **Pre-registration chronology corrected from the sprint wording (codex-2 #2517, source-documented;
   verified by claude-4).** The sprint framing implied the fresh episodes were collected *after* the
-  plan was committed. Corrected definition: a test is *pre-registered* when a committed plan fixed the
-  model, its threshold and its success criterion **before any detector was scored** on the test's
-  episodes (method.tex). For **gpt-oss-20b** the reasoning-probe plan was frozen **before the fresh
-  episodes were collected** (the stronger case). For **Qwen3-32B** the round-level plan was frozen
+  plan was committed. **Current definition (after your round-1 decision):** a test is *pre-registered*
+  when a committed written plan fixed the analysis and its success criterion **before the test's
+  episodes were collected** (method.tex). Only **gpt-oss-20b** meets it: its reasoning-probe plan was
+  frozen before the fresh episodes were collected. The **Qwen3-32B** round-level plan was frozen
   **after** its fresh episodes were collected, when their overall leak counts were already known, but
-  **before any probe or monitor was scored** (confirmation.tex:6). Both meet the "before any detector
-  scored" bar, so the paper keeps "pre-registered" for both but **never claims "before collection" for
-  Qwen**; the abstract/intro use "pre-registered" only for gpt-oss. Exact commit times go in the
-  analysis-history table. Numbers unchanged.
+  **before any probe or monitor was scored** (app:confirmation). The paper therefore calls only the
+  gpt-oss test "pre-registered" and describes the Qwen test as planned before scoring, on fresh
+  episodes held out from training. Exact commit times are in the analysis-history table. Numbers
+  unchanged. (An earlier version of this note said the paper kept "pre-registered" for both tests;
+  that is no longer true.)
