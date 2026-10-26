@@ -1,0 +1,8 @@
+{
+  "transform": "Within each saved seed/fold, rank all evaluation scores to percentiles, then average seed percentiles per call. Descriptive, uses evaluation distribution; not an online score.",
+  "alignment": "Scored calls before first positive call; unscored calls may intervene.",
+  "gate": "Median paired leak-minus-previous-scored-call percentile increase has family-bootstrap 95% lower bound > 0 in every model/cohort.",
+  "examples": "One fresh leaking episode per model, upper median of scored sequence length, episode path tie-break; requires at least five scored calls.",
+  "bootstrap": 1000,
+  "seed": 20261026
+}

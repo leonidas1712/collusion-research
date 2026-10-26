@@ -13,7 +13,7 @@ def read(path):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--saved-root',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     a.output.mkdir(parents=True,exist_ok=False)
-    plan=dict(transform='Within each saved seed/fold, rank all evaluation scores to percentiles, then average seed percentiles per call. Descriptive, uses evaluation distribution; not an online score.',alignment='Scored calls before first positive call; unscored calls may intervene.',gate='Median paired leak-minus-previous-scored-call percentile increase has family-bootstrap 95% lower bound > 0 in every model/cohort.',examples='One fresh leaking episode per model, upper median of scored sequence length, episode path tie-break; requires an earlier scored call.',bootstrap=1000,seed=20261026)
+    plan=dict(transform='Within each saved seed/fold, rank all evaluation scores to percentiles, then average seed percentiles per call. Descriptive, uses evaluation distribution; not an online score.',alignment='Scored calls before first positive call; unscored calls may intervene.',gate='Median paired leak-minus-previous-scored-call percentile increase has family-bootstrap 95% lower bound > 0 in every model/cohort.',examples='One fresh leaking episode per model, upper median of scored sequence length, episode path tie-break; requires at least five scored calls.',bootstrap=1000,seed=20261026)
     (a.output/'analysis_plan.json').write_text(json.dumps(plan,indent=2)+'\n')
     specs=[('qwen','development',ROOT/'runs/20261026-2201-e05-arxiv-qwen-any-public/probe_scores.csv.gz'),('qwen','fresh',ROOT/'runs/20261026-2212-e05-arxiv-qwen-fresh-percall/probe_scores.csv.gz'),('gpt_oss','development',a.saved_root/'runs/20261026-1221-e05-lastprompt-percall-6013/probe_scores.csv.gz'),('gpt_oss','fresh',ROOT/'runs/20261026-2222-e05-arxiv-gpt-fresh-percall/probe_scores.csv.gz')]
     summaries=[];export=[];examples=[];sources={};rng=np.random.default_rng(plan['seed'])
@@ -41,7 +41,7 @@ def main():
                 rec=dict(model=model,cohort=cohort,episode=episode,offset=i-end,**r);aligned.append(rec);export.append(rec)
             if end:
                 deltas.append((seq[-1]['family'],seq[-1]['score']-seq[-2]['score']))
-                eligible.append((episode,seq))
+                if len(seq)>=5:eligible.append((episode,seq))
         families=sorted({f for f,_ in deltas});fm={f:[d for ff,d in deltas if ff==f] for f in families}
         boot=[np.median([v for i in rng.integers(len(families),size=len(families)) for v in fm[families[i]]]) for _ in range(plan['bootstrap'])]
         ci=np.quantile(boot,[.025,.975]).tolist();aggregate=[]

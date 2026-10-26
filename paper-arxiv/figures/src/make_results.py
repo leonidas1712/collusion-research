@@ -31,7 +31,8 @@ def draw(ax, x, y, entry, model, kind='activation', horizontal=False, fresh=Fals
     error = [[value-ci[0]], [ci[1]-value]] if ci else None
     ax.errorbar(value if horizontal else x, y if horizontal else value,
                 xerr=error if horizontal else None, yerr=None if horizontal else error,
-                marker=marker or DETECTOR_MARKERS[kind], color=color, markersize=6,
+                marker=marker or DETECTOR_MARKERS[kind], color=color, markersize=8 if fresh else 6, markeredgewidth=1.5,
+                markeredgecolor='#222222' if fresh else color,
                 markerfacecolor=color if fresh or entry['status']=='confirmed' else 'white',
                 capsize=2, linewidth=1, linestyle='none', zorder=3)
     return True
@@ -77,6 +78,9 @@ def headline(data,sha):
             e=get(data,key);rows.append((title,'Fresh test: '+key,e))
             draw(ax,x+.18,None,e,model,kind,fresh=True,
                  marker='D' if key=='gptossFreshReasoning' else 'o')
+            if e.get('value') is not None:
+                ax.annotate('Fresh test',xy=(x+.18,e['value']),xytext=(x-.12,.72),
+                            ha='center',fontsize=8,arrowprops=dict(arrowstyle='-',color='#555555',lw=.7))
         ax.axhline(.5,color='#777777',ls='--',lw=.8)
         ax.set(xlim=(-.3,2.3),ylim=(0,1.03),xticks=[0,1,2],xticklabels=['Will it\never leak?','This round\nor next?','This call?'],title=title)
         ax.grid(axis='y',alpha=.15)
@@ -113,7 +117,8 @@ def forest(data,sha,stem,title,panels):
         ax.set(xlim=(0,1.03),ylim=(len(items)-.4,-.8),yticks=[],xlabel='AUROC',xticks=[0,.5,1])
         ax.axvline(.5,color='#777777',ls='--',lw=.8)
         if not compact:
-            ax.text(.5,1.02,'chance',ha='center',fontsize=9,transform=ax.get_xaxis_transform())
+            ax.text(.5,.02,'chance',ha='center',va='bottom',fontsize=9,
+                    bbox=dict(facecolor='white',edgecolor='none',pad=1),transform=ax.get_xaxis_transform())
         ax.spines['left'].set_visible(False)
     fig.suptitle(title,fontsize=11,y=.98)
     kinds=list(dict.fromkeys(kind for _,_,items in panels for _,_,kind in items))
@@ -131,7 +136,7 @@ def shortcuts(data,sha):
         ('Call reads the protected file','gptossReadStep','rule',2),
         ('Keywords in reasoning','gptossKeyword','rule',3),
         ('Before the peer asks\n(other calls)','gptossPlacebo','control',4),
-        ('Incoming messages + tool results\n(one seed; different calls)','gptossIncomingProbe','activation',6)]
+        ('Probe reading only incoming\nmessages and tool results','gptossIncomingProbe','activation',6)]
     rows=[]
     for label,key,kind,y in items:
         e=get(data,key);rows.append(('gpt-oss-20b',label,e))
