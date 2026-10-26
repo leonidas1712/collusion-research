@@ -1,13 +1,17 @@
 {
   "source": "report/paper.md",
-  "source_sha256": "9a655c0a23b5d5407926040eefe300b9d9cc3d9f6ce07a364e70617f119c6884",
+  "source_sha256": "c8673b7581d4b0cb7fcbee82304b2fcf000932573d4f99afe87814cf55ea4170",
   "template_sha256": "2c345fb9fe13cb7d874d532259374a9793f80551565364314f32e4a23d9ab247",
   "bibliography_sha256": "2d278baf9c08b763ba9e3284c23c9443ebb2ec74543246e44b0e50817eeaa941",
   "csl_sha256": "3917def5fc951b104d64216c3373096042368b9704ba269ca83c14ebaba889fc",
   "images": [
     {
       "path": "report/figures/figure1_setup.png",
-      "sha256": "58ef7d9a91f8eacd74d3e4b27e4c1bd6992edeead080ec8770d87df019dff7fa"
+      "sha256": "eadc94cb0f52662b43df69fbfb67e8a2f3d20a04472517d040ce9c363300aa17"
+    },
+    {
+      "path": "report/figures/figure3_streaming.png",
+      "sha256": "ffc30e85c980dc28f15605cf7929fe26b42b0bdcdbf02d172fc1b3e0f139a188"
     },
     {
       "path": "report/figures/figure2_prediction.png",
@@ -24,6 +28,10 @@
     {
       "path": "report/figures/appendix_h_layers.png",
       "sha256": "e9c79d1e57164465df3da70f9a4fea90c031114a2b075b5bba684ff51dda66c6"
+    },
+    {
+      "path": "report/figures/figure3b_appendix_checks.png",
+      "sha256": "c660bf64d23b43bd79be49b2d1b7286ae26aaf1c84bc3a377d4df5f3bf7984ec"
     }
   ],
   "cross_references": {
@@ -33,21 +41,19 @@
       "section 3": "methods",
       "section 3.1": "setup",
       "section 3.2": "data",
+      "figure 1": "figure-1",
       "section 3.3": "what-gets-scored",
       "section 3.4": "detectors",
-      "figure 1": "figure-1",
       "section 3.5": "evaluation",
       "section 3.6": "second-target",
       "section 4": "results",
       "section 4.1": "behaviour-the-setup-produces-mixed-outcomes",
+      "section 4.2": "asked-per-call-a-probe-predicts-which-call-will-give-in",
+      "figure 3": "figure-3",
+      "section 4.3": "what-the-per-call-signal-is-not",
+      "section 4.4": "the-further-from-the-act-the-less-predictable",
       "figure 2": "figure-2",
-      "section 4.2": "eventual-give-in-is-barely-predictable-from-one-step",
-      "section 4.3": "near-term-give-in-is-modestly-predictable-and-not-only-from-pressure",
-      "section 4.4": "the-near-term-result-holds-on-new-episodes",
-      "section 4.5": "what-a-monitor-should-ask-and-see",
-      "table 1": "table-1",
-      "section 4.6": "transfer-to-a-second-target",
-      "section 4.7": "exploratory-reading-the-reasoning-as-it-streams",
+      "section 4.5": "what-a-round-level-monitor-should-ask-and-see",
       "section 5": "discussion-and-limitations",
       "section 6": "conclusion",
       "section A": "a.-limitations-and-dual-use-ethical-considerations",
@@ -59,6 +65,7 @@
       "section E": "e.-detectors-and-evaluation",
       "table E.1": "table-E-1",
       "figure E.1": "figure-E-1",
+      "table E.2": "table-E-2",
       "section F": "f.-second-target-gpt-oss-20b-and-gemma-4-31b",
       "table F.1": "table-F-1",
       "section G": "g.-behaviour-screening",
@@ -74,9 +81,17 @@
       "section I.3": "i.3-peer-agent-gpt-oss-20b-episodes-deepseek-v4-pro",
       "section I.4": "i.4-text-monitors",
       "section J": "j.-a-scaled-follow-up-study-design-and-decision-criteria",
-      "table J.1": "table-J-1",
-      "table J.2": "table-J-2",
-      "section K": "k.-related-work-in-full"
+      "section K": "k.-related-work-in-full",
+      "section L": "l.-per-call-and-streaming-probes",
+      "section L.1": "l.1-the-gpt-oss-20b-reasoning-probe-design-and-development-results",
+      "table L.1": "table-L-1",
+      "section L.2": "l.2-expanded-capture-incoming-messages-and-action-time-tokens",
+      "table L.2": "table-L-2",
+      "section L.3": "l.3-per-call-last-prompt-probes-on-both-models-post-hoc",
+      "section L.4": "l.4-checks-on-the-per-call-signal",
+      "figure L.1": "figure-L-1",
+      "section L.5": "l.5-frozen-confirmation-on-new-gpt-oss-20b-episodes",
+      "section L.6": "l.6-figure-3-full-caption"
     },
     "links": [
       {
@@ -88,16 +103,20 @@
         "target": "methods"
       },
       {
+        "text": "Section 4.2",
+        "target": "asked-per-call-a-probe-predicts-which-call-will-give-in"
+      },
+      {
         "text": "Section 4.3",
-        "target": "near-term-give-in-is-modestly-predictable-and-not-only-from-pressure"
+        "target": "what-the-per-call-signal-is-not"
+      },
+      {
+        "text": "Section 4.4",
+        "target": "the-further-from-the-act-the-less-predictable"
       },
       {
         "text": "Section 4.5",
-        "target": "what-a-monitor-should-ask-and-see"
-      },
-      {
-        "text": "Section 4.6",
-        "target": "transfer-to-a-second-target"
+        "target": "what-a-round-level-monitor-should-ask-and-see"
       },
       {
         "text": "Appendix K",
@@ -116,12 +135,16 @@
         "target": "c.-scenarios-an-example-and-model-choice"
       },
       {
+        "text": "Appendix B",
+        "target": "b.-experimental-pipeline-and-reproducibility"
+      },
+      {
         "text": "Figure 1",
         "target": "figure-1"
       },
       {
-        "text": "\u00a73.3",
-        "target": "what-gets-scored"
+        "text": "Appendix B",
+        "target": "b.-experimental-pipeline-and-reproducibility"
       },
       {
         "text": "\u00a73.5",
@@ -130,10 +153,6 @@
       {
         "text": "\u00a73.5",
         "target": "evaluation"
-      },
-      {
-        "text": "\u00a74",
-        "target": "results"
       },
       {
         "text": "Appendix B",
@@ -148,32 +167,20 @@
         "target": "figure-1"
       },
       {
+        "text": "Appendix L",
+        "target": "l.-per-call-and-streaming-probes"
+      },
+      {
         "text": "\u00a73.5",
         "target": "evaluation"
       },
       {
-        "text": "\u00a74",
-        "target": "results"
-      },
-      {
-        "text": "Appendix D",
-        "target": "d.-labels-and-judges"
-      },
-      {
-        "text": "Appendix A",
-        "target": "a.-limitations-and-dual-use-ethical-considerations"
-      },
-      {
         "text": "Appendix E",
         "target": "e.-detectors-and-evaluation"
       },
       {
         "text": "Appendix E",
         "target": "e.-detectors-and-evaluation"
-      },
-      {
-        "text": "\u00a74.6",
-        "target": "transfer-to-a-second-target"
       },
       {
         "text": "Table C.1",
@@ -188,24 +195,32 @@
         "target": "f.-second-target-gpt-oss-20b-and-gemma-4-31b"
       },
       {
-        "text": "\u00a74.6",
-        "target": "transfer-to-a-second-target"
+        "text": "Appendix L",
+        "target": "l.-per-call-and-streaming-probes"
       },
       {
         "text": "Appendix B",
         "target": "b.-experimental-pipeline-and-reproducibility"
       },
       {
-        "text": "Appendix C",
-        "target": "c.-scenarios-an-example-and-model-choice"
+        "text": "Appendix F",
+        "target": "f.-second-target-gpt-oss-20b-and-gemma-4-31b"
       },
       {
-        "text": "Figure 2",
-        "target": "figure-2"
+        "text": "Figure 3",
+        "target": "figure-3"
       },
       {
-        "text": "Figure 2",
-        "target": "figure-2"
+        "text": "Appendix L",
+        "target": "l.-per-call-and-streaming-probes"
+      },
+      {
+        "text": "Appendix L",
+        "target": "l.-per-call-and-streaming-probes"
+      },
+      {
+        "text": "Figure 3",
+        "target": "figure-3"
       },
       {
         "text": "Appendix H",
@@ -214,54 +229,38 @@
       {
         "text": "Figure 2",
         "target": "figure-2"
-      },
-      {
-        "text": "Table E.1",
-        "target": "table-E-1"
-      },
-      {
-        "text": "Appendix E",
-        "target": "e.-detectors-and-evaluation"
-      },
-      {
-        "text": "Table 1",
-        "target": "table-1"
       },
       {
         "text": "Appendix F",
         "target": "f.-second-target-gpt-oss-20b-and-gemma-4-31b"
       },
       {
-        "text": "Appendix H",
-        "target": "h.-robustness-and-diagnostics-for-the-main-results"
+        "text": "Table E.1",
+        "target": "table-E-1"
       },
       {
-        "text": "\u00a74.6",
-        "target": "transfer-to-a-second-target"
-      },
-      {
-        "text": "Appendix H",
-        "target": "h.-robustness-and-diagnostics-for-the-main-results"
-      },
-      {
-        "text": "Appendix E",
-        "target": "e.-detectors-and-evaluation"
+        "text": "Table E.2",
+        "target": "table-E-2"
       },
       {
         "text": "Appendix A",
         "target": "a.-limitations-and-dual-use-ethical-considerations"
       },
       {
+        "text": "Appendix D",
+        "target": "d.-labels-and-judges"
+      },
+      {
+        "text": "\u00a74.3",
+        "target": "what-the-per-call-signal-is-not"
+      },
+      {
+        "text": "Appendix H",
+        "target": "h.-robustness-and-diagnostics-for-the-main-results"
+      },
+      {
         "text": "Appendix A",
         "target": "a.-limitations-and-dual-use-ethical-considerations"
-      },
-      {
-        "text": "\u00a74.7",
-        "target": "exploratory-reading-the-reasoning-as-it-streams"
-      },
-      {
-        "text": "Appendix G",
-        "target": "g.-behaviour-screening"
       },
       {
         "text": "Appendix J",
@@ -361,19 +360,11 @@
       },
       {
         "text": "\u00a74.5",
-        "target": "what-a-monitor-should-ask-and-see"
+        "target": "what-a-round-level-monitor-should-ask-and-see"
       },
       {
         "text": "\u00a74.5",
-        "target": "what-a-monitor-should-ask-and-see"
-      },
-      {
-        "text": "Table 1",
-        "target": "table-1"
-      },
-      {
-        "text": "\u00a74.5",
-        "target": "what-a-monitor-should-ask-and-see"
+        "target": "what-a-round-level-monitor-should-ask-and-see"
       },
       {
         "text": "Appendix D",
@@ -408,8 +399,8 @@
         "target": "d.-labels-and-judges"
       },
       {
-        "text": "\u00a74.3",
-        "target": "near-term-give-in-is-modestly-predictable-and-not-only-from-pressure"
+        "text": "\u00a74.4",
+        "target": "the-further-from-the-act-the-less-predictable"
       },
       {
         "text": "Appendix A",
@@ -425,7 +416,7 @@
       },
       {
         "text": "\u00a74.4",
-        "target": "the-near-term-result-holds-on-new-episodes"
+        "target": "the-further-from-the-act-the-less-predictable"
       },
       {
         "text": "Table H.3",
@@ -436,26 +427,38 @@
         "target": "g.-behaviour-screening"
       },
       {
-        "text": "\u00a74.7",
-        "target": "exploratory-reading-the-reasoning-as-it-streams"
-      },
-      {
-        "text": "Appendix E",
-        "target": "e.-detectors-and-evaluation"
-      },
-      {
         "text": "Section 2",
         "target": "related-work"
       },
       {
         "text": "\u00a73.5",
         "target": "evaluation"
+      },
+      {
+        "text": "\u00a73.3",
+        "target": "what-gets-scored"
+      },
+      {
+        "text": "\u00a74.2",
+        "target": "asked-per-call-a-probe-predicts-which-call-will-give-in"
+      },
+      {
+        "text": "Appendix E",
+        "target": "e.-detectors-and-evaluation"
+      },
+      {
+        "text": "Appendix E",
+        "target": "e.-detectors-and-evaluation"
+      },
+      {
+        "text": "Figure 3",
+        "target": "figure-3"
       }
     ]
   },
   "paragraph_layout": "balanced-xcharter",
   "pdfa_export_requested": true,
-  "markdown_tables": 15,
+  "markdown_tables": 17,
   "pandoc_command": [
     "pandoc",
     "--from=json",
