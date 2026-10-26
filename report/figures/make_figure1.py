@@ -1,5 +1,5 @@
 """Figure 1: the setup and what each detector sees; a toy episode with rounds, calls, the eligible window, the three labels and where each probe reads;
-and a strip of real messages from one episode (the target holds, then gives in).
+and a strip of real messages from one episode (the target refuses, then gives in).
 
     uv run --no-project --with matplotlib python report/figures/make_figure1.py
 
@@ -108,7 +108,7 @@ def panel_timeline(ax, label="b"):
     ax.axis("off")
     ax.text(-1.6, 6.15, f"({label}) Toy episode: rounds, calls and labels", weight="bold", fontsize=8, va="top")
 
-    y_round, y_probe, y_event, y_ev, y_nt, y_call, y_held = 5.3, 4.75, 4.0, 3.2, 2.5, 1.8, 0.8
+    y_round, y_probe, y_event, y_ev, y_nt, y_call, y_ref = 5.3, 4.75, 4.0, 3.2, 2.5, 1.8, 0.8
     # Eligible calls of the give-in episode: after the read, up to the call that posts the value.
     x0, x1 = xs[read_i + 1] - 0.45, xs[leak_i] + 0.42
     ax.add_patch(Rectangle((x0, y_call - 0.35), x1 - x0, (y_event + 0.4) - (y_call - 0.35), fc=WINDOW, ec="none"))
@@ -123,11 +123,11 @@ def panel_timeline(ax, label="b"):
         probe_glyphs(ax, x, y_probe)
 
     ax.text(-1.55, y_event, "gives-in\nepisode", va="center", weight="bold", linespacing=1.1)
-    events = ["reads\ntoken", "holds", "holds", "holds", "holds", "reads\nfile", "posts\ntoken"]
+    events = ["reads\ntoken", "refuses", "refuses", "refuses", "refuses", "reads\nfile", "posts\ntoken"]
     for i, (x, ev) in enumerate(zip(xs, events)):
         leak = i == leak_i
         ax.text(x, y_event, ev, ha="center", va="center", fontsize=5.8, linespacing=1.0,
-                color=POS if leak else (MUTED if ev == "holds" else INK), weight="bold" if leak else "normal")
+                color=POS if leak else (MUTED if ev == "refuses" else INK), weight="bold" if leak else "normal")
 
     def row(y, name, values):
         ax.text(-1.55, y, name, va="center")
@@ -142,11 +142,11 @@ def panel_timeline(ax, label="b"):
     row(y_call, "this call", {i: int(i == leak_i) for i in eligible})
 
     ax.plot([-1.55, 7.2], [1.3, 1.3], color=FAINT, lw=0.5)
-    ax.add_patch(Rectangle((x0, y_held - 0.3), xs[-1] + 0.42 - x0, 0.6, fc=WINDOW, ec="none"))
-    ax.text(-1.55, y_held, "held\nepisode", va="center", weight="bold", linespacing=1.1)
-    ax.text(xs[0], y_held, "reads\ntoken", ha="center", va="center", fontsize=6.0, linespacing=1.05)
+    ax.add_patch(Rectangle((x0, y_ref - 0.3), xs[-1] + 0.42 - x0, 0.6, fc=WINDOW, ec="none"))
+    ax.text(-1.55, y_ref, "refusing\nepisode", va="center", weight="bold", linespacing=1.1)
+    ax.text(xs[0], y_ref, "reads\ntoken", ha="center", va="center", fontsize=6.0, linespacing=1.05)
     for x in xs[1:]:
-        ax.text(x, y_held, "0", ha="center", va="center", color=INK)
+        ax.text(x, y_ref, "0", ha="center", va="center", color=INK)
 
     ax.text(-1.55, 0.0, "Round: the peer posts, then the target makes one or more calls.\n"
             "Call: prompt \u2192 (reasoning) \u2192 answer or tool call.", va="center", fontsize=5.8,
@@ -180,7 +180,7 @@ def panel_exchange(ax, label="c"):
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.axis("off")
-    ax.text(0, 1.0, f"({label}) A real episode: the target holds, then gives in", weight="bold", fontsize=8,
+    ax.text(0, 1.0, f"({label}) A real episode: the target refuses, then gives in", weight="bold", fontsize=8,
             va="top")
     n, gap = len(EXCHANGE), 0.035
     w = (1 - gap * (n - 1)) / n
