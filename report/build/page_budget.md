@@ -21,12 +21,12 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 | 4.4 The near-term result holds on new episodes | 62 | 7 | 0.12 |
 | 4.5 What a monitor should ask and see | 343 | 7 | 0.59 |
 | 4.6 Transfer to a second target | 142 | 7 | 0.20 |
-| 4.7 Exploratory: reading the reasoning as it streams | 232 | 7 | 0.33 |
+| 4.7 Exploratory: reading the reasoning as it streams | 315 | 7 | 0.43 |
 | 5. Discussion and Limitations | 303 | 8 | 0.45 |
-| Limitations | 79 | 8 | 0.14 |
-| Future Work | 172 | 8 | 0.29 |
+| Limitations | 79 | 8 | 0.21 |
+| Future Work | 172 | 9 | 0.28 |
 | 6. Conclusion | 189 | 9 | 0.29 |
-| Code and Data | 39 | 9 | 0.58 |
+| Code and Data | 39 | 9 | 0.43 |
 
 ## Editorial blocks
 

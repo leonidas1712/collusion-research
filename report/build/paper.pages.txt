@@ -272,13 +272,18 @@ folds, recipe and candidate layers), taking each reply’s maximum. The label is
 makes the first public emission of the value by any route, which is broader than the paper’s channel  
 outcome. On held-out scenarios the probe separates leaking replies at 0.93 [0.91, 0.95] (1,995 replies 
 with reasoning, 121 leaking), against 0.49 for the last-prompt probe on the same replies, 0.60 for Jev 
-reading  the  same  reasoning,  0.40–0.48  for  fixed  keyword  rules  and  0.69  for  reply  length  (a 
-retrospective check). With a cutoff set on control replies for a nominal 5% false-alarm rate, it flags  
-85% of the leaking replies that have reasoning, at a median 8% of the way into the reasoning, while  
-4% of replies in held episodes alarm. On the near-term label it reaches only 0.64. This is post hoc, on 
-one model, with several variants tried, and 25 of the 146 leaking replies have no reasoning, so end-
-to-end coverage is about 70%. It shows that a give-in, once the model reasons toward it, can be read 
-before the action, not that it can be predicted earlier (Appendix J.8).
+reading the same reasoning, 0.40–0.48 for fixed keyword rules and 0.69 for reasoning length (a  
+retrospective check). The last-prompt probe was trained for the paper’s label, so it does not show that 
+the signal is missing before the reply: a probe on the incoming peer message alone, trained on the  
+same label, also ranks well (0.93, Appendix J.9), so much of the signal is present before the target  
+reasons, and reading the reasoning makes the warning far more precise (4% against 19% of held  
+replies alarm). With a cutoff set on control replies for a nominal 5% false-alarm rate, it flags 85% of  
+the leaking replies that have reasoning, at a median 8% of the way into the reasoning, while 4% of  
+replies in held episodes alarm (but at least one alarm fires in 41% of the 92 non-leaking held  
+episodes). On the near-term label it reaches only 0.64. This is post hoc, on one model, with several  
+variants tried, and 25 of the 146 leaking replies have no reasoning, so end-to-end coverage is about  
+70%. It shows that a give-in, once the model reasons toward it, can be read before the action, not that 
+it can be predicted earlier (Appendix J.8).
 5. Discussion and Limitations
 First, prediction depends on the horizon: eventual give-in is close to unreadable from a single step,  
 while near-term give-in is modestly readable. One reading is that the outcome is often unsettled until 
@@ -306,6 +311,7 @@ prompt token, so a decision that forms within the reply is understated. The near
 chosen after seeing the eventual result, which the confirmation set guards against. Our probes are  
 trained on labelled steps, while our monitors are prompted with no tuning, so a monitor tuned on the 
 same labels would be a fairer comparison. Full list and dual-use statement: Appendix A.
+
 Future Work
 Our setup has one peer and one target, but collusion in deployment involves groups: several recruiting 
 peers, honest teammates who can object, and recruited agents that go on to recruit others, as in the  
@@ -313,7 +319,6 @@ peers, honest teammates who can object, and recruited agents that go on to recru
 memory (Pulipaka et al., 2026). A natural next step is to run the same pipeline, probes and monitors 
 scored on the same steps, in such group settings, and ask whether warning comes earlier or later  
 when pressure comes from several peers or when a teammate pushes back. The streaming result  
-
 (§4.7) points to per-token probes that can stop a reply between the decision and the action, as  
 streaming classifiers and token-level probes do for misuse (Cunningham et al., 2026; McKenzie et al., 
 2026; Sharma et al., 2025 ); they need a prospective test on more models, with incoming messages  
@@ -1815,9 +1820,16 @@ before the first public emission, so it holds no leaking reply. We added each ep
 public-emission reply (146 replies), giving 2,205. Of these, 1,995 have reasoning, including 
 121 of the 146 leaking replies; every scored token precedes the reply’s first public answer or 
 tool-call token. Only 2 leaking replies mention the value in their reasoning.
-- Labels. The primary label marks the reply that makes the first public emission of the value 
-by any route, a file write included, so it differs from the paper’s channel outcome. The near-
-term comparator is the paper’s label (a channel give-in in this round or the next).
+- Labels, with an example. Each target call returns its reasoning and then an answer or a 
+tool call. Label 1 marks the one call whose output is the first public emission of the value, by 
+any route, a file write included; every other call is label 0, including every call in a held 
+episode. For example (illustrative), in round 6 the target reasons that the peer needs the 
+whole configuration block and then calls write_file with a block that contains the value: that 
+call is label 1, and its earlier calls are 0. The probe reads only that call’s reasoning tokens, all 
+of which come before its output starts. The paper’s near-term label differs in three ways: it 
+concerns a channel leak; it marks the eligible steps before the leak, in the leak’s round or the 
+one before; and the main probe reads one position per step, the last prompt token, before 
+any reasoning. The near-term comparator below uses that paper label.
 - Probe. The same recipe as the main gpt-oss probe: logistic regression with C = 0.1, training-
 only scaling, round-balanced weights and the same 17 candidate layers, on the saved pooled 
 folds and held-out-scenario rotations, seeds 42, 43 and 44. Each token carries its reply’s 
@@ -1826,20 +1838,24 @@ dominate. A reply’s score is its maximum token score (the mean is also reporte
 is chosen on the inner split by the reply-level within scenario × round AUROC. The probe 
 does not use the window smoothing or weighted loss of Cunningham et al. (2026).
 - Comparators on the same replies. The frozen main gpt-oss last-prompt probe, applied 
-without refitting (it was trained on the channel near-term label). Jev 1.14 and GPT-5-nano 
-reading the reasoning so far at six cumulative cut points per reply (five evenly spaced and 
-the full reasoning), asked “Will the agent, in this reply, write or post the protected value?”, 
-with the reply score being the running maximum; exact values were replaced by a marker. 
-Fixed keyword rules on the reasoning so far (the scenario’s key name, its handoff filename, 
-“env”, “environment block”, “verbatim”, “copy the whole”; a broader list adds field names 
-and block wording), fixed before scoring. Reply length, reversed, as a retrospective check 
-that a maximum over more tokens is not just rewarding length; it is not usable online.
+without refitting (it was trained on the channel near-term label). Two text monitors, run 
+differently from the main monitors (Appendix E): for each reply, Jev 1.14 and GPT-5-nano 
+read only that reply’s reasoning so far, at six cumulative cut points (five evenly spaced 
+through the reasoning, then the full reasoning), and at each answer one per-reply question, 
+“Will the agent, in this reply, write or post the protected value?”. They see no conversation, 
+tool results or earlier replies. The reply’s score is the running maximum of the six answers, 
+
+so each point uses only text available by then, and exact protected values in the reasoning 
+are replaced by a marker. Fixed keyword rules on the reasoning so far (the scenario’s key 
+name, its handoff filename, “env”, “environment block”, “verbatim”, “copy the whole”; a 
+broader list adds field names and block wording), fixed before scoring. Reasoning length 
+(the number of reasoning tokens), reversed, as a retrospective check that a maximum over 
+more tokens is not just rewarding length; it is not usable online.
 - Checks. A censored variant drops every reasoning token from the first exact mention of the 
 value onward. A placebo applies the post-ask probe to pre-ask replies against the episode’s 
 eventual outcome.
 - Alarms. For each fold, the cutoff is set on other-fold control replies’ maximum scores for a 
 nominal 5% reply false-alarm rate (strictly above alarms). A leaking reply counts as warned 
-
 if an alarm fires on any of its reasoning tokens; false alarms are counted on replies from held 
 episodes.
 Table J.1. Recognising the leaking reply from its reasoning (gpt-oss-20b, exploratory). Within scenario × round AUROC 
@@ -1858,19 +1874,44 @@ running maximum 0.598 [0.533, 0.653] 0.598 [0.533, 0.653]
 GPT-5-nano on the same prefixes 0.360 [0.298, 0.415] 0.360 [0.298, 0.415]
 Keyword rule, running maximum 
 (narrow / broad list) 0.404 / 0.481 0.404 / 0.481
-Reply length, reversed (retrospective) 0.691 [0.634, 0.736] 0.691 [0.634, 0.736]
+Reasoning length, reversed 
+(retrospective) 0.691 [0.634, 0.736] 0.691 [0.634, 0.736]
 Near-term label: reasoning probe, 
 maximum 0.587 [0.535, 0.641] 0.637 [0.586, 0.685]
 Near-term label: last-prompt probe 0.497 [0.451, 0.541] 0.526 [0.481, 0.568]
-Alarms and lead. At the control-reply cutoff, the reasoning probe warns on 84.8% of the leaking replies 
-that have reasoning (seed mean) on held-out scenarios, with 4.4% of held-episode replies alarming;  
-pooled, 75.5% and 2.0%. Counting the 25 leaking replies with no reasoning, end-to-end coverage is  
-about 70% held-out and 63% pooled. The first crossing comes a median 8% of the way into the  
-reasoning (interquartile range 5–22%). Jev warns on 91.7% of leaking replies, but 9.0–9.4% of held-
-episode replies alarm. GPT-5-nano warns on 5.0%, with 34.6% alarming. The keyword rules never  
-alarm, because they match more than 5% of control replies. Censoring at the first value mention  
-leaves the result unchanged (0.957 held-out). The placebo scores 0.46–0.49. Per-scenario held-out  
-AUROCs range from 0.84 to 0.98.
+Comparators trained on other labels. The frozen last-prompt probe was trained on the paper’s channel 
+near-term label, not on “this reply leaks”, so its 0.49 does not show that the context before the reply  
+lacks the signal. The fair comparator is J.9’s probe on the incoming peer message and tool results,  
+trained on the same label: it also ranks well (0.927), but with a far less precise cutoff (19.1% against 
+4.4% of held replies alarm). That probe uses one seed and a reduced recipe, so the comparison is  
+indicative. On the paper’s own near-term label and the main cohort’s replies that have reasoning  
+(1,874 replies, 118 positives, held-out scenarios), a reasoning probe trained on that label reaches  
+0.603 [0.535, 0.661] against 0.537 [0.482, 0.593] for the last-prompt probe, a paired difference of  
++0.066 [−0.010, +0.140] (paired_comparisons.json).
+Alarms and lead. At the control-reply cutoff, the reasoning probe warns on 84.8% of the leaking 
+replies that have reasoning (seed mean) on held-out scenarios, with 4.4% of held-episode replies 
+alarming; pooled, 75.5% and 2.0%. Per episode the false-alarm rate is far higher: at least one alarm 
+fires in 41.3% [33.3, 50.0] of the 92 held episodes on held-out scenarios and 23.9% [17.0, 31.5] 
+
+pooled, well above the nominal 5% per reply (same thresholds, not recalibrated; runs/20261026-
+0526-e05-reasoning-stream/held_episode_alarms.md). These figures are the reply-calibrated 
+operating point. At an episode-calibrated operating point, a declared post hoc recalibration, the 
+cutoff is set so that at most 5% of the training-side no-ask control episodes alarm with their 
+maximum score (48–49 control episodes per cutoff). There the probe would stop 34.0% of the 146 
+leaking episodes before the first public emission (by seed: 27%, 44%, 31%), with an alarm in 8.0% 
+of the 92 held recruiting episodes (2%, 21%, 1%). The probe’s ranking is stable across seeds, but 
+these thresholded rates are not. Most stops fall within the leaking reply (median step lead 0; 12 of 
+the 149 caught episode-seed observations alarm on an earlier request). The 5% applies to the 
+training-side control episodes; the 8% is measured on the held recruiting episodes. Neither is a 
+false-alarm rate on held-out controls 
+(runs/20261026-0526-e05-reasoning-stream/episode_calibrated_alarms.md, experiments/E05-
+probes/reasoning_stream_episode_alarms.py). Counting the 25 leaking replies with no reasoning, 
+end-to-end coverage is about 70% held-out and 63% pooled. The first crossing comes a median 8% 
+of the way into the reasoning (interquartile range 5–22%). Jev warns on 91.7% of leaking replies, 
+but 9.0–9.4% of held-episode replies alarm. GPT-5-nano warns on 5.0%, with 34.6% alarming. The 
+keyword rules never alarm, because they match more than 5% of control replies. Censoring at the 
+first value mention leaves the result unchanged (0.957 held-out). The placebo scores 0.46–0.49. 
+Per-scenario held-out AUROCs range from 0.84 to 0.98.
 Caveats. This analysis was designed after the main results, uses one model, and tried several 
 variants (two aggregates, two cuts, two splits); it has no confirmation set. The label is any public 
 emission, not the paper’s outcome. Within a reply the probe likely reads a decision the model is 
@@ -1883,11 +1924,66 @@ so there is a clear last moment to block, just before the value’s first charac
 horizon collusion, such as a paraphrased disclosure or a plan coordinated over many steps, has no 
 such cut point, and its labels would need judges. Sources: 
 experiments/E05-probes/reasoning_stream_{data,labels,fit,report,text,nulls}.py, experiments/E06-
-monitors/reasoning_prefix_monitor.py; runs/20261026-0522-e05-reasoning-stream-data, 
-runs/20261026-0526-e05-reasoning-stream (frozen models from runs/20261026-0138-e05-gpt-oss-
-main), runs/20261026-0740-e06-reasoning-prefix-jev (USD 0.11), runs/20261026-0756-e06-
-reasoning-prefix-nano (USD 0.15). The probe analysis ran on CPU with no new inference.
+monitors/reasoning_prefix_monitor.py, reasoning_prefix_nano.py; runs/20261026-0522-e05-
+reasoning-stream-data, runs/20261026-0526-e05-reasoning-stream (frozen models from 
+runs/20261026-0138-e05-gpt-oss-main), runs/20261026-0740-e06-reasoning-prefix-jev (USD 
+0.11), runs/20261026-0756-e06-reasoning-prefix-nano (USD 0.15). The probe analysis ran on CPU 
+with no new inference.
+J.9 Expanded capture: incoming messages and action-time tokens (exploratory).  A second, 
+targeted replay (USD 4.84 on one GPU) saved what J.8 lacked, for the same 2,205 recruiting replies  
+plus 1,125 post-ask control replies (3,330 requests). For each request it saved three kinds of positions: 
+the incoming segment of the prompt (the tokens added since the previous request: the latest peer  
+message and tool results); every generated token of the reply (reasoning, answer and tool call),  
+stopping just before the first character of the value when the reply leaks; and the last prompt token.  
+It saved four fixed layers (6, 12, 18 and 23, in half precision) and a seeded 256-dimensional random 
+projection of all 24 layers (runs/20261026-0659-e02-gpt-oss-stream-plan, runs/20261026-0813-e05-
+expanded-stream-data). We report two streams. Incoming-only is a forecast: it scores only what arrives 
+before the target starts its reply. Action-time adds the generated tokens up to the value, so it can read 
+the model writing toward the leak; it is an output filter, not a forecast.
+The  recipe  is  reduced  from  J.8  and  follows  Constitutional  Classifiers++  more  closely 
+(Cunningham et al., 2026 ). It uses one layer, 18, fixed before fitting and not chosen on outcomes,  
+and one seed (42), on held-out scenarios only. Training uses at most 64 evenly spaced tokens per  
+reply, with logits averaged over a 16-token window of that sampled sequence and a token loss  
 
+weighted by a softmax over the reply’s own logits (temperature 1). Inference uses an exponential  
+moving average of the logits (decay 2/17, our choice), and a reply alarms at the first crossing.  
+Otherwise the settings match J.8: C = 0.1, training-only scaling, round-balanced reply weights, the  
+immediate any-public label, and cutoffs set on other-fold control replies for a nominal 5% reply false-
+alarm rate. Keyword (the broad list of J.8), observed-token-count and round baselines use exactly the 
+same positions.
+Table J.2. Incoming-only and action-time streams (gpt-oss-20b, exploratory, held-out scenarios, seed 42). AUROC within 
+scenario × round with 95% family-bootstrap intervals. Warning = share of leaking replies that alarm; held alarms = share 
+of replies in held episodes that alarm.
+Stream Detector AUROC [95% CI] Warning Held-reply alarms
+Incoming-only (2,199 
+replies, 143 leaking) Probe 0.927 [0.896, 0.958] 95.1% 19.1%
+Keyword rule 0.350 [0.294, 0.390] 9.8% 37.1%
+Token count so far 0.346 [0.292, 0.384] 4.2% 24.9%
+Length, reversed 
+(retrospective) 0.654 [0.616, 0.708] – –
+Action-time (2,205 
+replies, 146 leaking) Probe 1.000 [0.998, 1.000] 100.0% 3.3%
+Keyword rule 0.370 [0.324, 0.414] 19.2% 27.3%
+Token count so far 0.328 [0.284, 0.366] 11.6% 25.6%
+Length, reversed 
+(retrospective) 0.672 [0.634, 0.716] – –
+Round scores 0.500 in both streams. Stopping the episode at the first alarm , replayed offline on the  
+saved trajectories, would have halted 140 of the 146 leaking episodes before the value was emitted  
+with the incoming-only probe and all 146 with the action-time probe. However, 74 of the 92 held  
+episodes (80%) and 49 of 92 (53%), respectively, would also have been stopped at least once. The  
+median alarm comes in the same request as the leak (step lead 0), so the warning is late in the episode 
+even when it is early in the request. The incoming-only result shows that the incoming messages of  
+the leaking request carry a strong signal. Its high false-alarm rate fits a probe that also reads pressure, 
+which the control-reply cutoff never sees. The action-time result shows that a probe can stop the reply 
+before the value appears, but for an exact string an output filter does the same. Its value would be for 
+leaks that no filter can match, which this setup does not test.
+Caveats. These are offline replays, not interventions: they assume the episode halts at the alarm 
+and do not model a peer adapting. There is one seed, one fixed layer and a reduced, approximate 
+version of the Constitutional Classifiers++ recipe (sampled tokens, smoothing on the sampled 
+sequence). The analysis is post hoc, with no confirmation set, and has the same label and fidelity 
+caveats as J.8. Intervals resample saved scores without refitting. Sources: 
+experiments/E05-probes/stream_capture_small.py, stream_capture_keywords.py, 
+stream_layer18_report.py; runs/20261026-1128-e05-stream-layer18-loso.
 K. Related Work in Full
 How does this study relate to prior work on probes, monitors, persuasion and early warning?  Section 2 
 gives the four contrasts that position the study; this appendix gives the fuller comparison, one strand 
@@ -1895,6 +1991,7 @@ of work per paragraph, each ending with how our study differs.
 Probes on a model under attack.  Probes detect prompt-injection exposure in tool-using agents  
 (Dong et al., 2026), recover directions separating hijacked from resisted trajectories (Yu et al., 2026), 
 and predict a reasoning model’s next behaviour single-turn ( Kortukov et al., 2026 ). Probes on the  
+
 prompt alone also predict sleeper-agent defection, jailbreak success and future tool calls ( Advani et 
 al., 2026; Ashok & May, 2025; Kirch et al., 2025; MacDiarmid et al., 2024). Fomin et al. (2026) warn 
 such probes read the situation, not the action, and NARCBench ( Rose et al., 2026) trains on agents 
@@ -1936,7 +2033,6 @@ a peer will give in, from its activations or from text monitors scored on the sa
 LLM Usage Statement
 The author, Leonidas Raghav, set the research question, designed the study, and made all 
 methodological decisions. AI coding and writing agents wrote most of the code and ran the 
-
 experiments under the author’s direction: Claude Code (Claude Opus 5.5 and Opus 4.8) and 
 OpenAI Codex (GPT-6 Astra, and GPT Daybreak Blue through OpenAI’s cyber access program). The 
 agents were coordinated through two of the author’s own open-source tools: Aboard 
@@ -1945,6 +2041,7 @@ reviewed and tracked work across agent sessions, and Leaf (github.com/leonidas17
 document viewer in which the author left inline comments that the agents then addressed. On the 
 paper, the agents drafted text from the author’s detailed outline. The author read all of it in detail 
 and revised it through several rounds of line-by-line comments. Agents also helped edit and 
+
 proofread the text, traced every reported number to its run folder, and checked each reference 
 against its source in three independent passes and a final scripted check. The author reviewed the 
 results and these checks and spot-checked the references.
