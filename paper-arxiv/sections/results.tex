@@ -68,7 +68,7 @@ It usually leaks within a round of the request, so ``this round or the next'' ad
 A text monitor shown the same conversation and tool results scores well below the probe on both models (\cref{fig:percall}).
 On Qwen3-32B, Jev scores \qwenCallJev{}, and the gap to the probe has an interval that excludes zero.
 
-On gpt-oss-20b, Jev flags almost every call made under pressure, so it cannot separate the calls that leak.
+On gpt-oss-20b, Jev flags nearly every call that leaks, but also most calls in refusing episodes, so it cannot separate the calls that leak.
 Within a scenario and round it ranks the leaking calls below the others (\gptossCallJev{}).
 Even with its ranking reversed after the fact, it stays below the probe (\cref{app:monitors}).
 

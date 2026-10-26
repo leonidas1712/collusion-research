@@ -16,6 +16,7 @@ Every reasoning token comes before the call's public output, so this probe also 
 A text monitor is a language model that reads the transcript and has no access to activations.
 Our main monitor is Jev \citep{typesafe2026jev}, a commercial decision model that returns the probability of ``yes'' to a yes-or-no question instead of writing text.
 For each call, we show Jev the conversation and tool results that the target had seen, with the secret masked, and ask whether the agent's next reply will write or post the protected value.
+On gpt-oss-20b, Jev also sees the target's earlier reasoning in the same turn, which the model's prompt retains.
 \Cref{app:monitors} gives the prompts and two further monitors, an LLM judge and a second decision model.
 
 \paragraph{A fair comparison.}
