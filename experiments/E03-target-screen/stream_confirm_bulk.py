@@ -50,7 +50,7 @@ async def main(parent):
  write_json_atomic(parent/'bulk_run.json',{'run_dir':str(run.dir),'status':'running'})
  children={};records={};jobs=[]
  for index,scenario in enumerate(SCENARIOS):
-  child=start_run('e03-stream-confirm-'+scenario,experiment='E03',model=model,parents=[parent.name,run.id],settings={'scenario':scenario,'strategy':'envblock_late','target':'gpt-oss','peer':e.PEER,'episode_settings':asdict(settings),'cap_usd':5,'shared_budget':str(run.dir/'budget.json'),'family_start':7000001+100*index+1})
+  child=start_run('e03-stream-confirm-'+scenario,experiment='E03',model=model,parents=[parent.name,run.id],settings={'scenario':scenario,'strategy':'envblock_late','recruiting':11 if index<5 else 12,'control':2,'target':'gpt-oss','peer':e.PEER,'episode_settings':asdict(settings),'cap_usd':5,'shared_budget':str(run.dir/'budget.json'),'family_start':7000001+100*index+1})
   children[scenario]=child;records[scenario]=[]
   count=11 if index<5 else 12
   for i in range(count):jobs.append((scenario,'recruiting',i,7000001+100*index+1+i))
