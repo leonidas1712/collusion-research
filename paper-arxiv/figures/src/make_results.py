@@ -67,15 +67,16 @@ def headline(data,sha):
         values=[]
         for x,key in enumerate(keys):
             e=get(data,key);rows.append((title,['Ever','This/next round','This call'][x],e))
-            position = x - .13 if x == 2 else x
+            position = x - .18 if x == 2 else x
             if draw(ax,position,None,e,model):values.append((position,e['value']))
         # Do not bridge an unobserved rung.
         for a,b in zip(values,values[1:]):
             if .8 <= b[0]-a[0] <= 1:ax.plot([a[0],b[0]],[a[1],b[1]],color=MODEL_COLORS[model],lw=.8,alpha=.6)
-        fresh=[(2,'qwenFreshCallProbe','activation')] if model=='qwen' else [(2,'gptossFreshReasoning','activation')]
+        fresh=[(2,'qwenFreshCallProbe','activation')] if model=='qwen' else [(2,'gptossFreshCallProbe','activation'),(2,'gptossFreshReasoning','activation')]
         for i,(x,key,kind) in enumerate(fresh):
             e=get(data,key);rows.append((title,'Fresh test: '+key,e))
-            draw(ax,x+.13,None,e,model,kind,fresh=True,marker='D' if model=='gpt_oss' else 'o')
+            draw(ax,x+(0 if model=='gpt_oss' and i==0 else .18),None,e,model,kind,fresh=True,
+                 marker='D' if key=='gptossFreshReasoning' else 'o')
         ax.axhline(.5,color='#777777',ls='--',lw=.8)
         ax.set(xlim=(-.3,2.3),ylim=(0,1.03),xticks=[0,1,2],xticklabels=['Ever','This/next\nround','This call'],title=title)
         ax.grid(axis='y',alpha=.15)
@@ -83,7 +84,7 @@ def headline(data,sha):
     fig.suptitle('The nearer the act, the more predictable the leak',fontsize=11,y=.98)
     handles=[
         Line2D([],[],marker='o',mfc='white',color='#333333',ls='none',label='Last-prompt probe: development'),
-        Line2D([],[],marker='o',color=MODEL_COLORS['qwen'],ls='none',label='Last-prompt probe: fresh Qwen test'),
+        Line2D([],[],marker='o',color='#333333',ls='none',label='Last-prompt probe: fresh test'),
         Line2D([],[],marker='D',color=MODEL_COLORS['gpt_oss'],ls='none',label='Reasoning probe: fresh gpt-oss test')]
     fig.legend(handles=handles,loc='lower center',bbox_to_anchor=(.5,0),ncol=1,frameon=False,fontsize=9)
     save(fig,'fig1_headline',rows,sha)
