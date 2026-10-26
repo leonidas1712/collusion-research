@@ -6,23 +6,26 @@ Two were pre-registered: before collecting the fresh test episodes, we wrote dow
 
 \begin{table}[t]
   \centering
-  \caption{\textbf{Results at a glance.} AUROC within scenario and round. Development results are on held-out scenarios; intervals are shown in the figures. ``Pre-registered'' means the test was fixed in a committed plan before its episodes were collected.}
+  \caption{\textbf{Results at a glance.} AUROC within scenario and round; intervals are shown in the figures. Development results are on held-out scenarios. $^\dagger$Pre-registered: fixed in a committed plan before its episodes were collected. $^\ddagger$Uses the leak label fixed in that plan (\cref{app:labels}); every other row uses the label of \cref{sec:setup}.}
   \label{tab:glance}
   \small
-  \begin{tabular}{@{}llllc l@{}}
+  \begin{tabular}{@{}llcc@{}}
     \toprule
-    Question & Model & Detector & Episodes & Pre-registered & AUROC \\
+    Question & Detector & Qwen3-32B & gpt-oss-20b \\
     \midrule
-    This call? & gpt-oss-20b & reasoning probe & fresh test & yes & \gptossFreshReasoning{} \\
-    This round or next? & Qwen3-32B & probe / Jev & fresh test & yes & \qwenFreshNearProbe{} / \qwenFreshNearJev{} \\
-    This call? & Qwen3-32B & last-prompt probe / Jev & fresh test & no & \qwenFreshCallProbe{} / \qwenFreshCallJev{} \\
-    This call? & gpt-oss-20b & last-prompt probe & fresh test & no & \gptossFreshCallProbe{} \\
-    This call? & Qwen3-32B & last-prompt probe / Jev & development & no & \qwenCallProbe{} / \qwenCallJev{} \\
-    This call? & gpt-oss-20b & last-prompt probe / Jev & development & no & \gptossCallProbe{} / \gptossCallJev{} \\
-    This round or next? & Qwen3-32B & last-prompt probe & development & no & \qwenNearProbe{} \\
-    This round or next? & gpt-oss-20b & last-prompt probe & development & no & \gptossNearProbe{} \\
-    Ever? & Qwen3-32B & last-prompt probe & development & no & \qwenEverProbe{} \\
-    Ever? & gpt-oss-20b & last-prompt probe & development & no & \gptossEverProbe{} \\
+    \multicolumn{4}{@{}l}{\emph{Fresh test episodes}} \\
+    This call? & last-prompt probe & \qwenFreshCallProbe{} & \gptossFreshCallProbe{} \\
+    This call? & reasoning probe & -- & \gptossFreshReasoning{}$^\dagger$ \\
+    This call? & Jev & \qwenFreshCallJev{} & -- \\
+    This round or next?$^\ddagger$ & last-prompt probe & \qwenFreshNearProbe{}$^\dagger$ & -- \\
+    This round or next?$^\ddagger$ & Jev, forecasting & \qwenFreshNearJev{}$^\dagger$ & -- \\
+    \midrule
+    \multicolumn{4}{@{}l}{\emph{Development episodes}} \\
+    This call? & last-prompt probe & \qwenCallProbe{} & \gptossCallProbe{} \\
+    This call? & reasoning probe & -- & \gptossCallReasoning{} \\
+    This call? & Jev & \qwenCallJev{} & \gptossCallJev{} \\
+    This round or next? & last-prompt probe & \qwenNearProbe{} & \gptossNearProbe{} \\
+    Ever? & last-prompt probe & \qwenEverProbe{} & \gptossEverProbe{} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -38,7 +41,7 @@ At the frozen threshold it caught about half of the leaking calls, fewer than in
 \paragraph{Will the target leak this round or the next? Qwen3-32B.}
 This question was modestly predictable on the fresh test episodes, for the probe (\qwenFreshNearProbe{}) and for the text monitor fixed in the same plan, and neither was clearly better (\cref{fig:round}).
 That monitor is Jev asked to forecast a leak at any later point, shown everything the target had seen, which was the strongest monitor on development episodes.
-This test scores only the calls before any public emission, and counts as a leak a channel post or, in five scenarios, a new file (\cref{app:labels}).
+Its plan fixed a slightly different leak label: it scores only the calls before the secret is first written out, and counts as a leak a channel post or, in five scenarios, a new file (\cref{app:labels}).
 
 \begin{figure}[t]
   \centering
@@ -62,10 +65,10 @@ The Qwen3-32B probe holds on fresh episodes.
 We fit it on the development episodes only, committed it, and then scored it once on the fresh test episodes, which were never used to fit or choose anything for it (AUROC~\qwenFreshCallProbe{}).
 
 On gpt-oss-20b, the last-prompt probe tested the same way scores lower on its fresh episodes (\gptossFreshCallProbe{}) than the pre-registered reasoning probe does on the same calls.
-On development episodes the two probes score about the same (\gptossCallReasoning{} for the reasoning probe), so most of the signal is present before the model starts to reason, but on fresh episodes reading the reasoning helped.
+On development episodes the two probes score about the same, so most of the signal is present before the model starts to reason, but on fresh episodes reading the reasoning helped.
 
 The signal is specific to the call that leaks.
-Asked instead whether the next call will leak, with the leaking call itself removed, the probe scores only \qwenStrictNextProbe{} on Qwen3-32B.
+Asked one call earlier, with the leaking call itself removed, the probe scores \qwenStrictNextProbe{} on Qwen3-32B: above chance, but far below its score on the leaking call.
 On gpt-oss-20b, most of what it detects one call ahead is the read of the protected file that usually comes just before the leak (\cref{app:ahead}).
 
 \begin{figure}[t]

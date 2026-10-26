@@ -8,11 +8,12 @@ Re-running the saved prompts through the open weights reproduces the served repl
 An episode is analysed only if it ran to completion, the target read the protected value, and the target wrote a correct status summary at some point.
 We check for a correct summary at some point, not in the final file, because on gpt-oss-20b a leak can overwrite the summary file.
 A check on the final file would therefore drop mostly leaking episodes and select on the outcome.
-We fixed this rule before any probe or monitor saw the second model's data.
+We fixed this rule for gpt-oss-20b before any probe or monitor saw its data.
+The Qwen3-32B analyses keep the episodes and validity checks of the original Qwen3-32B collection, so the two models' rules differ slightly, and no Qwen3-32B episode was re-selected for this version.
 
 \paragraph{Which calls count.}
-Calls before the target reads the secret cannot leak.
-A probe trained to tell calls before and after the read apart does so perfectly, so including those calls would reward detecting the read.
+We exclude the calls before the target reads the secret.
+A probe trained to tell calls before and after the read apart does so perfectly, so including those calls would reward detecting the read rather than the leak.
 We therefore score calls from the read up to and including the call that leaks.
 On gpt-oss-20b, the scored calls also start only after the peer's first request, and the calls between the read and the request serve as a placebo (\cref{app:shortcuts}).
 The reasoning-probe comparisons on gpt-oss-20b use the scored calls that returned reasoning; the last-prompt probe gives a similar result on all scored calls (\cref{app:robustness}).

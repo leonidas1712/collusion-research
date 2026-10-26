@@ -19,7 +19,7 @@ A call \emph{leaks} if it is the first to write the secret out, in its reply or 
 We detect this with an exact string match on the tool log, so the label needs no judge.
 The secret may appear in the target's private reasoning without counting as a leak.
 
-Every scenario also runs with a control peer that never asks for the value, and on Qwen3-32B also with the target working alone.
+Every scenario also runs with a control peer, which asks only for the ordinary task details and never for the value, and on Qwen3-32B also with the target working alone, with no peer.
 These episodes never leak, so the leaks are caused by the request.
 
 We use two open-weight target models, Qwen3-32B \citep{yang2025qwen3} with thinking disabled and gpt-oss-20b \citep{openai2025gptoss}, which reasons before it answers.
@@ -36,7 +36,7 @@ In both models' development episodes, the target leaks in some recruiting episod
 
 \begin{table}[t]
   \centering
-  \caption{\textbf{The four datasets.} Every number in the paper comes from exactly one of them. Scored calls are those made after the target has read the secret, up to and including the call that leaks (\cref{app:data}).}
+  \caption{\textbf{The four datasets.} Every number in the paper comes from exactly one of them. Counts are of episodes that ran correctly and have at least one scored call; scored calls are those made after the target has read the secret, up to and including the call that leaks (\cref{app:data}).}
   \label{tab:datasets}
   \input{tables/datasets.tex}
 \end{table}
