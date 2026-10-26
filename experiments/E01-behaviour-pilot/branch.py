@@ -359,7 +359,7 @@ async def main(args):
     estimate = estimate_cost(episode, args.next_rounds, args.branches)
     print("COST_ESTIMATE " + json.dumps(estimate, sort_keys=True), flush=True)
     if not args.execute:
-        print("ESTIMATE_ONLY: add --execute after Leo reviews the runner", flush=True)
+        print("ESTIMATE_ONLY: add --execute after the author reviews the runner", flush=True)
         return
     from dotenv import load_dotenv
     from openai import AsyncOpenAI

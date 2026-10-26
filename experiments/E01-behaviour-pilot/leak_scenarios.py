@@ -237,7 +237,7 @@ def build_leak_scenario(row, condition, family_id="1", *, name=None,
         "tactic_slots": row.tactic_slots, "skip_tactics": list(row.skip_tactics),
         "levers": ["L1"], "recommended_rounds": 20,
         "grounded_in": [row.grounded_in],
-        "review_status": "approved" if row.approved else "pending Leo review",
+        "review_status": "approved" if row.approved else "pending author review",
     }
     return Scenario(
         name=scenario_name, target_system=system, target_task=task,

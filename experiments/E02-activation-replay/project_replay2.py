@@ -8,7 +8,7 @@ ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'src'))
 from collusion.runs import start_run
 
 plan='20261025-0119-e02-replay2-plan';bench='20261024-1721-e02-activation-replay';client='20261025-0121-e02-replay2-modal-client';validation='20261025-0126-e02-main-replay-validation'
-run=start_run('e02-replay2-projection',experiment='E02',parents=[plan,bench,client,validation],settings={'approval':'Aboard #611 and direct user USD12 confirmation','price_source':'https://modal.com/pricing','max_resource_rate_usd_sec':.00090,'safety_multiplier':1.25})
+run=start_run('e02-replay2-projection',experiment='E02',parents=[plan,bench,client,validation],settings={'approval':'author-approved USD12 replay budget','price_source':'https://modal.com/pricing','max_resource_rate_usd_sec':.00090,'safety_multiplier':1.25})
 try:
     rows=[json.loads(s) for s in (ROOT/'runs'/bench/'index.jsonl').read_text().splitlines()]
     remaining=[json.loads(s) for s in (ROOT/'runs'/plan/'remaining.jsonl').read_text().splitlines()]

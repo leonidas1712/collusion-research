@@ -44,7 +44,7 @@ def main(out):
         if p not in episodes:episodes[p]=json.loads(Path(p).read_text())
         latest,prev=structural(episodes[p],row['request_idx']);details.append(dict(row_id=row['row_id'],label=int(y[len(details)]),latest_incoming_protected_read=latest,previous_call_protected_read=prev))
     flags={k:np.array([r[k] for r in details]) for k in ['latest_incoming_protected_read','previous_call_protected_read']}
-    run=start_run('e05-immediate-readstep',experiment='E05',parents=[out.name,sources[1].parent.name],settings={'request':'Aboard1990','no_refit':True,'source_hashes':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}})
+    run=start_run('e05-immediate-readstep',experiment='E05',parents=[out.name,sources[1].parent.name],settings={'request':'immediate-call workflow-position controls','no_refit':True,'source_hashes':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}})
     try:
         metrics={};paired={};counts={k:dict(rows=int(v.sum()),positive=int((v&(y==1)).sum()),negative=int((v&(y==0)).sum())) for k,v in flags.items()}
         for mode in ['pooled','loso']:

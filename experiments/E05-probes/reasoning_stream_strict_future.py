@@ -34,7 +34,7 @@ def main(out):
             assert i not in dest
             dest[i] = record
     run = start_run('e05-stream-strict-future', experiment='E05', parents=[out.name],
-                    settings={'author_request': 'Aboard1900', 'source_sha256': source_hash,
+                    settings={'author_request': 'strictly future evaluation of saved inclusive-horizon scores', 'source_sha256': source_hash,
                               'no_refit': True, 'bootstrap_seed': 20261025, 'bootstrap_reps': 1000})
     try:
         results = {}

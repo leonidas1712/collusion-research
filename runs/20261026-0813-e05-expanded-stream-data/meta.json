@@ -1,0 +1,48 @@
+{
+  "id": "20261026-0813-e05-expanded-stream-data",
+  "experiment": "E05",
+  "name": "e05-expanded-stream-data",
+  "tags": [
+    "exploratory",
+    "cpu-only"
+  ],
+  "settings": {
+    "requests": 3330,
+    "tokens": 420523,
+    "full_layers": [
+      6,
+      12,
+      18,
+      23
+    ],
+    "projection_dim": 256,
+    "dtype": "float16",
+    "plan_sha256": "f9a8eae46f7c1fa94829ae5fab48777f4a10d2a242eb5ae77d0f3ff9d57a4dcc"
+  },
+  "parents": [
+    "20261026-0659-e02-gpt-oss-stream-plan",
+    "20261026-0704-e02-gpt-oss-stream-download",
+    "20261026-0522-e05-reasoning-stream-data"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python experiments/E05-probes/stream_capture_data.py --plan runs/20261026-0659-e02-gpt-oss-stream-plan/plan.json --downloads runs/20261026-0704-e02-gpt-oss-stream-download/downloads.json",
+  "git_commit": "60631f1c44b4bdfb2bc68c498a5e70afd4a8a79b",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T08:13:38",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T08:19:10",
+  "results": {
+    "requests": 3330,
+    "tokens": 420523,
+    "recruiting": 2205,
+    "controls": 1125,
+    "max_old_last_relative_l2": 0.0,
+    "finite": true,
+    "exact_full_last_fp16_parity": true,
+    "all_before_first_generated_value_token": true,
+    "free_gib": 100.3289680480957
+  }
+}

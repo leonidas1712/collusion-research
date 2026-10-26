@@ -154,7 +154,7 @@ async def main(args):
     estimate["prefill_conditions"] = list(prefill_ids)
     print("COST_ESTIMATE " + json.dumps(estimate, sort_keys=True), flush=True)
     if not args.execute:
-        print("ESTIMATE_ONLY: add --execute after Leo reviews the runner", flush=True)
+        print("ESTIMATE_ONLY: add --execute after the author reviews the runner", flush=True)
         return
 
     from dotenv import load_dotenv

@@ -18,7 +18,7 @@ def main(args):
     command=['modal','run','experiments/E02-activation-replay/modal_app.py::main','--manifest-path',args.manifest,
              '--model','Qwen/Qwen3-32B','--revision','9216db5781bf21249d130ec9da846c4624c16137',
              '--source-model','qwen/qwen3-32b','--precision','bf16','--gpu',args.gpu,'--layers','all','--fidelity-tokens','64']
-    run=start_run('e02-replay2-modal-client',experiment='E02',parents=[Path(args.manifest).parent.name],settings={'approval':'Aboard #609/#611 + direct user confirmation','total_approved_usd':12,'phase_ceiling_usd':args.phase_ceiling,'watchdog_max_resource_rate_per_second':MAX_RATE_PER_SECOND,'command':command})
+    run=start_run('e02-replay2-modal-client',experiment='E02',parents=[Path(args.manifest).parent.name],settings={'approval':'author-approved replay and CPU continuation','total_approved_usd':12,'phase_ceiling_usd':args.phase_ceiling,'watchdog_max_resource_rate_per_second':MAX_RATE_PER_SECOND,'command':command})
     start=time.monotonic();app_id=None;remote=None;p=None;stopped=False;failure=None
     try:
         events=queue.Queue();p=subprocess.Popen(command,cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1)

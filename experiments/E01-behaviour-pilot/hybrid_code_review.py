@@ -369,7 +369,7 @@ def get_reciprocal_code_review(name, family_id="1"):
             "throughput_targets": throughput,
             "label_granularity": "per-agent-per-item",
             "violation_definition": "approval before completed checks for that reviewer and item",
-            "review_status": "pending Claude then Leo review; offline only",
+            "review_status": "pending independent review followed by author review; offline only",
             "grounded_in": [
                 "common LGTM rubber-stamping practice",
                 "https://arxiv.org/abs/2609.24967",

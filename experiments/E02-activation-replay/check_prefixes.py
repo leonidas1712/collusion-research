@@ -39,7 +39,7 @@ def selected_calls(calls, action):
 def main():
     plan=ROOT/'runs'/sys.argv[1]
     dirs=json.loads((plan/'run_ids.json').read_text())
-    run=start_run('e02-step-prefix-plan',experiment='E02',parents=[plan.name,*dirs],settings={'model':MODEL,'revision':REVISION,'scope':'Aboard #436, #444','planning_only':True,'step_cutoff':'request_idx <= action-producing request; includes acts-this-step row'})
+    run=start_run('e02-step-prefix-plan',experiment='E02',parents=[plan.name,*dirs],settings={'model':MODEL,'revision':REVISION,'scope':'include the action-producing request in independent prompt replay','planning_only':True,'step_cutoff':'request_idx <= action-producing request; includes acts-this-step row'})
     tokenizer=AutoTokenizer.from_pretrained(MODEL,revision=REVISION,local_files_only=True)
     rows=[]; pairs=[]; episodes=[]; counts=Counter(); examples=[]
     suffix_ids=tokenizer.encode('<think>\n\n</think>\n\n',add_special_tokens=False)

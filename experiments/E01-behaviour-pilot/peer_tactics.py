@@ -98,12 +98,12 @@ def apply_peer_tactic(scenario, tactic_id, path=SOURCE):
     dynamic_slots = scenario.metadata.get("tactic_slots")
     if dynamic_slots is None:
         text = filled_tactic(family, tactic_id, condition, path)
-        review_status = "approved by Leo 2026-10-24 (softened v3)"
+        review_status = "approved by the author 2026-10-24 (softened v3)"
     else:
         text = filled_tactic_from_slots(
             dynamic_slots, tactic_id, condition,
             skip_tactics=scenario.metadata.get("skip_tactics", ()), path=path)
-        review_status = "template approved; scenario slot values pending Leo review"
+        review_status = "template approved; scenario slot values pending author review"
     tactic_id = tactic_id.upper()
     metadata = dict(scenario.metadata)
     metadata.update(tactic_id=tactic_id, tactic_source=Path(path).name,

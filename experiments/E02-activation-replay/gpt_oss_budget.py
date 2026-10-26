@@ -22,7 +22,7 @@ def main(args):
                  '--model','openai/gpt-oss-20b','--revision','6cee5e81ee83917806bbde320786a8fb61efebee']
     else:
         command=['modal','run','experiments/E02-activation-replay/modal_gpt_oss.py', '--plan', args.plan]
-    run=start_run('e02-gpt-oss-modal-client',experiment='E02',settings={'approval':'Aboard #1010: separate USD4 total',
+    run=start_run('e02-gpt-oss-modal-client',experiment='E02',settings={'approval':'separate plumbing-test budget: USD4 total',
         'phase':args.phase,'phase_ceiling_usd':args.phase_ceiling,'watchdog_max_resource_rate_per_second':MAX_RATE_PER_SECOND,'command':command})
     start=time.monotonic();app_id=None;remote=None;p=None;stopped=False;failure=None
     try:

@@ -13,7 +13,7 @@ def main(directory):
     target=json.loads((directory/'meta.json').read_text())['settings']['target'];rows,evaluation,_,_=m.inputs(target);ids=np.array(sorted(evaluation));y=np.array([rows[i]['y_immediate'] for i in ids]);source={(r['analysis'],int(r['seed']),r['row_id']):r for r in csv.DictReader((directory/'probe_scores.csv').open())};original=json.loads((directory/'metrics.json').read_text());result={}
     probe_source=m.MATCHED if target=='gpt-oss' else m.QWEN/'probe_scores.csv'
     probe={(r['analysis'],int(r['seed']),r['row_id']):r for r in csv.DictReader(probe_source.open()) if r['label_variant']=='immediate' and (target!='gpt-oss' or r.get('cohort')=='matched')}
-    run=start_run('e06-percall-reversal-diagnostic',experiment='E06',parents=[directory.name],settings={'request':'Aboard2071','post_hoc':True,'primary_unchanged':True,'no_refit':True})
+    run=start_run('e06-percall-reversal-diagnostic',experiment='E06',parents=[directory.name],settings={'request':'post hoc ranking-reversal diagnostic','post_hoc':True,'primary_unchanged':True,'no_refit':True})
     try:
         for mode in ['pooled','loso']:
             scores=np.array([[float(source[(mode,s,rows[i]['row_id'])]['score']) for i in ids] for s in SEEDS]);folds=np.array([[int(source[(mode,s,rows[i]['row_id'])]['fold']) for i in ids] for s in SEEDS]);reversed_metric,reversed_boot=stream_metrics(rows,ids,y,1-scores,folds,1000)

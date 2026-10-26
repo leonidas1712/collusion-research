@@ -59,7 +59,8 @@ def main(plan:str,journal:str,remaining_usd:float):
     from collusion.runs import write_json_atomic
     path=Path(plan);raw=path.read_bytes();frozen=json.loads(raw);plan_sha=hashlib.sha256(raw).hexdigest()
     assert 0<remaining_usd<=14.0
-    assert frozen.get('capture_spec')=='Aboard #1747' and frozen.get('budget_approval')=='Aboard #1751', 'Parallel replay approval required'
+    from stream_plan_approval import approved_stream_plan
+    assert approved_stream_plan(raw), 'Approved capture plan required'
     assert hashlib.sha256(Path(frozen['source_manifest']).read_bytes()).hexdigest()==frozen['source_manifest_sha256']
     for source,sha in frozen['sources'].items():assert hashlib.sha256(Path(source).read_bytes()).hexdigest()==sha
     destination=Path(journal)

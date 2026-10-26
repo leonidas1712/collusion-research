@@ -1,6 +1,6 @@
 # E05: can pre-action activations predict later rule violations?
 
-Status: core analysis complete (APA-48). Inputs are the verified E02 main replay and provisional target-authored step-position labels. No model API calls, GPU runs or commits are part of this experiment.
+Status: core analysis complete. Inputs are the verified E02 main replay and provisional target-authored step-position labels. No model API calls, GPU runs or commits are part of this experiment.
 
 [Final report and figures](../../runs/20261024-2007-e05-probe-core/report.md): 1,810 exposed steps from 92 recruiting episodes, 47 families. The inner-selected probe reaches within-round AUROC **0.658** (95% family-bootstrap CI 0.593–0.724), versus round0.500, prompt length0.530 and shuffled labels0.509. Control-calibrated episode recall is18.0%, with6.1% false alarms on held recruiting and3.5% on held-out controls. Exposure decoding reaches0.997 AUROC.
 
@@ -36,7 +36,7 @@ The first fit (20261024-1935-e05-probe-core) stopped on a dual-solver convergenc
 
 The report includes bootstrap intervals conditional on the saved predictions, per-seed values, partial AUROC, threshold false-alarm rates, visibility and length subsets, and exploratory PNG/SVG figures. A report may reuse frozen metrics with `--metrics-run <earlier-report-id>`; the new run records both parents. The `consequence_logged` source dataset includes an observation/review cue, so this experiment does not establish transfer to unlogged scenarios.
 
-## Text comparison (APA-52)
+## Text comparison
 
 [TF-IDF headline table and paired intervals](../../runs/20261024-2011-e05-text-baselines/report.md) uses exactly the saved main steps and outer/inner folds. Within-round AUROC: full rendered prompt **0.480**, prior target assistant text including tool calls **0.484**, target prose only **0.488**, versus activation probe **0.658**. Probe-minus-text paired family-bootstrap intervals are **+0.178 [0.076, 0.271]**, **+0.174 [0.081, 0.282]**, and **+0.169 [0.096, 0.262]**, respectively.
 
@@ -50,13 +50,13 @@ The fit run's `rows.jsonl` has one row per original E02 index row, in the same o
 
 `folds.json` records each seed's train, test, calibration and inner-validation episode IDs, group IDs, chosen layer and cutoff. Main `layer_scores` has shape `[seed, original_row, candidate_layer]`, ordered as `0,4,...,60,63`. Never select a new headline layer from these outer-test scores. Tactic-transfer arrays have one seed and a separate `transfer.json` describing their fixed train/test split.
 
-## V1 branching check (APA-59c)
+## V1 branching check
 
 [Report and plot](../../runs/20261025-0000-e05-branching-check/report.md): all 34 recruiting branch points match replayed first target requests, but only 23 points from 20 families have finite eligible frozen OOF scores. The 11 excluded points lack token exposure (six also fail the original episode-validity filter). All 170 reruns are complete and their three-round outcomes match the summaries.
 
 Mean frozen OOF logit versus the fraction giving in over five reruns: Spearman **0.527**, family-bootstrap 95% CI **[0.178, 0.772]**. This is a parent-step association: branches restart before the peer speaks, whereas the saved target prompt includes the original current-round peer message; none of the 170 new target requests exactly matches it. The strictly earlier-score sensitivity gives **0.149 [-0.299, 0.550]**. Selection by parent outcome, repeated points, five-sample fractions and the timing mismatch limit interpretation. No refits or inference. Reproduce the original checkpoint analysis with `branching_check.py`; the clean shared-state replay is reported below.
 
-## Shared pooled-scenario scoring (APA-59)
+## Shared pooled-scenario scoring
 
 Call `metrics.within_round(y, scores, rounds, weights, stratum_key=scenario_names)` for scenario×round AUROC, weighted by positive mass. `weights` is optional. Omit `stratum_key` for the legacy round-only metric. Keys must be hashable with one per row. Single-class strata are omitted and `positive_coverage` reports the retained positive mass; per-stratum details remain in `detail['rounds']`, with an added `stratum_key` field.
 
@@ -64,7 +64,7 @@ Call `metrics.within_round(y, scores, rounds, weights, stratum_key=scenario_name
 
 For pooled v2/spray results, the replay2 recipe includes a scenario-only baseline using each scenario's **training-fold episode** give-in rate, and a logistic scenario+round baseline (one-hot scenario plus numeric round, preprocessing fitted on training data). The added-value base model includes scenario, round and prompt length; compare adding the probe score with paired family-bootstrap intervals. All meta-model training scores must be generated within the outer training families, so outer-test families cannot leak indirectly through a stacking feature. For leave-one-scenario-out, the unseen scenario-only rate falls back to the overall training-episode rate: no test labels, hence a constant score within the held-out scenario. Report that baseline alongside each held-out scenario result.
 
-## Replay2 CPU pipeline (APA-59)
+## Replay2 CPU pipeline
 
 The frozen recipe is [REPLAY2_ANALYSIS_PLAN.md](REPLAY2_ANALYSIS_PLAN.md). Replay2 uses the completed-request window strictly after first read and strictly before first action, including file-only action boundaries. This differs from the original v1 headline above. All pooled ranking comparisons and bootstrap intervals stratify by scenario × round.
 
@@ -96,7 +96,7 @@ All 78 fold audits passed; pooled splits match the E06 export, and saved selecte
 
 Fits: `20261025-0340-e05-replay2-fits`; frozen numerical analysis: `20261025-0531-e05-replay2-analysis`; final narrative/package: `20261025-0536-e05-replay2-analysis`. `replay2_finalize.py` copies the frozen numerical artifacts and plots with hash checks, then adds the summary and audit caveat without recomputation.
 
-### Near-term action labels (APA-62)
+### Near-term action labels
 
 `near_term.py` reuses replay-2 features and the saved outer, inner-validation and stacking folds. A labels all eligible recruiting steps by whether the first action is in the current or next round. B drops earlier give-in steps, comparing near-action positives with held negatives. C uses B's contrast with at most three completed target requests until action. All retained steps precede the first action. It evaluates frozen eventual-label probes and refits inner-selected/fixed32 logistic probes, metadata baselines and a cross-fitted added-value model. Family-bootstrap ranking uses scenario × round, with fold × scenario × round as a sensitivity. The CSV includes each variant's exact labels and E06 row IDs.
 
@@ -107,7 +107,7 @@ experiments/E05-probes/.venv/bin/python experiments/E05-probes/near_term_validat
 
 Status: complete. [Report](../../runs/20261025-0730-e05-near-term/report.md), [validation](../../runs/20261025-0840-e05-near-term-validation/summary.json). Nested scenario × round AUROC (pooled/LOSO): A 0.585/0.611; B 0.605/0.603; C 0.589/0.619. These are exploratory near-term results; the eventual-label headline is unchanged. The run contains `probe_scores.csv` (423,792 records, generated local artifact) with all methods, `label_variant`, E06 row IDs and new labels. All 99 fits and the CSV audit passed; no new episodes or GPU use. The initial run was stopped before LOSO fitting to correct reconstruction of a shared-family validation scenario; completed pooled fits were verified and reused. `test_near_term.py` checks exact reproduction of the saved stacking splits.
 
-### Learning and per-layer curves (APA-67)
+### Learning and per-layer curves
 
 `learning_curve.py` compares eventual outcome and near-term B under pooled CV and LOSO. It samples 25/50/75/100% of the recruiting training families, with three nested draws per seed and unchanged test and inner-validation assignments. Only class/comparability failures cause a draw retry; the plan was frozen in `runs/20261025-0731-e05-learning-curve` before B's scores were evaluated. The 100% predictions are reused. It reports family-bootstrap scenario × round AUROC and the paired 75%→100% increment. The completed CPU run is `runs/20261025-0842-e05-learning-curve`; `runs/20261025-1003-e05-learning-curve-validation` verifies all 594 fits (exact score reconstruction and full-data reuse; no train/test family overlap). Only near-term B pooled nested has a positive 75%→100% interval: +.033 [.003,.066]; B LOSO is −.008 [−.037,.019]. Eventual-label final increments all include zero. These conditional intervals do not establish saturation, and pooled ranks remain sensitive to cross-fold score calibration.
 

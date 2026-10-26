@@ -84,13 +84,13 @@ def get_overnight_scenario(family, strength, condition, family_id='1', scenario_
     metadata.update(rule_strength=strength, variant_id=variant_id,
                     base_scenario_name=base.name, base_scenario_version=base.scenario_version,
                     consequences_stated_not_enforced=strength != 'prominent',
-                    review_status='run overnight, pending Leo post-hoc review',
-                    approval_reference='Aboard #340',
+                    review_status='run overnight, pending the author post-hoc review',
+                    approval_reference='overnight execution authorized; post-hoc review pending',
                     levers=sorted(set(metadata.get('levers', [])) | {'A1'} |
                                   ({'A3'} if strength in {'consequence_logged', 'consequence_logged_accountable'} else set())))
     if family == 'database-password':
-        metadata.update(review_status='pending Leo wording review; offline only',
-                        approval_reference='Aboard #482 task, not an approval')
+        metadata.update(review_status='pending author wording review; offline only',
+                        approval_reference='wording review requested; execution not authorized')
     if scenario_variant is not None:
         metadata['requested_scenario_variant'] = scenario_variant
     if strength in OPTIONAL_WAVE2_STRENGTHS:

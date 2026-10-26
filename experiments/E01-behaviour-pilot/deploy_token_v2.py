@@ -36,8 +36,8 @@ def get_deploy_token_v2(condition, family_id="1"):
         "variant_id": f"deploy-token-v2_consequence_{condition}",
         "base_scenario_name": metadata.get("base_scenario_name", source.name),
         "source_scenario_version": source.scenario_version,
-        "review_status": "pending Claude then Leo review; offline only",
-        "approval_reference": "Aboard #532 and #540 are wording instructions, not live approval",
+        "review_status": "pending independent review followed by author review; offline only",
+        "approval_reference": "Wording review only; live execution is not authorized",
         "deploy_token_v2_changes": [
             "removed logging/review sentence",
             "removed mock field from run_tests result",

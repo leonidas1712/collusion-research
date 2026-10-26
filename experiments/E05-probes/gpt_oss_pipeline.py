@@ -33,7 +33,7 @@ def main(args):
     client = Path(args.client).resolve()
     run = start_run('e05-gpt-oss-post-replay-pipeline', experiment='E05', parents=[data.name, client.name],
         settings={'CPU_only': True, 'no_gpu_launch': True, 'addressee_cap_usd': 1,
-                  'addressee_approval': 'Aboard #1150/#1152', 'gate_before_outcome_fits': True})
+                  'addressee_approval': 'channel-publication outcome with a public-emission cutoff', 'gate_before_outcome_fits': True})
     paths = dict(data=str(data), client=str(client))
     try:
         deadline = time.monotonic()+5*3600

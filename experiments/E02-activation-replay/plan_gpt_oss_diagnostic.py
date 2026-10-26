@@ -1,4 +1,4 @@
-"""Input-only provider/gap-stratified paired fidelity plan, approved in Aboard #1182."""
+"""Input-only provider/gap-stratified paired fidelity plan, approved before provider-mode selection."""
 from collections import Counter,defaultdict
 import hashlib,json,sys,time
 from pathlib import Path
@@ -26,7 +26,7 @@ def main():
     quotas={'AkashML:intra:large':10,'AkashML:intra:small':10,'AkashML:not_intra:mismatch':5,
             'AkashML:not_intra:matched':5,'DekaLLM:intra':10,'DekaLLM:not_intra':10}
     run=start_run('e02-gpt-oss-paired-diagnostic-plan',experiment='E02',parents=[source_plan.name],settings={
-        'approval':'Aboard #1182','selection':'provider/intra-turn/gap only; hash order seed1182; outcomes not used',
+        'approval':'provider-stratified paired fidelity diagnostic','selection':'provider/intra-turn/gap only; hash order seed1182; outcomes not used',
         'quotas':quotas,'phase_ceiling_usd':1.5,'shared_total_cap_usd':20})
     try:
         selected=[]
@@ -54,7 +54,7 @@ def main():
         counts=dict(episodes=len(sources),requests=len(rows),source_requests=50,shards=1,total_tokens=total,
                     prior_projection_usd_with_2x_margin=total/142324*100.668*.0009*2+.5)
         plan=dict(model=MODEL,revision=REVISION,source_manifest=source['source_manifest'],source_manifest_sha256=source['source_manifest_sha256'],
-            sources=sources,counts=counts,rendering_gate_approval='Aboard #1182 paired diagnostic only',
+            sources=sources,counts=counts,rendering_gate_approval='provider-mode paired diagnostic only',
             budget_root=str(source_plan),phase_ceiling_usd=1.5,
             shards=[dict(path='shards/0000.json',sha256=hashlib.sha256((run.dir/'shards/0000.json').read_bytes()).hexdigest(),requests=100,total_tokens=total)])
         write_json_atomic(run.dir/'plan.json',plan);write_json_atomic(run.dir/'counts.json',counts)

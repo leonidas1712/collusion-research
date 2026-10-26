@@ -20,4 +20,4 @@ if __name__=='__main__':
     segment.append(ids[position]);seen=seen or bool(regex.search(enc.decode(segment)));arrays[stream][r['capture_start']+k]=seen;previous=position
   if j%100==0:print('KEYWORDS',j,len(rows),flush=True)
  np.savez(a.data/'keyword_broad_streams.npz',**arrays)
- (a.data/'keyword_broad_streams.json').write_text(json.dumps({'source':'reasoning_stream_text.patterns(scenario,broad=True), frozen Aboard1785','protected_values_used':False,'streams':['incoming','action_time'],'matching':'decoded observed contiguous segment only; running match persists across gaps; no synthetic phrases across uncaptured gaps','null':'binary any-match in observed prefix'},indent=2)+'\n')
+ (a.data/'keyword_broad_streams.json').write_text(json.dumps({'source':'reasoning_stream_text.patterns(scenario,broad=True), fixed before evaluating the expanded keyword baseline','protected_values_used':False,'streams':['incoming','action_time'],'matching':'decoded observed contiguous segment only; running match persists across gaps; no synthetic phrases across uncaptured gaps','null':'binary any-match in observed prefix'},indent=2)+'\n')

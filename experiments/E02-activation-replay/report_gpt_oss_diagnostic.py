@@ -39,7 +39,7 @@ def main():
         write_json_atomic(run.dir/'metrics.json',metrics)
         write_json_atomic(run.dir/'verification.json',dict(requests=100,source_requests=50,layers=24,hidden_size=2880,
             all_shapes_hashes_finite=True,app_stopped=True,cost=cost,full_replay_gate='pass_with_documented_provider_format_caveat',
-            selected_provider_modes={'AkashML':'current_turn','DekaLLM':'drop_all'},approval='Aboard #1182'))
+            selected_provider_modes={'AkashML':'current_turn','DekaLLM':'drop_all'},approval='provider-stratified paired fidelity diagnostic'))
         lines=['# Paired gpt-oss provider rendering fidelity check','',
             'The diagnostic used 50 requests selected by provider, tool-turn position and prompt-count gap, without outcome labels. '
             'Each was replayed with dropped prior reasoning and with current-turn reasoning retained, for 100 teacher-forced forwards. '
@@ -50,7 +50,7 @@ def main():
             'top-5 is 98.816% versus 99.675%. The samples differ, so these are sanity comparisons, not a controlled equivalence test. '
             'DekaLLM drop-all answer/tool-body NLL is 0.35960 with 99.126% top-5; this does not indicate a large answer-fidelity loss. '
             'Current-turn retention improves AkashML and does not improve DekaLLM. Reasoning is less faithful than answer/tool bodies.','',
-            'Decision under the conditional gate approved in Aboard #1182: proceed with AkashML current-turn and DekaLLM drop-all. '
+            'Decision under the conditional gate approved before provider-mode selection: proceed with AkashML current-turn and DekaLLM drop-all. '
             'DekaLLM prompt tokens remain approximate; likelihood agreement does not establish exact provider tokens. '
             'Provider quantization fields are null. Replay all requests and retain provider and absolute count gap; '
             'the primary analysis uses all eligible steps and a sensitivity excludes requests with |gap| > 1. '

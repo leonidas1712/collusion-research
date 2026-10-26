@@ -12,7 +12,7 @@ from gpt_oss_stream_capture import FULL_LAYERS,PROJECTION_SEED,PROJECTION_DIM
 def main():
     old=ROOT/'runs/20261026-0540-e02-gpt-oss-blocking-plan'
     base=json.loads((old/'plan.json').read_text())
-    run=start_run('e02-gpt-oss-stream-plan',experiment='E02',parents=[old.name],tags=['exploratory','approved-1747-1751','offline-plan'],settings={'cap_usd':15,'full_layers':FULL_LAYERS,'projection_seed':PROJECTION_SEED,'projection_dim':PROJECTION_DIM,'benchmark_requests':20})
+    run=start_run('e02-gpt-oss-stream-plan',experiment='E02',parents=[old.name],tags=['exploratory','approved-expanded-capture','offline-plan'],settings={'cap_usd':15,'full_layers':FULL_LAYERS,'projection_seed':PROJECTION_SEED,'projection_dim':PROJECTION_DIM,'benchmark_requests':20})
     try:
         (run.dir/'cache').mkdir();(run.dir/'shards').mkdir()
         rng=np.random.default_rng(PROJECTION_SEED)
@@ -37,7 +37,7 @@ def main():
         shared=ROOT/'runs/20261026-0652-e02-gpt-oss-blocking-launch-plan'
         counts={**base['counts'],'capture_positions':total_positions,'role_counts':{k:role_counts[v] for k,v in ROLE.items()},'control_incoming_positions':incoming_control,'activation_raw_bytes':raw,'activation_raw_gib':raw/2**30,'prior_throughput_projection_usd':base['counts']['projection_usd']+.0441,'projection_usd':base['counts']['input_tokens']/1128.8*1.5*.0009+1+.0441}
         m={k:v for k,v in base.items() if k not in ['shards','counts','primary_report_required','sources']}
-        m.update(capture_spec='Aboard #1747',budget_approval='Aboard #1751',approval='Final incoming/generated positions, four full layers fp16 plus all-layer256 projection; USD15 including earlier startup',budget_root=str(shared),shards=parts,counts=counts,projection_path=str(projection),projection_sha256=sha,full_layers=FULL_LAYERS,projection_seed=PROJECTION_SEED,projection_dim=PROJECTION_DIM)
+        m.update(capture_spec='incoming_and_generated_prefixes_v1',budget_approval='shared_cap_15usd_v1',approval='Final incoming/generated positions, four full layers fp16 plus all-layer256 projection; USD15 including earlier startup',budget_root=str(shared),shards=parts,counts=counts,projection_path=str(projection),projection_sha256=sha,full_layers=FULL_LAYERS,projection_seed=PROJECTION_SEED,projection_dim=PROJECTION_DIM)
         m['sources']={str(projection):sha}
         for name in ['gpt_oss_stream_capture.py','gpt_oss_stream_positions.py','gpt_oss_stream_budget.py','modal_gpt_oss_stream.py','gpt_oss_replay.py','replay.py','fidelity.py']:
             p=ROOT/'experiments/E02-activation-replay'/name;m['sources'][str(p)]=hashlib.sha256(p.read_bytes()).hexdigest()

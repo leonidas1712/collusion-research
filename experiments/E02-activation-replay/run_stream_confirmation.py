@@ -17,13 +17,13 @@ def run_logged(command, log):
 
 
 def say(message):
-    subprocess.run(['aboard', 'say', '--to', '@claude', '--reply', '1833', message], cwd=ROOT, check=True)
+    print(message, flush=True)
 
 
 def main(freeze, existing_plan=None):
     freeze = freeze.resolve()
     run = start_run('e05-stream-confirm-completion', experiment='E05', parents=[freeze.name],
-                    settings={'approval': 'Aboard1833/1838/1861/1867', 'hard_cap_usd': 10,
+                    settings={'approval': 'frozen confirmation with outcome-blind quota and incomplete-only replacement', 'hard_cap_usd': 10,
                               'API_cap_usd': 5, 'Modal_cap_usd': 4, 'reserve_usd': 1,
                               'new_data_refits': False})
     root_python = str(ROOT / '.venv/bin/python')
@@ -64,7 +64,7 @@ def main(freeze, existing_plan=None):
             run_logged([replay_python, 'experiments/E02-activation-replay/plan_gpt_oss_confirmation.py',
                     '--manifest', manifest['path'], '--shard-size', '100',
                     '--provider-modes', '{"AkashML":"current_turn","DekaLLM":"drop_all"}',
-                    '--approval-ref', 'Aboard1833/1838/1861; same frozen provider-specific renderer',
+                    '--approval-ref', 'frozen confirmation; same provider-specific renderer',
                     '--budget-root', str(freeze / 'gpu-budget')], run.dir / 'plan.log')
             lines = (run.dir / 'plan.log').read_text().splitlines()
             paths = [s.removeprefix('FULL_PLAN ') for s in lines if s.startswith('FULL_PLAN ')]

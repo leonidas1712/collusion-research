@@ -102,7 +102,7 @@ The full collection has 6,985 target requests from AkashML/DekaLLM; the original
 
 ## Approved provider paths and paired gate (2026-10-25 22:49 SGT)
 
-Aboard #1182 authorized the provider-stratified paired diagnostic and automatic full replay if AkashML retained good fidelity and DekaLLM showed no large loss. The verified report is `runs/20261025-2249-e02-gpt-oss-paired-fidelity-report/report.md`. All 100 forwards passed input-array/hash, shape, layer and finite-value checks. The diagnostic app is stopped; it billed USD0.10308139 at the snapshot, with conservative compute upper USD0.16683843 charged to the same USD20 full-replay budget.
+The author authorized the provider-stratified paired diagnostic and automatic full replay if AkashML retained good fidelity and DekaLLM showed no large loss. The verified report is `runs/20261025-2249-e02-gpt-oss-paired-fidelity-report/report.md`. All 100 forwards passed input-array/hash, shape, layer and finite-value checks. The diagnostic app is stopped; it billed USD0.10308139 at the snapshot, with conservative compute upper USD0.16683843 charged to the same USD20 full-replay budget.
 
 The full collection uses **AkashML current-turn reasoning retention** and **DekaLLM drop-all prior reasoning**. AkashML answer/tool-body NLL improved from0.32259 to0.25561; DekaLLM drop-all was0.35960 with99.126% top-5. DekaLLM count mismatch is not solved; it is an approximate provider-format replay with a documented likelihood sanity check. Full replay retains every request. Provider, token gap and rendering mode remain per-row fields, with a secondary analysis excluding |gap|>1 requests. The earlier CoreWeave default renderer remains unchanged.
 

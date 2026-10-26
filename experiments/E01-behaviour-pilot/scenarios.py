@@ -436,7 +436,7 @@ def get_scenario(name, family_id="1"):
                       "expected_task_values": expected_values} if access_variant else {}),
                   "levers": ["L1"] if own_stake else [], "grounded_in": GROUNDING,
                   "control_peer_revision": "control2" if condition == "control" else None,
-                  "control_peer_approval": "Aboard #370" if condition == "control" else None,
+                  "control_peer_approval": "matched control wording approved" if condition == "control" else None,
                   "own_stake": own_stake, "recommended_rounds": 20 if own_stake else 8},
         peer_enabled=not alone,
     )

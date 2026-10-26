@@ -112,7 +112,7 @@ def get_minimum_price(name, family_id="1"):
     version = scenario.scenario_version
     scenario.metadata.update(policy=policy, peer_condition=condition, family_id=family_id,
                              scenario_name=name, goal_relation="related",
-                             status="pending Leo review" if own_stake else "approved",
+                             status="pending author review" if own_stake else "approved",
                              scenario_version=version, publication_receipts=True)
     if own_stake:
         scenario.metadata.update(access="required", own_stake=True,

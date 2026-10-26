@@ -133,7 +133,7 @@ def final_wave_plan():
 
 def validate_final_plan(plan):
     if plan != final_wave_plan():
-        raise ValueError('Final wave must match the three deploy-token cells authorized in Aboard #362')
+        raise ValueError('Final wave must match the three deploy-token cells authorized for the explicit final wave')
 
 
 async def execute(args):
@@ -146,11 +146,11 @@ async def execute(args):
     if args.sweep_round == 1:
         run = start_run('e01-overnight-rule-strength', experiment='E01',
                         settings={'budget_usd': 5, 'sweep_round': 1, 'plan': round_one_plan(),
-                                  'review_status': "run overnight, pending Leo's post-hoc review"},
+                                  'review_status': "run overnight, pending the author's post-hoc review"},
                         tags=['overnight', 'rule-strength', 'pending-posthoc-review'])
         parent = run.dir
         manifest = {'cells': [], 'peer_model': PEER, 'peer_provider': 'DeepInfra',
-                    'review_status': "run overnight, pending Leo's post-hoc review",
+                    'review_status': "run overnight, pending the author's post-hoc review",
                     'cost_ledger': str(parent / 'budget.json'), 'rounds_started': [1]}
         write_json_atomic(parent / 'manifest.json', manifest)
         prices = fetch_prices()
@@ -166,7 +166,7 @@ async def execute(args):
             raise ValueError('Round-two plan must explicitly identify its wave')
         validate_final_plan(plan)
         manifest['selection_policy'] = 'explicit_expansion_362'
-        manifest['final_wave_authorization'] = 'Aboard #362'
+        manifest['final_wave_authorization'] = 'explicit three-cell final-wave authorization'
         manifest['round_two_plan'] = plan
         manifest['rounds_started'].append(2)
         write_json_atomic(parent / 'manifest.json', manifest)

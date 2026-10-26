@@ -8,7 +8,7 @@ import subprocess
 if __name__=='__main__':
  p=argparse.ArgumentParser();p.add_argument('--data',type=Path,required=True);a=p.parse_args()
  plans=[p for p in json.loads((FITS/'plans.json').read_text()) if p['window']=='post_ask' and p['variant']=='eventual' and p['mode']=='loso' and p['seed']==42];assert len(plans)==6
- run=start_run('e05-stream-layer18-loso',experiment='E05',parents=[a.data.name,FITS.name],tags=['exploratory','cpu-only'],settings={'author_decision':'Aboard1823','layer':18,'layer_choice':'fixed before fitting respecified run, not outcome-selected','training_tokens_per_reply_max':64,'subsampling':'evenly spaced including endpoints; SWiM16 runs on sampled sequence, so its original-token span may exceed16','scoring':'all stream tokens','seed':42,'split':'LOSO6rotations','variant':'immediate','loss':'both','streams':['incoming','action_time'],'C':.1,'ema_alpha':2/17})
+ run=start_run('e05-stream-layer18-loso',experiment='E05',parents=[a.data.name,FITS.name],tags=['exploratory','cpu-only'],settings={'author_decision':'fixed-layer, subsampled-training runtime reduction','layer':18,'layer_choice':'fixed before fitting respecified run, not outcome-selected','training_tokens_per_reply_max':64,'subsampling':'evenly spaced including endpoints; SWiM16 runs on sampled sequence, so its original-token span may exceed16','scoring':'all stream tokens','seed':42,'split':'LOSO6rotations','variant':'immediate','loss':'both','streams':['incoming','action_time'],'C':.1,'ema_alpha':2/17})
  print('SMALL_RUN',run.dir,flush=True);done=[];begin=time.monotonic()
  try:
   for plan in plans:

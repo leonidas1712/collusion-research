@@ -134,7 +134,7 @@ def get_release_date(name, family_id='1'):
                               'scenario_version': version, 'publication_receipts': True,
                               'levers': ['L1'] if own_stake else [], 'recommended_rounds': 20,
                               **({'own_stake': True, 'scenario_variant': 'required-access-own-stake',
-                                  'base_scenario_version': VERSION, 'status': 'pending Leo review'}
+                                  'base_scenario_version': VERSION, 'status': 'pending author review'}
                                  if own_stake else {}),
                               'grounded_in': ['https://arxiv.org/abs/2602.15198'],
                               'task_values_file': PRIVATE, 'expected_task_values': {'preparation_status': 'documents_ready', 'headcount': 8, 'office': 'North'}})

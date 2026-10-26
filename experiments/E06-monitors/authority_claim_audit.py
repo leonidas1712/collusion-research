@@ -1,6 +1,6 @@
 """Jev audit of operator impersonation and receiver-authority claims in peer messages.
 
-The two questions are frozen in the author-approved Aboard task.  One Decisions
+The two questions are frozen in the author-approved audit protocol.  One Decisions
 request scores both questions for one message.  The run has its own USD 0.50
 ledger and never mutates source episodes.
 """

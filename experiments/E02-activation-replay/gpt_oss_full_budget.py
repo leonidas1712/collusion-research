@@ -31,7 +31,7 @@ def main(plan_path):
     assert remaining>0
     assert plan['counts']['prior_projection_usd_with_2x_margin']<=remaining+OVERHEAD,'Prior projection exceeds phase/shared remainder'
     run=start_run('e02-gpt-oss-full-client',experiment='E02',parents=[plan_path.parent.name],
-        settings={'approval':'Aboard #1036/#1150: USD20 total','cap_usd':CAP,'prior_upper_usd':spent,
+        settings={'approval':'full replay and addressee audit: USD20 total','cap_usd':CAP,'prior_upper_usd':spent,
                   'overhead_reserve_usd':OVERHEAD,'remaining_usd':remaining,'rate_per_second':RATE,'plan':str(plan_path)})
     write_json_atomic(ledger_path,[*previous,str(run.dir.resolve())])
     command=['modal','run','experiments/E02-activation-replay/modal_gpt_oss_full.py','--plan',str(plan_path),

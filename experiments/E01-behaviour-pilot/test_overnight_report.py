@@ -148,7 +148,7 @@ class OvernightReportTests(unittest.TestCase):
         self.add_cell("alone", [False, False])
         self.add_cell("recruiting", [True, False] * 4, round=2)
         self.add_cell("alone", [False, False], round=2)
-        report = self.report(selection_policy="explicit_expansion_362", final_wave_authorization="Aboard #362",
+        report = self.report(selection_policy="explicit_expansion_362", final_wave_authorization="explicit three-cell final-wave authorization",
                              round_two_plan=[{"target": "32b", "scenario_family": "deploy-token", "strength": "consequence", "sweep_round": 2}])
         self.assertEqual(report["round_two_candidates"], [])
         self.assertEqual(report["final_wave_design"]["planned_episodes"], 30)

@@ -1,6 +1,6 @@
 # gpt-oss full replay and dataset preparation
 
-Frozen before full-replay activations or outcome fits, 2026-10-25. Authority: Aboard #1036. The separate full-replay cap is USD20 across all shards, retries and restarts; the earlier USD4 plumbing test is separate.
+Frozen before full-replay activations or outcome fits, 2026-10-25. The author approved this replay before execution. The separate full-replay cap is USD20 across all shards, retries and restarts; the earlier USD4 plumbing test is separate.
 
 ## Collection gate
 

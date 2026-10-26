@@ -17,7 +17,7 @@ def main(directory):
     for r in csv.DictReader(probe.open()):
         if r['label_variant']=='immediate' and (target!='gpt-oss' or r['cohort']=='matched'):probes[(r['analysis'],int(r['seed']),r['row_id'])]=r
     for r in csv.DictReader(monitor.open()):monitors[(r['analysis'],int(r['seed']),r['row_id'])]=r
-    run=start_run('e06-percall-input-paired',experiment='E06',parents=[directory.name,probe.parent.name],settings={'request':'Aboard2064','no_refit':True,'bootstrap_reps':1000,'bootstrap_seed':20261025})
+    run=start_run('e06-percall-input-paired',experiment='E06',parents=[directory.name,probe.parent.name],settings={'request':'paired probe-minus-monitor comparison on identical calls','no_refit':True,'bootstrap_reps':1000,'bootstrap_seed':20261025})
     try:
         result={}
         for mode in ['pooled','loso']:

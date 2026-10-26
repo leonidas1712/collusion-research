@@ -45,7 +45,7 @@ def prepare():
         tasks.append(dict(row_index=i,row_id=key,request_sha256=row['request_sha256'],prompt_sha256=row['prompt_sha256'],payload_key=pk,evaluation=i in ev,calibration=i in cal,option_order=list(order)))
         facts.append(dict(row_id=key,evaluation=i in ev,retained_reasoning_messages=len(reasons),retained_reasoning_characters=sum(map(len,reasons)),history_reasoning_mode=mode,prompt_token_count=len(p['prompt_ids']),text_reencoding_preserves_ids=reencoded==p['prompt_ids']))
     rate=base.reserve_rate();worst=sum(Decimal(len(json.dumps(b,ensure_ascii=False).encode()))*rate for k,b in payloads.items() if k not in reused)
-    run=start_run('e06-percall-input-jev-l4',experiment='E06',parents=[L3.name,PLAN.name],settings={'target':'gpt-oss','approval':'Aboard2054,separateUSD2cap','prompt_spec':base.PROMPT_SPEC,'prompt_sha256':base.PROMPT_SHA,'same_saved_folds':True,'private_reasoning_access':True})
+    run=start_run('e06-percall-input-jev-l4',experiment='E06',parents=[L3.name,PLAN.name],settings={'target':'gpt-oss','approval':'retained-reasoning input comparator,separateUSD2cap','prompt_spec':base.PROMPT_SPEC,'prompt_sha256':base.PROMPT_SHA,'same_saved_folds':True,'private_reasoning_access':True})
     for n,v in [('payloads',payloads),('tasks',tasks),('input_details',facts)]:write_json_atomic(run.dir/(n+'.json'),v)
     if reused:
         (run.dir/'cache').mkdir()

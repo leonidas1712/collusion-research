@@ -62,7 +62,7 @@ def main():
     directories = sorted(path for path in args.runs_root.iterdir() if path.is_dir() and in_scope(path.name))
     benchmark = json.loads((ROOT/'runs'/BENCHMARK/'results.json').read_text())
     run = start_run('e02-main-replay-plan', experiment='E02', parents=[*(p.name for p in directories), BENCHMARK],
-        settings={'model': MODEL, 'revision': REVISION, 'scope': 'Aboard #429', 'selection': 'Aboard #435: first API request per round, round < first boundary violation', 'planning_only': True})
+        settings={'model': MODEL, 'revision': REVISION, 'scope': 'plan the complete consequence-logged main dataset', 'selection': 'first API request per round, round < first boundary violation', 'planning_only': True})
     tokenizer = AutoTokenizer.from_pretrained(MODEL, revision=REVISION, local_files_only=True)
     manifests = {'first': [], 'last': [], 'last_additional': []}
     episodes, excluded = [], []

@@ -15,7 +15,7 @@ RUN_LIST=ROOT/'experiments/E02-activation-replay/manifests/replay3_runs.txt'
 
 def main():
     paths=[ROOT/p for p in RUN_LIST.read_text().splitlines() if p.strip()]
-    run=start_run('e02-replay3-plan',experiment='E02',parents=[p.name for p in paths],settings={'approval':'Aboard #698: Leo approval relayed by Claude','hard_cap_usd':4,'model':MODEL,'revision':REV,'all_target_requests':True})
+    run=start_run('e02-replay3-plan',experiment='E02',parents=[p.name for p in paths],settings={'approval':'author-approved additional confirmation replay','hard_cap_usd':4,'model':MODEL,'revision':REV,'all_target_requests':True})
     try:
         tok=AutoTokenizer.from_pretrained(ROOT/'runs/20261024-1018-e02-activation-replay/tokenizer',local_files_only=True)
         inputs=[];counts=Counter();epnotes=[]

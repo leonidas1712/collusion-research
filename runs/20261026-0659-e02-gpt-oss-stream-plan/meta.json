@@ -1,0 +1,53 @@
+{
+  "id": "20261026-0659-e02-gpt-oss-stream-plan",
+  "experiment": "E02",
+  "name": "e02-gpt-oss-stream-plan",
+  "tags": [
+    "exploratory",
+    "approved-1747-1751",
+    "offline-plan"
+  ],
+  "settings": {
+    "cap_usd": 15,
+    "full_layers": [
+      6,
+      12,
+      18,
+      23
+    ],
+    "projection_seed": 20261026,
+    "projection_dim": 256,
+    "benchmark_requests": 20
+  },
+  "parents": [
+    "20261026-0540-e02-gpt-oss-blocking-plan"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E02-activation-replay/.venv/bin/python experiments/E02-activation-replay/plan_gpt_oss_stream.py",
+  "git_commit": "237b7befddbbb5abfb5fdc889cb9fca87da34517",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T06:59:34",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T07:00:32",
+  "results": {
+    "requests": 3330,
+    "input_tokens": 6641615,
+    "stream_positions": 126625,
+    "projection_usd": 8.98720794649185,
+    "capture_positions": 420523,
+    "role_counts": {
+      "incoming": 255734,
+      "reasoning": 53575,
+      "answer": 81437,
+      "tool": 26447,
+      "last_prompt": 3330
+    },
+    "control_incoming_positions": 40365,
+    "activation_raw_bytes": 15776914944,
+    "activation_raw_gib": 14.693397045135498,
+    "prior_throughput_projection_usd": 7.663356622076542
+  }
+}

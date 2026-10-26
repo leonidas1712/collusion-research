@@ -48,7 +48,7 @@ def main(plan_path, benchmark_client=None, benchmark_plan=None):
     estimate=projection['upper_usd'] if projection else plan['counts']['prior_projection_usd_with_2x_margin']
     assert estimate<=remaining+OVERHEAD,'Prior projection exceeds phase/shared remainder'
     run=start_run('e02-gpt-oss-confirm-client',experiment='E02',parents=[plan_path.parent.name],
-        settings={'approval':'Aboard1833: sharedUSD10confirmation, API cost deducted before GPU','cap_usd':CAP,'prior_upper_usd':spent,
+        settings={'approval':'frozen confirmation: sharedUSD10 total, API cost deducted before GPU','cap_usd':CAP,'prior_upper_usd':spent,
                   'overhead_reserve_usd':OVERHEAD,'remaining_usd':remaining,'rate_per_second':RATE,'plan':str(plan_path)})
     if projection:write_json_atomic(run.dir/'projection.json',projection)
     write_json_atomic(ledger_path,[*previous,str(run.dir.resolve())])

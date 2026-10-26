@@ -13,7 +13,7 @@ CLIENT='20261025-0126-e02-replay2-modal-client';REMOTE='20261024-1727-e02-activa
 
 def main():
     resumed_from=sys.argv[1] if len(sys.argv)>1 else None
-    run=start_run('e05-replay2-pipeline',experiment='E05',parents=[CLIENT]+([resumed_from] if resumed_from else []),settings={'no_gpu_launches':True,'stop_on_any_stage_failure':True,'approval':'Aboard #609 and #611; CPU continuation authorized','resumed_from':resumed_from,'resume_reason':'increase read-only download concurrency; reuse atomic completed files' if resumed_from else None})
+    run=start_run('e05-replay2-pipeline',experiment='E05',parents=[CLIENT]+([resumed_from] if resumed_from else []),settings={'no_gpu_launches':True,'stop_on_any_stage_failure':True,'approval':'CPU continuation of the approved second replay','resumed_from':resumed_from,'resume_reason':'increase read-only download concurrency; reuse atomic completed files' if resumed_from else None})
     stages={}
     def step(name,command,marker=None):
         print('START',name,flush=True);p=subprocess.Popen(command,cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True);found=None

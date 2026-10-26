@@ -31,7 +31,7 @@ def prepare_many_peer_scenario(scenario, peer_count):
         peer_display_names=peer_names,
         peer_prompts=prompts,
         many_to_one_review_status=("approved" if MANY_PEER_APPROVED
-                                   else "pending Leo review; offline only"),
+                                   else "pending author review; offline only"),
         many_to_one_approval_reference=None,
     )
     target_system = (scenario.target_system + " Additional teammates in this channel: "

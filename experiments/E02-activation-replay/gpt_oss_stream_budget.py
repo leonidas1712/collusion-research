@@ -19,7 +19,8 @@ OVERHEAD=1.
 
 def main(plan_path):
     plan_path=Path(plan_path).resolve();plan=json.loads(plan_path.read_text())
-    assert plan.get('capture_spec')=='Aboard #1747' and plan.get('budget_approval')=='Aboard #1751', 'Parallel replay approval required'
+    from stream_plan_approval import approved_stream_plan
+    assert approved_stream_plan(plan_path.read_bytes()), 'Approved capture plan required'
     import shutil
     assert shutil.disk_usage(ROOT).free>=40*2**30, 'Must retain 40 GiB local free space'
     budget_root=Path(plan.get('budget_root',plan_path.parent));budget_root.mkdir(parents=True,exist_ok=True)
@@ -34,7 +35,7 @@ def main(plan_path):
     assert remaining>0
     assert plan['counts']['projection_usd']<=remaining+OVERHEAD,'Prior projection exceeds phase/shared remainder'
     run=start_run('e02-gpt-oss-stream-client',experiment='E02',parents=[plan_path.parent.name],
-        settings={'approval':'Aboard #1747/#1751: USD15 total including prior startup, final capture benchmark then abort','cap_usd':CAP,'prior_upper_usd':spent,
+        settings={'approval':'expanded capture: USD15 total including prior startup, benchmark then abort if projected cost exceeds the cap','cap_usd':CAP,'prior_upper_usd':spent,
                   'overhead_reserve_usd':OVERHEAD,'remaining_usd':remaining,'rate_per_second':RATE,'plan':str(plan_path)})
     write_json_atomic(ledger_path,[*previous,str(run.dir.resolve())])
     command=['modal','run','experiments/E02-activation-replay/modal_gpt_oss_stream.py','--plan',str(plan_path),

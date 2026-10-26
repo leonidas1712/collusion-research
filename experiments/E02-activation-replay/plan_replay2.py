@@ -17,7 +17,7 @@ RUN_LIST=ROOT/'experiments/E02-activation-replay/manifests/replay2_runs.txt'
 
 def main():
     paths=[ROOT/p for p in RUN_LIST.read_text().splitlines() if p.strip()]
-    run=start_run('e02-replay2-plan',experiment='E02',parents=[p.name for p in paths]+[BRANCH],settings={'approval':'Aboard #609/#610','hard_cap_usd':8,'model':MODEL,'revision':REV,'all_target_requests':True})
+    run=start_run('e02-replay2-plan',experiment='E02',parents=[p.name for p in paths]+[BRANCH],settings={'approval':'all target requests plus shared branching histories','hard_cap_usd':8,'model':MODEL,'revision':REV,'all_target_requests':True})
     try:
         tok=AutoTokenizer.from_pretrained(ROOT/'runs/20261024-1018-e02-activation-replay/tokenizer',local_files_only=True)
         inputs=[];counts=Counter();epnotes=[]

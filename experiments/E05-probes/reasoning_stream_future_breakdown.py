@@ -63,7 +63,7 @@ def main(out):
                         'incoming_tool_content_tokens': role_tokens['tool'], 'incoming_peer_content_tokens': role_tokens['user'],
                         'incoming_content_tokens': sum(role_tokens.values()), 'exact_message_prefix': True})
     run = start_run('e05-stream-future-breakdown', experiment='E05', parents=[out.name],
-                    settings={'request': 'Aboard1914', 'no_refit': True, 'source_sha256': source_hash})
+                    settings={'request': 'same-round versus next-round strict-future breakdown', 'no_refit': True, 'source_sha256': source_hash})
     try:
         round_counts = dict(Counter(str(d['round_gap']) for d in details))
         summaries = {}

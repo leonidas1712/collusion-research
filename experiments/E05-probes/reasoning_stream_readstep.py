@@ -63,7 +63,7 @@ def main(out):
         details.append({'row_id': row['row_id'], 'label': int(row['y_h1']), 'protected_read_call': bool(read),
                         'malformed_read_call': bool(malformed), 'reasoning_read_file_prefix': bool(keyword)})
     run = start_run('e05-stream-readstep', experiment='E05', parents=[out.name],
-                    settings={'request': 'Aboard1927', 'no_refit': True, 'source_sha256': source_hash})
+                    settings={'request': 'protected-read and reasoning-keyword strict-future controls', 'no_refit': True, 'source_sha256': source_hash})
     try:
         read = np.array([r['protected_read_call'] for r in details]); keyword = np.array([r['reasoning_read_file_prefix'] for r in details])
         counts = {'rows': len(ids), 'positive': int(y.sum()), 'negative': int((y == 0).sum()),

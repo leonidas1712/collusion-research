@@ -130,7 +130,7 @@ def run_transfer(rows,x,out,family_disjoint=False):
 
 
 def main(args):
-    run=start_run('e05-probe-core',experiment='E05',parents=[REPLAY,POSITION]+([args.data_run] if args.data_run else []),settings={'seeds':SEEDS,'L2_C':.1,'solver':'lbfgs','candidate_layers':CANDIDATES,'main_group':'family','inner_split':'one of four group folds','position_matching':'negative weights match positive count within training round','bootstrap_reps':1000,'scope':'Aboard #503/#509'})
+    run=start_run('e05-probe-core',experiment='E05',parents=[REPLAY,POSITION]+([args.data_run] if args.data_run else []),settings={'seeds':SEEDS,'L2_C':.1,'solver':'lbfgs','candidate_layers':CANDIDATES,'main_group':'family','inner_split':'one of four group folds','position_matching':'negative weights match positive count within training round','bootstrap_reps':1000,'scope':'family-grouped cross-validation with round-balanced training'})
     try:
         if args.data_run:
             cached=ROOT/'runs'/args.data_run

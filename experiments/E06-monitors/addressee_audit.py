@@ -40,7 +40,7 @@ def lexical(text,peer):
 
 
 def author_review(rows, cached):
-    """Join only the ten identified low-score messages covered by Aboard #1153."""
+    """Join only the ten identified low-score messages selected for the author spot-check."""
     previous=ROOT/'runs/20261025-2202-e06-addressee-audit'
     original=json.loads((previous/'messages.json').read_text())
     reviewed={}
@@ -53,7 +53,7 @@ def author_review(rows, cached):
     assert len(reviewed)==10 and sum(v=='to_peer' for v in reviewed.values())==9
     selected=[r for r in rows if r['model']=='gpt-oss' and r['first_leak']]
     matched={r['id']:reviewed[r['id']] for r in selected if r['id'] in reviewed}
-    return dict(source='Aboard #1153', blinded=False, preliminary_first_leak_replies=132,
+    return dict(source='unblinded author spot-check of ten low-score messages', blinded=False, preliminary_first_leak_replies=132,
         preliminary_jev_to_peer=122, low_score_reviewed=10, low_score_to_peer=9, low_score_unclear=1,
         high_score_sample_reviewed=8, high_score_sample_to_peer=8,
         current_matched_low_score_reviews=matched,

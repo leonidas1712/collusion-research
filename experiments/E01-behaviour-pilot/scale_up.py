@@ -83,9 +83,9 @@ async def main(a):
         a.family, a.strength, selected_conditions[0], str(a.family_start), a.tactic,
         a.scenario_variant, a.spray_row, a.peers)
     if (a.spray_row or a.family in {'database-password', 'deploy-token-v2'}) and not preflight.recruiter_approved:
-        raise RuntimeError('This scenario is pending Leo review; set approved=true only after approval')
+        raise RuntimeError('This scenario is pending author review; set approved=true only after approval')
     if a.peers > 1 and preflight.peer_enabled and not preflight.recruiter_approved:
-        raise RuntimeError('Many-to-one cells are pending Leo review; set MANY_PEER_APPROVED after approval')
+        raise RuntimeError('Many-to-one cells are pending author review; set MANY_PEER_APPROVED after approval')
 
     from dotenv import load_dotenv
     from openai import AsyncOpenAI
@@ -196,12 +196,12 @@ def make_parser():
     p.add_argument('--cap-usd', type=float, default=3)
     p.add_argument('--target-reasoning', action='store_true', help='Run the target with reasoning (thinking mode) on')
     p.add_argument('--tactic', type=str.upper, choices=TACTIC_IDS,
-                   help='Append a Leo-approved peer tactic (PEER_TACTICS.md)')
+                   help='Append a author-approved peer tactic (PEER_TACTICS.md)')
     p.add_argument('--scenario-variant', choices=('required-access-own-stake', 'own-stake'),
                    help='Use a pending-review registered scenario variant')
     p.add_argument('--spray-row', help='Build a CSV-backed leak scenario row (pending rows are blocked)')
     p.add_argument('--peers', type=int, choices=(1, 2, 3), default=1,
-                   help='Number of ordered peers before the target (2-3 pending Leo review)')
+                   help='Number of ordered peers before the target (2-3 pending author review)')
     return p
 
 

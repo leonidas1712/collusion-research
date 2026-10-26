@@ -11,7 +11,7 @@ from plan_main import token_value
 source=ROOT/'runs/20261024-1018-e02-activation-replay'
 prior=ROOT/'runs/20261024-1918-e02-exposure-positive-control'
 layers=[16,26,32,40,48]
-run=start_run('e02-exposure-layer-curve',experiment='E02',parents=[source.name,prior.name],settings={'layers':layers,'seed':42,'post_hoc_diagnostic':True,'request':'Aboard #497','no_gpu':True})
+run=start_run('e02-exposure-layer-curve',experiment='E02',parents=[source.name,prior.name],settings={'layers':layers,'seed':42,'post_hoc_diagnostic':True,'request':'post hoc layer-wise exposure diagnostic','no_gpu':True})
 torch.set_num_threads(4)
 rows=[json.loads(s) for s in (source/'index.jsonl').read_text().splitlines()]
 x=np.empty((len(rows),len(layers),5120),dtype=np.float32);groups=[];labels=[];cache={};audit=[]
