@@ -108,13 +108,13 @@ The reasoning raises Jev's score but leaves its ranking inverted.
 
 \begin{table}[h]
   \centering
-  \caption{\textbf{Jev scored on the same calls as the per-call probe.} AUROC within scenario and round, with 95\% bootstrap intervals, on the development episodes. ``Pooled'' is the AUROC over all calls without grouping by scenario and round. The flag rates use the alarm cutoff set on control episodes, and ``non-leaking'' means calls in episodes that never leak. The main text reports the gpt-oss-20b row with reasoning.}
+  \caption{\textbf{Jev scored on the same calls as the per-call probe.} AUROC within scenario and round, with 95\% bootstrap intervals, on the development episodes. ``Unstratified'' is the AUROC over all calls without grouping by scenario and round. The flag rates use the alarm cutoff set on control episodes, and ``non-leaking'' means calls in episodes that never leak. The main text reports the gpt-oss-20b row with reasoning.}
   \label{tab:monitor-percall}
   \small
   \begin{tabular}{@{}lccccc@{}}
     \toprule
     & & & Leaking & Non-leaking & Probe \\
-    Model and Jev input & AUROC & Pooled & flagged & flagged & minus Jev \\
+    Model and Jev input & AUROC & Unstratified & flagged & flagged & minus Jev \\
     \midrule
     Qwen3-32B & \qwenCallJev{} \qwenCallJevCI{} & \qwenCallJevUnstratified{} & \qwenCallJevLeakFlagged{} & \qwenCallJevRefusingFlagged{} & \qwenCallProbeMinusJev{} \qwenCallProbeMinusJevCI{} \\
     gpt-oss-20b & & & & & \\
