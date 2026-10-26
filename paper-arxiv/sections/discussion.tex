@@ -4,6 +4,8 @@
 An overseer cannot tell early which episode will leak, but it can tell which call is about to.
 A probe that scores each call before it runs could pause that call and hand it to a human or a stronger monitor, at the cost of some alarms in episodes that never leak (\cref{sec:monitor}).
 Further from the act the signal fades, so our results do not support warnings rounds ahead.
+The same per-call signal is also readable without activations: a cheap text classifier trained on labelled calls recovers most of it, far above a zero-shot monitor, which matters for agents whose weights an overseer cannot inspect.
+Whether that holds outside templated scenarios like ours is open.
 
 For an exact secret, an output filter that matches the string would also stop the leak.
 The per-call probe matters most where no string filter can match, as with paraphrased or encoded leaks, and where an overseer wants to pause a call before it acts.
