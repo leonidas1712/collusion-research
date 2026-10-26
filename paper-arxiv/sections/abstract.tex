@@ -8,5 +8,5 @@ On gpt-oss-20b, a reasoning probe scores \gptossFreshReasoning{} in a pre-regist
 The signal is sharp but short-range.
 Checked at each call, the probe can tell when the very next output will leak the secret, but it weakens when asked about the next round, and is weak when asked whether an episode will ever leak.
 
-For multi-agent oversight, this suggests a cheap monitor that runs on every call and pauses an agent just before it gives in, catching what a text monitor misses.
-Probes matter most where output filters fail, such as paraphrased, encoded or slowly coordinated leaks, which we leave to future work.
+For multi-agent oversight, this suggests a cheap monitor that runs on every call and pauses an agent just before it gives in, beating a text monitor given the same conversation.
+Probes would matter most where output filters fail, such as paraphrased, encoded or slowly coordinated leaks, which we leave to future work.

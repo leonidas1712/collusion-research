@@ -15,7 +15,12 @@ We list the limitations in order of how much each could change a headline.
 \paragraph{Narrow setting.}
 We test two models, six scenarios built from one task template, one peer and one target per episode, and synthetic tools and secrets.
 Leaks are exact strings, which an output filter would catch.
+Qwen3-32B ran with its reasoning switched off; in a small screen with reasoning on, it leaked less often (\cref{app:behaviour}).
 Settings with several peers, recruited agents that recruit others, or paraphrased leaks are untested.
+
+\paragraph{One peer strategy on gpt-oss-20b.}
+gpt-oss-20b refuses direct requests, so its leaks come from one peer strategy, a delayed request to copy the whole configuration block, and nearly every first leak is a write to the handoff file.
+The probe may partly detect an imminent write of that block (\cref{app:shortcuts}).
 
 \paragraph{Few confirmed leaking calls.}
 The pre-registered per-call result covers one probe on one model, and the fresh test episodes hold few leaking calls, so its interval is wide (\cref{app:confirmation}).

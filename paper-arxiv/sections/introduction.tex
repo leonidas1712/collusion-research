@@ -21,13 +21,13 @@ It is not simply detecting the request, the secret string, or the moment the pro
 
 For multi-agent oversight, this suggests a cheap monitor that runs on every call and pauses an agent just before it gives in.
 For an exact secret like ours, an output filter would also catch the leak.
-Probes matter most where output filters fail, such as paraphrased, encoded or slowly coordinated leaks, which we leave to future work.
+Probes would matter most where output filters fail, such as paraphrased, encoded or slowly coordinated leaks, which we leave to future work.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig1_headline.pdf}
   \caption{\textbf{The nearer the act, the more predictable the leak.}
-  For each model, the probe is asked three questions of the same calls, from ``will this episode ever leak?'' to ``will this call leak?''.
+  For each model, the probe is asked three questions of the same calls with the same leak label, from ``will this episode ever leak?'' to ``will this call leak?''.
   Hollow markers are held-out scenarios on development episodes; filled markers are fresh test episodes, each scored once by a model fit only on development episodes.
   On gpt-oss-20b, the filled diamond is the reasoning probe, whose fresh test was pre-registered; the circles are the last-prompt probe.
   AUROC is computed within each scenario and round, so 0.5 is chance; whiskers are 95\% bootstrap intervals.}

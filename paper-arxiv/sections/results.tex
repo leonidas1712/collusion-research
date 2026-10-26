@@ -64,8 +64,8 @@ It scores \qwenCallProbe{} on Qwen3-32B, reading one position before the call wr
 The Qwen3-32B probe holds on fresh episodes.
 We fit it on the development episodes only, committed it, and then scored it once on the fresh test episodes, which were never used to fit or choose anything for it (AUROC~\qwenFreshCallProbe{}).
 
-On gpt-oss-20b, the last-prompt probe tested the same way scores lower on its fresh episodes (\gptossFreshCallProbe{}) than the pre-registered reasoning probe does on the same calls.
-On development episodes the two probes score about the same, so most of the signal is present before the model starts to reason, but on fresh episodes reading the reasoning helped.
+On gpt-oss-20b, tested the same way on its fresh episodes, the last-prompt probe scored \gptossFreshCallProbe{} and the pre-registered reasoning probe \gptossFreshReasoning{} on the same calls; with few leaking calls, that gap is within noise.
+On development episodes the two probes score about the same, so most of the signal is present before the model starts to reason.
 
 The signal is specific to the call that leaks.
 Asked one call earlier, with the leaking call itself removed, the probe scores \qwenStrictNextProbe{} on Qwen3-32B: above chance, but far below its score on the leaking call.
@@ -104,8 +104,8 @@ Even with its ranking reversed after the fact, it stays below the probe (\cref{a
 
 Detecting the request cannot explain the score.
 Every scored call comes from an episode with a recruiting peer, and we compare it only with calls from the same scenario and round, which face the same kind of pressure.
-On gpt-oss-20b, every scored call comes after the peer's request.
-As a placebo, we apply the probe to the calls made before the request, where nothing predictive has happened yet, and it scores at chance (\gptossPlacebo{}; \cref{fig:shortcuts}).
+On gpt-oss-20b, every scored call, leaking or not, also comes after the peer's request.
+As a sanity check, the probe applied to the calls made before the request does not separate the episodes that later leak (\gptossPlacebo{}; \cref{fig:shortcuts}).
 
 The probe is not matching the secret string or detecting the file read.
 On gpt-oss-20b, almost no leaking call names the secret in its reasoning, and keyword rules on the reasoning do no better than chance (\gptossKeyword{}).

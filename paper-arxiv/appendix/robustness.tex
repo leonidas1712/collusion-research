@@ -15,7 +15,7 @@ Dropping every reasoning token from the first exact mention of the secret onward
 Including the calls that returned no reasoning, the last-prompt probe on gpt-oss-20b scores slightly higher.
 
 \paragraph{Other labels.}
-On gpt-oss-20b, scoring the first channel post instead of the first public emission gives a similarly high score.
+On gpt-oss-20b, scoring the first channel post instead of the first call that writes the secret out gives a similarly high score.
 That comparison uses a wider set of calls, and most of its positives repost a value that an earlier file write had already made public, so it says little about stopping the first leak.
 On Qwen3-32B, excluding the calls that write the value back into the protected file changes the score very little.
 
