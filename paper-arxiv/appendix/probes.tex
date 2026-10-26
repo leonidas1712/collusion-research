@@ -22,6 +22,15 @@ The leaking call outranks one of the two, so the group's AUROC is 0.5.
 A second group holds a leaking call at 0.7 and one other call at 0.4, so its AUROC is 1.
 Each group has one positive, so the reported value is their mean, 0.75.
 Groups with only one class are dropped, and ties count one half, which is why any score that is constant within a group gets exactly 0.5.
+\Cref{tab:group-coverage} shows, for each headline test, how many leaking calls remain in groups that hold both kinds of call.
+
+\begin{table}[h]
+  \centering
+  \caption{Scenario-and-round groups kept by the metric, and the leaking calls they contain, for each headline test.}
+  \label{tab:group-coverage}
+  \small
+  \input{tables/group_coverage.tex}
+\end{table}
 
 \paragraph{Why compare only within scenario and round.}
 Leaks fall in earlier rounds than other calls, so rating early rounds as risky already scores well on the raw AUROC.
