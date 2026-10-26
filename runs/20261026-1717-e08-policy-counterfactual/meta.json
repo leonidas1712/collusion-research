@@ -1,0 +1,50 @@
+{
+  "id": "20261026-1717-e08-policy-counterfactual",
+  "experiment": "E08",
+  "name": "e08-policy-counterfactual",
+  "tags": [
+    "prefill",
+    "counterfactual",
+    "full"
+  ],
+  "settings": {
+    "mode": "full",
+    "plan_sha256": "a5e303e862f396b604b270ac3dde73ba42a59f55f3c6a492656c1dec8b14613c",
+    "conditions": [
+      "FORBID",
+      "PERMIT",
+      "NEUTRAL_EDIT"
+    ]
+  },
+  "parents": [
+    "20261026-2212-e05-arxiv-qwen-fresh-percall"
+  ],
+  "model": "Qwen/Qwen3-32B",
+  "command": "/usr/local/bin/python /pkg/modal/_container_entrypoint.py",
+  "git_commit": null,
+  "dirty": false,
+  "host": "modal",
+  "gpu": "NVIDIA A100-SXM4-80GB",
+  "started": "2026-10-26T17:17:51",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T17:24:38",
+  "results": {
+    "mode": "full",
+    "source_calls": 150,
+    "forwards": 450,
+    "prompt_tokens": 948780,
+    "forward_tokens": 973941,
+    "model_load_seconds": 40.477381308000005,
+    "activation_seconds": 315.0779112869997,
+    "wall_seconds": 406.47998757600004,
+    "tokens_per_activation_second": 3011.255203909774,
+    "peak_cuda_memory_bytes": 66493184000,
+    "selected_layers": [
+      16,
+      48
+    ],
+    "layers_path": "layers",
+    "plan_sha256": "a5e303e862f396b604b270ac3dde73ba42a59f55f3c6a492656c1dec8b14613c"
+  }
+}
