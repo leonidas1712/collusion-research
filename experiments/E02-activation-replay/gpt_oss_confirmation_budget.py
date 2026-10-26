@@ -16,7 +16,22 @@ CAP=4.
 OVERHEAD=.50
 
 
-def main(plan_path):
+def full_run_projection(plan, client_path, old_plan_path):
+    """Scale the completed same-model full replay, including its retries/load time."""
+    client=json.loads(Path(client_path).read_text());old=json.loads(Path(old_plan_path).read_text())
+    assert client['app_stopped'] and not client['error']
+    assert (old['model'],old['revision'])==(plan['model'],plan['revision'])
+    old_tokens=old['counts']['prompt_tokens']+old['counts']['reply_tokens']
+    new_tokens=plan['counts']['prompt_tokens']+plan['counts']['reply_tokens']
+    projected_seconds=new_tokens/old_tokens*client['client_wall_seconds']
+    return dict(benchmark_client=str(client_path),benchmark_plan=str(old_plan_path),
+                old_tokens=old_tokens,new_tokens=new_tokens,old_wall_seconds=client['client_wall_seconds'],
+                projected_seconds=projected_seconds,margin=1.25,
+                upper_usd=projected_seconds*RATE*1.25+OVERHEAD,
+                note='Outcome-blind completed full-run estimate; cap and measured longest-first shard guard unchanged')
+
+
+def main(plan_path, benchmark_client=None, benchmark_plan=None):
     plan_path=Path(plan_path).resolve();plan=json.loads(plan_path.read_text())
     assert plan.get('rendering_gate_approval'), 'Provider rendering gate is pending author decision (#1173); do not launch this plan'
     budget_root=Path(plan.get('budget_root',plan_path.parent));budget_root.mkdir(parents=True,exist_ok=True)
@@ -29,10 +44,13 @@ def main(plan_path):
         spent+=max(summary['conservative_compute_upper_usd'],summary['billed_so_far_usd'])
     remaining=min(CAP-OVERHEAD-spent,float(plan.get('phase_ceiling_usd',CAP)))
     assert remaining>0
-    assert plan['counts']['prior_projection_usd_with_2x_margin']<=remaining+OVERHEAD,'Prior projection exceeds phase/shared remainder'
+    projection=full_run_projection(plan,benchmark_client,benchmark_plan) if benchmark_client else None
+    estimate=projection['upper_usd'] if projection else plan['counts']['prior_projection_usd_with_2x_margin']
+    assert estimate<=remaining+OVERHEAD,'Prior projection exceeds phase/shared remainder'
     run=start_run('e02-gpt-oss-confirm-client',experiment='E02',parents=[plan_path.parent.name],
         settings={'approval':'Aboard1833: sharedUSD10confirmation, API cost deducted before GPU','cap_usd':CAP,'prior_upper_usd':spent,
                   'overhead_reserve_usd':OVERHEAD,'remaining_usd':remaining,'rate_per_second':RATE,'plan':str(plan_path)})
+    if projection:write_json_atomic(run.dir/'projection.json',projection)
     write_json_atomic(ledger_path,[*previous,str(run.dir.resolve())])
     command=['modal','run','experiments/E02-activation-replay/modal_gpt_oss_full.py','--plan',str(plan_path),
              '--journal',str(journal),'--remaining-usd',str(remaining)]
@@ -83,8 +101,10 @@ def main(plan_path):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--plan',required=True);p.add_argument('--api-ledger',required=True);p.add_argument('--cap',type=float,default=4);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--plan',required=True);p.add_argument('--api-ledger',required=True);p.add_argument('--cap',type=float,default=4)
+    p.add_argument('--benchmark-client');p.add_argument('--benchmark-plan');a=p.parse_args()
+    assert bool(a.benchmark_client)==bool(a.benchmark_plan)
     api=sum(float(r['charged_or_reserved_usd']) for r in json.loads(Path(a.api_ledger).read_text()))
     assert 0<a.cap<=10-api-1, 'API plus GPU cap plus reserve must remain belowUSD10'
     CAP=a.cap
-    main(a.plan)
+    main(a.plan,a.benchmark_client,a.benchmark_plan)

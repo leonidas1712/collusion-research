@@ -20,7 +20,7 @@ def say(message):
     subprocess.run(['aboard', 'say', '--to', '@claude', '--reply', '1833', message], cwd=ROOT, check=True)
 
 
-def main(freeze):
+def main(freeze, existing_plan=None):
     freeze = freeze.resolve()
     run = start_run('e05-stream-confirm-completion', experiment='E05', parents=[freeze.name],
                     settings={'approval': 'Aboard1833/1838/1861/1867', 'hard_cap_usd': 10,
@@ -41,15 +41,17 @@ def main(freeze):
             say(f"Fixed bulk finished with {bulk['incomplete']} incomplete attempts. Applying the predeclared "
                 "incomplete-only replacement rule once, with fresh reserved families, unchanged settings and shared USD5 ledger. "
                 "No replacement uses exposure, task correctness or leak outcome.")
-            run_logged([root_python, 'experiments/E03-target-screen/stream_confirm_topup.py',
-                        '--freeze', str(freeze)], run.dir / 'topup.log')
+            if not (freeze / 'topup_run.json').exists():
+                run_logged([root_python, 'experiments/E03-target-screen/stream_confirm_topup.py',
+                            '--freeze', str(freeze)], run.dir / 'topup.log')
             topup = json.loads((freeze / 'topup_run.json').read_text())
             assert topup['status'] == 'finished' and topup['incomplete'] == 0, 'Replacement failed; stop for review'
             cost_source = topup
         else:
             cost_source = bulk
-        run_logged([root_python, 'experiments/E03-target-screen/stream_confirm_manifest.py',
-                    '--freeze', str(freeze)], run.dir / 'manifest.log')
+        if not (freeze / 'confirmation_manifest.json').exists():
+            run_logged([root_python, 'experiments/E03-target-screen/stream_confirm_manifest.py',
+                        '--freeze', str(freeze)], run.dir / 'manifest.log')
         manifest = json.loads((freeze / 'confirmation_manifest.json').read_text())
         assert manifest['selected'] == 84 and not manifest['deficits']
         ledger = [{'charged_or_reserved_usd': cost_source['charged_or_reserved_total_including_benchmark'],
@@ -58,27 +60,37 @@ def main(freeze):
                    'benchmark_included_once': True}]
         write_json_atomic(freeze / 'replay_api_ledger.json', ledger)
         assert float(ledger[0]['charged_or_reserved_usd']) <= 5
-        run_logged([replay_python, 'experiments/E02-activation-replay/plan_gpt_oss_confirmation.py',
+        if existing_plan is None:
+            run_logged([replay_python, 'experiments/E02-activation-replay/plan_gpt_oss_confirmation.py',
                     '--manifest', manifest['path'], '--shard-size', '100',
                     '--provider-modes', '{"AkashML":"current_turn","DekaLLM":"drop_all"}',
                     '--approval-ref', 'Aboard1833/1838/1861; same frozen provider-specific renderer',
                     '--budget-root', str(freeze / 'gpu-budget')], run.dir / 'plan.log')
-        lines = (run.dir / 'plan.log').read_text().splitlines()
-        paths = [s.removeprefix('FULL_PLAN ') for s in lines if s.startswith('FULL_PLAN ')]
-        assert len(paths) == 1
-        plan_path = Path(paths[0]).resolve()
+            lines = (run.dir / 'plan.log').read_text().splitlines()
+            paths = [s.removeprefix('FULL_PLAN ') for s in lines if s.startswith('FULL_PLAN ')]
+            assert len(paths) == 1
+            plan_path = Path(paths[0]).resolve()
+        else:
+            plan_path = existing_plan.resolve()
         plan = json.loads(plan_path.read_text())
-        projection = plan['counts']['prior_projection_usd_with_2x_margin']
+        assert Path(plan['source_manifest']).resolve()==Path(manifest['path']).resolve()
+        from gpt_oss_confirmation_budget import full_run_projection
+        benchmark_client=ROOT/'runs/20261025-2253-e02-gpt-oss-full-client/summary.json'
+        benchmark_plan=ROOT/'runs/20261025-2251-e02-gpt-oss-full-plan/plan.json'
+        estimate=full_run_projection(plan,benchmark_client,benchmark_plan)
+        write_json_atomic(freeze/'replay_projection_amendment.json',estimate)
+        projection = estimate['upper_usd']
         assert projection <= 4, 'Prior replay projection exceeds USD4 phase cap'
         write_json_atomic(freeze / 'replay_plan_pointer.json', {'path': str(plan_path), 'counts': plan['counts']})
         say(f"Confirmation collection fixed84 complete; API billed USD{ledger[0]['billed_usd']}, "
             f"charged/reserved USD{ledger[0]['charged_or_reserved_usd']}. Replay plan {plan_path.parent.name}: "
-            f"{plan['counts']['requests']} requests, prior2x-margin GPU projection USD{projection:.3f}. "
+            f"{plan['counts']['requests']} requests, completed-full-run 25%-margin GPU projection USD{projection:.3f}. "
             "Launching cached-weight replay under USD4 cap; measured first-shard projection abort remains enabled. Frozen weights unchanged.")
         gpu_log = (run.dir / 'gpu.log').open('w')
         gpu = subprocess.Popen([root_python, 'experiments/E02-activation-replay/gpt_oss_confirmation_budget.py',
                                 '--plan', str(plan_path), '--api-ledger', str(freeze / 'replay_api_ledger.json'),
-                                '--cap', '4'], cwd=ROOT, stdout=gpu_log, stderr=subprocess.STDOUT)
+                                '--cap', '4', '--benchmark-client',str(benchmark_client),
+                                '--benchmark-plan',str(benchmark_plan)], cwd=ROOT, stdout=gpu_log, stderr=subprocess.STDOUT)
         client_list = freeze / 'gpu-budget/clients.json'
         while not client_list.exists():
             assert gpu.poll() is None, 'GPU wrapper failed before client creation'
@@ -120,4 +132,5 @@ def main(freeze):
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('--freeze', type=Path, required=True)
-    main(p.parse_args().freeze)
+    p.add_argument('--replay-plan',type=Path)
+    a=p.parse_args();main(a.freeze,a.replay_plan)
