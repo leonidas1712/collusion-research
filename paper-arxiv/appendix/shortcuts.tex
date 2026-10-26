@@ -36,7 +36,7 @@ So most of the per-call signal is present in the text the model reads, and the p
 
 \begin{table}[h]
   \centering
-  \caption{Text and workflow baselines, development episodes, held-out scenarios, on the same calls as the last-prompt probe. $^*$Against the latest-message classifier on Qwen3-32B and the full-input classifier on gpt-oss-20b, the only paired comparisons computed.}
+  \caption{Text and workflow baselines, development episodes, held-out scenarios, on the same calls as the last-prompt probe.}
   \label{tab:text-baselines}
   \small
   \begin{tabular}{@{}lcc@{}}
@@ -46,7 +46,8 @@ So most of the per-call signal is present in the text the model reads, and the p
     Last-prompt probe & \qwenCallProbe{} & \gptossCallProbe{} \\
     Trained text classifier, full input & \qwenTextClassifier{} & \gptossTextClassifier{} \\
     Trained text classifier, latest message only & \qwenTextClassifierLatest{} & \gptossTextClassifierLatest{} \\
-    Probe minus text classifier, paired$^*$ & \qwenTextGap{} & \gptossTextGap{} \\
+    Probe minus full-input classifier, paired & \qwenTextGapFull{} & \gptossTextGapFull{} \\
+    Probe minus latest-message classifier, paired & \qwenTextGapLatest{} & \gptossTextGapLatest{} \\
     Flag: the call's action is a file write & -- & \gptossWriteBaseline{} \\
     Last-prompt probe, handoff-file writes only & -- & \gptossHandoffProbe{} \\
     \bottomrule
