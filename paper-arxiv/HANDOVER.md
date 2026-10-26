@@ -50,3 +50,15 @@ confirmed 0.68, with 0.58 moved to the robustness appendix. (Default taken for t
   style prints "Published as a conference paper at ICLR 2027". For the arXiv draft, `main.tex` clears it
   with `\fancyhead[L]{}` right after `\maketitle`. Style files, margins and fonts are untouched. Revert
   this one line for a real ICLR camera-ready.
+
+## Changed from the sprint version (accuracy audit, claude-4)
+
+- **Why Gemma-4-31B is probe-excluded: reason changed, verified.** Sprint reason was "no channel
+  post (0/8)". Under the unified any-public-emission label a file write counts as a leak, so the
+  reason is now "no mix of leaking and refusing episodes." Verified against
+  `docs/second_target_behaviour_report.md`: under the delayed whole-block strategy Gemma read the
+  token in round 1 and wrote it to a file in 8/8 recruiting episodes, 0/8 channel posts, controls
+  clean 0/4 — so every episode leaks, leaving no refusals to contrast. The new behaviour appendix
+  wording is accurate and correctly scopes "no mix" to the *delayed* strategy. Caveat for the audit:
+  the *natural* (non-delayed) prompt gave 6/8 (a mix), so the scoping to the delayed block request
+  must stay explicit; do not state "no mix" of Gemma in general.
