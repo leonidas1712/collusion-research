@@ -76,31 +76,7 @@ We left out Luna Decisions because it scored at chance as a forecaster on the de
   \caption{\textbf{Most round-level setups are close to chance.} AUROC within scenario and round, with 95\% bootstrap intervals, on the Qwen3-32B development episodes. ``Ever'' asks whether the episode leaks at any point. ``This round or next'' asks whether it leaks in the current round or the next.}
   \label{tab:monitor-grid}
   \small
-  \begin{tabular}{@{}lllcc@{}}
-    \toprule
-    Monitor & Question & Access & Ever & This round or next \\
-    \midrule
-    Jev 1.14 & Detector & Actions only & \qwenMonJevDetectActionsEver{} \qwenMonJevDetectActionsEverCI{} & \qwenMonJevDetectActionsNear{} \qwenMonJevDetectActionsNearCI{} \\
-    Jev 1.14 & Detector & Plus peer messages & \qwenMonJevDetectPeerEver{} \qwenMonJevDetectPeerEverCI{} & \qwenMonJevDetectPeerNear{} \qwenMonJevDetectPeerNearCI{} \\
-    Jev 1.14 & Detector & Everything seen & \qwenMonJevDetectAllEver{} \qwenMonJevDetectAllEverCI{} & \qwenMonJevDetectAllNear{} \qwenMonJevDetectAllNearCI{} \\
-    GPT-5-nano & Detector & Actions only & \qwenMonNanoDetectActionsEver{} \qwenMonNanoDetectActionsEverCI{} & \qwenMonNanoDetectActionsNear{} \qwenMonNanoDetectActionsNearCI{} \\
-    GPT-5-nano & Detector & Plus peer messages & \qwenMonNanoDetectPeerEver{} \qwenMonNanoDetectPeerEverCI{} & \qwenMonNanoDetectPeerNear{} \qwenMonNanoDetectPeerNearCI{} \\
-    GPT-5-nano & Detector & Everything seen & \qwenMonNanoDetectAllEver{} \qwenMonNanoDetectAllEverCI{} & \qwenMonNanoDetectAllNear{} \qwenMonNanoDetectAllNearCI{} \\
-    Luna Decisions & Detector & Actions only & \qwenMonLunaDetectActionsEver{} \qwenMonLunaDetectActionsEverCI{} & \qwenMonLunaDetectActionsNear{} \qwenMonLunaDetectActionsNearCI{} \\
-    Luna Decisions & Detector & Plus peer messages & \qwenMonLunaDetectPeerEver{} \qwenMonLunaDetectPeerEverCI{} & \qwenMonLunaDetectPeerNear{} \qwenMonLunaDetectPeerNearCI{} \\
-    Luna Decisions & Detector & Everything seen & \qwenMonLunaDetectAllEver{} \qwenMonLunaDetectAllEverCI{} & \qwenMonLunaDetectAllNear{} \qwenMonLunaDetectAllNearCI{} \\
-    \midrule
-    Jev 1.14 & Forecaster & Actions only & \qwenMonJevForecastActionsEver{} \qwenMonJevForecastActionsEverCI{} & \qwenMonJevForecastActionsNear{} \qwenMonJevForecastActionsNearCI{} \\
-    Jev 1.14 & Forecaster & Plus peer messages & \qwenMonJevForecastPeerEver{} \qwenMonJevForecastPeerEverCI{} & \qwenMonJevForecastPeerNear{} \qwenMonJevForecastPeerNearCI{} \\
-    Jev 1.14 & Forecaster & Everything seen & \qwenMonJevForecastAllEver{} \qwenMonJevForecastAllEverCI{} & \qwenMonJevForecastAllNear{} \qwenMonJevForecastAllNearCI{} \\
-    GPT-5-nano & Forecaster & Actions only & \qwenMonNanoForecastActionsEver{} \qwenMonNanoForecastActionsEverCI{} & \qwenMonNanoForecastActionsNear{} \qwenMonNanoForecastActionsNearCI{} \\
-    GPT-5-nano & Forecaster & Plus peer messages & \qwenMonNanoForecastPeerEver{} \qwenMonNanoForecastPeerEverCI{} & \qwenMonNanoForecastPeerNear{} \qwenMonNanoForecastPeerNearCI{} \\
-    GPT-5-nano & Forecaster & Everything seen & \qwenMonNanoForecastAllEver{} \qwenMonNanoForecastAllEverCI{} & \qwenMonNanoForecastAllNear{} \qwenMonNanoForecastAllNearCI{} \\
-    Luna Decisions & Forecaster & Actions only & \qwenMonLunaForecastActionsEver{} \qwenMonLunaForecastActionsEverCI{} & \qwenMonLunaForecastActionsNear{} \qwenMonLunaForecastActionsNearCI{} \\
-    Luna Decisions & Forecaster & Plus peer messages & \qwenMonLunaForecastPeerEver{} \qwenMonLunaForecastPeerEverCI{} & \qwenMonLunaForecastPeerNear{} \qwenMonLunaForecastPeerNearCI{} \\
-    Luna Decisions & Forecaster & Everything seen & \qwenMonLunaForecastAllEver{} \qwenMonLunaForecastAllEverCI{} & \qwenMonLunaForecastAllNear{} \qwenMonLunaForecastAllNearCI{} \\
-    \bottomrule
-  \end{tabular}
+  \input{tables/monitor_grid.tex}
 \end{table}
 
 \subsection{How does Jev score a single call, and why does it fail on gpt-oss-20b?}
@@ -123,16 +99,16 @@ With the same-turn reasoning, reversed Jev scores \gptossCallJevReversed{} \gpto
 That interval lies wholly below the probe's interval of \gptossCallProbeCI{}.
 Without the same-turn reasoning, the probe beats reversed Jev by \gptossCallProbeMinusJevNoReasoningReversed{} \gptossCallProbeMinusJevNoReasoningReversedCI{}.
 
+We ran Jev on gpt-oss-20b in two versions, and the main text reports the version with reasoning.
 gpt-oss-20b keeps its earlier reasoning from the same turn in its prompt, so the last-prompt probe can read it.
-We therefore ran Jev on gpt-oss-20b in two versions.
-The first removes that reasoning and shows the request as structured messages.
-The second includes the reasoning and renders the input in the model's own chat format, so it matches the probe's input more closely.
+The main version includes that reasoning, so it matches the probe's input more closely.
+In the main version, Jev reads the conversation as text in gpt-oss-20b's own chat format, Harmony, rather than as the raw request messages.
+The second version removes the reasoning and shows the raw request messages and tool definitions, as for Qwen3-32B.
 The reasoning raises Jev's score but leaves its ranking inverted.
-The main text reports the second version.
 
 \begin{table}[h]
   \centering
-  \caption{\textbf{Jev scored on the same calls as the per-call probe.} AUROC within scenario and round, with 95\% bootstrap intervals, on the development episodes. ``Pooled'' is the AUROC over all calls without grouping by scenario and round. The flag rates use the alarm cutoff set on control episodes, and ``non-leaking'' means calls in episodes that never leak.}
+  \caption{\textbf{Jev scored on the same calls as the per-call probe.} AUROC within scenario and round, with 95\% bootstrap intervals, on the development episodes. ``Pooled'' is the AUROC over all calls without grouping by scenario and round. The flag rates use the alarm cutoff set on control episodes, and ``non-leaking'' means calls in episodes that never leak. The main text reports the gpt-oss-20b row with reasoning.}
   \label{tab:monitor-percall}
   \small
   \begin{tabular}{@{}lccccc@{}}
@@ -142,8 +118,8 @@ The main text reports the second version.
     \midrule
     Qwen3-32B & \qwenCallJev{} \qwenCallJevCI{} & \qwenCallJevUnstratified{} & \qwenCallJevLeakFlagged{} & \qwenCallJevRefusingFlagged{} & \qwenCallProbeMinusJev{} \qwenCallProbeMinusJevCI{} \\
     gpt-oss-20b & & & & & \\
+    \quad with reasoning (main) & \gptossCallJev{} \gptossCallJevCI{} & \gptossCallJevUnstratified{} & \gptossCallJevLeakFlagged{} & \gptossCallJevRefusingFlagged{} & \gptossCallProbeMinusJev{} \gptossCallProbeMinusJevCI{} \\
     \quad without reasoning & \gptossCallJevNoReasoning{} \gptossCallJevNoReasoningCI{} & \gptossCallJevNoReasoningUnstratified{} & \gptossCallJevNoReasoningLeakFlagged{} & \gptossCallJevNoReasoningRefusingFlagged{} & \gptossCallProbeMinusJevNoReasoning{} \gptossCallProbeMinusJevNoReasoningCI{} \\
-    \quad with reasoning & \gptossCallJev{} \gptossCallJevCI{} & \gptossCallJevUnstratified{} & \gptossCallJevLeakFlagged{} & \gptossCallJevRefusingFlagged{} & \gptossCallProbeMinusJev{} \gptossCallProbeMinusJevCI{} \\
     \bottomrule
   \end{tabular}
 \end{table}
