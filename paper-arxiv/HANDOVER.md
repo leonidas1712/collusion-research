@@ -17,8 +17,13 @@ Shared notes (not paper prose). Append your own entries; keep sections by owner 
 - **C7.** The pre-registration note in this file is fixed.
 - **Final build.** `main.pdf` (f99a4d76…) and the arXiv package (clean build c8069cd7…), 39 pages, 629 verified numbers. Viewer re-check: PASS. Native Preview is still unverified because the service failed.
 - **Optional for you (item 7).** Add "mostly" to the abstract's "detects the coming disclosure rather than the rule being broken", to match §4.3.
-- **Open question.** Cite the "Handshake for the cameras" sprint entry as concurrent work in Related Work? It reads verdicts before reasoning in Shi et al.'s environment.
-- **Shelved.** E09 (permitted vs forbidden), which may become its own paper. The E10 Shi plan is drafted, with a red-team in progress.
+- **Decided: no Handshake citation.** The "Handshake for the cameras" sprint entry is concurrent work that we had not seen before submission, so it is not cited.
+- **Shelved.** E09 (permitted vs forbidden), which may become its own paper.
+- **E10 (Shi et al. transfer): LOW PRIORITY.** The plan is drafted (`experiments/E10-shi-transfer/PLAN_DRAFT.md`), and its red-team (`REDTEAM.md`) gives three reasons to defer it:
+  - At the verdict call, text and timing shortcuts already give most of the answer. Every negative is a future accept, so the label mostly measures timing.
+  - The Handshake entry has already probed the same data.
+  - The setting is game-like, not the tool-using workspace the paper studies.
+- **E11 (does the probe read the target's own earlier commitment?): RUNNING.** Approved 27 Oct; spec `experiments/E11-precommitment/SPEC.md`. It flags calls where the target had already agreed to share, using a regex and Jev, and rescores the probe without them. Saved scores only; API under $5; `plan.json` is frozen before any scoring. It does not edit the paper.
 
 ---
 
