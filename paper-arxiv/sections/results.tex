@@ -73,7 +73,7 @@ A round-level test on fresh Qwen3-32B episodes, with its own leak label, gives t
   \includegraphics[width=\linewidth]{fig3_percall.pdf}
   \caption{\textbf{A probe picks out the call that leaks; a zero-shot monitor does not, and a trained text classifier comes close.}
   Per-call AUROC on held-out scenarios, development episodes, with 95\% bootstrap intervals.
-  The zero-shot monitor (Jev) sees the conversation and tool results that the last-prompt probe sees, with the secret masked; on gpt-oss-20b it scores below chance because it flags almost every call made under pressure. The trained text classifier reads the latest message on Qwen3-32B and the full input on gpt-oss-20b (\cref{app:shortcuts}).}
+  The zero-shot monitor (Jev) sees the conversation and tool results that the last-prompt probe sees, with the secret masked; on gpt-oss-20b it scores below chance because it flags almost every call made under pressure. The trained text classifier shows the stronger of two text views for each model, the last message on Qwen3-32B and the full input on gpt-oss-20b; both are in \cref{tab:text-baselines}.}
   \label{fig:percall}
 \end{figure}
 
