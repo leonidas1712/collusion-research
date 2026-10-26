@@ -48,6 +48,10 @@ def build(root=PAPER, env=None):
                 if p.is_file() and p.suffix in {'.tex', '.bib', '.sty', '.bst', '.pdf', '.png'}
                 and p.name != 'main.pdf'
                 and not any(part.startswith('.') or part == 'dist' for part in p.relative_to(root).parts)}
+    generator = root / 'scripts/generate_pending_macros.py'
+    if generator.is_file():
+        subprocess.run([os.sys.executable, str(generator)], check=True)
+        snapshot['pending_macros.tex'] = sha(root / 'pending_macros.tex')
     hashes = json.loads((root / 'template_hashes.json').read_text())
     for name, expected in hashes.items():
         if name.endswith(('.sty', '.bst')) and sha(root / name) != expected:
