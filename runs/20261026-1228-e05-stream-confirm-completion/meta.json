@@ -1,0 +1,77 @@
+{
+  "id": "20261026-1228-e05-stream-confirm-completion",
+  "experiment": "E05",
+  "name": "e05-stream-confirm-completion",
+  "tags": [],
+  "settings": {
+    "approval": "Aboard1833/1838/1861/1867",
+    "hard_cap_usd": 10,
+    "API_cap_usd": 5,
+    "Modal_cap_usd": 4,
+    "reserve_usd": 1,
+    "new_data_refits": false
+  },
+  "parents": [
+    "20261026-1139-e05-stream-confirm"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/.venv/bin/python experiments/E02-activation-replay/run_stream_confirmation.py --freeze runs/20261026-1139-e05-stream-confirm --replay-plan runs/20261026-1225-e02-gpt-oss-confirm-plan/plan.json",
+  "git_commit": "8b905007e66ae928d43b8af29e634412cc499810",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T12:28:30",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T13:03:07",
+  "results": {
+    "primary": {
+      "within_round_auc": 0.905128205128205,
+      "within_round_by_seed": [
+        0.905128205128205
+      ],
+      "within_round_ci95": [
+        0.7754905808477238,
+        0.9913294314381271
+      ],
+      "pooled_auc": 0.9544284940411701,
+      "pooled_by_seed": [
+        0.9544284940411701
+      ],
+      "pooled_ci95": [
+        0.915595671914688,
+        0.9819670749997713
+      ],
+      "positive_coverage_by_seed": [
+        1.0
+      ],
+      "bootstrap_groups": 57,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "predeclared_success": true
+    },
+    "costs": {
+      "API": {
+        "charged_or_reserved_usd": "1.512518196000",
+        "billed_usd": "1.512518196",
+        "source": "/Users/leo/collusion-research/runs/20261026-1221-e03-stream-confirm-topup/budget.json",
+        "benchmark_included_once": true
+      },
+      "GPU": {
+        "app_id": "ap-0WaWgdqOLmcBO8QAj4eXbI",
+        "app_stopped": true,
+        "client_wall_seconds": 1999.5804517497309,
+        "conservative_compute_upper_usd": 1.7996224065747577,
+        "billed_so_far_usd": 1.5740432799999997,
+        "billing_may_lag": true,
+        "total_upper_usd": 2.2996224065747577,
+        "journal": "/Users/leo/collusion-research/runs/20261026-1225-e02-gpt-oss-confirm-plan/completed-shards.json",
+        "error": null
+      },
+      "total_conservative_usd": 3.8121406025747575,
+      "unspent_reserve_usd": 1,
+      "shared_cap_usd": 10
+    }
+  }
+}
