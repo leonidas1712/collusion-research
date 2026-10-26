@@ -27,6 +27,34 @@ A probe that also reads the tokens generated up to the secret ranks them almost 
 For an exact string, an output filter does the same.
 Both use one layer, one seed and a reduced version of a production streaming recipe \citep{cunningham2026}.
 
+\paragraph{The handoff-file write.}
+On gpt-oss-20b, almost every leak copies the configuration block into the handoff file, so the probe might detect an upcoming file write rather than a leak.
+A baseline that knows only whether the call's action is a file write scores well, but among the calls that write the handoff file the probe still separates leaks from non-leaks (\cref{tab:text-baselines}).
+
+\paragraph{A trained text classifier.}
+To test whether the same input text carries the signal, we trained a bag-of-words classifier (TF-IDF features and logistic regression) on each call's input, with the secret masked, on the same calls, folds and weights as the probe.
+On gpt-oss-20b it comes close to the last-prompt probe, and the probe's paired edge is small but its interval excludes zero (\cref{tab:text-baselines}).
+So most of the per-call signal is present in the text the model reads, and the probe's advantage over the zero-shot monitor comes mostly from training, not from access to activations.
+
+\begin{table}[h]
+  \centering
+  \caption{Text and workflow baselines on gpt-oss-20b development episodes, held-out scenarios, on the same calls as the last-prompt probe.}
+  \label{tab:text-baselines}
+  \small
+  \begin{tabular}{@{}lc@{}}
+    \toprule
+    Detector & AUROC \\
+    \midrule
+    Last-prompt probe & \gptossCallProbe{} \\
+    Trained text classifier, full input & \gptossTextClassifier{} \\
+    Trained text classifier, latest message only & \gptossTextClassifierLatest{} \\
+    Probe minus text classifier (paired) & \gptossTextGap{} \\
+    Flag: the call's action is a file write & \gptossWriteBaseline{} \\
+    Last-prompt probe, handoff-file writes only & \gptossHandoffProbe{} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \begin{table}[h]
   \centering
   \caption{Shortcut checks. AUROC within scenario and round, development episodes, held-out scenarios.}

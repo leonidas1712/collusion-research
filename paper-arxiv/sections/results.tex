@@ -121,6 +121,7 @@ As a sanity check, the probe applied to the calls made before the request does n
 The probe is not matching the secret string or detecting the file read.
 On gpt-oss-20b, almost no leaking call names the secret in its reasoning, and keyword rules on the reasoning do no better than chance (\gptossKeyword{}).
 A simple flag that fires when the call's latest input is the protected file's contents scores \gptossReadStep{} on gpt-oss-20b, and the probes beat it on both models (\cref{fig:shortcuts}).
+On gpt-oss-20b, nearly every leak is a write to the handoff file, but among the calls that write that file the probe still separates the leaks from the others (\gptossHandoffProbe{}).
 
 What the probe does read is open.
 On gpt-oss-20b, we trained a separate probe that reads only the tokens new to the call, which are the latest peer message and tool results.
