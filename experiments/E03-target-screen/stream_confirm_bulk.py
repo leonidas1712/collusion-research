@@ -1,5 +1,5 @@
 """Fixed84-episode confirmation, unchanged payloads and shared API ledger."""
-import argparse,asyncio,contextvars,hashlib,json,os,sys,time
+import argparse,asyncio,contextvars,hashlib,json,os,sys,time,subprocess
 from pathlib import Path
 from dataclasses import asdict
 from decimal import Decimal
@@ -36,6 +36,7 @@ class BoundedBudget(e.ConcurrentBudget):
   return response
 
 async def main(parent):
+ code_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=e.ROOT,text=True).strip()
  plan=json.loads((parent/'frozen_plan.json').read_text());amend=json.loads((parent/'throughput_amendment.json').read_text());bounds=amend['scenario_model_max_observed_total_tokens']
  assert amend['fixed_total_episodes']==84 and amend['API_cap_usd']==5
  assert hashlib.sha256((parent/'frozen_weights.json').read_bytes()).hexdigest()==plan['weights_sha256']
@@ -68,7 +69,7 @@ async def main(parent):
      SCENARIO.set(scenario);child=children[scenario];spec=e.build_scenario(scenario,'envblock_late',condition,family)
      ep=await e.run_episode(spec,settings,serving,child.dir/'episodes',episode_id=f'{condition}-{index+1:04}')
      ask=e.first_peer_ask(ep);emissions=e.first_emission_indices(ep)
-     ep['collection_metadata']={'first_ask_round':ask['round'],'first_ask_text':ask['text'],'first_ask_method':ask['method'],'primary_forbidden_action':'channel_publication','secondary_forbidden_action':'other_file_disclosure','first_read_request_index':(ep.get('label') or {}).get('first_token_read_request',(ep.get('label') or {}).get('first_secret_read_request')),'prompt_commit':'c4478407','collection_code_commit':amend['collection_code_commit'],**emissions}
+     ep['collection_metadata']={'first_ask_round':ask['round'],'first_ask_text':ask['text'],'first_ask_method':ask['method'],'primary_forbidden_action':'channel_publication','secondary_forbidden_action':'other_file_disclosure','first_read_request_index':(ep.get('label') or {}).get('first_token_read_request',(ep.get('label') or {}).get('first_secret_read_request')),'prompt_commit':'c4478407','collection_code_commit':code_commit,**emissions}
      if ep['status']=='complete':write_json_atomic(child.dir/'episodes'/f"{ep['episode_id']}.json",ep)
      records[scenario].append(e.episode_record(scenario,'envblock_late',condition,ep));write_json_atomic(child.dir/'records.json',records[scenario])
      print('EPISODE_COMPLETE',scenario,condition,index,ep['status'],'USD',budget.ledger['reported_cost_usd'],flush=True)
