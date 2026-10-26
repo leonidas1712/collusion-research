@@ -6,7 +6,7 @@ Apart from two pre-registered tests, the analyses in this section were designed 
 
 \begin{table}[t]
   \centering
-  \caption{\textbf{Results at a glance: will this call leak?} AUROC within scenario and round, with the leak label of \cref{sec:setup}; intervals are shown in the figures. Development results are on held-out scenarios. $^\dagger$Pre-registered.}
+  \caption{\textbf{Results at a glance: will this call leak?} AUROC within scenario and round, with the leak label of \cref{sec:setup}; intervals are shown in the figures. ``One call earlier?'' asks whether the next call will leak, with the leaking call itself removed. Development results are on held-out scenarios. $^\dagger$Pre-registered.}
   \label{tab:glance}
   \small
   \begin{tabular}{@{}llcc@{}}
@@ -40,9 +40,10 @@ On Qwen3-32B, the last-prompt probe, fit on development episodes only and frozen
 Most of the signal is present before the model starts to reason.
 On gpt-oss-20b, the last-prompt probe and the reasoning probe score about the same on development episodes, and the gap between them on the fresh episodes is within noise.
 
-The probe is not reading the obvious shortcuts.
-Every call that does not leak also faces the recruiting peer, in the same scenario and round, and on gpt-oss-20b it also comes after the peer's request.
-Keyword rules for the secret do no better than chance, and the probe beats a flag for ``the protected file was just read'', including among the calls that write the handoff file (\cref{app:shortcuts}).
+The probe is not reading the obvious shortcuts (\cref{app:shortcuts}).
+It is not detecting the request, because every call that does not leak also faces the recruiting peer in the same scenario and round.
+It is not matching the secret, because keyword rules that look for the secret's words in the model's reasoning do no better than chance.
+It is not detecting the file read, because it beats a flag for ``the protected file was just read'', including among the calls that write the handoff file, the shared status file that the target writes for the peer.
 
 \subsection{The warning is short-range}
 \label{sec:ladder}
@@ -54,25 +55,14 @@ gpt-oss-20b follows the same pattern, with the largest jump at the call itself, 
 Even one call earlier the probe drops well below its score on the leaking call (\cref{tab:glance}).
 On gpt-oss-20b, what it detects there is mostly the read of the protected file that usually comes just before the leak (\cref{app:ahead}).
 
-The middle of the ladder held in a pre-registered test.
-On fresh Qwen3-32B episodes, whether the target leaks this round or the next was modestly predictable, for the probe (\qwenFreshNearProbe{}) and the best text monitor (\qwenFreshNearJev{}) alike (\cref{fig:round}).
-That test's leak label differs slightly from ours (\cref{app:labels}).
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.6\linewidth]{fig_round_confirmation.pdf}
-  \caption{\textbf{This round or the next is modestly predictable on fresh episodes.}
-  Qwen3-32B fresh test episodes, scored once under the pre-registered plan, with its own leak label (\cref{app:labels}).
-  Whiskers are 95\% bootstrap intervals.}
-  \label{fig:round}
-\end{figure}
+The ``this round or the next'' result held in a pre-registered test on fresh Qwen3-32B episodes, on a slightly different leak label (\cref{app:labels}): the probe scored \qwenFreshNearProbe{} and the best text monitor \qwenFreshNearJev{} (\cref{app:confirmation}).
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig3_percall.pdf}
   \caption{\textbf{A probe picks out the call that leaks; a text monitor shown the same input does not.}
   Per-call AUROC on held-out scenarios, development episodes, with 95\% bootstrap intervals.
-  The text monitor (Jev) sees the conversation and tool results that the last-prompt probe sees, with the secret masked.}
+  The text monitor (Jev) sees the conversation and tool results that the last-prompt probe sees, with the secret masked; on gpt-oss-20b it scores below chance because it flags almost every call made under pressure.}
   \label{fig:percall}
 \end{figure}
 

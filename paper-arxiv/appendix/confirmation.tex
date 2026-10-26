@@ -16,13 +16,22 @@ At the frozen threshold the probe caught \gptossFreshCaught{} of the leaking cal
 \paragraph{Qwen3-32B round-level test.}
 The plan fixed the near-term label of \cref{app:labels}, the probe (one logistic model per seed trained on all development recruiting calls), and two text monitors chosen in advance.
 Its criteria were a probe interval above 0.5, and a gain above 0 from adding the probe to the weaker of the two monitors.
-Both were met.
+Both were met (\cref{fig:round}).
 The plan expected no gain from adding the probe to the stronger monitor, and there was none that was clearly above zero (\cref{app:roundmonitor}).
 
 \paragraph{Qwen3-32B per-call probe.}
 We fit this probe on the development episodes only, committed its weights and threshold, and then scored it once on the fresh test episodes.
 No fresh episode was used to fit or choose anything for it.
 It is not a pre-registered confirmation, because an earlier analysis on a related label had already included these episodes (\cref{app:history}).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\linewidth]{fig_round_confirmation.pdf}
+  \caption{\textbf{This round or the next is modestly predictable on fresh episodes.}
+  Qwen3-32B fresh test episodes, scored once under the pre-registered plan, with its own leak label (\cref{app:labels}).
+  Whiskers are 95\% bootstrap intervals.}
+  \label{fig:round}
+\end{figure}
 
 \begin{table}[h]
   \centering

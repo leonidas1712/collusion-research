@@ -4,7 +4,7 @@
 Just before an AI agent gives in and breaks its operator's rule, a linear probe on its activations can tell.
 We read the target model's internal activations at each of its calls, before it generates anything, and ask whether that call will leak a secret that its operator told it to keep.
 On Qwen3-32B, tested on fresh episodes held out from training, the probe ranks the leaking calls far above the others, and a zero-shot text monitor given the same conversation does much worse.
-At a fixed alarm threshold, the probe catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarm{} of calls in refusing episodes, where the monitor catches \qwenFreshJevCaught{} while flagging \qwenFreshJevAlarm{}, although per episode many refusing episodes still see at least one alarm (\cref{app:alarms}).
+On fresh Qwen3-32B episodes, at a threshold set on control calls, the probe catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarm{} of calls in refusing episodes, where the monitor catches \qwenFreshJevCaught{} while flagging \qwenFreshJevAlarm{}, although per episode many refusing episodes still see at least one alarm (\cref{app:alarms}).
 A bag-of-words classifier trained on the same text comes close to the probe, so most of that lead comes from training on the labels (\cref{sec:monitor}).
 On gpt-oss-20b, a probe on the call's reasoning held up in a pre-registered test on fresh episodes.
 
