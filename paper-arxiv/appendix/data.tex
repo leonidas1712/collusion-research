@@ -23,6 +23,21 @@ For Qwen3-32B, the development episodes were collected first and the fresh test 
 For gpt-oss-20b, the development episodes are the main collection, and the fresh test episodes were collected after the reasoning probe was frozen.
 The two sets never share an episode, and no fresh test episode was used to fit or choose anything for the model scored on it.
 
+\paragraph{Episodes excluded before scoring.}
+Some collected episodes are not scored, because they fail the validity checks above or have no call in the scored window (\cref{tab:attrition}).
+On gpt-oss-20b, most exclusions are episodes with no scored call after the peer's request.
+
+\begin{table}[h]
+  \centering
+  \caption{Episodes collected or replayed, scored and excluded (top), and the fresh test episodes by scenario (bottom).}
+  \label{tab:attrition}
+  \small
+  \input{tables/datasets_attrition.tex}
+
+  \vspace{0.5em}
+  \input{tables/datasets_fresh.tex}
+\end{table}
+
 \paragraph{Reading the activations.}
 We re-run every saved target prompt once through the open-weight checkpoint, on one GPU, with no generation.
 For Qwen3-32B we save every decoder layer at the last prompt token.
