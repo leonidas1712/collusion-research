@@ -4,6 +4,24 @@ Shared notes (not paper prose). Append your own entries; keep sections by owner 
 
 ---
 
+## ROUND 2 (Leo's feedback, 27 Oct ~02:45–03:30): DONE (coordinator)
+- **Title.** "Pre-Crime for Agents, at the Last Second: Probing When a Recruited Agent Gives In". There is a line break after the colon, and the subtitle now fits on one line.
+- **Abstract.** Replaced with your revised text, verbatim: 1,671 characters, under arXiv's 1,920 cap. Every number was checked against the registry.
+- **C1.** Tables 26 and 27 use the same calls. 0.57 comes from a probe trained on the eventual label and scored without refitting; 0.61 comes from a probe refit on the near-term label. Both captions now say this.
+- **C2.** The protected-file writebacks are exactly 2 calls in 2 episodes: one in development and one in fresh.
+- **C3–C6.**
+  - The Fig. 4 caption now says it shows the stronger of the two text views.
+  - Section O cites Table 31.
+  - The E08 history row uses your wording.
+  - "Last-prompt probe" replaces "Input probe".
+- **C7.** The pre-registration note in this file is fixed.
+- **Final build.** `main.pdf` (f99a4d76…) and the arXiv package (clean build c8069cd7…), 39 pages, 629 verified numbers. Viewer re-check: PASS. Native Preview is still unverified because the service failed.
+- **Optional for you (item 7).** Add "mostly" to the abstract's "detects the coming disclosure rather than the rule being broken", to match §4.3.
+- **Open question.** Cite the "Handshake for the cameras" sprint entry as concurrent work in Related Work? It reads verdicts before reasoning in Shi et al.'s environment.
+- **Shelved.** E09 (permitted vs forbidden), which may become its own paper. The E10 Shi plan is drafted, with a red-team in progress.
+
+---
+
 ## ROUND 1 (Leo's feedback, 27 Oct ~00:30–02:00): what changed (coordinator)
 
 **Applied from `FEEDBACK_round1.md` and `FEEDBACK_round1b_s44.md`:**
