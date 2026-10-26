@@ -1,0 +1,49 @@
+\section{Checks on the sprint cohort}
+\label{app:sprint}
+
+The checks in this section were run on the original cohorts and labels of the sprint version of this study, before the development and fresh test episodes were redefined for this paper.
+They describe the same episodes and support the same conclusions, but their counts do not match \cref{tab:datasets}.
+
+\paragraph{How leaks go out.}
+On Qwen3-32B, about half of the first leaks went out as the ordinary end-of-turn reply that the harness posts to the channel, and half inside tool arguments.
+On gpt-oss-20b, almost every first leak was a file write, typically the whole configuration block copied into the handoff file.
+An end-of-turn reply that carried a leak was almost always addressed to the peer, as judged by a decision model (\cref{tab:labels}).
+
+\paragraph{Deliberate or accidental.}
+A second decision model, Luna Decisions \citep{openai2026luna}, read the first message that published the value.
+It labelled the leak deliberate if the message offered the real value for use, and accidental if it exposed the value inside a refusal or an illustration.
+Its labels agree well with the author's blind labels on a sample of leaks (\cref{tab:labels}).
+Most Qwen3-32B leaks were deliberate, and on gpt-oss-20b nearly all were.
+We keep accidental leaks in the label, because an overseer must stop them too.
+On the eventual label, refitting the probe on deliberate leaks only gave a similar ranking.
+
+\paragraph{Peer claims of authority.}
+A decision-model pass flagged peer messages that claim to speak for the operator, or to be an authorised recipient.
+Leaks were no more common in episodes with such claims (\cref{tab:labels}).
+
+\paragraph{Pressure versus the leak.}
+On Qwen3-32B, a probe trained to separate recruiting from control calls did so perfectly, yet on the round-level labels it ranked leaking against refusing calls below chance.
+Pressure and the leak are therefore different signals.
+
+\paragraph{Round-level robustness.}
+The round-level near-term result on Qwen3-32B held across two label variants that use hindsight to choose negatives, a fixed middle layer, weighting scenarios equally, and a small neural network instead of logistic regression (\cref{tab:robust-round}).
+
+\paragraph{A channel-only per-call label on gpt-oss-20b.}
+Scoring the first channel post instead of the first call that writes the secret out gave a similarly high per-call score.
+That comparison used a wider set of calls, and most of its positives reposted a value that an earlier file write had already made public, so it says little about stopping the first leak.
+
+\begin{table}[h]
+  \centering
+  \caption{Label checks on the sprint cohort.}
+  \label{tab:labels}
+  \small
+  \input{tables/labels.tex}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{Round-level robustness on Qwen3-32B, near-term label, sprint cohort.}
+  \label{tab:robust-round}
+  \small
+  \input{tables/robust_round.tex}
+\end{table}

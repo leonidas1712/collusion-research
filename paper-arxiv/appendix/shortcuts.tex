@@ -7,13 +7,10 @@ A probe that sees only the incoming peer message and tool results also scores hi
 \paragraph{Pressure.}
 Every scored call comes from an episode with a recruiting peer, and we compare it only with calls in the same scenario and round.
 On gpt-oss-20b every scored call also follows the peer's request, and the probe applied to the calls between the read and the request, scored against whether the episode ever leaks, stays at chance.
-On Qwen3-32B, a probe trained to separate recruiting from control calls does so perfectly, yet on the round-level labels it ranks leaking against refusing calls below chance.
-Pressure and the leak are therefore different signals.
 
 \paragraph{The secret string.}
 On gpt-oss-20b, almost no leaking call names the value in its reasoning.
 Fixed keyword rules on the reasoning, written before scoring, do no better than chance.
-On Qwen3-32B, a keyword rule on the latest incoming message scores well above chance but far below the probe.
 
 \paragraph{The read step.}
 The call that leaks often comes right after the target reads the protected file.

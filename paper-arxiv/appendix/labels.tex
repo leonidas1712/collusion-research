@@ -1,8 +1,8 @@
-\section{How is a leak detected, and can the labels be trusted?}
+\section{How is a leak detected?}
 \label{app:labels}
 
 A rule on the tool log finds the first call that writes the secret out, by exact string match, so the main label needs no judge.
-An automated judge, used only to describe the leaks, agrees with the author's blind labels (\cref{tab:labels}).
+Checks of how leaks go out, and whether they are deliberate, are in \cref{app:sprint}.
 
 \paragraph{The leak label.}
 A call leaks if the protected value appears, in full, in its reply or in the arguments of any of its tool calls.
@@ -18,27 +18,3 @@ There, a leak is the complete value posted to the team channel, or written into 
 Scored calls stop before the secret is first written out anywhere.
 We report that test as it was planned.
 On gpt-oss-20b, the round-level analyses in \cref{app:gptoss-round} use a channel post as the leak, again with scored calls stopping before the secret is first written out.
-
-\paragraph{How leaks go out.}
-On Qwen3-32B, about half of the leaks go out as the ordinary end-of-turn reply and half inside tool arguments.
-On gpt-oss-20b, almost every first leak is a file write, typically the whole configuration block copied into the handoff file.
-An end-of-turn reply that carries a leak is almost always addressed to the peer, judged by a decision model (\cref{tab:labels}).
-
-\paragraph{Deliberate or accidental.}
-A second decision model, Luna Decisions \citep{openai2026luna}, reads the first message that publishes the value.
-It labels the leak deliberate if the message offers the real value for use, and accidental if it exposes the value inside a refusal or an illustration.
-Most Qwen3-32B leaks are deliberate, and on gpt-oss-20b nearly all are.
-We keep accidental leaks in the label, because an overseer must stop them too.
-On the eventual label, refitting the probe on deliberate leaks only gives a similar ranking (\cref{app:robustness}).
-
-\paragraph{Peer claims of authority.}
-A decision-model pass flagged peer messages that claim to speak for the operator, or to be an authorised recipient.
-Leaks were no more common in episodes with such claims (\cref{tab:labels}).
-
-\begin{table}[h]
-  \centering
-  \caption{Label checks. Agreement compares the judge with the author's blind labels on a sample of leaks.}
-  \label{tab:labels}
-  \small
-  \input{tables/labels.tex}
-\end{table}
