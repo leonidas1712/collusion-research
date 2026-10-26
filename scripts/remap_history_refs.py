@@ -6,6 +6,7 @@ commit, or push. Non-commit hexadecimal hashes are never guessed or changed.
 import argparse
 import collections
 import json
+import hashlib
 from pathlib import Path
 import re
 import subprocess
@@ -28,8 +29,29 @@ def main():
         for n in range(7, 41):
             prefix[old[:n]].add(old)
     tracked = subprocess.check_output(['git', 'ls-files', '-z'], cwd=root).decode().split('\0')
+    # Preserve any tracked file whose exact bytes are SHA-256-referenced elsewhere.
+    # This includes source code pinned by a frozen plan, not just JSON records.
+    contents = {}
+    referenced_hashes = set()
+    for rel in filter(None, tracked):
+        path = root / rel
+        if path.is_file() and not path.is_symlink():
+            data = path.read_bytes()
+            contents[rel] = data
+            referenced_hashes.update(re.findall(rb'(?<![0-9a-fA-F])[0-9a-fA-F]{64}(?![0-9a-fA-F])', data))
+    referenced_hashes = {value.decode().lower() for value in referenced_hashes}
+    preserved = []
+    for rel, data in contents.items():
+        digest = hashlib.sha256(data).hexdigest()
+        if (digest in referenced_hashes or Path(rel).name.startswith('frozen_')
+                or rel.startswith('docs/history/')):
+            preserved.append(dict(path=rel, sha256=digest,
+                                  reason='referenced SHA-256, frozen record, or history provenance'))
+    preserve_paths = {item['path'] for item in preserved}
     changes = []; issues = []; unresolved = collections.defaultdict(list); validated = set()
     for rel in filter(None, tracked):
+        if rel in preserve_paths:
+            continue
         path = root / rel
         if path.is_symlink() or not path.is_file():
             continue
@@ -81,11 +103,12 @@ def main():
     report = dict(applied=args.apply, commit_map=str(args.commit_map),
                   changed_files=len(changes), replacements=sum(c['count'] for c in changes),
                   validated_mapped_commits=len(validated), issues=issues,
-                  changes=changes, unmapped_nonresolving_hex=unresolved_report,
+                  changes=changes, preserved=preserved, unmapped_nonresolving_hex=unresolved_report,
                   scope='Only known commit-map keys or unique prefixes are substituted. Unmapped hashes require contextual classification.')
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2)+'\n')
-    print(json.dumps({k:v for k,v in report.items() if k not in ['changes','unmapped_nonresolving_hex']}, indent=2))
+    print(json.dumps({k:v for k,v in report.items() if k not in ['changes','preserved','unmapped_nonresolving_hex']}, indent=2))
+    print('Byte-preserved files:', len(preserved))
     print('Unmapped nonresolving hex strings:',len(unresolved_report))
     if issues:
         raise SystemExit('STOP: ambiguous or deleted commit references need review')
