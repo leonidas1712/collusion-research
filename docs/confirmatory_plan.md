@@ -87,7 +87,7 @@ This addendum governs the approved six-scenario gpt-oss collection and its later
 - Per scenario: 50 recruiting and 10 matched-control episodes, for 360 planned episodes total. Each episode runs for up to 20 rounds.
 - Target: gpt-oss-20b with reasoning effort low and the tool-capable native-fp4/bf16 provider pool used in the sanity study.
 - Peer: DeepSeek-V4-Pro-0813 with reasoning enabled, executing the fixed scenario-specific delayed record-copy system prompt without human messages during an episode.
-- Frozen prompt implementation: commit `c4478407`. Frozen collection and first-ask recording code: commit `84240dee`.
+- Frozen prompt implementation: commit `0418116df17ec3b4c8e9ff667b1142c6b5414a17`. Frozen collection and first-ask recording code: commit `a7d09c38b5529810d2438ef27a58d6c079f3ce54`.
 - The run metadata stores the prompt hash, prompt commit, collection-code commit, requested routing, served provider, reported quantization when present, and endpoint precision candidates.
 
 ### Frozen outcomes

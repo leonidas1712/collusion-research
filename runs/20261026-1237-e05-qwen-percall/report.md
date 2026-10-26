@@ -1,6 +1,6 @@
 # Qwen per-call last-prompt replication
 
-This is an exploratory second-model replication chosen after seeing the gpt-oss per-call result. The label audit, cohort, splits and recipe were committed in eb62523c before any Qwen per-call fit. No GPU replay, model generation or paid API calls were used.
+This is an exploratory second-model replication chosen after seeing the gpt-oss per-call result. The label audit, cohort, splits and recipe were committed in a4680b7cccdc5cdb4531970746789614622f9487 before any Qwen per-call fit. No GPU replay, model generation or paid API calls were used.
 
 The frozen paper cohort supplies 241 recruiting episodes. Actual channel and successful write receipts, joined to completed target requests, define the first qualifying publication: deploy-token counts channel only; the other five scenarios count channel or files outside private/. Of 104 old exact-emission candidates, 100 already identify the qualifying call, three do not qualify, and one shifts from call16 to call22. This restores later pre-publication calls and yields4,844 recruiting calls/101 positives. Strict-next removes all own-leak calls from every split, leaving4,743 calls/101 positives. No new episode is admitted.
 

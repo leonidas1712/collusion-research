@@ -27,6 +27,6 @@ This table covers channel-positive episodes only. File-only public emissions rem
 
 ## Provenance and scope
 
-Canonical manifest: `/Users/leo/collusion-research/runs/20261025-2212-e03-gpt-oss-full-collection/manifest.json` at commit `752b8d3e`.
+Canonical manifest: `/Users/leo/collusion-research/runs/20261025-2212-e03-gpt-oss-full-collection/manifest.json` at commit `cd93bf49ce4a118e4d3289fe0520faa213983383`.
 Billed cost: $0.0663513; charged or reserved: $0.0663513; hard cap: $1.
 The judgment describes how the first public emission is presented. It does not establish internal intent or awareness.

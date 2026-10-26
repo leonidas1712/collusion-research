@@ -1,6 +1,6 @@
 # Fresh reasoning-stream confirmation
 
-The model and threshold were committed before these episodes existed (22a89d84). The primary endpoint is recognition of the reply that first emits the protected value publicly, including in tool arguments. Successful tool execution is not required: malformed or failed calls can qualify. It is not the paper’s channel-only outcome or advance prediction.
+The model and threshold were committed before these episodes existed (d470afdcb74a862ba6dee1f7048fe20ed26615e7). The primary endpoint is recognition of the reply that first emits the protected value publicly, including in tool arguments. Successful tool execution is not required: malformed or failed calls can qualify. It is not the paper’s channel-only outcome or advance prediction.
 
 Layer 15; 594 reasoning replies, 26 positives. Predeclared lower-95%-CI-above-0.5 criterion: True.
 

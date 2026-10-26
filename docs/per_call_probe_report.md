@@ -607,7 +607,7 @@ Incoming tokens are prefilled, not generated, so their token distance is not a w
 
 | Item | Design | Status |
 |---|---|---|
-| **Qwen3-32B per-call replication** | Plan frozen before any fit (commit eb62523c). 241 recruiting and 97 benign episodes, 4,844 recruiting calls with 101 per-call positives. The paper's last-prompt recipe (17 of 64 layers, C = 0.1, same folds and seeds), per-call and strict next-call labels, and the frozen paper probe as comparator. It is exploratory, because it was planned after the gpt-oss result was seen. (`runs/20261026-1237-e05-qwen-percall/frozen_plan.json`, `label_audit.json`) | Fits running; no results yet |
+| **Qwen3-32B per-call replication** | Plan frozen before any fit (commit a4680b7cccdc5cdb4531970746789614622f9487). 241 recruiting and 97 benign episodes, 4,844 recruiting calls with 101 per-call positives. The paper's last-prompt recipe (17 of 64 layers, C = 0.1, same folds and seeds), per-call and strict next-call labels, and the frozen paper probe as comparator. It is exploratory, because it was planned after the gpt-oss result was seen. (`runs/20261026-1237-e05-qwen-percall/frozen_plan.json`, `label_audit.json`) | Fits running; no results yet |
 | **Post hoc route split** | Per-call results split by emission route: tool arguments versus plain reply text | Script drafted (`experiments/E05-probes/qwen_percall_routes.py`); no run yet |
 | **Jev reading the per-call input** | A text-monitor comparator given what the last-prompt probe sees, capped at USD 3 | Not started; no run folder yet |
 | **Frozen gpt-oss confirmation** | Section 8 | Collection done; GPU capture and scoring running |

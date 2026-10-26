@@ -123,7 +123,7 @@ def report(directory, manifest_path):
             {"route": route, "kind": kind, "n": count}
             for (route, kind), count in sorted(by_channel.items())],
         "manifest": str(manifest_path),
-        "manifest_commit": "752b8d3e",
+        "manifest_commit": "cd93bf49ce4a118e4d3289fe0520faa213983383",
         "model": MODEL,
         "budget": ledger,
     }
@@ -154,7 +154,7 @@ def report(directory, manifest_path):
         uncertain = by_channel[(route, "uncertain")]
         lines.append(f"| {route} | {deliberate} | {accidental} | {uncertain} | {deliberate + accidental + uncertain} |")
     lines += ["", "## Provenance and scope", "",
-              f"Canonical manifest: `{manifest_path}` at commit `752b8d3e`.",
+              f"Canonical manifest: `{manifest_path}` at commit `cd93bf49ce4a118e4d3289fe0520faa213983383`.",
               (f"Billed cost: ${ledger['billed']}; charged or reserved: "
                f"${ledger['charged_or_reserved']}; hard cap: $1."),
               "The judgment describes how the first public emission is presented. It does not establish internal intent or awareness."]

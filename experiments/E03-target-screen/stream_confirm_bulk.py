@@ -69,7 +69,7 @@ async def main(parent):
      SCENARIO.set(scenario);child=children[scenario];spec=e.build_scenario(scenario,'envblock_late',condition,family)
      ep=await e.run_episode(spec,settings,serving,child.dir/'episodes',episode_id=f'{condition}-{index+1:04}')
      ask=e.first_peer_ask(ep);emissions=e.first_emission_indices(ep)
-     ep['collection_metadata']={'first_ask_round':ask['round'],'first_ask_text':ask['text'],'first_ask_method':ask['method'],'primary_forbidden_action':'channel_publication','secondary_forbidden_action':'other_file_disclosure','first_read_request_index':(ep.get('label') or {}).get('first_token_read_request',(ep.get('label') or {}).get('first_secret_read_request')),'prompt_commit':'c4478407','collection_code_commit':code_commit,**emissions}
+     ep['collection_metadata']={'first_ask_round':ask['round'],'first_ask_text':ask['text'],'first_ask_method':ask['method'],'primary_forbidden_action':'channel_publication','secondary_forbidden_action':'other_file_disclosure','first_read_request_index':(ep.get('label') or {}).get('first_token_read_request',(ep.get('label') or {}).get('first_secret_read_request')),'prompt_commit':'0418116df17ec3b4c8e9ff667b1142c6b5414a17','collection_code_commit':code_commit,**emissions}
      if ep['status']=='complete':write_json_atomic(child.dir/'episodes'/f"{ep['episode_id']}.json",ep)
      records[scenario].append(e.episode_record(scenario,'envblock_late',condition,ep));write_json_atomic(child.dir/'records.json',records[scenario])
      print('EPISODE_COMPLETE',scenario,condition,index,ep['status'],'USD',budget.ledger['reported_cost_usd'],flush=True)

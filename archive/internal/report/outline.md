@@ -343,7 +343,7 @@ From `docs/writeup_limitations.md`:
 - Data: episodes (transcripts) in git; activations on the Modal volume, regenerable from the replay scripts (not in git).
 - Deployable probe: trained on all data, 12 full-data model sets plus a local inference command (`runs/20261025-1456-e05-all-data-main/report.md`; log 14:58).
 - How to reproduce the headline: scripts and run folders in order (README, to write).
-- **What existed before the sprint** (required): sprint start taken as Fri 23 Oct 00:00 AoE (= 12:00 UTC = 20:00 SGT); the sprint page gives only dates and an AoE deadline. Only one commit is earlier: `a5bd6f93` (23 Oct 00:50 SGT): planning docs, infra notes, the idea doc, related-work notes, a report skeleton; no code. The next commit (run helper and E01 harness) is 23 Oct 21:41 SGT. Everything from then on is sprint work. (`docs/release_checklist.md`; `git log`.)
+- **What existed before the sprint** (required): sprint start taken as Fri 23 Oct 00:00 AoE (= 12:00 UTC = 20:00 SGT); the sprint page gives only dates and an AoE deadline. Only one commit is earlier: `9dee095ddbadf0e4364c50bfcfbb3277dd87909f` (23 Oct 00:50 SGT): planning docs, infra notes, the idea doc, related-work notes, a report skeleton; no code. The next commit (run helper and E01 harness) is 23 Oct 21:41 SGT. Everything from then on is sprint work. (`docs/release_checklist.md`; `git log`.)
 - Info-hazard note: peer tactic text (see Appendix A).
 
 > Leo notes:

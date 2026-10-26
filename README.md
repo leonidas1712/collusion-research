@@ -4,7 +4,7 @@ This repository holds the code, prompts, transcripts and results for the paper *
 
 - **Paper:** [`report/build/paper.pdf`](report/build/paper.pdf) (source: [`report/paper.md`](report/paper.md); the SHA-256 of the source the PDF was built from is in [`report/build/paper.build.json`](report/build/paper.build.json))
 - **License:** MIT for the project code ([`LICENSE`](LICENSE)); the vendored fonts (`report/fonts/`) and citation style (`report/apa.csl`) keep their own licenses
-- **Pre-existing work:** only commit `a5bd6f93` (planning documents, no code) predates the sprint; see [Sprint timeline and pre-existing work](#sprint-timeline-and-pre-existing-work)
+- **Pre-existing work:** only commit `9dee095ddbadf0e4364c50bfcfbb3277dd87909f` (planning documents, no code) predates the sprint; see [Sprint timeline and pre-existing work](#sprint-timeline-and-pre-existing-work)
 
 ## What this project is
 
@@ -68,7 +68,7 @@ Other terms are defined in plain language in [`explainers/GLOSSARY.md`](explaine
 
 ## Getting the full run data
 
-The [data-v1 release](https://github.com/leonidas1712/collusion-research/releases/tag/untagged-a2a572b94f857e992207) holds the saved transcripts, per-call scores and monitor caches. From the repository root, restore them with:
+The [data-v1 release](https://github.com/leonidas1712/collusion-research/releases/tag/data-v1) holds the saved transcripts, per-call scores and monitor caches. From the repository root, restore them with:
 
 ```bash
 scripts/fetch_run_data.sh
@@ -309,7 +309,7 @@ and open `runs/viewer.html` in a browser (a local file is fine). It uses only th
 
 ## Sprint timeline and pre-existing work
 
-The sprint started on Fri 23 Oct 2026 00:00 AoE (12:00 UTC). The only project work that predates it is commit `a5bd6f93` (planning documents, no code; see `git show --stat a5bd6f93`); all code and results come from later commits. The author's own pre-existing open-source tools, Aboard (an agent message board) and Leaf (a document viewer for inline review comments), were used to coordinate and review the AI agents that helped with the work. They are not part of this repository's research code. AI coding agents wrote most of the code and ran the experiments under the author's direction, and drafted the paper's text from the author's outline; the paper's LLM Usage Statement gives the full account.
+The sprint started on Fri 23 Oct 2026 00:00 AoE (12:00 UTC). The only project work that predates it is commit `9dee095ddbadf0e4364c50bfcfbb3277dd87909f` (planning documents, no code; see `git show --stat 9dee095ddbadf0e4364c50bfcfbb3277dd87909f`); all code and results come from later commits. The author's own pre-existing open-source tools, Aboard (an agent message board) and Leaf (a document viewer for inline review comments), were used to coordinate and review the AI agents that helped with the work. They are not part of this repository's research code. AI coding agents wrote most of the code and ran the experiments under the author's direction, and drafted the paper's text from the author's outline; the paper's LLM Usage Statement gives the full account.
 
 ## Data and model terms
 
@@ -322,3 +322,5 @@ All tools are mocked in memory, and every protected value is a randomly generate
 ## Citation
 
 > Raghav, L. (2026). *Recruited: Pre-Crime for Agents? Predicting Give-In to Collusion Pressure, with Activation Probes and Text Monitors.* Apart AI Collusion Research Sprint. https://github.com/leonidas1712/collusion-research
+
+History was rewritten on 26 October 2026 to remove bulk run data (now in the data-v1 release) and internal agent configuration. Repository commit IDs were remapped except in byte-preserved frozen/hash-linked records; the original-to-release mapping and preserved-file hashes are in [`docs/history/`](docs/history/).

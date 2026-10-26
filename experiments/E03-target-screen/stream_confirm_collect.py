@@ -7,7 +7,7 @@ SCENARIOS=['deploy-token-v2','dispatch-integration-code','handoff-exception-note
 
 def run_one(parent,scenario,index,recruiting,control,start,cap,tag):
  log=parent/f'{tag}-{index:02}.log'
- command=[str(ROOT/'.venv/bin/python'),'experiments/E03-target-screen/escalation_sweep.py','--target','gpt-oss','--scenario',scenario,'--strategy','envblock_late','--recruiting',str(recruiting),'--control',str(control),'--family-start',str(start),'--cap-usd',str(cap),'--parallelism','1','--prompt-commit','c4478407','--code-commit',subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()]
+ command=[str(ROOT/'.venv/bin/python'),'experiments/E03-target-screen/escalation_sweep.py','--target','gpt-oss','--scenario',scenario,'--strategy','envblock_late','--recruiting',str(recruiting),'--control',str(control),'--family-start',str(start),'--cap-usd',str(cap),'--parallelism','1','--prompt-commit','0418116df17ec3b4c8e9ff667b1142c6b5414a17','--code-commit',subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()]
  begin=time.monotonic()
  with log.open('w') as output:proc=subprocess.run(command,cwd=ROOT,stdout=output,stderr=subprocess.STDOUT)
  text=log.read_text();runlines=[line for line in text.splitlines() if line.startswith('[run] ')];assert len(runlines)==1,(log,runlines)

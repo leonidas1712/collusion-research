@@ -18,13 +18,13 @@ or a rerun of the episode scorer.
 The final check matches the compact table's 21 Markdown lines (19 data rows,
 header and separator) against `manuscript_table.md`. That file contains the exact
 lines extracted from `report/paper.md` at revision
-`0eb6521feab1c3dd7a8173d1e44cf2b6411be556`, the revision recorded by the original
+`1c30f703a7538fe1f8e5c8cbe70e18e50be9d0d8`, the revision recorded by the original
 audit. The current paper has presentation edits, so it is not the default input.
 The saved excerpt lets this check run in a shallow clone. To check the historical
 full manuscript instead, add:
 
 ```sh
---paper-revision 0eb6521feab1c3dd7a8173d1e44cf2b6411be556
+--paper-revision 1c30f703a7538fe1f8e5c8cbe70e18e50be9d0d8
 ```
 
 The raw episode files must be available locally under their manifest paths. A

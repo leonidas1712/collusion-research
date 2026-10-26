@@ -15,7 +15,7 @@ def check(out):
     frozen=json.loads((out/'frozen_plan.json').read_text())
     for name,wanted in frozen['hashes'].items():
         assert hashlib.sha256((out/name).read_bytes()).hexdigest()==wanted
-    committed=subprocess.check_output(['git','show',f"eb62523c:{out.relative_to(ROOT)}/frozen_plan.json"],cwd=ROOT)
+    committed=subprocess.check_output(['git','show',f"a4680b7cccdc5cdb4531970746789614622f9487:{out.relative_to(ROOT)}/frozen_plan.json"],cwd=ROOT)
     assert committed==(out/'frozen_plan.json').read_bytes()
     rows=json.loads((out/'rows.json').read_text());metrics=json.loads((out/'metrics.json').read_text());assert len(metrics)==4
     x=np.load(DATA/'features.npy',mmap_mode='r');fits=point_checks=0;max_error=0.;model_error=0.
@@ -49,7 +49,7 @@ def check(out):
         assert abs(np.mean(points)-m['within_round_auc'])<1e-12
         assert abs(np.mean(basepoints)-m['paper_A']['within_round_auc'])<1e-12
     assert fits==66 and point_checks==24
-    result=dict(frozen_plan_unchanged_from_commit='eb62523c',fits_checked=fits,independent_sklearn_checks=point_checks,max_point_error=max_error,max_model_reconstruction_error=model_error,thresholds='132 thresholds independently recomputed at strict >5% control-reply target',strict_partition_check='own-leak calls absent in all strict-next splits',source_hashes_match=True)
+    result=dict(frozen_plan_unchanged_from_commit='a4680b7cccdc5cdb4531970746789614622f9487',fits_checked=fits,independent_sklearn_checks=point_checks,max_point_error=max_error,max_model_reconstruction_error=model_error,thresholds='132 thresholds independently recomputed at strict >5% control-reply target',strict_partition_check='own-leak calls absent in all strict-next splits',source_hashes_match=True)
     (out/'verification.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))
 
 

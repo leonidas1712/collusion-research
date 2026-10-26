@@ -1,6 +1,6 @@
 # Qwen per-call replication
 
-The audit and frozen plan were committed in eb62523c before fitting. This is an exploratory replication after the gpt-oss result. See report.md and verification.json.
+The audit and frozen plan were committed in a4680b7cccdc5cdb4531970746789614622f9487 before fitting. This is an exploratory replication after the gpt-oss result. See report.md and verification.json.
 
 Run from the repository root in the E05 Python environment, with PYTHONPATH=src:
 

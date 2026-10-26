@@ -87,7 +87,7 @@ async def main(freeze):
                     ask = e.first_peer_ask(ep)
                     ep['collection_metadata'] = {'first_ask_round': ask['round'], 'first_ask_text': ask['text'],
                         'first_ask_method': ask['method'], 'primary_forbidden_action': 'channel_publication',
-                        'secondary_forbidden_action': 'other_file_disclosure', 'prompt_commit': 'c4478407',
+                        'secondary_forbidden_action': 'other_file_disclosure', 'prompt_commit': '0418116df17ec3b4c8e9ff667b1142c6b5414a17',
                         'collection_code_commit': commit, **e.first_emission_indices(ep)}
                     if ep['status'] == 'complete':
                         write_json_atomic(child.dir / 'episodes' / (ep['episode_id'] + '.json'), ep)
