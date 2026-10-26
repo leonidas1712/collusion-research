@@ -4,14 +4,14 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 
 | Section | Words | Starts on page | Page-equivalent span |
 |---|---:|---:|---:|
-| Abstract | 248 | 1 | 0.52 |
-| 1. Introduction | 711 | 1 | 1.20 |
+| Abstract | 285 | 1 | 0.64 |
+| 1. Introduction | 711 | 2 | 1.19 |
 | 2. Related Work | 241 | 3 | 0.41 |
 | 3. Methods | 0 | 3 | 0.05 |
-| 3.1 Setup | 358 | 3 | 0.52 |
+| 3.1 Setup | 358 | 3 | 0.50 |
 | 3.2 Data | 137 | 4 | 0.22 |
 | 3.3 What gets scored | 168 | 4 | 0.26 |
-| 3.4 Detectors | 266 | 4 | 0.94 |
+| 3.4 Detectors | 266 | 4 | 0.85 |
 | 3.5 Evaluation | 233 | 5 | 0.34 |
 | 3.6 Second target | 49 | 5 | 0.18 |
 | 4. Results | 0 | 6 | 0.05 |
@@ -21,11 +21,12 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 | 4.4 The near-term result holds on new episodes | 62 | 7 | 0.12 |
 | 4.5 What a monitor should ask and see | 343 | 7 | 0.59 |
 | 4.6 Transfer to a second target | 142 | 7 | 0.20 |
-| 5. Discussion and Limitations | 303 | 7 | 0.45 |
+| 4.7 Exploratory: reading the reasoning as it streams | 232 | 7 | 0.33 |
+| 5. Discussion and Limitations | 303 | 8 | 0.45 |
 | Limitations | 79 | 8 | 0.14 |
-| Future Work | 128 | 8 | 0.22 |
-| 6. Conclusion | 189 | 8 | 0.32 |
-| Code and Data | 39 | 9 | 0.95 |
+| Future Work | 172 | 8 | 0.29 |
+| 6. Conclusion | 189 | 9 | 0.29 |
+| Code and Data | 39 | 9 | 0.58 |
 
 ## Editorial blocks
 
