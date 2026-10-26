@@ -53,7 +53,7 @@ def main(restore):
         peer[model]=[dict(settings=json.loads(k),requests=n) for k,n in sorted(c.items())]
     run=start_run('e05-arxiv-final-records',experiment='E05',tags=['cpu-only','existing-records'],settings={'no_new_analysis_or_fit':True,'sources':sources})
     write_json_atomic(run.dir/'summary.json',dict(group_coverage=summary,qwen_fresh_jev_alarm_by_seed=alarms,qwen_fresh_jev_alarm_rates=alarm_rates,peer_sampling=peer,alarm_source='Saved LOSO control-call cutoffs from original all-data monitor analysis; not the newly frozen development-only probe threshold',fresh_gpt_reasoning_coverage='Identical594 calls/26 positives to GPT fresh immediate input probe'))
-    with (run.dir/'group_counts.csv').open('w',newline='') as f:w=csv.DictWriter(f,fieldnames=list(groups[0]));w.writeheader();w.writerows(groups)
+    with (run.dir/'group_counts.csv').open('w',newline='') as f:w=csv.DictWriter(f,fieldnames=list(groups[0]),lineterminator='\n');w.writeheader();w.writerows(groups)
     run.result(no_fit=True,no_api=True,no_gpu=True);run.finish();print(run.dir);print(json.dumps(summary,indent=2));print(json.dumps(peer,indent=2))
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--restore-root',type=Path,required=True);main(p.parse_args().restore_root)
