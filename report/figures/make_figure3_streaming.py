@@ -75,27 +75,27 @@ def collect():
     return rows
 
 
-CAPTION = """Figure 3. Exploratory, gpt-oss-20b. A linear probe on the target's reasoning tokens recognises the reply that leaks the protected value; text and rule baselines reading the same material do not. (a) Within scenario × round AUROC on held-out scenarios; whiskers are 95% family-bootstrap confidence intervals. Label: this reply makes the first public emission of the value, by any route. The reasoning probe and all baselines are scored on the same 1,995 replies with reasoning (121 leaking) from 238 episodes. "…cut before value mention" drops every reasoning token from the first exact mention of the value onward. Reasoning length uses the final length of the reasoning (reversed), so it is a hindsight comparator, not an online alarm. *A probe on the incoming peer message and tool results alone, trained on the same label (seed 42 only; 2,199 replies, 143 leaking): much of the signal is present before the target reasons. †The post-ask probe applied to pre-ask replies against the eventual episode outcome (628 replies, 388 positives). (b) AUROC as the label moves closer to the leak. This ladder is descriptive, not a paired comparison: both the input and the reply set change between points, so it does not isolate an effect of label proximity. Last-prompt probe: 2,059 post-ask replies (169 positives for eventual, 148 for this or next round). Reasoning (paper replies): the paper's reply cohort; 1,874 replies, 118 positives. Reasoning (+ leaking replies): the panel-a reply set, which adds each episode's first leaking reply; 1,995 replies, 199 positives for this or next round and 121 for this reply. All cohorts cover 238 episodes. Values and exact source keys are in figure3_streaming.csv.
+CAPTION = """Figure 3. On gpt-oss-20b, a probe reading the model's reasoning picks out the reply that will leak the secret, and reading the text of the same reasoning does not. This analysis is exploratory and was designed after the main results. (a) Each row scores the same 1,995 replies that have reasoning (121 of them leak) from 238 episodes, on held-out scenarios. A reply counts as leaking if it is the first to make the secret public, by any route. AUROC measures how well a score ranks leaking replies above the others: 0.5 is chance and 1 is perfect. Whiskers are 95% bootstrap confidence intervals. "Stopped before the secret is mentioned" ignores every reasoning token from the first time the secret appears in the reasoning. The length row uses the final length of the reasoning, which is known only after the reply, so it is not a usable alarm. *This probe reads only what arrives before the reply: the peer's message and tool results (one seed; 2,199 replies, 143 leaking). It also scores 0.93, so much of the signal is already there before the model reasons. †The same probe, scored on replies from before the peer asks, against whether the episode ever leaks (628 replies, 388 positives); it stays at chance, as it should. (b) The same kind of probe, asked about leaks at different distances. The points are not a paired comparison: the reply set and the input differ between them. Probe at end of incoming message: 2,059 replies (169 positives for "ever", 148 for "this round or next"). Probe on reasoning, this round or next: 1,874 replies, 118 positives. The 0.93 point is the headline result from panel a, whose reply set also includes each episode's first leaking reply. Appendix J.8 gives the full table, including the reasoning probe on that larger reply set for "this round or next" (0.64). All points cover 238 episodes. Values and exact source keys are in figure3_streaming.csv.
 """
 
 
 DISPLAY_A = {  # CSV label -> (display label, panel-a row position, top to bottom)
-    'Reasoning-token probe': ('Reasoning-token probe', 9.0),
-    'Before value mention': ('…cut before value mention', 8.1),
-    'Incoming-message probe*': ('Incoming message only*', 7.2),
-    'Length (hindsight)': ('Reasoning length (hindsight)', 5.3),
-    'Jev on reasoning': ('Jev judge on reasoning', 4.4),
-    'Keywords': ('Keyword rule', 3.5),
-    'GPT-5-nano on reasoning': ('GPT-5-nano on reasoning', 2.6),
-    'Pre-ask placebo†': ('Pre-ask placebo†', .7),
+    'Reasoning-token probe': ("Probe on the model's reasoning", 9.0),
+    'Before value mention': ('Same, stopped before the secret is mentioned', 8.1),
+    'Incoming-message probe*': ("Probe on the peer's message only*", 7.2),
+    'Length (hindsight)': ('Length of the reasoning (known only afterwards)', 5.3),
+    'Jev on reasoning': ('LLM judge (Jev) reading the reasoning', 4.4),
+    'Keywords': ('Keyword search', 3.5),
+    'GPT-5-nano on reasoning': ('Small LLM (GPT-5-nano) reading the reasoning', 2.6),
+    'Pre-ask placebo†': ('Probe before any request (should be ~0.5)†', .7),
 }
-GROUP_HEADINGS = [(9.75, 'Linear probes on activations', '#087f8c'),
-                  (6.05, 'Text and rule baselines', '#334155'),
-                  (1.45, 'Control', '#64748b')]
-# Panel b: x position, marker. Triangles share panel a's reply set (paper replies + first leaking reply).
-POS_B = {'Last prompt: eventual': (0, 'D'), 'Last prompt: near-term': (.84, 'D'),
-         'Reasoning: paper cohort': (1.02, 'o'), 'Reasoning: extended': (1.20, '^'),
-         'Reasoning: this reply': (2, '^')}
+GROUP_HEADINGS = [(9.75, "Probe reading the model's internals", '#087f8c'),
+                  (6.05, 'Reading the text instead', '#334155'),
+                  (1.45, 'Sanity check', '#64748b')]
+# Panel b: two series. The extended-cohort near-term point (0.64) is left to Appendix J.8;
+# the this-reply point uses panel a's reply set, which adds the leaking replies (see caption).
+POS_B = {'Last prompt: eventual': (0, 'D'), 'Last prompt: near-term': (1.0, 'D'),
+         'Reasoning: paper cohort': (1.2, 'o'), 'Reasoning: this reply': (2.2, 'o')}
 TEAL, SLATE, GREY = '#087f8c', '#334155', '#64748b'
 
 
@@ -107,9 +107,9 @@ def render(rows, output):
                          'xtick.color': SLATE, 'ytick.color': SLATE,
                          'xtick.labelsize': 7, 'ytick.labelsize': 7})
     W, H = 6.5, 2.85
-    fig = plt.figure(figsize=(W, H), facecolor='white')
-    left = fig.add_axes([.255, .25, .27, .60])
-    right = fig.add_axes([.66, .25, .32, .60])
+    fig = plt.figure(figsize=(6.5, 2.85), facecolor='white')
+    left = fig.add_axes([.355, .25, .21, .60])
+    right = fig.add_axes([.69, .25, .295, .60])
 
     # (a) recognising the leaking reply
     for r in (r for r in rows if r['panel'] == 'a'):
@@ -122,52 +122,55 @@ def render(rows, output):
         left.text(1.012, y, f"{r['estimate']:.2f}", ha='left', va='center', fontsize=6.8,
                   color=color if r['group'] != 'control' else GREY, weight='bold' if head else 'normal')
         left.text(-.03, y, label, transform=left.get_yaxis_transform(), ha='right', va='center',
-                  fontsize=7, weight='bold' if head else 'normal')
+                  fontsize=6.5, weight='bold' if head else 'normal')
     for y, text, color in GROUP_HEADINGS:
         left.text(-.03, y, text, transform=left.get_yaxis_transform(), ha='right', va='center',
                   fontsize=6.2, style='italic', color=color)
     left.set_yticks([])
     left.set(xlim=(.25, 1), ylim=(.1, 10.2))
-    left.set_xlabel('AUROC on held-out scenarios (95% CI)', fontsize=7, labelpad=2)
     left.set_xticks([.3, .5, .7, .9])
     left.spines['left'].set_visible(False)
     for y in [6.6, 1.95]:
-        left.axhline(y, xmin=-.9, color='#CBD5E1', linewidth=.6, clip_on=False)
+        left.axhline(y, xmin=-1.6, color='#CBD5E1', linewidth=.6, clip_on=False)
     left.axvline(.5, color=GREY, linestyle='--', linewidth=.8, zorder=0)
     left.text(.5, 10.2, 'chance', ha='center', va='bottom', fontsize=6, color=GREY)
     left.grid(axis='x', alpha=.15)
-    fig.text(.012, .955, '(a) Recognising the reply that leaks (gpt-oss-20b)', weight='bold', fontsize=8)
+    left.annotate('warns before the\nsecret is written', xy=(.905, 8.1), xytext=(.84, 8.1),
+                  ha='right', va='center', fontsize=6, color=TEAL, linespacing=1.1,
+                  bbox=dict(boxstyle='square,pad=0.15', facecolor='white', edgecolor='none'),
+                  arrowprops=dict(arrowstyle='->', color=TEAL, linewidth=.6))
+    fig.text(.29, .14, 'AUROC: how well it separates leaking replies (0.5 = chance, 1 = perfect)',
+             fontsize=6.8, ha='center')
+    fig.text(.012, .955, '(a) gpt-oss-20b: which reply will leak the secret?', weight='bold', fontsize=7.8)
 
     # (b) label ladder
-    for r in (r for r in rows if r['panel'] == 'b'):
+    for r in (r for r in rows if r['panel'] == 'b' and r['label'] in POS_B):
         x, marker = POS_B[r['label']]
         color, _ = STYLE[r['group']]
         right.errorbar(x, r['estimate'], yerr=[[r['estimate']-r['low']], [r['high']-r['estimate']]],
                        fmt=marker, color=color, markersize=4.2, capsize=1.8, linewidth=.9, zorder=3)
         dx, ha = {'Last prompt: eventual': (-6, 'right'), 'Last prompt: near-term': (-6, 'right'),
-                  'Reasoning: paper cohort': (-5, 'right'), 'Reasoning: extended': (6, 'left'),
-                  'Reasoning: this reply': (6, 'left')}[r['label']]
+                  'Reasoning: paper cohort': (6, 'left'), 'Reasoning: this reply': (6, 'left')}[r['label']]
         right.annotate(f"{r['estimate']:.2f}", (x, r['estimate']), xytext=(dx, 0), va='center',
                        textcoords='offset points', ha=ha, fontsize=6.8, color=color,
                        bbox=dict(boxstyle='square,pad=0.1', facecolor='white', edgecolor='none'))
-    right.set(xlim=(-.5, 2.4), ylim=(.4, 1.0))
-    right.set_ylabel('AUROC (95% CI)', fontsize=7, labelpad=2)
-    right.set_xticks([0, 1, 2], ['Eventual\noutcome', 'This or next\nround', 'This\nreply'], fontsize=7)
+    right.set(xlim=(-.6, 2.75), ylim=(.4, 1.0))
+    right.set_ylabel('AUROC', fontsize=7, labelpad=2)
+    right.set_xticks([0, 1.1, 2.2], ['Will it\never leak?', 'Leak this\nround or next?', 'Leak in\nthis reply?'],
+                     fontsize=6.6)
     right.tick_params(axis='x', length=0, pad=3)
     right.set_yticks([.5, .6, .7, .8, .9, 1.0])
     right.axhline(.5, color=GREY, linestyle='--', linewidth=.8, zorder=0)
     right.grid(axis='y', alpha=.15)
-    right.set_xlabel('Label horizon  (closer to the leak \u2192)', fontsize=7, labelpad=2)
-    fig.text(.585, .955, '(b) The closer the label, the more readable', weight='bold', fontsize=8)
-    fig.text(.585, .895, 'Descriptive: labels and reply sets differ between points', fontsize=6.2, color=GREY)
-    handles = [Line2D([], [], marker='D', color=SLATE, linestyle='', markersize=4, label='Last-prompt probe'),
-               Line2D([], [], marker='o', color=TEAL, linestyle='', markersize=4, label='Reasoning (paper replies)'),
-               Line2D([], [], marker='^', color=TEAL, linestyle='', markersize=4.5, label='Reasoning (+ leaking replies)')]
+    fig.text(.525, .955, '(b) The nearer the leak, the easier to predict', weight='bold', fontsize=7.8)
+    handles = [Line2D([], [], marker='D', color=SLATE, linestyle='', markersize=4,
+                      label='Probe at end of incoming message'),
+               Line2D([], [], marker='o', color=TEAL, linestyle='', markersize=4, label='Probe on reasoning')]
     right.legend(handles=handles, loc='upper left', bbox_to_anchor=(0, 1.02), ncol=1, frameon=False,
-                 fontsize=6.4, handletextpad=.2, labelspacing=.35, borderaxespad=.2)
+                 fontsize=6.3, handletextpad=.2, labelspacing=.35, borderaxespad=.2)
 
-    fig.text(.012, .045, '* Peer message and tool results before the reply; one seed.   '
-             '† Pre-ask replies vs eventual outcome.', fontsize=6.2, color=GREY)
+    fig.text(.012, .035, "* Also sees tool results; one seed.   † Scored on replies before the peer asks.",
+             fontsize=6.2, color=GREY)
     for ext in ['png', 'pdf']:
         fig.savefig(output / f'figure3_streaming.{ext}', dpi=300, facecolor='white')
     plt.close(fig)
