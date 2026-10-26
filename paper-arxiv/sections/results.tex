@@ -64,14 +64,14 @@ On the fresh episodes the reasoning probe scored a little higher, a gap within n
 
 The signal is specific to the call that leaks.
 Asked one call earlier, the probe drops well below its score on the leaking call, and on gpt-oss-20b what it detects there is mostly the read of the protected file that usually comes just before the leak (\cref{app:ahead}).
-Followed through an episode, the probe's score stays low over the calls before a leak and jumps at the leaking call, on both models and on both sets of episodes (\cref{fig:trajectories}).
+Followed through an episode, the median score across leaking episodes stays low over the calls before the leak and jumps at the leaking call, on both models and on both sets of episodes, although individual episodes vary (\cref{fig:trajectories}).
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig6_trajectories.pdf}
-  \caption{\textbf{The score jumps at the call that leaks.}
+  \caption{\textbf{On average, the score jumps at the call that leaks.}
   Last-prompt probe score, as a percentile among that model's scored calls, aligned on each episode's leaking call (top: median over all leaking episodes, with the middle 50\% shaded for fresh episodes).
-  Bottom: one example fresh episode per model, chosen by the fixed rule given in \cref{app:ahead}.}
+  Bottom: one example fresh episode per model, chosen by a fixed rule (\cref{app:ahead}); individual episodes vary.}
   \label{fig:trajectories}
 \end{figure}
 
