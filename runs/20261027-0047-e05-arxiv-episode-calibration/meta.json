@@ -1,0 +1,81 @@
+{
+  "id": "20261027-0047-e05-arxiv-episode-calibration",
+  "experiment": "E05",
+  "name": "e05-arxiv-episode-calibration",
+  "tags": [],
+  "settings": {
+    "saved_predictions_and_frozen_weight_scoring_only": true,
+    "no_fit": true,
+    "sources": {
+      "runs/20261026-2155-e05-qwen-any-public-audit/rows.json": {
+        "sha256": "e7e096f786a7798563e3f8cc995f54ebc2417698cb83e283cabcb3bcf428ecf2",
+        "old_checkout_read_only": false
+      },
+      "runs/20261026-2212-e05-arxiv-qwen-fresh-percall/probe_scores.csv.gz": {
+        "sha256": "2e792979ef6af81180dd035c337c272e99cce7afa54f978e6612595364c16053",
+        "old_checkout_read_only": false
+      },
+      "paper-arxiv/frozen/qwen_percall_plan.json": {
+        "sha256": "dd1a9d4a6a7e002e647dd53f89f9fec26aa0d702eab309413140fe06e113e001",
+        "old_checkout_read_only": false
+      },
+      "runs/20261026-1309-e06-percall-input-jev-qwen/probe_scores.csv": {
+        "sha256": "8ee6e5fce2e3c450d3444bb1ba10cdf39fcaeeefb153402cdf30c0e9fea97da2",
+        "old_checkout_read_only": false
+      },
+      "runs/20261026-1309-e06-percall-input-jev-qwen/thresholds.json": {
+        "sha256": "2034c46831ff48f540a9e96e67418c743b2e4f1dda62b1f4f3ae0044f43582c4",
+        "old_checkout_read_only": false
+      },
+      "runs/20261026-1302-e05-stream-confirm-score/probe_scores.csv": {
+        "sha256": "deac9f3f8b01a64eab378b4b76b690a9f863b89696a69db0f382b8564490ff29",
+        "old_checkout_read_only": true
+      },
+      "runs/20261026-1139-e05-stream-confirm/frozen_plan.json": {
+        "sha256": "989267e1a5311d7efe5cca8ab180bb014034fc18018bb7480bcf6362aca69180",
+        "old_checkout_read_only": false
+      },
+      "runs/20261026-2207-e05-arxiv-qwen-percall-freeze/weights-s42.json.gz": {
+        "sha256": "c996452fea6a57d537404e8f686afb38d3820b8d83c37ec715f734c2b831940e",
+        "old_checkout_read_only": false
+      },
+      "runs/20261026-2207-e05-arxiv-qwen-percall-freeze/weights-s43.json.gz": {
+        "sha256": "23f3258906f9eb9831152bac1c6a72cb7f71c733c196a0a107f3b1caf3e07038",
+        "old_checkout_read_only": false
+      },
+      "runs/20261026-2207-e05-arxiv-qwen-percall-freeze/weights-s44.json.gz": {
+        "sha256": "4e64d86b7fc5a985b6640fbb8d55a9b9a589228d80b1cc7d4c3f01349382390e",
+        "old_checkout_read_only": false
+      },
+      "runs/20261026-0522-e05-reasoning-stream-data/replies.json": {
+        "sha256": "e83a72dc1e6c155e77e27472908bfd07bf80926d337eacf7f1b342033a51f479",
+        "old_checkout_read_only": true
+      },
+      "runs/20261026-1139-e05-stream-confirm/frozen_weights.json": {
+        "sha256": "94915ae7208c100ae156e599b4aea60462bc6027800ea7e28b43cfdbf90643f2",
+        "old_checkout_read_only": true
+      }
+    },
+    "comparison": "strict >; at most floor(0.05*n) calibration episodes alarm",
+    "precision_denominator": "all flagged scored recruiting calls, including earlier calls in eventual-leak episodes; controls excluded",
+    "episode_denominator": "all eligible episodes, including GPT emitting episodes with empty reasoning at their emission",
+    "development_scores": "Recomputed with exact frozen weights on saved activations; no refitting. Qwen fresh predictions and both original control cutoffs independently reproduced.",
+    "missing_controls": "Fresh Jev control prediction vectors unavailable in its recruiting-only export; report unavailable, not zero",
+    "historical_gpt_source": "runs/20261026-0526-e05-reasoning-stream/episode_calibrated_alarms.json"
+  },
+  "parents": [],
+  "model": null,
+  "command": "/Users/leo/collusion-research-followup/experiments/E05-probes/.venv/bin/python experiments/E05-probes/arxiv_episode_calibration.py",
+  "git_commit": "2fc61fa02803018da0455f3d4b5f2fa811379fb9",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-27T00:47:15",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-27T00:47:15",
+  "results": {
+    "no_api": true,
+    "no_gpu": true
+  }
+}
