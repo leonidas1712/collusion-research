@@ -73,14 +73,17 @@ def headline(data,sha):
         # Do not bridge an unobserved rung.
         for a,b in zip(values,values[1:]):
             if .8 <= b[0]-a[0] <= 1:ax.plot([a[0],b[0]],[a[1],b[1]],color=MODEL_COLORS[model],lw=.8,alpha=.6)
-        fresh=[(2,'qwenFreshCallProbe','activation')] if model=='qwen' else [(2,'gptossFreshReasoning','activation')]
+        fresh=[(2,'qwenFreshCallProbe','activation')] if model=='qwen' else [(2,'gptossFreshCallProbe','activation'),(2,'gptossFreshReasoning','activation')]
         for i,(x,key,kind) in enumerate(fresh):
             e=get(data,key);rows.append((title,'Fresh test: '+key,e))
-            draw(ax,x+.18,None,e,model,kind,fresh=True,
+            fresh_x=x+(0 if model=='gpt_oss' and i==0 else .18)
+            draw(ax,fresh_x,None,e,model,kind,fresh=True,
                  marker='D' if key=='gptossFreshReasoning' else 'o')
             if e.get('value') is not None:
-                ax.annotate('Fresh test',xy=(x+.18,e['value']),xytext=(x-.12,.72),
-                            ha='center',fontsize=8,arrowprops=dict(arrowstyle='-',color='#555555',lw=.7))
+                ax.annotate('Fresh last-prompt' if key=='gptossFreshCallProbe' else ('Fresh reasoning' if model=='gpt_oss' else 'Fresh test'),
+                            xy=(fresh_x,e['value']),xytext=(x-.50,.56 if model=='gpt_oss' and i==0 else .78),
+                            ha='right' if model=='gpt_oss' else 'center',fontsize=8,
+                            bbox=dict(facecolor='white',edgecolor='none',pad=1),arrowprops=dict(arrowstyle='-',color='#555555',lw=.7))
         ax.axhline(.5,color='#777777',ls='--',lw=.8)
         ax.set(xlim=(-.3,2.3),ylim=(0,1.03),xticks=[0,1,2],xticklabels=['Will it\never leak?','This round\nor next?','This call?'],title=title)
         ax.grid(axis='y',alpha=.15)
@@ -113,6 +116,7 @@ def forest(data,sha,stem,title,panels):
             e=get(data,key);rows.append((panel,label,e))
             draw(ax,None,y,e,model,kind,horizontal=True)
             ax.text(.02,y-.30,label,va='center',fontsize=10 if compact else 9,
+                    bbox=dict(facecolor='white',edgecolor='none',pad=1.5),
                     transform=ax.get_yaxis_transform())
         ax.set(xlim=(0,1.03),ylim=(len(items)-.4,-.8),yticks=[],xlabel='AUROC',xticks=[0,.5,1])
         ax.axvline(.5,color='#777777',ls='--',lw=.8)
