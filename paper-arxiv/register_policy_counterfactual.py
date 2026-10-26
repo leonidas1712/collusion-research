@@ -28,18 +28,18 @@ def main():
         for key,suffix in [('leaking','LeakingCalls'),('non_leaking','NonleakingCalls')]:
             cells[prefix][suffix]=add(prefix,suffix,['calls',key],fmt='integer')
         for key,suffix in [('permit_minus_forbid','PermitShift'),('neutral_minus_forbid','NeutralShift'),('permit_minus_neutral','PermitNeutralShift')]:
-            cells[prefix][suffix]=add(prefix,suffix,['paired_leaking_call_changes',key,'median'],['paired_leaking_call_changes',key,'ci95'],fmt='signed',decimals=3 if key=='permit_minus_forbid' else 2)
+            cells[prefix][suffix]=add(prefix,suffix,['paired_leaking_call_changes',key,'median'],['paired_leaking_call_changes',key,'ci95'],fmt='decimal',decimals=2)
         for condition,suffix in [('FORBID','Forbid'),('PERMIT','Permit'),('NEUTRAL_EDIT','Neutral')]:
             for kind,metric in [('within_stratum','AUROC'),('pooled','UnstratifiedAUROC')]:
                 cells[prefix][suffix+metric]=add(prefix,suffix+metric,['auc',condition,kind,'value'],['auc',condition,kind,'ci95'])
-            cells[prefix][suffix+'Crossing']=add(prefix,suffix+'Crossing',['threshold_crossing',condition,'fraction'],['threshold_crossing',condition,'ci95'],fmt='percent',decimals=1)
+            cells[prefix][suffix+'Crossing']=add(prefix,suffix+'Crossing',['threshold_crossing',condition,'fraction'],['threshold_crossing',condition,'ci95'],fmt='percent',decimals=0)
             for part,suf in [('numerator','CrossingCount'),('denominator','CrossingTotal')]:
                 add(prefix,suffix+suf,['threshold_crossing',condition,part],fmt='integer')
         add(prefix,'ReproductionError',['forbid_reproduction','max_absolute_error'],decimals=16)
     rows=[]
-    for label,suffix in [('Emitting calls','LeakingCalls'),('Matched nonemitting calls','NonleakingCalls'),('Median PERMIT minus FORBID','PermitShift'),('Median NEUTRAL minus FORBID','NeutralShift'),('FORBID within-group AUROC','ForbidAUROC'),('PERMIT within-group AUROC','PermitAUROC'),('NEUTRAL within-group AUROC','NeutralAUROC')]:
+    for label,suffix in [('Leaking calls','LeakingCalls'),('Matched non-leaking calls','NonleakingCalls'),('Permitting rule minus original rule','PermitShift'),('Neutral rewording minus original rule','NeutralShift'),('Original rule AUROC','ForbidAUROC'),('Permitting rule AUROC','PermitAUROC'),('Neutral rewording AUROC','NeutralAUROC')]:
         rows.append([label,cells['qwen'][suffix],cells['gptoss'][suffix]])
-    for label,suffix in [('FORBID threshold crossings','Forbid'),('PERMIT threshold crossings','Permit'),('NEUTRAL threshold crossings','Neutral')]:
+    for label,suffix in [('Original rule threshold crossings','Forbid'),('Permitting rule threshold crossings','Permit'),('Neutral rewording threshold crossings','Neutral')]:
         row=[label]
         for prefix in RUNS:
             stem=prefix+'Policy'+suffix

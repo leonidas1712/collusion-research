@@ -3,15 +3,15 @@
 \toprule
 Policy counterfactual & Qwen3-32B & gpt-oss-20b \\
 \midrule
-Emitting calls & \qwenPolicyLeakingCalls{} & \gptossPolicyLeakingCalls{} \\
-Matched nonemitting calls & \qwenPolicyNonleakingCalls{} & \gptossPolicyNonleakingCalls{} \\
-Median PERMIT minus FORBID & \qwenPolicyPermitShift{} \qwenPolicyPermitShiftCI{} & \gptossPolicyPermitShift{} \gptossPolicyPermitShiftCI{} \\
-Median NEUTRAL minus FORBID & \qwenPolicyNeutralShift{} \qwenPolicyNeutralShiftCI{} & \gptossPolicyNeutralShift{} \gptossPolicyNeutralShiftCI{} \\
-FORBID within-group AUROC & \qwenPolicyForbidAUROC{} \qwenPolicyForbidAUROCCI{} & \gptossPolicyForbidAUROC{} \gptossPolicyForbidAUROCCI{} \\
-PERMIT within-group AUROC & \qwenPolicyPermitAUROC{} \qwenPolicyPermitAUROCCI{} & \gptossPolicyPermitAUROC{} \gptossPolicyPermitAUROCCI{} \\
-NEUTRAL within-group AUROC & \qwenPolicyNeutralAUROC{} \qwenPolicyNeutralAUROCCI{} & \gptossPolicyNeutralAUROC{} \gptossPolicyNeutralAUROCCI{} \\
-FORBID threshold crossings & \qwenPolicyForbidCrossingCount{}/\qwenPolicyForbidCrossingTotal{}; \qwenPolicyForbidCrossing{} \qwenPolicyForbidCrossingCI{} & \gptossPolicyForbidCrossingCount{}/\gptossPolicyForbidCrossingTotal{}; \gptossPolicyForbidCrossing{} \gptossPolicyForbidCrossingCI{} \\
-PERMIT threshold crossings & \qwenPolicyPermitCrossingCount{}/\qwenPolicyPermitCrossingTotal{}; \qwenPolicyPermitCrossing{} \qwenPolicyPermitCrossingCI{} & \gptossPolicyPermitCrossingCount{}/\gptossPolicyPermitCrossingTotal{}; \gptossPolicyPermitCrossing{} \gptossPolicyPermitCrossingCI{} \\
-NEUTRAL threshold crossings & \qwenPolicyNeutralCrossingCount{}/\qwenPolicyNeutralCrossingTotal{}; \qwenPolicyNeutralCrossing{} \qwenPolicyNeutralCrossingCI{} & \gptossPolicyNeutralCrossingCount{}/\gptossPolicyNeutralCrossingTotal{}; \gptossPolicyNeutralCrossing{} \gptossPolicyNeutralCrossingCI{} \\
+Leaking calls & \qwenPolicyLeakingCalls{} & \gptossPolicyLeakingCalls{} \\
+Matched non-leaking calls & \qwenPolicyNonleakingCalls{} & \gptossPolicyNonleakingCalls{} \\
+Permitting rule minus original rule & \qwenPolicyPermitShift{} \qwenPolicyPermitShiftCI{} & \gptossPolicyPermitShift{} \gptossPolicyPermitShiftCI{} \\
+Neutral rewording minus original rule & \qwenPolicyNeutralShift{} \qwenPolicyNeutralShiftCI{} & \gptossPolicyNeutralShift{} \gptossPolicyNeutralShiftCI{} \\
+Original rule AUROC & \qwenPolicyForbidAUROC{} \qwenPolicyForbidAUROCCI{} & \gptossPolicyForbidAUROC{} \gptossPolicyForbidAUROCCI{} \\
+Permitting rule AUROC & \qwenPolicyPermitAUROC{} \qwenPolicyPermitAUROCCI{} & \gptossPolicyPermitAUROC{} \gptossPolicyPermitAUROCCI{} \\
+Neutral rewording AUROC & \qwenPolicyNeutralAUROC{} \qwenPolicyNeutralAUROCCI{} & \gptossPolicyNeutralAUROC{} \gptossPolicyNeutralAUROCCI{} \\
+Original rule threshold crossings & \qwenPolicyForbidCrossingCount{}/\qwenPolicyForbidCrossingTotal{}; \qwenPolicyForbidCrossing{} \qwenPolicyForbidCrossingCI{} & \gptossPolicyForbidCrossingCount{}/\gptossPolicyForbidCrossingTotal{}; \gptossPolicyForbidCrossing{} \gptossPolicyForbidCrossingCI{} \\
+Permitting rule threshold crossings & \qwenPolicyPermitCrossingCount{}/\qwenPolicyPermitCrossingTotal{}; \qwenPolicyPermitCrossing{} \qwenPolicyPermitCrossingCI{} & \gptossPolicyPermitCrossingCount{}/\gptossPolicyPermitCrossingTotal{}; \gptossPolicyPermitCrossing{} \gptossPolicyPermitCrossingCI{} \\
+Neutral rewording threshold crossings & \qwenPolicyNeutralCrossingCount{}/\qwenPolicyNeutralCrossingTotal{}; \qwenPolicyNeutralCrossing{} \qwenPolicyNeutralCrossingCI{} & \gptossPolicyNeutralCrossingCount{}/\gptossPolicyNeutralCrossingTotal{}; \gptossPolicyNeutralCrossing{} \gptossPolicyNeutralCrossingCI{} \\
 \bottomrule
 \end{tabular}
