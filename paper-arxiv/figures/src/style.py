@@ -12,7 +12,7 @@ def configure():
         'xtick.labelsize': 9, 'ytick.labelsize': 9, 'legend.fontsize': 9,
         'pdf.fonttype': 42, 'ps.fonttype': 42,
         'axes.spines.top': False, 'axes.spines.right': False,
-        'savefig.bbox': 'tight', 'savefig.pad_inches': 0.04,
+        'savefig.bbox': None, 'savefig.pad_inches': 0.04,
     })
 
 
