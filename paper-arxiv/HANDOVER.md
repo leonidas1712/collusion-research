@@ -201,6 +201,12 @@ already states each fact; the question is how much of it the title and abstract 
 1. **"Gives in" framing.** The title and abstract say the probe tells when an agent *gives in*. What the
    probe actually reads is open: it may read the situation that prompts a leak rather than a decision
    (§4.3; Limitations). Keep "gives in", or soften to "is about to leak".
+   **Update after E08 (policy counterfactual):** making sharing *permitted* leaves the probe's score
+   essentially unchanged, so the probe mostly tracks the coming emission, not the rule being broken
+   (app:policy). The abstract's first sentence ("gives in and breaks its operator's rule … a probe can
+   tell") is true in our setting, where every emission breaks the rule. A reader may still take it to
+   mean the probe detects rule-breaking, so this choice now matters more. claude-2 left your abstract
+   verbatim; the body and Discussion now call it a pre-emission detector.
 2. **The abstract's operating point has no precision or per-episode rate.** It gives 82% caught at 5% flagged.
    On the same fresh Qwen calls, only 24% of the probe's flags are real leaks, and 59% of refusing episodes
    see at least one flag (§4.4). Consider adding one of these, or accept the per-call framing as is.
