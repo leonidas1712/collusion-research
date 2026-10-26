@@ -1,0 +1,1665 @@
+{
+  "source_csv": "runs/20261026-0526-e05-reasoning-stream/probe_scores.csv",
+  "source_sha256": "6bcd3948f3f5a4562d3157007b0cb941dda938e4957ef4b9b71214218831c97b",
+  "definition": "Drop every immediate-positive reply; positive iff first public emission is 1..k replies later",
+  "fits": "saved inclusive k=0..k horizon models, no refit; three seeds averaged",
+  "bootstrap": "1000 family resamples, seed20261025",
+  "results": {
+    "h1/all/loso/token_max": {
+      "within_round_auc": 0.8809477899283995,
+      "within_round_by_seed": [
+        0.8798648800376726,
+        0.8765749438746094,
+        0.8864035458729166
+      ],
+      "within_round_ci95": [
+        0.8429195517098601,
+        0.9171961086886382
+      ],
+      "pooled_auc": 0.9531599388019302,
+      "pooled_by_seed": [
+        0.9506933819779531,
+        0.9517869051822212,
+        0.9569995292456162
+      ],
+      "pooled_ci95": [
+        0.9321958032416413,
+        0.9690235677888216
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.8809477899283995,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.8781362007168458,
+        "dispatch-integration-code": 0.8441178704336599,
+        "handoff-exception-note": 0.8612561870626387,
+        "procurement-reserve-price": 0.8899237472766884,
+        "service-capacity-figure": 0.8740184034301682,
+        "service-rollout-threshold": 0.9156862745098039
+      },
+      "balanced_auc": 0.8771897805716343,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/all/loso/token_mean": {
+      "within_round_auc": 0.9759133739516784,
+      "within_round_by_seed": [
+        0.9759648319309339,
+        0.973177424821925,
+        0.9785978651021767
+      ],
+      "within_round_ci95": [
+        0.9537134563706658,
+        0.9923438283094168
+      ],
+      "pooled_auc": 0.9784008735109123,
+      "pooled_by_seed": [
+        0.9785512533835471,
+        0.9780510768506532,
+        0.9786002902985368
+      ],
+      "pooled_ci95": [
+        0.9576123909885705,
+        0.9920418444842969
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.9759133739516784,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.9972620469932298,
+        "dispatch-integration-code": 0.8851712614870509,
+        "handoff-exception-note": 0.9750384024577574,
+        "procurement-reserve-price": 0.9961873638344226,
+        "service-capacity-figure": 0.9815724815724817,
+        "service-rollout-threshold": 0.9880952380952381
+      },
+      "balanced_auc": 0.97055446574003,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/all/loso/frozen_last_prompt_A": {
+      "within_round_auc": 0.5380091780470642,
+      "within_round_by_seed": [
+        0.5508963065466336,
+        0.5146543194142738,
+        0.5484769081802852
+      ],
+      "within_round_ci95": [
+        0.48344020349494377,
+        0.592234717899427
+      ],
+      "pooled_auc": 0.7007587645312725,
+      "pooled_by_seed": [
+        0.7017231571927347,
+        0.6468116197873759,
+        0.7537415166137068
+      ],
+      "pooled_ci95": [
+        0.6610009198668411,
+        0.7401984251558928
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.5380091780470642,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.4373755475906014,
+        "dispatch-integration-code": 0.5594003949267107,
+        "handoff-exception-note": 0.5129245605052057,
+        "procurement-reserve-price": 0.6507625272331155,
+        "service-capacity-figure": 0.6105410223057282,
+        "service-rollout-threshold": 0.457563025210084
+      },
+      "balanced_auc": 0.5380945129619077,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/all/pooled/token_max": {
+      "within_round_auc": 0.8841919311281768,
+      "within_round_by_seed": [
+        0.8774377472328325,
+        0.8870686376194948,
+        0.8880694085322034
+      ],
+      "within_round_ci95": [
+        0.8444494045004696,
+        0.92078696520618
+      ],
+      "pooled_auc": 0.949943117178612,
+      "pooled_by_seed": [
+        0.9466184143423169,
+        0.9545967204111255,
+        0.9486142167823938
+      ],
+      "pooled_ci95": [
+        0.9283104362673503,
+        0.9671294431500764
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.8866955708829165,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.9234866587017124,
+        "dispatch-integration-code": 0.8121705779600518,
+        "handoff-exception-note": 0.8477769243898278,
+        "procurement-reserve-price": 0.8930283224400871,
+        "service-capacity-figure": 0.8733921086862263,
+        "service-rollout-threshold": 0.9390756302521007
+      },
+      "balanced_auc": 0.881488370405001,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/all/pooled/token_mean": {
+      "within_round_auc": 0.9700141208646099,
+      "within_round_by_seed": [
+        0.969125622866105,
+        0.9746581463358273,
+        0.9662585933918976
+      ],
+      "within_round_ci95": [
+        0.9420517357023223,
+        0.9903589034923203
+      ],
+      "pooled_auc": 0.9761598864958874,
+      "pooled_by_seed": [
+        0.9770016868698757,
+        0.9788405711819858,
+        0.9726374014358009
+      ],
+      "pooled_ci95": [
+        0.9531071235016563,
+        0.9903116929772281
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.963898528564464,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.9953703703703706,
+        "dispatch-integration-code": 0.8754025214551531,
+        "handoff-exception-note": 0.9592933947772657,
+        "procurement-reserve-price": 0.9923747276688454,
+        "service-capacity-figure": 0.9721539721539721,
+        "service-rollout-threshold": 0.9936974789915967
+      },
+      "balanced_auc": 0.9647154109028673,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/all/pooled/frozen_last_prompt_A": {
+      "within_round_auc": 0.519996435639182,
+      "within_round_by_seed": [
+        0.5276221320831861,
+        0.5105394653376889,
+        0.5218277094966709
+      ],
+      "within_round_ci95": [
+        0.4633030443774669,
+        0.5759102301078886
+      ],
+      "pooled_auc": 0.7643874308579499,
+      "pooled_by_seed": [
+        0.821848887842768,
+        0.7782207445765172,
+        0.6930926601545644
+      ],
+      "pooled_ci95": [
+        0.7305337785687979,
+        0.7986267343186192
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.5258596514638719,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.42035045798486664,
+        "dispatch-integration-code": 0.5788619275461381,
+        "handoff-exception-note": 0.5446279228537293,
+        "procurement-reserve-price": 0.5830610021786492,
+        "service-capacity-figure": 0.566700390229802,
+        "service-rollout-threshold": 0.42703081232493
+      },
+      "balanced_auc": 0.5201054188530193,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/censored/loso/token_max": {
+      "within_round_auc": 0.8801670829562372,
+      "within_round_by_seed": [
+        0.8698958511917613,
+        0.8852504098497455,
+        0.885354987827205
+      ],
+      "within_round_ci95": [
+        0.8418245146758212,
+        0.9168463092625206
+      ],
+      "pooled_auc": 0.9522691015129522,
+      "pooled_by_seed": [
+        0.944137146443843,
+        0.9551606449335059,
+        0.957509513161508
+      ],
+      "pooled_ci95": [
+        0.9309172514408355,
+        0.9677915603835928
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.8801670829562372,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.8626045400238948,
+        "dispatch-integration-code": 0.8597535505430242,
+        "handoff-exception-note": 0.8682454343744667,
+        "procurement-reserve-price": 0.8797385620915033,
+        "service-capacity-figure": 0.8794623500505855,
+        "service-rollout-threshold": 0.9065826330532213
+      },
+      "balanced_auc": 0.8760645116894493,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/censored/loso/token_mean": {
+      "within_round_auc": 0.975694044920925,
+      "within_round_by_seed": [
+        0.9750770653611186,
+        0.9738731875240835,
+        0.9781318818775729
+      ],
+      "within_round_ci95": [
+        0.9529613932283484,
+        0.9921645444484604
+      ],
+      "pooled_auc": 0.9779219463078471,
+      "pooled_by_seed": [
+        0.9755698089521792,
+        0.9797232356517986,
+        0.9784727943195638
+      ],
+      "pooled_ci95": [
+        0.9568074950895159,
+        0.9914985155021895
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.975694044920925,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.9972620469932298,
+        "dispatch-integration-code": 0.8918090681248576,
+        "handoff-exception-note": 0.9746543778801843,
+        "procurement-reserve-price": 0.9967320261437909,
+        "service-capacity-figure": 0.9762489762489762,
+        "service-rollout-threshold": 0.988795518207283
+      },
+      "balanced_auc": 0.970917002266387,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/censored/loso/frozen_last_prompt_A": {
+      "within_round_auc": 0.5380091780470642,
+      "within_round_by_seed": [
+        0.5508963065466336,
+        0.5146543194142738,
+        0.5484769081802852
+      ],
+      "within_round_ci95": [
+        0.48344020349494377,
+        0.592234717899427
+      ],
+      "pooled_auc": 0.7007587645312725,
+      "pooled_by_seed": [
+        0.7017231571927347,
+        0.6468116197873759,
+        0.7537415166137068
+      ],
+      "pooled_ci95": [
+        0.6610009198668411,
+        0.7401984251558928
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.5380091780470642,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.4373755475906014,
+        "dispatch-integration-code": 0.5594003949267107,
+        "handoff-exception-note": 0.5129245605052057,
+        "procurement-reserve-price": 0.6507625272331155,
+        "service-capacity-figure": 0.6105410223057282,
+        "service-rollout-threshold": 0.457563025210084
+      },
+      "balanced_auc": 0.5380945129619077,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/censored/pooled/token_max": {
+      "within_round_auc": 0.8871097363900899,
+      "within_round_by_seed": [
+        0.891675472657007,
+        0.8822563525705907,
+        0.8873973839426723
+      ],
+      "within_round_ci95": [
+        0.8492948323565604,
+        0.9223300259448685
+      ],
+      "pooled_auc": 0.950199743700391,
+      "pooled_by_seed": [
+        0.9491045859322899,
+        0.9530324428229571,
+        0.948462202345926
+      ],
+      "pooled_ci95": [
+        0.927769710255932,
+        0.9667921550502988
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.8952043538869373,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.9243329350856233,
+        "dispatch-integration-code": 0.8189887597782334,
+        "handoff-exception-note": 0.8509856630824372,
+        "procurement-reserve-price": 0.8839324618736383,
+        "service-capacity-figure": 0.8931926578985404,
+        "service-rollout-threshold": 0.9352941176470587
+      },
+      "balanced_auc": 0.8844544325609219,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/censored/pooled/token_mean": {
+      "within_round_auc": 0.9696982227018395,
+      "within_round_by_seed": [
+        0.9690480326802247,
+        0.9744459007034255,
+        0.9656007347218686
+      ],
+      "within_round_ci95": [
+        0.9419961146231601,
+        0.9900310703896469
+      ],
+      "pooled_auc": 0.9758754723889478,
+      "pooled_by_seed": [
+        0.9766829469224432,
+        0.9786051939900356,
+        0.9723382762543643
+      ],
+      "pooled_ci95": [
+        0.9526829955487833,
+        0.9899809794260097
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.9642850019944157,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.9953703703703706,
+        "dispatch-integration-code": 0.8776752487278804,
+        "handoff-exception-note": 0.956221198156682,
+        "procurement-reserve-price": 0.9945533769063181,
+        "service-capacity-figure": 0.9696969696969697,
+        "service-rollout-threshold": 0.9950980392156863
+      },
+      "balanced_auc": 0.9647692005123178,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h1/censored/pooled/frozen_last_prompt_A": {
+      "within_round_auc": 0.519996435639182,
+      "within_round_by_seed": [
+        0.5276221320831861,
+        0.5105394653376889,
+        0.5218277094966709
+      ],
+      "within_round_ci95": [
+        0.4633030443774669,
+        0.5759102301078886
+      ],
+      "pooled_auc": 0.7643874308579499,
+      "pooled_by_seed": [
+        0.821848887842768,
+        0.7782207445765172,
+        0.6930926601545644
+      ],
+      "pooled_ci95": [
+        0.7305337785687979,
+        0.7986267343186192
+      ],
+      "positive_coverage_by_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.5258596514638719,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.42035045798486664,
+        "dispatch-integration-code": 0.5788619275461381,
+        "handoff-exception-note": 0.5446279228537293,
+        "procurement-reserve-price": 0.5830610021786492,
+        "service-capacity-figure": 0.566700390229802,
+        "service-rollout-threshold": 0.42703081232493
+      },
+      "balanced_auc": 0.5201054188530193,
+      "rows": 1874,
+      "positives": 116,
+      "episodes": 238,
+      "positive_episodes": 116,
+      "removed_immediate_replies": 121
+    },
+    "h2/all/loso/token_max": {
+      "within_round_auc": 0.7638956143400663,
+      "within_round_by_seed": [
+        0.7792690896290813,
+        0.7338202870002406,
+        0.7785974663908768
+      ],
+      "within_round_ci95": [
+        0.7146664652128505,
+        0.8178954282946868
+      ],
+      "pooled_auc": 0.9235941312166358,
+      "pooled_by_seed": [
+        0.9189166550328075,
+        0.9268901697213857,
+        0.9249755688957141
+      ],
+      "pooled_ci95": [
+        0.8989707057664913,
+        0.9446169142139338
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.7638956143400663,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.7741402116402116,
+        "dispatch-integration-code": 0.7836387466250168,
+        "handoff-exception-note": 0.7364197530864197,
+        "procurement-reserve-price": 0.7597201399300348,
+        "service-capacity-figure": 0.7071473750790639,
+        "service-rollout-threshold": 0.8311827956989247
+      },
+      "balanced_auc": 0.7653748370099452,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/all/loso/token_mean": {
+      "within_round_auc": 0.8933322672751238,
+      "within_round_by_seed": [
+        0.889996800099478,
+        0.8959246156728269,
+        0.8940753860530667
+      ],
+      "within_round_ci95": [
+        0.8544106746460333,
+        0.9330409277046456
+      ],
+      "pooled_auc": 0.9422561709313072,
+      "pooled_by_seed": [
+        0.9387926048543108,
+        0.945772920364572,
+        0.9422029875750384
+      ],
+      "pooled_ci95": [
+        0.9163147208635476,
+        0.9650703709067072
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.8933322672751238,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.9411375661375662,
+        "dispatch-integration-code": 0.8090013681546863,
+        "handoff-exception-note": 0.9287422839506173,
+        "procurement-reserve-price": 0.8705647176411794,
+        "service-capacity-figure": 0.8645748622029457,
+        "service-rollout-threshold": 0.9301075268817204
+      },
+      "balanced_auc": 0.8906880541614525,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/all/loso/frozen_last_prompt_A": {
+      "within_round_auc": 0.5238839188701196,
+      "within_round_by_seed": [
+        0.5437667021679936,
+        0.5033212697250095,
+        0.524563784717356
+      ],
+      "within_round_ci95": [
+        0.472392127377355,
+        0.5757372653297146
+      ],
+      "pooled_auc": 0.6959574001316288,
+      "pooled_by_seed": [
+        0.7043736662611436,
+        0.6425799246125925,
+        0.7409186095211504
+      ],
+      "pooled_ci95": [
+        0.6577495744819147,
+        0.734881914978393
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.5238839188701196,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.4001322751322751,
+        "dispatch-integration-code": 0.5832588718172242,
+        "handoff-exception-note": 0.5137731481481481,
+        "procurement-reserve-price": 0.6078460769615193,
+        "service-capacity-figure": 0.5292084575765791,
+        "service-rollout-threshold": 0.4806451612903226
+      },
+      "balanced_auc": 0.519143998487678,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/all/pooled/token_max": {
+      "within_round_auc": 0.7606203527121185,
+      "within_round_by_seed": [
+        0.7464946408388018,
+        0.7630690514828673,
+        0.7722973658146864
+      ],
+      "within_round_ci95": [
+        0.7115124630621581,
+        0.8211437123701792
+      ],
+      "pooled_auc": 0.9231061739228709,
+      "pooled_by_seed": [
+        0.9253225902953671,
+        0.9219520950918411,
+        0.9220438363814044
+      ],
+      "pooled_ci95": [
+        0.9024965076320808,
+        0.942724115252962
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.7917113692596883,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.7835648148148149,
+        "dispatch-integration-code": 0.7206324991222016,
+        "handoff-exception-note": 0.7653163580246914,
+        "procurement-reserve-price": 0.7513243378310844,
+        "service-capacity-figure": 0.7457079606035962,
+        "service-rollout-threshold": 0.7904761904761904
+      },
+      "balanced_auc": 0.7595036934787632,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/all/pooled/token_mean": {
+      "within_round_auc": 0.8750221187740763,
+      "within_round_by_seed": [
+        0.87267688922535,
+        0.873263223871213,
+        0.8791262432256659
+      ],
+      "within_round_ci95": [
+        0.8328471368220743,
+        0.9219113934971437
+      ],
+      "pooled_auc": 0.934943459444367,
+      "pooled_by_seed": [
+        0.9418958536925869,
+        0.9333599250114677,
+        0.9295745996290461
+      ],
+      "pooled_ci95": [
+        0.9087984680235957,
+        0.9597431942400707
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.88481204559389,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.9211309523809524,
+        "dispatch-integration-code": 0.7497018512464736,
+        "handoff-exception-note": 0.8962191358024691,
+        "procurement-reserve-price": 0.8795602198900551,
+        "service-capacity-figure": 0.8655913978494624,
+        "service-rollout-threshold": 0.9132104454685099
+      },
+      "balanced_auc": 0.8709023337729871,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/all/pooled/frozen_last_prompt_A": {
+      "within_round_auc": 0.49954907983143776,
+      "within_round_by_seed": [
+        0.5111059601225151,
+        0.49576554089389624,
+        0.49177573847790196
+      ],
+      "within_round_ci95": [
+        0.43443301570455134,
+        0.5532866535784126
+      ],
+      "pooled_auc": 0.7526122999807211,
+      "pooled_by_seed": [
+        0.8172274186793244,
+        0.773742047426258,
+        0.6668674338365809
+      ],
+      "pooled_ci95": [
+        0.721285350413708,
+        0.7837855421131279
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.4886859724335308,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.3862433862433862,
+        "dispatch-integration-code": 0.584491421791193,
+        "handoff-exception-note": 0.4817515432098765,
+        "procurement-reserve-price": 0.5368565717141429,
+        "service-capacity-figure": 0.5238547031715912,
+        "service-rollout-threshold": 0.462826420890937
+      },
+      "balanced_auc": 0.49600400783685444,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/censored/loso/token_max": {
+      "within_round_auc": 0.7704091738999651,
+      "within_round_by_seed": [
+        0.7851958944873764,
+        0.7526202633580027,
+        0.7734113638545161
+      ],
+      "within_round_ci95": [
+        0.7190204404656318,
+        0.8263159183086719
+      ],
+      "pooled_auc": 0.9253106240402066,
+      "pooled_by_seed": [
+        0.9303524062144751,
+        0.9244530424203745,
+        0.9211264234857701
+      ],
+      "pooled_ci95": [
+        0.9020830862856012,
+        0.9460324163449164
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.7704091738999651,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.7762896825396824,
+        "dispatch-integration-code": 0.7557005436296054,
+        "handoff-exception-note": 0.7341049382716051,
+        "procurement-reserve-price": 0.7624937531234384,
+        "service-capacity-figure": 0.7524396855516401,
+        "service-rollout-threshold": 0.8362519201228878
+      },
+      "balanced_auc": 0.7695467538731432,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/censored/loso/token_mean": {
+      "within_round_auc": 0.8924669737084577,
+      "within_round_by_seed": [
+        0.8904528180458016,
+        0.8922935059204834,
+        0.8946545971590886
+      ],
+      "within_round_ci95": [
+        0.8535846677898992,
+        0.9313733902524016
+      ],
+      "pooled_auc": 0.9413081776058183,
+      "pooled_by_seed": [
+        0.9411020921002772,
+        0.9436150056839712,
+        0.9392074350332064
+      ],
+      "pooled_ci95": [
+        0.9154306790573373,
+        0.9641342795218862
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.8924669737084577,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.9320436507936508,
+        "dispatch-integration-code": 0.8005587640599083,
+        "handoff-exception-note": 0.9295138888888889,
+        "procurement-reserve-price": 0.8700649675162418,
+        "service-capacity-figure": 0.8664272160477093,
+        "service-rollout-threshold": 0.9324116743471581
+      },
+      "balanced_auc": 0.8885033602755928,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/censored/loso/frozen_last_prompt_A": {
+      "within_round_auc": 0.5238839188701196,
+      "within_round_by_seed": [
+        0.5437667021679936,
+        0.5033212697250095,
+        0.524563784717356
+      ],
+      "within_round_ci95": [
+        0.472392127377355,
+        0.5757372653297146
+      ],
+      "pooled_auc": 0.6959574001316288,
+      "pooled_by_seed": [
+        0.7043736662611436,
+        0.6425799246125925,
+        0.7409186095211504
+      ],
+      "pooled_ci95": [
+        0.6577495744819147,
+        0.734881914978393
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.5238839188701196,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.4001322751322751,
+        "dispatch-integration-code": 0.5832588718172242,
+        "handoff-exception-note": 0.5137731481481481,
+        "procurement-reserve-price": 0.6078460769615193,
+        "service-capacity-figure": 0.5292084575765791,
+        "service-rollout-threshold": 0.4806451612903226
+      },
+      "balanced_auc": 0.519143998487678,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/censored/pooled/token_max": {
+      "within_round_auc": 0.7646779769247775,
+      "within_round_by_seed": [
+        0.7542347475346064,
+        0.7663308144572798,
+        0.7734683687824462
+      ],
+      "within_round_ci95": [
+        0.7163779106989876,
+        0.8233843857684469
+      ],
+      "pooled_auc": 0.9241525564574568,
+      "pooled_by_seed": [
+        0.9274126961967253,
+        0.9228216429668336,
+        0.9222233302088112
+      ],
+      "pooled_ci95": [
+        0.9038719124895356,
+        0.9437603122069901
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.7941196863860583,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.7880291005291005,
+        "dispatch-integration-code": 0.732307217318659,
+        "handoff-exception-note": 0.7714891975308641,
+        "procurement-reserve-price": 0.7471014492753624,
+        "service-capacity-figure": 0.75,
+        "service-rollout-threshold": 0.7937019969278033
+      },
+      "balanced_auc": 0.7637714935969648,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/censored/pooled/token_mean": {
+      "within_round_auc": 0.8747287911888503,
+      "within_round_by_seed": [
+        0.8742552747886417,
+        0.8721539380621064,
+        0.8777771607158029
+      ],
+      "within_round_ci95": [
+        0.8312873977131068,
+        0.9217193972434421
+      ],
+      "pooled_auc": 0.9351242828556803,
+      "pooled_by_seed": [
+        0.9423625376438444,
+        0.9334636325561916,
+        0.929546678367005
+      ],
+      "pooled_ci95": [
+        0.9091538209208487,
+        0.9597501474402366
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.8809833080497212,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.9171626984126985,
+        "dispatch-integration-code": 0.753141004685627,
+        "handoff-exception-note": 0.8986496913580247,
+        "procurement-reserve-price": 0.8775612193903047,
+        "service-capacity-figure": 0.8632872503840247,
+        "service-rollout-threshold": 0.912442396313364
+      },
+      "balanced_auc": 0.8703740434240071,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h2/censored/pooled/frozen_last_prompt_A": {
+      "within_round_auc": 0.49954907983143776,
+      "within_round_by_seed": [
+        0.5111059601225151,
+        0.49576554089389624,
+        0.49177573847790196
+      ],
+      "within_round_ci95": [
+        0.43443301570455134,
+        0.5532866535784126
+      ],
+      "pooled_auc": 0.7526122999807211,
+      "pooled_by_seed": [
+        0.8172274186793244,
+        0.773742047426258,
+        0.6668674338365809
+      ],
+      "pooled_ci95": [
+        0.721285350413708,
+        0.7837855421131279
+      ],
+      "positive_coverage_by_seed": [
+        0.993103448275862,
+        0.993103448275862,
+        0.993103448275862
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.4886859724335308,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.3862433862433862,
+        "dispatch-integration-code": 0.584491421791193,
+        "handoff-exception-note": 0.4817515432098765,
+        "procurement-reserve-price": 0.5368565717141429,
+        "service-capacity-figure": 0.5238547031715912,
+        "service-rollout-threshold": 0.462826420890937
+      },
+      "balanced_auc": 0.49600400783685444,
+      "rows": 1874,
+      "positives": 145,
+      "episodes": 238,
+      "positive_episodes": 141,
+      "removed_immediate_replies": 121
+    },
+    "h3/all/loso/token_max": {
+      "within_round_auc": 0.6545739997477363,
+      "within_round_by_seed": [
+        0.6742029474466547,
+        0.5993838320979953,
+        0.6901352196985588
+      ],
+      "within_round_ci95": [
+        0.5948128630092683,
+        0.7186355783991808
+      ],
+      "pooled_auc": 0.902174760908137,
+      "pooled_by_seed": [
+        0.8870981031953988,
+        0.8985909922380976,
+        0.9208351872909147
+      ],
+      "pooled_ci95": [
+        0.8781854270299723,
+        0.9252196240883748
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.6545739997477363,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.6802222222222222,
+        "dispatch-integration-code": 0.7175077935860443,
+        "handoff-exception-note": 0.5740740740740741,
+        "procurement-reserve-price": 0.6848126232741617,
+        "service-capacity-figure": 0.6585204129961163,
+        "service-rollout-threshold": 0.6718106995884773
+      },
+      "balanced_auc": 0.6644913042901825,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/all/loso/token_mean": {
+      "within_round_auc": 0.8041252341149835,
+      "within_round_by_seed": [
+        0.8104259959002135,
+        0.7985144045761318,
+        0.8034353018686055
+      ],
+      "within_round_ci95": [
+        0.7524689264530557,
+        0.8599354689164708
+      ],
+      "pooled_auc": 0.9353020989546424,
+      "pooled_by_seed": [
+        0.9340650285921458,
+        0.9309569717044874,
+        0.9408842965672946
+      ],
+      "pooled_ci95": [
+        0.9132001520476966,
+        0.9577024054128765
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.8041252341149835,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.8444074074074074,
+        "dispatch-integration-code": 0.7167014890723976,
+        "handoff-exception-note": 0.7724867724867726,
+        "procurement-reserve-price": 0.7785996055226825,
+        "service-capacity-figure": 0.8456711186890216,
+        "service-rollout-threshold": 0.8569958847736624
+      },
+      "balanced_auc": 0.802477046325324,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/all/loso/frozen_last_prompt_A": {
+      "within_round_auc": 0.5315994479700145,
+      "within_round_by_seed": [
+        0.5581889248437175,
+        0.5210874443418567,
+        0.515521974724469
+      ],
+      "within_round_ci95": [
+        0.4781719126324298,
+        0.5922678639611915
+      ],
+      "pooled_auc": 0.6973550205171306,
+      "pooled_by_seed": [
+        0.7049125756002703,
+        0.6492180418912016,
+        0.7379344440599199
+      ],
+      "pooled_ci95": [
+        0.6604347226727408,
+        0.7346895198709381
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.5315994479700145,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.4334074074074074,
+        "dispatch-integration-code": 0.5740100487513681,
+        "handoff-exception-note": 0.511904761904762,
+        "procurement-reserve-price": 0.5804733727810651,
+        "service-capacity-figure": 0.503173249976319,
+        "service-rollout-threshold": 0.5615226337448559
+      },
+      "balanced_auc": 0.5274152457609629,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/all/pooled/token_max": {
+      "within_round_auc": 0.6471993831208044,
+      "within_round_by_seed": [
+        0.6572070122512711,
+        0.6403846737979619,
+        0.6440064633131801
+      ],
+      "within_round_ci95": [
+        0.5897418109229587,
+        0.7139562815887953
+      ],
+      "pooled_auc": 0.9129216723521366,
+      "pooled_by_seed": [
+        0.9080008569403932,
+        0.9138115719912329,
+        0.9169525881247838
+      ],
+      "pooled_ci95": [
+        0.8930672140136009,
+        0.934362957589523
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.6664762843261102,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.6414074074074074,
+        "dispatch-integration-code": 0.6331712433257055,
+        "handoff-exception-note": 0.5784832451499118,
+        "procurement-reserve-price": 0.699457593688363,
+        "service-capacity-figure": 0.6860613810741687,
+        "service-rollout-threshold": 0.6621399176954733
+      },
+      "balanced_auc": 0.6501201313901716,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/all/pooled/token_mean": {
+      "within_round_auc": 0.7768489281224702,
+      "within_round_by_seed": [
+        0.7765768103690577,
+        0.7816822375480745,
+        0.7722877364502786
+      ],
+      "within_round_ci95": [
+        0.7225727934867752,
+        0.8345044357233693
+      ],
+      "pooled_auc": 0.9274566997907088,
+      "pooled_by_seed": [
+        0.9205978807204891,
+        0.931945749081261,
+        0.9298264695703762
+      ],
+      "pooled_ci95": [
+        0.9067998875831551,
+        0.9500271256247533
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.7872804358465303,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.791,
+        "dispatch-integration-code": 0.6634196846084967,
+        "handoff-exception-note": 0.7081128747795415,
+        "procurement-reserve-price": 0.8136094674556213,
+        "service-capacity-figure": 0.8405797101449276,
+        "service-rollout-threshold": 0.8333333333333334
+      },
+      "balanced_auc": 0.7750091783869868,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/all/pooled/frozen_last_prompt_A": {
+      "within_round_auc": 0.5414879226934644,
+      "within_round_by_seed": [
+        0.5667740972780422,
+        0.5341843707501664,
+        0.5235053000521845
+      ],
+      "within_round_ci95": [
+        0.4767487049139735,
+        0.5965484809734561
+      ],
+      "pooled_auc": 0.768543695720242,
+      "pooled_by_seed": [
+        0.826700285097477,
+        0.7923897101234324,
+        0.6865410919398164
+      ],
+      "pooled_ci95": [
+        0.7395940452890346,
+        0.7946931268582306
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.5346640610811498,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.4247407407407408,
+        "dispatch-integration-code": 0.6048141975922794,
+        "handoff-exception-note": 0.5242504409171076,
+        "procurement-reserve-price": 0.5668145956607494,
+        "service-capacity-figure": 0.5244624419816235,
+        "service-rollout-threshold": 0.5685185185185185
+      },
+      "balanced_auc": 0.5356001559018365,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/censored/loso/token_max": {
+      "within_round_auc": 0.6650564038331505,
+      "within_round_by_seed": [
+        0.6571365021631779,
+        0.6513464400069174,
+        0.6866862693293561
+      ],
+      "within_round_ci95": [
+        0.6071991684099457,
+        0.7263412445019989
+      ],
+      "pooled_auc": 0.9051663617936422,
+      "pooled_by_seed": [
+        0.8872365320281472,
+        0.9075427234224881,
+        0.9207198299302912
+      ],
+      "pooled_ci95": [
+        0.8824779674707663,
+        0.9270828898609373
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.6650564038331505,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.6317407407407407,
+        "dispatch-integration-code": 0.7174876877922595,
+        "handoff-exception-note": 0.626984126984127,
+        "procurement-reserve-price": 0.6925542406311637,
+        "service-capacity-figure": 0.6681822487449086,
+        "service-rollout-threshold": 0.6668724279835391
+      },
+      "balanced_auc": 0.6673035788127898,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/censored/loso/token_mean": {
+      "within_round_auc": 0.8042513328993866,
+      "within_round_by_seed": [
+        0.80471113191111,
+        0.8061538675801525,
+        0.801888999206897
+      ],
+      "within_round_ci95": [
+        0.7528957843290709,
+        0.8602734409350818
+      ],
+      "pooled_auc": 0.9346473086029125,
+      "pooled_by_seed": [
+        0.9276182000955818,
+        0.9362205632735123,
+        0.9401031624396434
+      ],
+      "pooled_ci95": [
+        0.9123850342152744,
+        0.9576623982352728
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.8042513328993866,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.830111111111111,
+        "dispatch-integration-code": 0.71610163167844,
+        "handoff-exception-note": 0.7817460317460317,
+        "procurement-reserve-price": 0.7785996055226824,
+        "service-capacity-figure": 0.8397745571658616,
+        "service-rollout-threshold": 0.8590534979423868
+      },
+      "balanced_auc": 0.800897739194419,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/censored/loso/frozen_last_prompt_A": {
+      "within_round_auc": 0.5315994479700145,
+      "within_round_by_seed": [
+        0.5581889248437175,
+        0.5210874443418567,
+        0.515521974724469
+      ],
+      "within_round_ci95": [
+        0.4781719126324298,
+        0.5922678639611915
+      ],
+      "pooled_auc": 0.6973550205171306,
+      "pooled_by_seed": [
+        0.7049125756002703,
+        0.6492180418912016,
+        0.7379344440599199
+      ],
+      "pooled_ci95": [
+        0.6604347226727408,
+        0.7346895198709381
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.5315994479700145,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.4334074074074074,
+        "dispatch-integration-code": 0.5740100487513681,
+        "handoff-exception-note": 0.511904761904762,
+        "procurement-reserve-price": 0.5804733727810651,
+        "service-capacity-figure": 0.503173249976319,
+        "service-rollout-threshold": 0.5615226337448559
+      },
+      "balanced_auc": 0.5274152457609629,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/censored/pooled/token_max": {
+      "within_round_auc": 0.6397396385694948,
+      "within_round_by_seed": [
+        0.6462132211795788,
+        0.6419724961897048,
+        0.6310331983392008
+      ],
+      "within_round_ci95": [
+        0.5826339172860453,
+        0.7026383018793498
+      ],
+      "pooled_auc": 0.9122471064528709,
+      "pooled_by_seed": [
+        0.9075592030454344,
+        0.9141411644501574,
+        0.9150409518630214
+      ],
+      "pooled_ci95": [
+        0.8927152605762889,
+        0.9331772599620993
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.6571055983831607,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.6271111111111112,
+        "dispatch-integration-code": 0.6356641544788246,
+        "handoff-exception-note": 0.5789241622574955,
+        "procurement-reserve-price": 0.6943786982248521,
+        "service-capacity-figure": 0.6976413753907361,
+        "service-rollout-threshold": 0.6211934156378601
+      },
+      "balanced_auc": 0.64248548618348,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/censored/pooled/token_mean": {
+      "within_round_auc": 0.7694653447532982,
+      "within_round_by_seed": [
+        0.760003129476862,
+        0.7774708420933962,
+        0.7709220626896365
+      ],
+      "within_round_ci95": [
+        0.7162565954475325,
+        0.8286263753494568
+      ],
+      "pooled_auc": 0.9265272490565416,
+      "pooled_by_seed": [
+        0.9209769120482524,
+        0.9309899309503799,
+        0.9276149041709926
+      ],
+      "pooled_ci95": [
+        0.9059915120119248,
+        0.9491313582589862
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.7811470803870533,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.7723333333333334,
+        "dispatch-integration-code": 0.6644121231718237,
+        "handoff-exception-note": 0.7072310405643739,
+        "procurement-reserve-price": 0.8067061143984221,
+        "service-capacity-figure": 0.826489533011272,
+        "service-rollout-threshold": 0.8240740740740741
+      },
+      "balanced_auc": 0.7668743697588832,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    },
+    "h3/censored/pooled/frozen_last_prompt_A": {
+      "within_round_auc": 0.5414879226934644,
+      "within_round_by_seed": [
+        0.5667740972780422,
+        0.5341843707501664,
+        0.5235053000521845
+      ],
+      "within_round_ci95": [
+        0.4767487049139735,
+        0.5965484809734561
+      ],
+      "pooled_auc": 0.768543695720242,
+      "pooled_by_seed": [
+        0.826700285097477,
+        0.7923897101234324,
+        0.6865410919398164
+      ],
+      "pooled_ci95": [
+        0.7395940452890346,
+        0.7946931268582306
+      ],
+      "positive_coverage_by_seed": [
+        0.994413407821229,
+        0.994413407821229,
+        0.994413407821229
+      ],
+      "bootstrap_groups": 238,
+      "bootstrap_reps": 1000,
+      "within_round_valid_bootstrap_reps": 1000,
+      "pooled_valid_bootstrap_reps": 1000,
+      "fold_stratified_auc": 0.5346640610811498,
+      "per_scenario_auc": {
+        "deploy-token-v2": 0.4247407407407408,
+        "dispatch-integration-code": 0.6048141975922794,
+        "handoff-exception-note": 0.5242504409171076,
+        "procurement-reserve-price": 0.5668145956607494,
+        "service-capacity-figure": 0.5244624419816235,
+        "service-rollout-threshold": 0.5685185185185185
+      },
+      "balanced_auc": 0.5356001559018365,
+      "rows": 1874,
+      "positives": 179,
+      "episodes": 238,
+      "positive_episodes": 146,
+      "removed_immediate_replies": 121
+    }
+  }
+}
