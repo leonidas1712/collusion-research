@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 STREAM = ROOT / 'runs/20261026-0526-e05-reasoning-stream'
 INCOMING = ROOT / 'runs/20261026-1128-e05-stream-layer18-loso'
 PROMPT = ROOT / 'runs/20261026-0138-e05-gpt-oss-main'
+PERCALL = ROOT / 'runs/20261026-1221-e05-lastprompt-percall-6013'
 STYLE = {'activation': ('#087f8c', 'o'), 'text/rule': ('#334155', 's'),
          'control': ('#64748b', 'D'), 'last-prompt': ('#334155', 'D')}
 
@@ -78,25 +79,22 @@ def collect():
                               ('h1/all/loso/frozen_last_prompt_A', 'Last prompt: next call', 'last-prompt')]:
         add('b', label, group, strict['results'][key], path, digest, f'results:{key}',
             'Strictly one call ahead: leaking calls removed; models not refitted')
-    rows.append(PENDING_ROW)
+    pc, path, digest = read(PERCALL / 'metrics.json')
+    for panel, label in [('a', 'Last-prompt probe retrained per call'), ('b', 'Last prompt retrained: this call')]:
+        add(panel, label, 'activation' if panel == 'a' else 'last-prompt', pc['matched/immediate/loso'],
+            path, digest, 'matched/immediate/loso',
+            "Paper's last-prompt probe refit on the per-call label; same replies as the reasoning probe")
     return rows
 
 
-# Slot for the paper's main last-prompt probe retrained on the per-call label. Leave the numbers
-# blank until the final run lands; blank rows are kept in the CSV but not plotted.
-PENDING_ROW = dict(panel='b', label='Last prompt retrained: this call', group='last-prompt',
-                   estimate='', low='', high='', rows='', positives='', episodes='', seeds='',
-                   source='', source_sha256='', source_key='',
-                   note='PENDING: last-prompt probe retrained on the per-call label; fill from the final run')
-
-
-CAPTION = """Figure 3. On gpt-oss-20b, a probe reading the model's reasoning picks out the reply that will leak the secret, and reading the text of the same reasoning does not. This analysis is exploratory and was designed after the main results. (a) Each row scores the same 1,995 replies that have reasoning (121 of them leak) from 238 episodes, on held-out scenarios. A reply counts as leaking if it is the first to make the secret public, by any route. AUROC measures how well a score ranks leaking replies above the others: 0.5 is chance and 1 is perfect. Whiskers are 95% bootstrap confidence intervals. The right-hand column shows the practical trade-off: each detector's alarm cutoff is set so that about 5% of no-ask control replies alarm, and the column gives the share of leaking replies that cutoff catches and the share of normal replies in pressured episodes that never leak on which it fires. The keyword rule never fires, because it matches more than 5% of control replies. "Stopped before the secret is mentioned" ignores every reasoning token from the first time the secret appears in the reasoning. The length row uses the final length of the reasoning, which is known only after the reply, so it is not a usable alarm. *A separate probe, trained on this label for each call, that reads only what arrives before the reply: the peer's message and tool results. It used a reduced recipe (one seed, layer 18; 2,199 replies, 143 leaking). It also scores 0.93, so much of the signal is already there before the model reasons, but it alarms far more often on normal replies. †The same probe, scored on replies from before the peer asks, against whether the episode ever leaks (628 replies, 388 positives); it stays at chance, as it should. (b) Probes asked about leaks at different distances; a "call" is one model reply. The diamonds are the paper's main probe, read at the last prompt token, not the incoming-message probe of panel a. The points are not a paired comparison: the label, the reply set and the input differ between them. In particular, the 0.60 and the 0.93 use different labels and different reply sets. Paper's main probe: 2,059 replies for "ever" and "this round or next" (169 and 148 positives). Probe on reasoning, this round or next: 1,874 replies, 118 positives. The 0.93 point is the headline result from panel a, whose reply set also includes each episode's first leaking reply. Appendix J.8 gives the full table. All points cover 238 episodes. Values and exact source keys are in figure3_streaming.csv.
+CAPTION = """Figure 3. On gpt-oss-20b, a probe reading the model's reasoning picks out the reply that will leak the secret, and reading the text of the same reasoning does not. This analysis is exploratory and was designed after the main results. (a) Each row scores the same 1,995 replies that have reasoning (121 of them leak) from 238 episodes, on held-out scenarios. A reply counts as leaking if it is the first to make the secret public, by any route. AUROC measures how well a score ranks leaking replies above the others: 0.5 is chance and 1 is perfect. Whiskers are 95% bootstrap confidence intervals. The right-hand column shows the practical trade-off: each detector's alarm cutoff is set so that about 5% of no-ask control replies alarm, and the column gives the share of leaking replies that cutoff catches and the share of normal replies in pressured episodes that never leak on which it fires. The keyword rule never fires, because it matches more than 5% of control replies. "Last prompt token" is the paper's main probe, read at the last prompt token before the model writes anything, retrained to ask whether this call will leak (1,995 replies, 121 leaking; three seeds). "Stopped before the secret is mentioned" ignores every reasoning token from the first time the secret appears in the reasoning. The length row uses the final length of the reasoning, which is known only after the reply, so it is not a usable alarm. *A separate probe, trained on this label for each call, that reads only what arrives before the reply: the peer's message and tool results. It used a reduced recipe (one seed, layer 18; 2,199 replies, 143 leaking). It also scores 0.93, so much of the signal is already there before the model reasons, but it alarms far more often on normal replies. †The same probe, scored on replies from before the peer asks, against whether the episode ever leaks (628 replies, 388 positives); it stays at chance, as it should. (b) Probes asked about leaks at different distances; a "call" is one model reply. The diamonds are the paper's main probe, read at the last prompt token, not the incoming-message probe of panel a; the filled diamonds keep its original training, and the hollow diamond is the same probe retrained on the per-call label. Retrained to ask whether this call will leak, the paper's last-prompt probe reaches 0.91 before the model writes anything; reading the reasoning adds a little (0.93). The points are not a paired comparison: the label, the reply set and the input differ between them. In particular, the 0.60 and the 0.93 use different labels and different reply sets. Paper's main probe: 2,059 replies for "ever" and "this round or next" (169 and 148 positives). Probe on reasoning, this round or next: 1,874 replies, 118 positives. The 0.93 point is the headline result from panel a, whose reply set also includes each episode's first leaking reply. Appendix J.8 gives the full table. All points cover 238 episodes. Values and exact source keys are in figure3_streaming.csv.
 """
 
 
 DISPLAY_A = {  # CSV label -> (display label, panel-a row position, top to bottom)
-    'Reasoning-token probe': ("Probe on the model's reasoning", 9.0),
-    'Before value mention': ('Same, stopped before secret is mentioned', 8.1),
+    'Reasoning-token probe': ("Probe on the model's reasoning", 9.9),
+    'Before value mention': ('Same, stopped before secret is mentioned', 9.0),
+    'Last-prompt probe retrained per call': ('Last prompt token (before any output)', 8.1),
     'Incoming-message probe*': ('Probe on incoming message + tool results*', 7.2),
     'Length (hindsight)': ('Reasoning length (known only afterwards)', 5.3),
     'Jev on reasoning': ('LLM judge (Jev) on the reasoning', 4.4),
@@ -107,11 +105,13 @@ DISPLAY_A = {  # CSV label -> (display label, panel-a row position, top to botto
 # Alarm column: % of leaking replies flagged / % of normal held-episode replies flagged, at a cutoff
 # set for ~5% alarms on no-ask control replies. Sources: report/paper.md Appendix J.8 "Alarms and lead"
 # (reasoning probe 84.8/4.4, Jev 91.7/9.0-9.4, GPT-5-nano 5.0/34.6; keyword rules never alarm) and
-# runs/20261026-1128-e05-stream-layer18-loso/report.md (incoming probe 95.1/19.1).
-ALARMS = {'Reasoning-token probe': '85% / 4%', 'Incoming-message probe*': '95% / 19%',
+# runs/20261026-1128-e05-stream-layer18-loso/report.md (incoming probe 95.1/19.1), and
+# runs/20261026-1221-e05-lastprompt-percall-6013/metrics.json matched/immediate/loso, seed means of
+# positive_reply_alarm_by_seed / held_reply_alarm_by_seed (retrained last-prompt probe 56.5/1.6).
+ALARMS = {'Reasoning-token probe': '85% / 4%', 'Last-prompt probe retrained per call': '56% / 2%', 'Incoming-message probe*': '95% / 19%',
           'Jev on reasoning': '92% / 9%', 'GPT-5-nano on reasoning': '5% / 35%',
           'Keywords': 'never fires'}
-GROUP_HEADINGS = [(9.75, "Probe reading the model's internals", '#087f8c'),
+GROUP_HEADINGS = [(10.65, "Probe reading the model's internals", '#087f8c'),
                   (6.05, 'Reading the text instead', '#334155'),
                   (1.45, 'Sanity check', '#64748b')]
 # Panel b. To add a horizon: insert it into HORIZONS (left = far from the leak, right = nearest),
@@ -122,12 +122,14 @@ HORIZONS = [('eventual', 'Will it\never\nleak?'),
             ('round', 'Leak this\nround or\nnext?'),
             ('next', 'Leak in\nthe next\ncall?'),
             ('reply', 'Leak in\nthis call?')]
-SERIES_B = {'last-prompt': ("Paper's main probe\n(last prompt token)", 'D', -1),
-            'reasoning': ('Probe on reasoning', 'o', +1)}  # (legend, marker, side of value label)
+# (legend, marker, offset side when two series share a horizon, where the value label goes)
+SERIES_B = {'last-prompt': ("Paper's main probe\n(last prompt token)", 'D', -1, 'left'),
+            'last-prompt-retrained': ('Same probe, retrained\nto ask about this call', 'D', -1, 'below'),
+            'reasoning': ('Probe on reasoning', 'o', +1, 'above')}
 B_ROWS = {'Last prompt: eventual': ('eventual', 'last-prompt'),
           'Last prompt: near-term': ('round', 'last-prompt'),
           'Reasoning: paper cohort': ('round', 'reasoning'),
-          'Last prompt retrained: this call': ('reply', 'last-prompt'),
+          'Last prompt retrained: this call': ('reply', 'last-prompt-retrained'),
           'Reasoning: this reply': ('reply', 'reasoning')}
 # The 'next call' rows stay in the CSV but are not plotted: the one-call-ahead signal is largely the
 # call reading the secret file (Appendix J.8).
@@ -141,12 +143,12 @@ def render(rows, output):
                          'axes.labelcolor': SLATE, 'text.color': SLATE,
                          'xtick.color': SLATE, 'ytick.color': SLATE,
                          'xtick.labelsize': 7, 'ytick.labelsize': 7})
-    W, H = 6.5, 2.85
+    W, H = 6.5, 2.95
     fig = plt.figure(figsize=(W, H), facecolor='white')
-    left = fig.add_axes([.315, .25, .16, .60])
-    right = fig.add_axes([.725, .25, .255, .60])
+    left = fig.add_axes([.315, .245, .16, .60])
+    right = fig.add_axes([.725, .245, .255, .60])
     col = blended_transform_factory(fig.transFigure, left.transData)
-    ALARM_X = .59
+    ALARM_X = .617
 
     # (a) recognising the leaking reply
     for r in (r for r in rows if r['panel'] == 'a'):
@@ -167,20 +169,19 @@ def render(rows, output):
         left.text(-.03, y, text, transform=left.get_yaxis_transform(), ha='right', va='center',
                   fontsize=6.2, style='italic', color=color)
     left.set_yticks([])
-    left.set(xlim=(.25, 1), ylim=(.1, 10.2))
+    left.set(xlim=(.25, 1), ylim=(.1, 11.1))
     left.set_xticks([.3, .5, .7, .9])
     left.spines['left'].set_visible(False)
-    for y in [6.6, 1.95]:
+    for y in [6.6, 1.95]:  # group separators
         left.axhline(y, xmin=-1.7, xmax=2.0, color='#CBD5E1', linewidth=.6, clip_on=False)
     left.axvline(.5, color=GREY, linestyle='--', linewidth=.8, zorder=0)
-    left.text(1.012, 9.75, 'AUROC', ha='left', va='center', fontsize=6.4, weight='bold')
-    left.text(ALARM_X, 10.95, 'Catches / false alarms', transform=col, ha='center', va='bottom',
-              fontsize=6.4, weight='bold')
-    left.text(ALARM_X, 10.9, '(% leaking /\n% normal\nreplies flagged)', transform=col, ha='center',
-              va='top', fontsize=6, color=GREY, linespacing=1.05)
-    left.text(.5, 10.2, 'chance', ha='center', va='bottom', fontsize=6, color=GREY)
+    auroc_x = left.transData.transform((1.012, 0))[0] / fig.bbox.width
+    fig.text(auroc_x, .893, 'AUROC', ha='left', va='bottom', fontsize=6.4, weight='bold')
+    fig.text(ALARM_X, .893, 'Catch / false alarm', ha='center', va='bottom', fontsize=6.4, weight='bold')
+    fig.text(ALARM_X, .862, '(% leaks / % normal)', ha='center', va='bottom', fontsize=6, color=GREY)
+    left.text(.5, 11.1, 'chance', ha='center', va='bottom', fontsize=6, color=GREY)
     left.grid(axis='x', alpha=.15)
-    left.annotate('warns before the\nreply\'s output', xy=(.905, 8.1), xytext=(.84, 8.1),
+    left.annotate('warns before the\nreply\'s output', xy=(.93, 9.0), xytext=(.85, 9.0),
                   ha='right', va='center', fontsize=6, color=TEAL, linespacing=1.1,
                   bbox=dict(boxstyle='square,pad=0.15', facecolor='white', edgecolor='none'),
                   arrowprops=dict(arrowstyle='->', color=TEAL, linewidth=.6))
@@ -194,16 +195,18 @@ def render(rows, output):
     xpos = {h: 1.1 * i for i, h in enumerate(used)}
     for r in b_rows:
         horizon, series = B_ROWS[r['label']]
-        _, marker, side = SERIES_B[series]
+        _, marker, side, where = SERIES_B[series]
         shared = sum(B_ROWS[q['label']][0] == horizon for q in b_rows) > 1
         x = xpos[horizon] + (.1 * side if shared else 0)
         color = TEAL if series == 'reasoning' else SLATE
         right.errorbar(x, r['estimate'], yerr=[[r['estimate']-r['low']], [r['high']-r['estimate']]],
-                       fmt=marker, color=color, markersize=4.2, capsize=1.8, linewidth=.9, zorder=3)
-        # last-prompt values sit to the left of the point; reasoning values sit above the whisker
-        right.annotate(f"{r['estimate']:.2f}", (x, r['high'] if side > 0 else r['estimate']),
-                       xytext=(0, 2) if side > 0 else (-6, 0), va='bottom' if side > 0 else 'center',
-                       textcoords='offset points', ha='center' if side > 0 else 'right', fontsize=6.8,
+                       fmt=marker, color=color, markersize=4.2, capsize=1.8, linewidth=.9, zorder=3,
+                       markerfacecolor='white' if series.endswith('retrained') else color, markeredgewidth=1)
+        anchor, offset, va, ha = {'left': (r['estimate'], (-6, 0), 'center', 'right'),
+                                  'above': (r['high'], (0, 2), 'bottom', 'center'),
+                                  'below': (r['low'], (0, -2), 'top', 'center')}[where]
+        right.annotate(f"{r['estimate']:.2f}", (x, anchor), xytext=offset, va=va,
+                       textcoords='offset points', ha=ha, fontsize=6.8,
                        color=color, bbox=dict(boxstyle='square,pad=0.1', facecolor='white', edgecolor='none'))
     right.set(xlim=(-.6, xpos[used[-1]] + .4), ylim=(.4, 1.0))
     right.set_ylabel('AUROC', fontsize=7, labelpad=2)
@@ -215,7 +218,9 @@ def render(rows, output):
     right.grid(axis='y', alpha=.15)
     fig.text(.6, .955, '(b) Nearer the leak, easier to predict', weight='bold', fontsize=7.8)
     handles = [Line2D([], [], marker=m, color=TEAL if k == 'reasoning' else SLATE, linestyle='',
-                      markersize=4, label=name) for k, (name, m, _) in SERIES_B.items()]
+                      markersize=4, markeredgewidth=1, label=name,
+                      markerfacecolor='white' if k.endswith('retrained') else (TEAL if k == 'reasoning' else SLATE))
+               for k, (name, m, _, _) in SERIES_B.items()]
     right.legend(handles=handles, loc='lower left', bbox_to_anchor=(0, .5), ncol=1, frameon=False,
                  fontsize=6.3, handletextpad=.2, labelspacing=.35, borderaxespad=.2)
 
