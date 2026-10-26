@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / 'paper-arxiv/figures'
 TRAJECTORY = ROOT / 'runs/20261026-2254-e05-arxiv-score-trajectories/metrics.json'
 ALARMS = ROOT / 'runs/20261026-2252-e05-arxiv-alarm-tradeoffs'
-EPISODE = ROOT / 'runs/20261027-0047-e05-arxiv-episode-calibration/metrics.json'
+EPISODE = ROOT / 'runs/20261027-0049-e05-arxiv-episode-calibration-descriptive/metrics.json'
 
 
 def save(fig, stem, sources, rows):
@@ -71,7 +71,7 @@ def alarms():
                 color=color, ls=ls, lw=1.5, label='Zero-shot Jev' if name=='Jev' else name)
         ax.plot(op['refusing_call_alarm'], op['leaking_call_alarm'], marker=marker, color=color, ms=7)
     episode = json.loads(EPISODE.read_text())['qwen_probe']
-    assert episode['calibration_status'] == 'development_refusing_calibration'
+    assert episode['calibration_status'] == 'descriptive_fresh_refusing_calibration'
     point = episode['episode_calibrated']
     ax.plot(point['refusing_calls']['rate'], point['leaking_calls']['rate'],
             marker='D', mfc='white', mec=MODEL_COLORS['qwen'], mew=1.7, ms=8,
@@ -85,10 +85,10 @@ def alarms():
         Line2D([], [], marker='o', color='#555555', ls='none',
                label='Filled markers: original thresholds'),
         Line2D([], [], marker='D', mfc='white', mec=MODEL_COLORS['qwen'], ls='none',
-               label='Episode threshold set on development')],
+               label='Episode threshold chosen on fresh episodes\n(descriptive)')],
         loc='lower center', bbox_to_anchor=(.5,.015), ncol=1, frameon=False, fontsize=8.5)
     rows.append(dict(panel='Qwen: fresh episodes',
-                     detector='Last-prompt probe: development episode-calibrated marker',
+                     detector='Last-prompt probe: descriptive episode-calibrated marker',
                      threshold_offset=episode['episode_threshold']-episode['original_threshold'],
                      leaks_caught=point['leaking_calls']['rate'],
                      refusing_alarm=point['refusing_calls']['rate']))
