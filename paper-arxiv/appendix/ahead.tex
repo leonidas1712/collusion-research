@@ -43,8 +43,9 @@ The fresh Qwen3-32B operating points, and how per-call and per-episode rates rel
   \centering
   \caption{Per-call and per-episode thresholds on the fresh test episodes: precision of the flagged calls, leaking episodes caught by their first leak, refusing episodes and calls flagged, and the same rates on control traffic.}
   \label{tab:episode-calibration}
-  \small
-  \IfFileExists{tables/episode_calibration.tex}{\input{tables/episode_calibration.tex}}{pending}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \input{tables/episode_calibration.tex}
 \end{table}
 A deployed alarm would need its threshold set per episode, as \citet{gao2026} also argues.
 \Cref{fig:alarm-tradeoff} shows the full trade-off between leaking calls caught and refusing calls alarmed for the probe and Jev on the same calls.
