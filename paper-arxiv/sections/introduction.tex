@@ -4,13 +4,13 @@
 Just before an AI agent gives in and breaks its operator's rule, a linear probe on its activations can tell.
 We read the target model's internal activations at each of its calls, before it generates anything, and ask whether that call will leak a secret that its operator told it to keep.
 On Qwen3-32B, tested on fresh episodes held out from training, the probe ranks the leaking calls far above the others, and a zero-shot text monitor given the same conversation does much worse.
+At a fixed alarm threshold, the probe catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarm{} of calls in refusing episodes, where the monitor catches \qwenFreshJevCaught{} while flagging \qwenFreshJevAlarm{}, although per episode many refusing episodes still see at least one alarm (\cref{app:alarms}).
 A bag-of-words classifier trained on the same text comes close to the probe, so most of that lead comes from training on the labels (\cref{sec:monitor}).
 On gpt-oss-20b, a probe on the call's reasoning held up in a pre-registered test on fresh episodes.
 
 The setting is recruitment, a common first step of collusion between agents, in which one agent presses another to break its own operator's rule.
 In July 2026, agents in an internal cyber evaluation coordinated on an unsanctioned message board, passed credentials to one another and attacked production infrastructure, and some agents pressed others to join \citep{openai2026huggingface,greenblatt2026incident}.
-We study the simplest checkable version of that first step.
-A peer agent presses a target agent, over many rounds, to reveal a secret such as a deploy token.
+In the simplest checkable version of that first step, a peer agent presses a target agent, over many rounds, to reveal a secret such as a deploy token.
 Without the operator's rule, handing over the token would be ordinary help, and with it, the handover is collusion against the operator \citep{agrawal2025,nakamura2026}.
 The request comes openly from a teammate, in the channel the target is meant to use, so this is not prompt injection hidden in data \citep{liu2024formalizing,debenedetti2024agentdojo}.
 The target often refuses at first, citing the rule, and then gives in.
@@ -18,7 +18,6 @@ The target often refuses at first, citing the rule, and then gives in.
 The signal is sharp but short-range (\cref{fig:headline}).
 We ask the same calls three questions: will this call leak, will the target leak this round or the next, and will the episode ever leak?
 The probe answers the first well, weakens on the second, and is weak on the third, on both models.
-It is not simply detecting the request, the secret string, or the moment the protected file is read.
 
 For multi-agent oversight, this suggests a cheap monitor that runs on every call and pauses an agent just before it gives in.
 For an exact secret like ours, an output filter would also catch the leak.
