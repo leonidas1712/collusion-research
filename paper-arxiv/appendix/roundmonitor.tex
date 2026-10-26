@@ -25,7 +25,7 @@ Branching reruns from the same state often end differently, which suggests the o
 
 \begin{table}[h]
   \centering
-  \caption{Round-level results on Qwen3-32B, with the round-level label (\cref{app:labels}) and its own call set, not those of \cref{fig:headline}: probe and monitors on the same calls, and the gain from adding the probe to a monitor.}
+  \caption{Round-level results on Qwen3-32B, with the round-level label (\cref{app:labels}) and its own call set, not those of \cref{fig:headline}: probe and monitors on the same calls, and the gain from adding the probe to a monitor. The development probe here is trained on the eventual label and scored on both labels without refitting.}
   \label{tab:combination}
   \small
   \input{tables/round_level.tex}
@@ -36,7 +36,7 @@ The round-level ``this round or the next'' result on Qwen3-32B holds across two 
 
 \begin{table}[h]
   \centering
-  \caption{Round-level robustness on Qwen3-32B, with the round-level label (\cref{app:labels}).}
+  \caption{Round-level robustness on Qwen3-32B, with the round-level label (\cref{app:labels}), on the same calls as \cref{tab:combination}. Each probe here is refit on the near-term label, with its layer chosen again, so it scores higher on that label than the eventual-trained probe of \cref{tab:combination}.}
   \label{tab:robust-round}
   \small
   \input{tables/robust_round.tex}
