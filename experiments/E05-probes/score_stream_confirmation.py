@@ -278,6 +278,8 @@ def main(args):
                   'The Modal app is stopped. Cost projection history and all failed setup/replacement attempts are retained in the freeze folder.']
         (run.dir / 'report.md').write_text('\n'.join(lines) + '\n')
         write_json_atomic(freeze / 'confirmation_result.json', {'run': str(run.dir), 'primary': primary, 'counts': counts})
+        from audit_stream_confirmation import main as audit_saved_scores
+        audit_saved_scores(freeze)
         run.result(primary=primary, counts=counts); run.finish()
         print('CONFIRMATION_RESULT', run.dir, json.dumps(primary), flush=True)
     except BaseException as exc:
