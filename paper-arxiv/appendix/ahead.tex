@@ -9,10 +9,14 @@ Asked whether the next call will leak, with the leaking call removed, the probe 
 On gpt-oss-20b, nearly all of the calls just before a leak are reads of the protected file, and a flag for that read scores about as well as the probe.
 Among those reads, the probe still separates the ones followed by a leak.
 
+\paragraph{Score across an episode.}
+\Cref{fig:trajectories} aligns each leaking episode on its leaking call and shows the probe's score as a percentile among that model's scored calls.
+Its example episodes are chosen by one fixed rule: for each model, the fresh leaking episode of median length among those with at least five scored calls.
+
 \paragraph{Where in the call.}
 gpt-oss-20b's reasoning is short, and most of the reasoning probe's first alarms on leaking calls fire at the first reasoning token.
 The signal is present when the call starts, which fits the result that the incoming message alone carries much of it (\cref{app:shortcuts}).
-This does not show a decision forming over the reasoning.
+This does not show what the signal represents.
 
 \subsection{False alarms}
 \label{app:alarms}
@@ -29,7 +33,7 @@ A deployed alarm would need its threshold set per episode, as \citet{gao2026} al
   \centering
   \includegraphics[width=\linewidth]{fig7_alarm_tradeoffs.pdf}
   \caption{\textbf{Leaking calls caught against refusing calls alarmed, as the threshold moves.}
-  Rates pool all calls, and negatives are calls in episodes that never leak; marked points are the thresholds set on control calls, which for the gpt-oss-20b fresh episodes is the frozen threshold.
+  Rates are unstratified, counted over all calls, and negatives are calls in episodes that never leak; marked points are the thresholds set on control calls, which for the gpt-oss-20b fresh episodes is the frozen threshold.
   Jev on gpt-oss-20b was scored only on development episodes.}
   \label{fig:alarm-tradeoff}
 \end{figure}

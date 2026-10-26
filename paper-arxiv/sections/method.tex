@@ -29,14 +29,16 @@ We compute the AUROC within each such group $g$ and average the groups, weightin
 \end{equation*}
 AUROC is the chance that a random positive call outranks a random negative one, so 0.5 is chance and 1 is perfect.
 In words, the metric asks how often a leaking call outranks a non-leaking call from the same scenario and round.
-Any score that depends only on the scenario and the round therefore gets exactly 0.5.
+Groups with only leaking or only non-leaking calls are dropped, and any score that depends only on the scenario and the round therefore gets exactly 0.5.
 
 \paragraph{Held-out scenarios.}
 We train on five scenarios, test on the sixth, and rotate through all six, so every test call comes from a scenario that the probe never saw in training.
 Related episodes, such as variants of one seeded episode or reruns that share a history, are always kept on the same side of a split.
 Intervals are 95\% bootstrap intervals that resample these groups of related episodes (\cref{app:probes}).
 
-\paragraph{Evidence status.}
-Two results were tested under plans that we wrote down and committed before the fresh test episodes were collected (\cref{app:confirmation}).
-We evaluate every other analysis on held-out scenarios, and on the fresh test episodes where possible.
+\paragraph{Evidence.}
+A model is \emph{frozen} when its weights and alarm threshold are fixed and committed before it is scored.
+A test is \emph{pre-registered} when a committed written plan fixed the model, its threshold and its success criterion before the test's episodes were collected.
+Two tests are pre-registered (\cref{sec:confirmed}).
+We evaluate every other analysis on held-out scenarios, and score frozen models once on the fresh test episodes where possible.
 In every figure, filled markers are fresh test episodes and hollow markers are development episodes.

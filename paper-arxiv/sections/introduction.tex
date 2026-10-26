@@ -3,7 +3,8 @@
 
 Just before an AI agent gives in and breaks its operator's rule, a linear probe on its activations can tell.
 We read the target model's internal activations at each of its calls, before it generates anything, and ask whether that call will leak a secret that its operator told it to keep.
-On Qwen3-32B, tested on fresh episodes it never saw, the probe ranks the leaking calls far above the others, and a text monitor given the same conversation does much worse.
+On Qwen3-32B, tested on fresh episodes held out from training, the probe ranks the leaking calls far above the others, and a zero-shot text monitor given the same conversation does much worse.
+A bag-of-words classifier trained on the same text comes close to the probe, so most of that lead comes from training on the labels (\cref{sec:monitor}).
 On gpt-oss-20b, a probe on the call's reasoning held up in a pre-registered test on fresh episodes.
 
 The setting is recruitment, a common first step of collusion between agents, in which one agent presses another to break its own operator's rule.

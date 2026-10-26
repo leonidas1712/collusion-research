@@ -2,11 +2,11 @@ Just before an AI agent gives in and breaks its operator's rule, a linear probe 
 We study recruitment, a common first step of collusion: a peer agent presses a target agent, over many rounds, to reveal a secret its operator told it to keep, such as a deploy token.
 The target often refuses at first, then gives in.
 Read at each call before the model generates anything, a probe tells whether that call is about to leak the secret, with AUROC \qwenFreshCallProbe{} on Qwen3-32B.
-A text monitor given the same conversation scores \qwenFreshCallJev{}.
+A zero-shot text monitor given the same conversation scores \qwenFreshCallJev{}.
 On gpt-oss-20b, a reasoning probe scores \gptossFreshReasoning{} in a pre-registered test on fresh episodes, catching half of leaking calls at a \gptossFreshRefusingAlarm{} false-alarm rate.
 
 The signal is sharp but short-range.
 Checked at each call, the probe can tell when the very next output will leak the secret, but it weakens when asked about the next round, and is weak when asked whether an episode will ever leak.
 
-For multi-agent oversight, this suggests a cheap monitor that runs on every call and pauses an agent just before it gives in, beating a text monitor given the same conversation.
+For multi-agent oversight, this suggests a cheap monitor that runs on every call and pauses an agent just before it gives in, beating a zero-shot text monitor given the same conversation.
 Probes would matter most where output filters fail, such as paraphrased, encoded or slowly coordinated leaks, which we leave to future work.

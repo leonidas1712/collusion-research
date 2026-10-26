@@ -2,7 +2,7 @@
 \label{sec:discussion}
 
 An overseer cannot tell early which episode will leak, but it can tell which call is about to.
-A probe that scores each call before it runs could pause that call and hand it to a human or a stronger monitor.
+A probe that scores each call before it runs could pause that call and hand it to a human or a stronger monitor, at the cost of some alarms in episodes that never leak (\cref{sec:monitor}).
 Further from the act the signal fades, so our results do not support warnings rounds ahead.
 
 For an exact secret, an output filter that matches the string would also stop the leak.
@@ -14,7 +14,7 @@ We list the limitations in order of how much each could change a headline.
 \paragraph{Narrow setting.}
 We test two models, six scenarios built from one task template, one peer and one target per episode, and synthetic tools and secrets.
 Leaks are exact strings, which an output filter would catch.
-Qwen3-32B ran with its reasoning switched off; in a small screen with reasoning on, it leaked less often (\cref{app:behaviour}).
+Qwen3-32B ran with its reasoning switched off.
 Settings with several peers, recruited agents that recruit others, or paraphrased leaks are untested.
 
 On gpt-oss-20b, the leaks come from one peer strategy, a delayed request to copy the whole configuration block.
@@ -27,7 +27,7 @@ The Qwen3-32B per-call test on fresh episodes is out of sample for the probe, bu
 One call ahead the signal is much weaker, and on gpt-oss-20b it mostly reflects the file read that precedes the leak (\cref{app:ahead}).
 
 \paragraph{What the probe reads is open.}
-The signal may reflect what has just arrived rather than a decision forming in the model (\cref{sec:shortcuts}), and our results are correlational.
+The signal may reflect what has just arrived in the input (\cref{sec:shortcuts}), and our results are correlational.
 
 \paragraph{False alarms per episode.}
 At a threshold set for few false alarms per call, many refusing episodes still get at least one alarm.
