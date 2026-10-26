@@ -70,6 +70,16 @@ On development episodes the two probes score about the same, so most of the sign
 The signal is specific to the call that leaks.
 Asked one call earlier, with the leaking call itself removed, the probe scores \qwenStrictNextProbe{} on Qwen3-32B: above chance, but far below its score on the leaking call.
 On gpt-oss-20b, most of what it detects one call ahead is the read of the protected file that usually comes just before the leak (\cref{app:ahead}).
+Followed through an episode, the probe's score stays flat over the calls before a leak and jumps at the leaking call, on both models and on both sets of episodes (\cref{fig:trajectories}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig6_trajectories.pdf}
+  \caption{\textbf{The score jumps at the call that leaks.}
+  Last-prompt probe score, as a percentile among all scored calls, aligned on each episode's leaking call (top: median over all leaking episodes, with the middle 50\% shaded for fresh episodes).
+  Bottom: the fresh leaking episode of median length for each model, chosen by that rule alone.}
+  \label{fig:trajectories}
+\end{figure}
 
 \begin{figure}[t]
   \centering
