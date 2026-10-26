@@ -28,6 +28,8 @@ def package(output, root=PAPER):
         for group in re.findall(r'\\' + command + r'\{([^}]+)\}', aux):
             inputs.extend(Path(name.strip() + suffix) for name in group.split(','))
     inputs.extend(map(Path, ['latexmkrc', 'template_hashes.json']))
+    inputs.extend(Path(name) for name in ['numbers.yaml', 'numbers_verification.json']
+                  if (root / name).is_file())
     for relative in sorted(set(inputs)):
         if not (root / relative).resolve().is_relative_to(root):
             raise RuntimeError(f'External package dependency: {relative}')
