@@ -10,10 +10,19 @@ The criterion was met.
 At its frozen threshold the probe caught about half of the leaking calls, fewer than in development, while alarming on few calls in refusing episodes (\cref{app:confirmation}).
 
 On Qwen3-32B, whether the target leaks this round or the next was modestly predictable on its fresh test episodes.
-The frozen probe scored \qwenFreshNearProbe{} and the strongest text monitor \qwenFreshNearJev{}, both clearly above chance, as the plan required (\cref{fig:headline}b).
+The frozen probe scored \qwenFreshNearProbe{} and the strongest text monitor \qwenFreshNearJev{}, both clearly above chance, as the plan required (\cref{fig:round}).
 At this distance the probe is not clearly better than the monitor.
 The strongest monitor here is Jev asked to forecast a leak at any later point, shown everything the target had seen (\cref{app:monitors}).
 This test uses the leak label fixed in its plan, which differs only slightly from the one above (\cref{app:labels}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.6\linewidth]{fig_round_confirmation.pdf}
+  \caption{\textbf{This round or the next is modestly predictable on fresh episodes.}
+  Qwen3-32B fresh test episodes, scored once under the frozen plan, with its own leak label (\cref{app:labels}).
+  Whiskers are 95\% bootstrap intervals.}
+  \label{fig:round}
+\end{figure}
 
 The analyses below were designed after earlier results.
 We evaluate them on held-out scenarios and, where possible, on the fresh test episodes.
