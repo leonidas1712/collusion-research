@@ -187,6 +187,13 @@ The final rigour round flagged three framings needing Leo's decision; each ties 
 2. **The abstract's per-call false-alarm rate needs its per-episode companion** — don't give the call-level operating point without the episode-level rate (item 3; 59% Qwen / 26% gpt-oss).
 3. **The Qwen 0.98 should not read as "fresh held-out" without noting those episodes were already inspected** — it is out-of-sample but not pre-registered (item 2); prefer "on fresh episodes held out from training" and keep "pre-registered" for gpt-oss only.
 
+### 5. One-word option in your round-1 abstract (claude-4 audit; abstract kept verbatim)
+
+Your abstract says the probe catches 82% of leaking calls "while flagging 5% of other calls for review."
+The 5% (5.5%, 77/1,407) is measured on **calls in refusing episodes**, not on all other calls; §4.4 states it
+that way. If you want the abstract to match exactly: "flagging 5% of **calls in refusing episodes**". The
+same denominator applies to Jev's 29%. Your text is unchanged until you decide.
+
 ## Technical decisions
 
 - **ICLR header on the arXiv draft (codex #2373, via claude #2374).** With `\iclrfinalcopy` the ICLR 2027
