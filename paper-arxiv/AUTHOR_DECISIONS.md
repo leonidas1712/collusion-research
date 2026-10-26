@@ -25,3 +25,16 @@
     - Match the rigour of the closest published papers; the calibration memos are `reviews/rw_calibration_*.md`.
     - Do not chase every reviewer request. Anything beyond that norm goes to Future work or Limitations in one line.
     - No new analyses tonight.
+12. **Story check in every review round.** The main text is a focused essay with one arc:
+    1. the question;
+    2. the setup;
+    3. sharp at the call (the headline and fresh tests);
+    4. short-range (the ladder);
+    5. who can read the signal (the probe, a zero-shot monitor, a trained text classifier);
+    6. what it means for oversight, and its limits.
+    
+    Every review round includes a story check:
+    - The blind clarity reader is asked whether the main text tells one clear story, and which paragraph or figure does not serve it.
+    - The writer does a story pass after each round's fixes.
+    
+    Content that does not serve the arc moves to the appendix with one pointer. Do not add analyses to appease reviewers.
