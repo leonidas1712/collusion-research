@@ -39,6 +39,8 @@ Baseline A: the last message in the current request is a tool result linked to a
 - loso/matched_last_prompt minus latest_incoming_protected_read: 0.108, 95% CI [0.075, 0.137].
 - loso/matched_last_prompt minus previous_call_protected_read: 0.116, 95% CI [0.082, 0.148].
 
+Conditional comparison coverage: latest-incoming-read strata retain 79/84 positives (94.0%); previous-read strata retain 78/82 (95.1%). Single-class scenario×round strata do not contribute to AUROC.
+
 Intervals use 1,000 paired family-bootstrap draws, seed 20261025, averaging seeds 42/43/44. Conditional AUROCs retain only strata with both classes; coverage is in JSON. These diagnostics do not identify a causal mechanism or establish general advance warning.
 
 Script: experiments/E05-probes/reasoning_stream_immediate_readstep.py. Audit run: /Users/leo/collusion-research/runs/20261026-1307-e05-immediate-readstep. CPU only, USD0.

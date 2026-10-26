@@ -68,7 +68,7 @@ def prepare(target):
         body,order=base.body_for(text,base.digest(text));key=base.digest(body);payloads.setdefault(key,body)
         tasks.append(dict(row_index=i,row_id=row['row_id'],request_sha256=row['request_sha256'],payload_key=key,evaluation=i in evaluation,calibration=i in calibration,option_order=list(order)))
     rate=base.reserve_rate();worst=sum(Decimal(len(json.dumps(b,ensure_ascii=False).encode()))*rate for b in payloads.values())
-    run=start_run('e06-percall-input-jev'+('-qwen' if target=='qwen' else ''),experiment='E06',parents=[base.FITS.name,MATCHED.parent.name],settings={'target':target,'approval':'Aboard1964/2018,separate capUSD3 per target','prompt_spec':base.PROMPT_SPEC,'prompt_sha256':base.PROMPT_SHA,'no_future_output':True,'reasoning_access':False,'protected_values_sent':False,'same_saved_folds':True})
+    run=start_run('e06-percall-input-jev'+('-qwen' if target=='qwen' else ''),experiment='E06',parents=[base.FITS.name,MATCHED.parent.name] if target=='gpt-oss' else [QWEN.name],settings={'target':target,'approval':'Aboard1964/2018,separate capUSD3 per target','prompt_spec':base.PROMPT_SPEC,'prompt_sha256':base.PROMPT_SHA,'no_future_output':True,'reasoning_access':False,'protected_values_sent':False,'same_saved_folds':True})
     for n,v in [('payloads',payloads),('tasks',tasks)]:write_json_atomic(run.dir/(n+'.json'),v)
     pre=dict(evaluation_replies=len(evaluation),calibration_replies=len(calibration),unique_payloads=len(payloads),reserve_usd_per_byte=str(rate),worst_case_usd=str(worst),cap_usd='3.00',within_cap=worst<=3,matched_export_sha256=hashlib.sha256(MATCHED.read_bytes()).hexdigest())
     write_json_atomic(run.dir/'preflight.json',pre);run.result(**pre);run.finish('prepared');print(run.dir,flush=True);print(json.dumps(pre),flush=True)
@@ -106,11 +106,15 @@ def summarize(directory):
 
 def audit_inputs(directory):
     meta=json.loads((directory/'meta.json').read_text());target=meta['settings'].get('target','gpt-oss')
+    preflight=json.loads((directory/'preflight.json').read_text())
+    for path,expected in preflight.get('source_hashes',{}).items():assert hashlib.sha256(Path(path).read_bytes()).hexdigest()==expected
+    if target=='gpt-oss':assert hashlib.sha256(MATCHED.read_bytes()).hexdigest()==preflight['matched_export_sha256']
     rows,ev,cal,_=inputs(target);tasks=json.loads((directory/'tasks.json').read_text());payloads=json.loads((directory/'payloads.json').read_text());episodes={}
     assert {t['row_index'] for t in tasks}==ev|cal
     for task in tasks:
         row=rows[task['row_index']];path=Path(row['source_path'])
         if str(path) not in episodes:episodes[str(path)]=json.loads(path.read_text())
+        if row.get('episode_sha256'):assert hashlib.sha256(path.read_bytes()).hexdigest()==row['episode_sha256']
         ep=episodes[str(path)];request=ep['requests'][row['request_idx']]['request']
         blob=json.dumps(request,ensure_ascii=False,**({'sort_keys':True} if target=='gpt-oss' else {'separators':(',',':')})).encode()
         assert hashlib.sha256(blob).hexdigest()==row.get('harmony_request_sha256',row['request_sha256'])

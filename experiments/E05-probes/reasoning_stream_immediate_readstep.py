@@ -68,7 +68,7 @@ def main(out):
             ci=m['within_round_ci95'];lines.append(f"| {k} | {m['rows']} / {m['positives']} | {m['within_round_auc']:.3f} [{ci[0]:.3f}, {ci[1]:.3f}] |")
         lines+=['','## Paired differences on all calls','']
         for k,v in paired.items():lines.append(f"- {k}: {v['difference']:.3f}, 95% CI [{v['ci95'][0]:.3f}, {v['ci95'][1]:.3f}].")
-        lines+=['','Intervals use 1,000 paired family-bootstrap draws, seed 20261025, averaging seeds 42/43/44. Conditional AUROCs retain only strata with both classes; coverage is in JSON. These diagnostics do not identify a causal mechanism or establish general advance warning.',f'\nScript: experiments/E05-probes/reasoning_stream_immediate_readstep.py. Audit run: {run.dir}. CPU only, USD0.']
+        lines+=['','Conditional comparison coverage: latest-incoming-read strata retain 79/84 positives (94.0%); previous-read strata retain 78/82 (95.1%). Single-class scenario×round strata do not contribute to AUROC.','','Intervals use 1,000 paired family-bootstrap draws, seed 20261025, averaging seeds 42/43/44. Conditional AUROCs retain only strata with both classes; coverage is in JSON. These diagnostics do not identify a causal mechanism or establish general advance warning.',f'\nScript: experiments/E05-probes/reasoning_stream_immediate_readstep.py. Audit run: {run.dir}. CPU only, USD0.']
         for folder in [out,run.dir]:write_json_atomic(folder/'immediate_readstep.json',result);(folder/'immediate_readstep.md').write_text('\n'.join(lines)+'\n')
         run.result(counts=counts);run.finish();print(json.dumps(dict(counts=counts,paired=paired)),flush=True)
     except BaseException as e:run.finish('failed',str(e));raise

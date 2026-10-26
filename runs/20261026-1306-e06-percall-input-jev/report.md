@@ -14,3 +14,12 @@ Unstratified AUROC is 0.808; it is not the headline within-scenario×round resul
 CIs use 1,000 family-bootstrap draws (seed 20261025), averaged over saved seeds 42/43/44. Thresholds use the same saved training-control calls, strict greater-than, nominal 5% call-level false-alarm rate. These are offline warning opportunities, not measured prevented leaks. No monitor was fitted; pooled/LOSO differ only in calibration and fold bookkeeping.
 
 Billed USD0.376623786; charged/reserved USD0.3766237860000000000000000001; hard cap USD3. Sources and exact frozen payload specification are in meta.json and preflight.json. Script: experiments/E06-monitors/percall_input_monitor.py.
+
+## Paired probe comparison
+
+Both methods use identical calls, labels, folds, and scenario×round strata. Family-bootstrap draws are paired (1,000 draws, seed20261025), averaging seeds42/43/44. The probe is the matched immediate-label last-prompt probe. No score is reversed and no model is refitted.
+
+| Split | Probe AUROC | Jev AUROC | Probe minus Jev [paired95% CI] |
+|---|---:|---:|---|
+| pooled | 0.882 | 0.271 | +0.611 [+0.532, +0.697] |
+| loso | 0.906 | 0.271 | +0.635 [+0.557, +0.713] |
