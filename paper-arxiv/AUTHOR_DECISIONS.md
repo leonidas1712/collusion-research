@@ -21,3 +21,7 @@
     - **Probe score through an episode.** Include it only if the spike-at-the-leak behaviour really is there. Choose the episode or episodes by a fixed rule, not by cherry-picking.
     - **Alarm trade-off curve.** Plot the share of leaks caught against the false-alarm rate, for the probe and for the text monitor, with the operating point marked.
     The writers decide where each figure goes, keeping the main text at 9–10 pages.
+11. **Calibrate the rigour bar.** This is a solo author polishing sprint work into a solid arXiv preprint, close to workshop or conference quality. It is not a lab-scale paper.
+    - Match the rigour of the closest published papers; the calibration memos are `reviews/rw_calibration_*.md`.
+    - Do not chase every reviewer request. Anything beyond that norm goes to Future work or Limitations in one line.
+    - No new analyses tonight.
