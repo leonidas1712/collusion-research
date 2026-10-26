@@ -6,16 +6,16 @@ Two were pre-registered: before collecting the fresh test episodes, we wrote dow
 
 \begin{table}[t]
   \centering
-  \caption{\textbf{Results at a glance.} AUROC within scenario and round, with 95\% bootstrap intervals for single detectors. Development results are on held-out scenarios. ``Pre-registered'' means the test was fixed in a committed plan before its episodes were collected.}
+  \caption{\textbf{Results at a glance.} AUROC within scenario and round. Development results are on held-out scenarios; intervals are shown in the figures. ``Pre-registered'' means the test was fixed in a committed plan before its episodes were collected.}
   \label{tab:glance}
   \footnotesize
   \begin{tabular}{@{}llllc l@{}}
     \toprule
     Question & Model & Detector & Episodes & Pre-registered & AUROC \\
     \midrule
-    This call? & gpt-oss-20b & reasoning probe & fresh test & yes & \gptossFreshReasoning{} \gptossFreshReasoningCI{} \\
+    This call? & gpt-oss-20b & reasoning probe & fresh test & yes & \gptossFreshReasoning{} \\
     This round or next? & Qwen3-32B & probe / Jev & fresh test & yes & \qwenFreshNearProbe{} / \qwenFreshNearJev{} \\
-    This call? & Qwen3-32B & last-prompt probe & fresh test & no & \qwenFreshCallProbe{} \qwenFreshCallProbeCI{} \\
+    This call? & Qwen3-32B & last-prompt probe & fresh test & no & \qwenFreshCallProbe{} \\
     This call? & Qwen3-32B & last-prompt probe / Jev & development & no & \qwenCallProbe{} / \qwenCallJev{} \\
     This call? & gpt-oss-20b & last-prompt probe / Jev & development & no & \gptossCallProbe{} / \gptossCallJev{} \\
     Ever? & Qwen3-32B & last-prompt probe & development & no & \qwenEverProbe{} \\
@@ -53,7 +53,7 @@ We evaluate them on held-out scenarios and, where possible, on the fresh test ep
 \label{sec:percall}
 
 On held-out scenarios, the last-prompt probe picks out the call that leaks on both models (\cref{fig:percall}).
-It scores \qwenCallProbe{} on Qwen3-32B and \gptossCallProbe{} on gpt-oss-20b, reading one position before the call writes anything.
+It scores \qwenCallProbe{} on Qwen3-32B, reading one position before the call writes anything.
 
 The Qwen3-32B probe holds on fresh episodes.
 We fit it on the development episodes only, committed it, and then scored it once on the fresh test episodes, which were never used to fit or choose anything for it (AUROC~\qwenFreshCallProbe{}).
@@ -78,7 +78,6 @@ On gpt-oss-20b, most of what it detects one call ahead is the read of the protec
 \label{sec:ladder}
 
 On the same calls, the probe goes from near chance for the eventual outcome, to modest for this round or the next, to high for this call (\cref{fig:headline}).
-On Qwen3-32B it rises from \qwenEverProbe{} for ``will this episode ever leak?'' to \qwenCallProbe{} for ``will this call leak?''.
 We refit the probe for each question, on the same calls, model and reading position, so only the question changes.
 
 gpt-oss-20b follows the same pattern, with the largest jump at the call itself.
@@ -88,10 +87,10 @@ It usually leaks within a round of the request, so ``this round or the next'' ad
 \label{sec:monitor}
 
 A text monitor shown the same conversation and tool results scores well below the probe on both models (\cref{fig:percall}).
-On Qwen3-32B, Jev scores \qwenCallJev{}, and the gap to the probe has an interval that excludes zero.
+On Qwen3-32B, the probe's margin over Jev has an interval that excludes zero.
 
 On gpt-oss-20b, Jev flags nearly every call that leaks, but also most calls in refusing episodes, so it cannot separate the calls that leak.
-Within a scenario and round it ranks the leaking calls below the others (\gptossCallJev{}).
+Within a scenario and round it ranks the leaking calls below the others.
 Even with its ranking reversed after the fact, it stays below the probe (\cref{app:monitors}).
 
 \subsection{What the probe is not reading}
