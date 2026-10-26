@@ -1,5 +1,6 @@
 """Frozen fresh-cohort commitment audit; no probe fitting or target generation."""
 import argparse
+from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 import csv
 import gzip
 import hashlib
@@ -87,7 +88,7 @@ def prepare():
     run.finish('prepared');print(run.dir)
 
 def verified(d):
-    plan=json.loads((d/'plan.json').read_text());rel=str((d/'plan.json').relative_to(ROOT))
+    plan=json.loads((d/'plan.json').read_text());rel=str((d/'plan.json').resolve().relative_to(ROOT))
     frozen=subprocess.check_output(['git','show','HEAD:'+rel],cwd=ROOT)
     assert frozen==(d/'plan.json').read_bytes(),'Plan must be committed unchanged before calls/scoring'
     payloads=json.loads((d/'payloads.json').read_text());assert digest(payloads)==plan['payloads_sha256']
@@ -103,9 +104,9 @@ def execute(d,benchmark):
         check=json.loads((d/'benchmark.json').read_text());assert check['within_cap']
     keys=plan['benchmark_payload_keys'] if benchmark else sorted(payloads)
     rate=Decimal(plan['reserve_usd_per_byte'])
-    for key in keys:
+    def one(key):
         p=cache/(key+'.json')
-        if p.exists():continue
+        if p.exists():return
         b=payloads[key];reserve=rate*len(json.dumps(b,ensure_ascii=False).encode());entry=ledger.reserve(key,reserve)
         try:raw=post_json(DECISION_URL,b,os.environ['OPENROUTER_API_KEY'])
         except BaseException:
@@ -114,6 +115,22 @@ def execute(d,benchmark):
         score=parse_decision(raw,'precommitment');write(p,dict(score=score,response=raw,cost=cost,payload_sha256=key))
         assert cost is not None and Decimal(str(cost))<=reserve,'Cost missing/exceeded reservation: stop'
         if len(list(cache.glob('*.json')))%100==0:print('cached',len(list(cache.glob('*.json'))),'billed',ledger.data['billed'],flush=True)
+    if benchmark:
+        for key in keys: one(key)
+    else:
+        # Keep at most eight reservations in flight; stop feeding work on failure.
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            source=iter(k for k in keys if not (cache/(k+'.json')).exists())
+            pending=set()
+            for _ in range(8):
+                k=next(source,None)
+                if k is not None:pending.add(pool.submit(one,k))
+            while pending:
+                done,pending=wait(pending,return_when=FIRST_COMPLETED)
+                for f in done:f.result()
+                for _ in done:
+                    k=next(source,None)
+                    if k is not None:pending.add(pool.submit(one,k))
     if benchmark:
         ratios=[Decimal(str(json.loads((cache/(k+'.json')).read_text())['cost']))/len(json.dumps(payloads[k],ensure_ascii=False).encode()) for k in keys]
         remaining=sum(len(json.dumps(b,ensure_ascii=False).encode()) for k,b in payloads.items() if not (cache/(k+'.json')).exists())
