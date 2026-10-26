@@ -75,72 +75,103 @@ def collect():
     return rows
 
 
-CAPTION = """Draft Figure 3. Reading reasoning recognises the leaking reply more strongly than last-prompt prediction anticipates a later leak. (a) Within scenario × round AUROC; whiskers are saved 95% family-bootstrap confidence intervals. Activation rows are held-out-scenario estimates; fixed text/rule scores are evaluated on the same replies as the reasoning probe. Rows are sorted within groups. The reasoning and text/rule comparison uses 1,995 replies, 121 positives, from 238 episodes. *Incoming-message capture includes peer messages and tool results, uses seed 42 only, and covers 2,199 replies / 143 positives. †The pre-ask placebo instead predicts eventual episode outcome on 628 steps / 388 positives. Length is reversed final reasoning length, a hindsight comparator, not an online alarm. (b) The label ladder is descriptive, not a paired comparison or an isolated effect of label proximity: the input and eligible cohort change. Last-prompt eventual and near-term estimates use 2,059 steps (169 and 148 positives); near-term reasoning uses 1,874 replies / 118 positives in the paper cohort and 1,995 / 199 in the extended cohort. This-reply reasoning uses the panel-a cohort. All cohorts cover 238 episodes. Near-term means this or the next round. Points are deliberately unconnected. Exploratory results; no new fits. Numeric values and exact source keys are in figure3_streaming.csv.
+CAPTION = """Figure 3. Exploratory, gpt-oss-20b. A linear probe on the target's reasoning tokens recognises the reply that leaks the protected value; text and rule baselines reading the same material do not. (a) Within scenario × round AUROC on held-out scenarios; whiskers are 95% family-bootstrap confidence intervals. Label: this reply makes the first public emission of the value, by any route. The reasoning probe and all baselines are scored on the same 1,995 replies with reasoning (121 leaking) from 238 episodes. "…cut before value mention" drops every reasoning token from the first exact mention of the value onward. Reasoning length uses the final length of the reasoning (reversed), so it is a hindsight comparator, not an online alarm. *A probe on the incoming peer message and tool results alone, trained on the same label (seed 42 only; 2,199 replies, 143 leaking): much of the signal is present before the target reasons. †The post-ask probe applied to pre-ask replies against the eventual episode outcome (628 replies, 388 positives). (b) AUROC as the label moves closer to the leak. This ladder is descriptive, not a paired comparison: both the input and the reply set change between points, so it does not isolate an effect of label proximity. Last-prompt probe: 2,059 post-ask replies (169 positives for eventual, 148 for this or next round). Reasoning (paper replies): the paper's reply cohort; 1,874 replies, 118 positives. Reasoning (+ leaking replies): the panel-a reply set, which adds each episode's first leaking reply; 1,995 replies, 199 positives for this or next round and 121 for this reply. All cohorts cover 238 episodes. Values and exact source keys are in figure3_streaming.csv.
 """
+
+
+DISPLAY_A = {  # CSV label -> (display label, panel-a row position, top to bottom)
+    'Reasoning-token probe': ('Reasoning-token probe', 9.0),
+    'Before value mention': ('…cut before value mention', 8.1),
+    'Incoming-message probe*': ('Incoming message only*', 7.2),
+    'Length (hindsight)': ('Reasoning length (hindsight)', 5.3),
+    'Jev on reasoning': ('Jev judge on reasoning', 4.4),
+    'Keywords': ('Keyword rule', 3.5),
+    'GPT-5-nano on reasoning': ('GPT-5-nano on reasoning', 2.6),
+    'Pre-ask placebo†': ('Pre-ask placebo†', .7),
+}
+GROUP_HEADINGS = [(9.75, 'Linear probes on activations', '#087f8c'),
+                  (6.05, 'Text and rule baselines', '#334155'),
+                  (1.45, 'Control', '#64748b')]
+# Panel b: x position, marker. Triangles share panel a's reply set (paper replies + first leaking reply).
+POS_B = {'Last prompt: eventual': (0, 'D'), 'Last prompt: near-term': (.84, 'D'),
+         'Reasoning: paper cohort': (1.02, 'o'), 'Reasoning: extended': (1.20, '^'),
+         'Reasoning: this reply': (2, '^')}
+TEAL, SLATE, GREY = '#087f8c', '#334155', '#64748b'
 
 
 def render(rows, output):
     plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 7,
                          'pdf.fonttype': 42, 'ps.fonttype': 42,
                          'axes.spines.top': False, 'axes.spines.right': False,
-                         'axes.labelcolor': '#334155', 'text.color': '#334155'})
-    fig = plt.figure(figsize=(6.5, 2.6), facecolor='white')
-    left = fig.add_axes([.265, .22, .255, .59])
-    right = fig.add_axes([.645, .22, .33, .59])
-    a = sorted([r for r in rows if r['panel'] == 'a'],
-               key=lambda r: (['activation', 'text/rule', 'control'].index(r['group']), -r['estimate']))
-    ys = [8, 7, 6, 4.7, 3.7, 2.7, 1.7, .3]
-    for r, y in zip(a, ys):
+                         'axes.labelcolor': SLATE, 'text.color': SLATE,
+                         'xtick.color': SLATE, 'ytick.color': SLATE,
+                         'xtick.labelsize': 7, 'ytick.labelsize': 7})
+    W, H = 6.5, 2.85
+    fig = plt.figure(figsize=(W, H), facecolor='white')
+    left = fig.add_axes([.255, .25, .27, .60])
+    right = fig.add_axes([.66, .25, .32, .60])
+
+    # (a) recognising the leaking reply
+    for r in (r for r in rows if r['panel'] == 'a'):
+        label, y = DISPLAY_A[r['label']]
         color, marker = STYLE[r['group']]
+        head = r['label'] == 'Reasoning-token probe'
         left.errorbar(r['estimate'], y, xerr=[[r['estimate']-r['low']], [r['high']-r['estimate']]],
-                      fmt=marker, color=color, ecolor=color, markersize=3.5, capsize=2, linewidth=.8)
-        left.text(1.015, y, f"{r['estimate']:.3f}", ha='left', va='center', fontsize=6.3)
-    left.set_yticks(ys, [r['label'] for r in a], fontsize=6.5)
-    left.tick_params(axis='y', length=0, pad=4)
-    left.set(xlim=(.25, 1), ylim=(-.5, 8.7), xlabel='AUROC (95% CI)')
+                      fmt=marker, color=color, ecolor=color, markersize=4.5 if head else 3.8,
+                      capsize=1.8, linewidth=.9, zorder=3)
+        left.text(1.012, y, f"{r['estimate']:.2f}", ha='left', va='center', fontsize=6.8,
+                  color=color if r['group'] != 'control' else GREY, weight='bold' if head else 'normal')
+        left.text(-.03, y, label, transform=left.get_yaxis_transform(), ha='right', va='center',
+                  fontsize=7, weight='bold' if head else 'normal')
+    for y, text, color in GROUP_HEADINGS:
+        left.text(-.03, y, text, transform=left.get_yaxis_transform(), ha='right', va='center',
+                  fontsize=6.2, style='italic', color=color)
+    left.set_yticks([])
+    left.set(xlim=(.25, 1), ylim=(.1, 10.2))
+    left.set_xlabel('AUROC on held-out scenarios (95% CI)', fontsize=7, labelpad=2)
     left.set_xticks([.3, .5, .7, .9])
     left.spines['left'].set_visible(False)
-    for y in [5.35, .95]:
-        left.axhline(y, color='#CBD5E1', linewidth=.6)
-    left.axvline(.5, color='#64748b', linestyle='--', linewidth=.8, zorder=0)
+    for y in [6.6, 1.95]:
+        left.axhline(y, xmin=-.9, color='#CBD5E1', linewidth=.6, clip_on=False)
+    left.axvline(.5, color=GREY, linestyle='--', linewidth=.8, zorder=0)
+    left.text(.5, 10.2, 'chance', ha='center', va='bottom', fontsize=6, color=GREY)
     left.grid(axis='x', alpha=.15)
-    fig.text(.015, .955, '(a) Recognising the leaking reply', weight='bold', fontsize=8)
-    fig.text(.015, .885, 'gpt-oss-20b · held-out scenarios', fontsize=7)
-    fig.text(.615, .955, '(b) From later outcome to this reply', weight='bold', fontsize=8)
-    fig.text(.645, .885, 'Different labels and cohorts; no paired contrast', fontsize=6.2)
-    positions = {'Last prompt: eventual': 0, 'Last prompt: near-term': .84,
-                 'Reasoning: paper cohort': 1.02, 'Reasoning: extended': 1.20,
-                 'Reasoning: this reply': 2}
-    for r in [r for r in rows if r['panel'] == 'b']:
-        x = positions[r['label']]
-        color, marker = STYLE[r['group']]
-        if r['label'] == 'Reasoning: extended': marker = '^'
+    fig.text(.012, .955, '(a) Recognising the reply that leaks (gpt-oss-20b)', weight='bold', fontsize=8)
+
+    # (b) label ladder
+    for r in (r for r in rows if r['panel'] == 'b'):
+        x, marker = POS_B[r['label']]
+        color, _ = STYLE[r['group']]
         right.errorbar(x, r['estimate'], yerr=[[r['estimate']-r['low']], [r['high']-r['estimate']]],
-                       fmt=marker, color=color, markersize=4, capsize=2, linewidth=.8)
-        if r['label'] == 'Last prompt: near-term':
-            xytext=(-9, -14)
-        elif r['label'] == 'Reasoning: paper cohort':
-            xytext=(-15, 8)
-        elif r['label'] == 'Reasoning: extended':
-            xytext=(13, 11)
-        else: xytext=(0, 9)
-        right.annotate(f"{r['estimate']:.3f}", (x, r['estimate']), xytext=xytext,
-                       textcoords='offset points', ha='center', fontsize=6.2, color=color)
-    right.set(xlim=(-.25, 2.3), ylim=(.4, 1.03), ylabel='AUROC (95% CI)')
-    right.set_xticks([0, 1, 2], ['Eventual', 'This / next\nround', 'This reply'], fontsize=6.5)
-    right.set_yticks([.5, .7, .9])
-    right.axhline(.5, color='#64748b', linestyle='--', linewidth=.8, zorder=0)
+                       fmt=marker, color=color, markersize=4.2, capsize=1.8, linewidth=.9, zorder=3)
+        dx, ha = {'Last prompt: eventual': (-6, 'right'), 'Last prompt: near-term': (-6, 'right'),
+                  'Reasoning: paper cohort': (-5, 'right'), 'Reasoning: extended': (6, 'left'),
+                  'Reasoning: this reply': (6, 'left')}[r['label']]
+        right.annotate(f"{r['estimate']:.2f}", (x, r['estimate']), xytext=(dx, 0), va='center',
+                       textcoords='offset points', ha=ha, fontsize=6.8, color=color,
+                       bbox=dict(boxstyle='square,pad=0.1', facecolor='white', edgecolor='none'))
+    right.set(xlim=(-.5, 2.4), ylim=(.4, 1.0))
+    right.set_ylabel('AUROC (95% CI)', fontsize=7, labelpad=2)
+    right.set_xticks([0, 1, 2], ['Eventual\noutcome', 'This or next\nround', 'This\nreply'], fontsize=7)
+    right.tick_params(axis='x', length=0, pad=3)
+    right.set_yticks([.5, .6, .7, .8, .9, 1.0])
+    right.axhline(.5, color=GREY, linestyle='--', linewidth=.8, zorder=0)
     right.grid(axis='y', alpha=.15)
-    handles = [Line2D([], [], marker='o', color='#087f8c', linestyle='', label='Reasoning'),
-               Line2D([], [], marker='^', color='#087f8c', linestyle='', label='Extended cohort'),
-               Line2D([], [], marker='D', color='#334155', linestyle='', label='Last prompt')]
-    right.legend(handles=handles, loc='lower center', bbox_to_anchor=(.5, -.38), ncol=3,
-                 frameon=False, fontsize=5.8, handletextpad=.2, columnspacing=.6, markerscale=.8)
-    fig.text(.015, .075, '* Incoming: seed 42, expanded capture.  † Placebo: eventual label.', fontsize=6)
-    fig.text(.015, .025, 'Groups: teal circles = activations; slate squares = text/rules; grey diamond = control.', fontsize=5.8)
+    right.set_xlabel('Label horizon  (closer to the leak \u2192)', fontsize=7, labelpad=2)
+    fig.text(.585, .955, '(b) The closer the label, the more readable', weight='bold', fontsize=8)
+    fig.text(.585, .895, 'Descriptive: labels and reply sets differ between points', fontsize=6.2, color=GREY)
+    handles = [Line2D([], [], marker='D', color=SLATE, linestyle='', markersize=4, label='Last-prompt probe'),
+               Line2D([], [], marker='o', color=TEAL, linestyle='', markersize=4, label='Reasoning (paper replies)'),
+               Line2D([], [], marker='^', color=TEAL, linestyle='', markersize=4.5, label='Reasoning (+ leaking replies)')]
+    right.legend(handles=handles, loc='upper left', bbox_to_anchor=(0, 1.02), ncol=1, frameon=False,
+                 fontsize=6.4, handletextpad=.2, labelspacing=.35, borderaxespad=.2)
+
+    fig.text(.012, .045, '* Peer message and tool results before the reply; one seed.   '
+             '† Pre-ask replies vs eventual outcome.', fontsize=6.2, color=GREY)
     for ext in ['png', 'pdf']:
         fig.savefig(output / f'figure3_streaming.{ext}', dpi=300, facecolor='white')
     plt.close(fig)
+    return W, H
 
 
 def main():
@@ -164,8 +195,8 @@ def main():
         writer.writeheader()
         writer.writerows(rows)
     (args.output_dir / 'figure3_streaming_caption.md').write_text(CAPTION)
-    render(rows, args.output_dir)
-    print(f'{len(rows)} saved estimates; figure size 6.5 × 2.6 inches (468 × 187.2 pt).')
+    w, h = render(rows, args.output_dir)
+    print(f'{len(rows)} saved estimates; figure size {w} × {h} inches.')
 
 
 if __name__ == '__main__':
