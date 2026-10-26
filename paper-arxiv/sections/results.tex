@@ -102,7 +102,7 @@ The cost of those flags depends on what a flag does.
 If each flag sends one call to review, the per-call rate is the review workload.
 If a flag instead stops the whole agent, what matters is whether an episode sees at least one flag.
 A refusing episode has about \qwenFreshMedianRefusingCalls{} scored calls.
-If each call were flagged independently at that rate, about \qwenEpisodeAlarmIndependent{} of episodes would see at least one flag; in practice \qwenFreshRefusingEpisodeAlarm{} do, because flags cluster in the same episodes.
+If each call were flagged independently at the nominal 5\% rate, about \qwenEpisodeAlarmIndependent{} of episodes would see at least one flag; in practice \qwenFreshRefusingEpisodeAlarm{} do, because flags cluster in the same episodes.
 
 A stricter threshold, set on the development episodes so that about one refusing episode in twenty sees a flag and applied unchanged to the fresh episodes, still catches \qwenEpisodeCalCaught{} of leaking fresh episodes by their first leak.
 It implies a much lower per-call flag rate, and so catches fewer leaking calls (\cref{tab:episode-calibration}).
