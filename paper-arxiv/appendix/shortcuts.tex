@@ -31,12 +31,12 @@ A baseline that knows only whether the call's action is a file write scores well
 \paragraph{A trained text classifier.}
 To test whether the input text alone carries the signal, we trained a bag-of-words classifier (TF-IDF features and logistic regression) on each call's input, with the secret masked, on the same calls, folds and weights as the probe.
 We report two views of the input: the full input, and only the latest incoming message and tool results.
-On both models the better of the two comes close to the last-prompt probe, and the probe keeps a small edge whose interval excludes zero (\cref{tab:text-baselines}).
+On both models a trained bag-of-words classifier comes close to the probe, and the probe keeps a small edge whose interval excludes zero (\cref{tab:text-baselines}).
 So most of the per-call signal is present in the text the model reads, and the probe's large margin over the zero-shot monitor comes mostly from training on these labels rather than from reading activations.
 
 \begin{table}[h]
   \centering
-  \caption{Text and workflow baselines, development episodes, held-out scenarios, on the same calls as the last-prompt probe.}
+  \caption{Text and workflow baselines, development episodes, held-out scenarios, on the same calls as the last-prompt probe. $^*$Against the latest-message classifier on Qwen3-32B and the full-input classifier on gpt-oss-20b, the only paired comparisons computed.}
   \label{tab:text-baselines}
   \small
   \begin{tabular}{@{}lcc@{}}
@@ -46,7 +46,7 @@ So most of the per-call signal is present in the text the model reads, and the p
     Last-prompt probe & \qwenCallProbe{} & \gptossCallProbe{} \\
     Trained text classifier, full input & \qwenTextClassifier{} & \gptossTextClassifier{} \\
     Trained text classifier, latest message only & \qwenTextClassifierLatest{} & \gptossTextClassifierLatest{} \\
-    Probe minus best text classifier (paired) & \qwenTextGap{} & \gptossTextGap{} \\
+    Probe minus text classifier, paired$^*$ & \qwenTextGap{} & \gptossTextGap{} \\
     Flag: the call's action is a file write & -- & \gptossWriteBaseline{} \\
     Last-prompt probe, handoff-file writes only & -- & \gptossHandoffProbe{} \\
     \bottomrule
