@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / 'paper-arxiv/figures'
 TRAJECTORY = ROOT / 'runs/20261026-2254-e05-arxiv-score-trajectories/metrics.json'
 ALARMS = ROOT / 'runs/20261026-2252-e05-arxiv-alarm-tradeoffs'
+EPISODE = ROOT / 'runs/20261027-0045-e05-arxiv-episode-calibration/metrics.json'
 
 
 def save(fig, stem, sources, rows):
@@ -60,8 +61,8 @@ def alarms():
     with (ALARMS / 'curves.csv').open() as f:
         rows = [r for r in csv.DictReader(f) if r['panel'] == 'Qwen: fresh episodes']
     metrics = json.loads((ALARMS / 'metrics.json').read_text())
-    fig, ax = plt.subplots(figsize=(4.5, 3.6))
-    fig.subplots_adjust(left=.17, right=.93, bottom=.30, top=.88)
+    fig, ax = plt.subplots(figsize=(4.5, 4.0))
+    fig.subplots_adjust(left=.17, right=.93, bottom=.34, top=.88)
     for name, color, ls, marker in [('Last-prompt probe', MODEL_COLORS['qwen'], '-', 'o'),
                                     ('Jev', '#666666', '--', 's')]:
         curve = [r for r in rows if r['detector'] == name]
@@ -69,13 +70,29 @@ def alarms():
         ax.plot([float(r['refusing_alarm']) for r in curve], [float(r['leaks_caught']) for r in curve],
                 color=color, ls=ls, lw=1.5, label='Zero-shot Jev' if name=='Jev' else name)
         ax.plot(op['refusing_call_alarm'], op['leaking_call_alarm'], marker=marker, color=color, ms=7)
+    episode = json.loads(EPISODE.read_text())['qwen_probe']
+    assert episode['calibration_status'] == 'descriptive_fresh_refusing_calibration'
+    point = episode['episode_calibrated']
+    ax.plot(point['refusing_calls']['rate'], point['leaking_calls']['rate'],
+            marker='D', mfc='white', mec=MODEL_COLORS['qwen'], mew=1.7, ms=8,
+            clip_on=False, zorder=5)
     ax.set(title='Qwen3-32B: fresh episodes', xlim=(0,1), ylim=(0,1.02),
            xlabel='Calls in refusing episodes flagged', ylabel='Leaking calls caught')
     ax.xaxis.set_major_formatter(PercentFormatter(1)); ax.yaxis.set_major_formatter(PercentFormatter(1))
     ax.grid(alpha=.15)
-    fig.legend(loc='lower center', bbox_to_anchor=(.5,.07), ncol=2, frameon=False, fontsize=9)
-    fig.text(.5,.015,'Markers: saved control-calibrated thresholds',ha='center',fontsize=9)
-    save(fig, 'fig7_qwen_alarms', [ALARMS/'curves.csv', ALARMS/'metrics.json'], rows)
+    fig.legend(loc='lower center', bbox_to_anchor=(.5,.15), ncol=2, frameon=False, fontsize=9)
+    fig.legend(handles=[
+        Line2D([], [], marker='o', color='#555555', ls='none',
+               label='Filled markers: original thresholds'),
+        Line2D([], [], marker='D', mfc='white', mec=MODEL_COLORS['qwen'], ls='none',
+               label='Episode threshold: descriptive, fresh-calibrated')],
+        loc='lower center', bbox_to_anchor=(.5,.015), ncol=1, frameon=False, fontsize=8.5)
+    rows.append(dict(panel='Qwen: fresh episodes',
+                     detector='Last-prompt probe: descriptive episode-calibrated marker',
+                     threshold_offset=episode['episode_threshold']-episode['original_threshold'],
+                     leaks_caught=point['leaking_calls']['rate'],
+                     refusing_alarm=point['refusing_calls']['rate']))
+    save(fig, 'fig7_qwen_alarms', [ALARMS/'curves.csv', ALARMS/'metrics.json', EPISODE], rows)
 
 
 if __name__ == '__main__':
