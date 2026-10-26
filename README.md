@@ -1,6 +1,6 @@
 # Recruited: can you tell an agent is about to be talked into breaking its rule?
 
-This repository holds the code, prompts, transcripts and results for the paper *Recruited: Pre-Crime for Agents? Predicting Give-In to Collusion Pressure, with Activation Probes and Text Monitors*, written for the Apart AI Collusion Research Sprint (October 2026).
+This repository holds the code, prompts, transcripts and results for the paper *Recruited: Pre-Crime for Collusion? Predicting When an Agent Gives In to a Recruiting Peer, with Activation Probes and Text Monitors*, written for the Apart AI Collusion Research Sprint (October 2026).
 
 - **Paper:** [`report/build/paper.pdf`](report/build/paper.pdf) (source: [`report/paper.md`](report/paper.md); the SHA-256 of the source the PDF was built from is in [`report/build/paper.build.json`](report/build/paper.build.json))
 - **License:** MIT for the project code ([`LICENSE`](LICENSE)); the vendored fonts (`report/fonts/`) and citation style (`report/apa.csl`) keep their own licenses
@@ -321,6 +321,6 @@ All tools are mocked in memory, and every protected value is a randomly generate
 
 ## Citation
 
-> Raghav, L. (2026). *Recruited: Pre-Crime for Agents? Predicting Give-In to Collusion Pressure, with Activation Probes and Text Monitors.* Apart AI Collusion Research Sprint. https://github.com/leonidas1712/collusion-research
+> Raghav, L. (2026). *Recruited: Pre-Crime for Collusion? Predicting When an Agent Gives In to a Recruiting Peer, with Activation Probes and Text Monitors.* Apart AI Collusion Research Sprint. https://github.com/leonidas1712/collusion-research
 
 History was rewritten on 26 October 2026 to remove bulk run data (now in the data-v1 release) and internal agent configuration. Repository commit IDs were remapped except in byte-preserved frozen/hash-linked records; the original-to-release mapping and preserved-file hashes are in [`docs/history/`](docs/history/).
