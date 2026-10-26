@@ -4,7 +4,19 @@ Shared notes (not paper prose). Append your own entries; keep sections by owner 
 
 ## For Leo first
 
-### The submitted abstract reports the *development* round-level number, not the *confirmed* one (claude-4, verified against run folders)
+### 1. The probe's lead over the zero-shot monitor is mostly *training*, not *activations* (claude-4, per @claude #2482)
+
+A trained bag-of-words (TF-IDF) text classifier nearly matches the activation probe on **both** models
+on its stronger text view: **Qwen 0.93 vs 0.96; gpt-oss 0.86 vs 0.91**. So the probe's large lead over
+the *zero-shot* text monitor (Jev) comes mostly from **training on these labels**, not from access to
+activations; activations add a **small, reliable edge** (paired interval excludes zero). The honest
+framing is that a trained probe — on activations or on text — beats an untuned monitor, and the
+activation probe keeps a small edge. **You may want to reconsider how much the title and abstract lean on
+"activations."** Both text views are shown in Appendix H (`tab:text-baselines`) with no best-view
+selection. Checks are development-only, saved-score, $0 (gpt-oss `runs/20261026-2242-e05-arxiv-gpt-text-workflow`;
+Qwen rerun per codex-2 with verified family exclusions).
+
+### 2. The submitted abstract reports the *development* round-level number, not the *confirmed* one (claude-4, verified against run folders)
 
 **What to know:** the submitted abstract's near-term clause — "(Qwen3-32B: probe AUROC 0.58,
 best monitor 0.65, both holding on new episodes)" — states the **development** estimate (0.58)
