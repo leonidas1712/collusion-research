@@ -74,7 +74,7 @@ The [data-v1 release](https://github.com/leonidas1712/collusion-research/release
 scripts/fetch_run_data.sh
 ```
 
-The release is currently a private draft. Until it is published, install the [GitHub CLI](https://cli.github.com/) and run `gh auth login` with an account that has access to this repository. The command uses that authentication; after public publication, it can also download over HTTPS without the CLI.
+The release is public. The command downloads with the GitHub CLI when available, or over HTTPS without the CLI. No API key is needed.
 
 The download is about 1.6 GB and expands to about 8.5 GB. The script checks the pinned manifest and every archive/file SHA-256, restores the original paths, and refuses to overwrite a differing local file. It includes all 360 original gpt-oss episodes and the 84 confirmation episodes. Activations and model weights are separate: regenerate or download those as described below.
 
@@ -140,7 +140,7 @@ Prices change, so treat these as a guide, not a quote.
 
 ## Reproduce the paper from a fresh clone
 
-These steps use only what is committed and cost nothing. Figure and paper steps write into tracked folders (`report/figures/`, `report/build/`). To compare against the committed files instead, pass `--output-dir DIR` to the figure scripts (`--out DIR/figure1_setup.png` for Figure 1) and `--output DIR/paper.docx` to the paper build.
+These steps cost nothing. Compact figure and paper builds use committed inputs; restore the release data first for the data-figures command and trace viewer. Figure and paper steps write into tracked folders (`report/figures/`, `report/build/`). To compare against the committed files instead, pass `--output-dir DIR` to the figure scripts (`--out DIR/figure1_setup.png` for Figure 1) and `--output DIR/paper.docx` to the paper build.
 
 | Step | Command (from the repository root) | What you get | Time |
 |---|---|---|---|
@@ -148,7 +148,7 @@ These steps use only what is committed and cost nothing. Figure and paper steps 
 | Run the tests | the pytest command in [Setup](#setup) | 74 pass, 3 skip | under a minute |
 | Figure 1 | `uv run --no-project --with matplotlib python report/figures/make_figure1.py` | `report/figures/figure1_setup.*` | about 2 s |
 | Figure 2 and Figure L.1 | `uv run --with matplotlib python report/figures/make_figure3_streaming.py` | `report/figures/figure3_streaming.*` and `figure3b_appendix_checks.*`, with every plotted value and its source key in `figure3_streaming.csv` (reads the tracked run folders; `--input-csv` re-renders from the CSV alone) | about 2 s |
-| Data figures and tables | `OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 experiments/E05-probes/.venv/bin/python report/make_data_figures.py` | Table C.1, Table E.2, Figure E.1 and a Qwen-only draft of Figure 3. **This overwrites the committed two-target Figure 3; the next row restores it.** | about 5 s |
+| Data figures and tables (fetch run data first) | `OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 experiments/E05-probes/.venv/bin/python report/make_data_figures.py` | Table C.1, Table E.2, Figure E.1 and a Qwen-only draft of Figure 3. **This overwrites the committed two-target Figure 3; the next row restores it.** | about 5 s |
 | Figure 3 with both targets | `uv run --with matplotlib python report/figures/make_figure2_targets.py` (always right after the step above) | `report/figures/figure2_prediction.*` | about 1 s |
 | The paper | `uv run --with python-docx --with lxml --with pillow --with pypdf python report/build_paper.py` | `report/build/paper.docx` and `paper.pdf` | about 20 s |
 | Browse the transcripts | `uv run python experiments/E01-behaviour-pilot/build_viewer.py` | `runs/viewer.html` (see [Trace viewer](#trace-viewer)) | about 20 s |
