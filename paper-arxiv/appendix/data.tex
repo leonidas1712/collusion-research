@@ -43,6 +43,25 @@ The Qwen3-32B fresh test episodes contain none from the main scenario, and in th
 On gpt-oss-20b, the reasoning-probe comparisons have fewer leaking calls than leaking episodes, because some leaking calls return no reasoning and are left out.
 Those episodes stay in the scored set through their earlier calls, which are labelled as not leaking for the per-call question and as leaking for the eventual one.
 
+\Cref{tab:reasoning-coverage} gives these counts, and \cref{tab:qwen-accounting} breaks down the Qwen3-32B fresh calls.
+
+\begin{table}[h]
+  \centering
+  \caption{Leaking episodes and leaking calls with reasoning, gpt-oss-20b.}
+  \label{tab:reasoning-coverage}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \input{tables/reasoning_coverage.tex}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{Qwen3-32B fresh calls: leaking calls, earlier calls in leaking episodes, calls in refusing episodes, and control calls, which are counted separately.}
+  \label{tab:qwen-accounting}
+  \small
+  \input{tables/qwen_call_accounting.tex}
+\end{table}
+
 \paragraph{Reading the activations.}
 We re-run every saved target prompt once through the open-weight checkpoint, on one GPU, with no generation.
 For Qwen3-32B we save every decoder layer at the last prompt token.
@@ -74,3 +93,22 @@ The chosen layers are those of the frozen per-call probes, one per seed.
   \small
   \input{tables/settings.tex}
 \end{table}
+
+The detector settings and the rules for splits and families are in \cref{tab:detector-settings,tab:split-settings}.
+
+\begin{table}[h]
+  \centering
+  \caption{Settings of the trained text classifier, the neural-network probe and the incoming-only probe.}
+  \label{tab:detector-settings}
+  \small
+  \input{tables/detector_settings.tex}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{How families of related episodes and the inner validation splits are defined.}
+  \label{tab:split-settings}
+  \small
+  \input{tables/split_settings.tex}
+\end{table}
+
