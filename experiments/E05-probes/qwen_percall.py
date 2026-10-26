@@ -17,7 +17,7 @@ from metrics import within_round, threshold_at_fpr
 from near_term import save_lr
 from reasoning_stream_report import stream_metrics
 from data import ROOT, CANDIDATES
-from collusion.runs import start_run, write_json_atomic
+from collusion.runs import Run, start_run, write_json_atomic
 sys.path.insert(0,str(ROOT/'experiments/E01-behaviour-pilot'))
 from request_labels import completed_target_requests
 
@@ -218,7 +218,10 @@ def fit_all(out,limit=None,threads=2,workers=1):
     if limit is None:
         with threadpool_limits(limits=2):summarize(out,rows)
     if limit is None:
-        meta=json.loads((out/'meta.json').read_text());meta['status']='complete';meta['results']={'fits':66,'metrics_cells':4,'no_gpu':True,'no_api':True};write_json_atomic(out/'meta.json',meta)
+        meta=json.loads((out/'meta.json').read_text());meta['status']='running'
+        run=Run(out.name,out,meta)
+        run.result(fits=66,metrics_cells=4,no_gpu=True,no_api=True)
+        run.finish('complete')
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--audit',action='store_true');p.add_argument('--fit',action='store_true');p.add_argument('--out',type=Path);p.add_argument('--limit',type=int);p.add_argument('--threads',type=int,default=2);p.add_argument('--workers',type=int,default=1);a=p.parse_args()

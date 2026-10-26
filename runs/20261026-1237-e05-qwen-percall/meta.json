@@ -6,21 +6,31 @@
   "settings": {
     "phase": "label audit then plan freeze before fits",
     "no_gpu": true,
-    "no_api": true
+    "no_api": true,
+    "actual_fit_threads": 6,
+    "execution_change": "Thread limit increased from2 to6 after first2 completed folds; statistical frozen plan unchanged; resumed using cached fits.",
+    "workers": 3,
+    "threads_per_worker": 2
   },
   "parents": [
     "20261025-1026-e05-replay3-data-1d95",
     "20261025-1456-e05-all-data-main"
   ],
   "model": null,
-  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python experiments/E05-probes/qwen_percall.py --audit",
+  "command": "experiments/E05-probes/.venv/bin/python experiments/E05-probes/qwen_percall.py --fit --out runs/20261026-1237-e05-qwen-percall --threads 2 --workers 3",
   "git_commit": "bbe6f6b4bb35d0d01f1bfcc309435c724d4bc041",
   "dirty": true,
   "host": "Leos-MacBook-Pro.local",
   "gpu": null,
   "started": "2026-10-26T12:37:27",
-  "status": "finished",
+  "status": "complete",
   "error": null,
-  "ended": "2026-10-26T12:37:30",
-  "results": {}
+  "ended": "2026-10-26T13:07:38",
+  "results": {
+    "fits": 66,
+    "metrics_cells": 4,
+    "no_gpu": true,
+    "no_api": true,
+    "independent_verification": "passed"
+  }
 }
