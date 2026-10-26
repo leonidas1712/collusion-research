@@ -1,8 +1,10 @@
 \section{What was frozen for the fresh test episodes, and what happened?}
 \label{app:confirmation}
 
-Two tests were fixed in written plans before their fresh test episodes were collected, and both met their pre-stated criteria (\cref{tab:fresh}).
-A third test, the Qwen3-32B per-call probe, was frozen and committed before it was scored on fresh episodes, but its episodes had been collected earlier.
+Two tests were fixed in written plans before any detector was scored on their fresh test episodes, and both met their pre-stated criteria (\cref{tab:fresh}).
+The gpt-oss-20b plan was committed before its fresh episodes were collected.
+The Qwen3-32B round-level plan was committed after its fresh episodes were collected, when their overall leak counts were known, but before any probe or monitor was scored on them.
+A third test, the Qwen3-32B per-call probe, was frozen and committed before it was scored on the same fresh episodes, which had by then been analysed for the round-level test.
 
 \paragraph{gpt-oss-20b reasoning probe.}
 Before the fresh test episodes were collected, we committed the probe's layer, chosen on development data, its weights, refit once on all development calls, the maximum over tokens as the call score, and an alarm threshold calibrated on development control calls.
