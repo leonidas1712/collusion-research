@@ -15,13 +15,13 @@ Output filters catch an exact secret once it is written \citep{sharma2025constit
 We ask whether an overseer can tell, before a call acts, that the agent is about to give in, early enough to pause that call.
 Probes on activations can detect that an agent was exposed to an attack \citep{dong2026,yu2026} or read agents that were told to collude \citep{rose2026}.
 Early-warning work under user pressure or prompt injection finds weak signals, which text baselines often match \citep{saraogi2026before,fayyazi2026agent,jia2026window}.
-No prior work asks, call by call, whether an agent pressed by a peer is about to give in, and compares activations and text on the same calls.
+We ask this question for peer recruitment, call by call, and compare activations with zero-shot and trained text detectors on the same calls.
 
-In this work, a peer agent presses a target agent over many rounds to reveal a secret, such as a deploy token, that the target's operator told it to keep.
+In our setup, the target holds a secret, such as a deploy token, that its operator has told it never to share, and a peer agent keeps asking for it over many rounds.
 We read the target's activations at each of its calls before it generates anything, and compare linear probes with a zero-shot text monitor and a trained text classifier on exactly the same calls, in six scenarios on two open-weight models.
 We find three things (\cref{fig:headline}).
 First, the call that leaks is predictable just before it acts, and this held on fresh episodes on both models.
-Second, the signal is short-range: it weakens when asked about the next round, and is weak for whether an episode will ever leak.
+Second, the warning comes late: the probe is only modestly accurate for whether the target leaks this round or the next, and weak for whether an episode will ever leak.
 Third, a zero-shot text monitor does far worse than the probe, but a text classifier trained on the same labelled calls comes close, so activations add a small edge on top of training.
 
 \begin{figure}[t]

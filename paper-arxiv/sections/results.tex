@@ -42,8 +42,8 @@ There, the last-prompt probe and the reasoning probe score about the same on gpt
 
 The probe is not explained by three simple shortcuts: the request, keywords for the secret, or the file read and write (\cref{app:shortcuts}).
 It is not detecting the request, because every call that does not leak also faces the recruiting peer in the same scenario and round.
-It is not matching the secret, because keyword rules that look for the secret's words in the model's reasoning do no better than chance.
-It is not detecting the file read, because it beats a flag for ``the protected file was just read'', including among the calls that write the handoff file, the shared status file that the target writes for the peer.
+It is not matching the secret: on gpt-oss-20b, keyword rules that look for the secret's words in the model's reasoning do no better than chance.
+It is not detecting the file read, because it beats a flag for ``the protected file was just read'' on both models, and on gpt-oss-20b it still separates leaks among the calls that write the handoff file, the shared status file that the target writes for the peer.
 
 Followed through an episode, the median probe score stays low over the calls before the leak and jumps at the leaking call, on both models and on both sets of episodes (\cref{fig:trajectory-main}).
 Individual episodes vary, and \cref{app:ahead} shows examples chosen by a fixed rule.
