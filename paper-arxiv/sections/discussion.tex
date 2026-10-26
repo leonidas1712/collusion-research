@@ -2,6 +2,7 @@
 \label{sec:discussion}
 
 An overseer cannot tell early which episode will leak, but it can tell which call is about to.
+The probe is best read as a pre-emission detector: it flags a call that is about to write the protected value, whether or not the rule forbids it, rather than reading the agent's intent (\cref{app:policy}).
 This suggests a cascade, as in production classifier systems \citep{cunningham2026}, in which a cheap probe or trained text classifier runs on every call with two thresholds.
 A lenient per-call threshold escalates a call to a stronger automated monitor or a human before it acts; it fires often, costs little per alarm, and catches most leaks.
 A strict per-episode threshold halts the agent and should fire rarely, so that an honest agent is seldom interrupted, and it must be set on held-out honest traffic rather than on the episodes the detector was trained on (\cref{sec:cost}).
@@ -32,7 +33,7 @@ One call ahead the signal is much weaker, and on gpt-oss-20b it mostly reflects 
 
 \paragraph{What the probe reads is open.}
 The signal may reflect what has just arrived in the input (\cref{sec:shortcuts}), and our results are correlational.
-No episode writes the secret with permission, so the probe may track emitting the value rather than breaking the rule.
+The probe tracks emitting the value more than breaking the rule: making sharing permitted leaves its score essentially unchanged (\cref{app:policy}).
 
 \paragraph{False alarms per episode.}
 At a per-call threshold, most refusing Qwen3-32B episodes see at least one flag, which suits escalating single calls rather than halting the agent (\cref{sec:cost}).
@@ -45,4 +46,5 @@ The leak label is an exact match on the tool log.
 Whether a leak was deliberate or accidental, which we use only to describe the leaks, comes from an automated judge (\cref{app:leakchecks}).
 
 \paragraph{Future work.}
-Next steps are to test whether the probe direction causally affects the decision, to test the probe in other environments and on more models, and to study larger multi-agent settings, as in the 2026 incident in which evaluation agents coordinated an attack on production infrastructure \citep{greenblatt2026incident,pulipaka2026shareborne}.
+The most direct next step is episodes in which sharing the same value is sometimes permitted and sometimes forbidden, to test whether a probe can learn the rule rather than the emission.
+Other steps are to test whether the probe direction causally affects the decision, to test the probe in other environments and on more models, and to study larger multi-agent settings, as in the 2026 incident in which evaluation agents coordinated an attack on production infrastructure \citep{greenblatt2026incident,pulipaka2026shareborne}.

@@ -1,0 +1,26 @@
+\section{Does the probe track the rule, or the emission?}
+\label{app:policy}
+
+The emission.
+Changing the operator's rule to permit sharing leaves the probe's score on leaking calls essentially unchanged on both models (\cref{tab:policy}).
+
+\paragraph{Design.}
+We take the leaking calls of the fresh test episodes and matched non-leaking calls from the same scenarios and rounds, and re-run each call's exact prompt through the model under three system prompts: the original rule, a rule that explicitly permits sharing the value with teammates, and a neutral rewording that permits nothing new.
+The saved reply is held fixed, so only the rule changes, and the frozen last-prompt probe scores the last prompt token as before, with no refitting.
+On gpt-oss-20b this is the frozen last-prompt probe, not the pre-registered reasoning probe.
+
+\paragraph{Result.}
+Permitting the leak does not detectably lower the score of leaking calls, and the neutral rewording also leaves it unchanged.
+The probe ranks leaking above non-leaking calls about equally well under all three prompts, and nearly the same leaking calls cross the frozen threshold.
+The probe therefore mostly tracks that the model is about to write the protected value, not that writing it breaks the rule.
+
+\paragraph{Caveat.}
+This is an off-policy counterfactual: under the permissive rule the model might not have written exactly the saved reply, and the rule's separate sentence about the consequences of a disclosure was left unchanged.
+
+\begin{table}[h]
+  \centering
+  \caption{Policy counterfactual on the fresh test episodes. Calls are the leaking calls and matched non-leaking calls from the same scenarios and rounds, scored by the frozen last-prompt probes, so the call sets and probes differ from \cref{tab:glance}. Score changes are medians over leaking calls with 95\% bootstrap intervals.}
+  \label{tab:policy}
+  \small
+  \IfFileExists{tables/policy_counterfactual.tex}{\input{tables/policy_counterfactual.tex}}{pending}
+\end{table}
