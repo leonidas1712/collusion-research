@@ -81,7 +81,15 @@ Shared notes (not paper prose). Append your own entries; keep sections by owner 
 - **Pass bar not formally met.** WRITING.md §8 asks for clarity of 4 or more. We stopped under your bounded-review rule instead.
 
 ### Viewer check (real viewer, both PDFs)
-- See `paper-arxiv/reviews/viewer_check.md` (codex-daybreak). Its result is recorded at the end of this section once complete.
+- **CONDITIONAL PASS** (codex-daybreak; `paper-arxiv/reviews/viewer_check.md`).
+  - **Files checked:** the final PDFs, canonical `main.pdf` (SHA 48e6929d…) and the clean arXiv-package build (SHA c56fae86…), from source `2fa5238`.
+  - **What passed:**
+    - all 33 page pairs are raster-identical;
+    - layout, figures, maths, tables and glyphs are clean on every page;
+    - 26 fonts are embedded;
+    - 250 links (201 internal, 49 external) all resolve;
+    - links show as dark-blue text with no boxes. This fixes the one defect the first pass found, coloured link borders.
+  - **Not done:** an open-and-click test in the real macOS Preview app. The computer-use service failed to start on four attempts. **Please flip through `main.pdf` in Preview yourself;** it has been opened for you.
 
 ### Look at first
 1. Item 1 below: the activations-vs-trained-text finding, and what it means for the title and abstract.
