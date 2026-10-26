@@ -8,3 +8,4 @@
 3. **Compute.** Modal GPU spend up to $10 in total, only if a recomputation needs re-extracting activations. Everything else is CPU from saved scores and activations.
 4. **Title.** Agents propose a title, keeping "Recruited" as the lead word, with alternatives in HANDOVER.md.
 5. **Repository.** Work only on the `followup` branch of a fresh clone. Agents may push to `followup` all night. Never commit to `main`. Never move or delete the `apart-submission` tag. `BRIEF.md` and `WRITING.md` may be public on `followup` only.
+6. **Blind-review rounds are bounded.** Run at most 3 to 5 rounds of the clarity and rigour reviews. Stop earlier when the reviewers are only raising small or irrelevant points, since an AI reviewer asked to find problems will always find something. Fix only what matters: anything under WRITING.md §8 questions 6–7, and anything that changes a headline. Record the final verdicts and the reason for stopping in HANDOVER.md.
