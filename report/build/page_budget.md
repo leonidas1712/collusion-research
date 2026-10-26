@@ -4,7 +4,7 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 
 | Section | Words | Starts on page | Page-equivalent span |
 |---|---:|---:|---:|
-| Abstract | 250 | 1 | 0.64 |
+| Abstract | 249 | 1 | 0.64 |
 | 1. Introduction | 792 | 2 | 1.33 |
 | 2. Related Work | 280 | 3 | 0.46 |
 | 3. Methods | 0 | 3 | 0.05 |
