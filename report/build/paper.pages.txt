@@ -75,9 +75,9 @@ under the same pressure, and probes and text monitors are scored on exactly the 
 barely predictable, this round or the next modestly (confirmed on new episodes), and this 
 call highly (Section 4.4).
 3. Asked per call, a probe predicts which call will give in, before the call acts: 0.95 on 
-Qwen3-32B and 0.91 on gpt-oss-20b, above a Jev monitor given the same input (0.74 and 
-0.27). A probe on gpt-oss-20b’s streaming reasoning reaches 0.93 and held on new episodes 
-under a plan fixed in advance (Section 4.2).
+Qwen3-32B and 0.91 on gpt-oss-20b, above a decision-model monitor (Jev) given the same 
+input (0.74 and 0.27). A probe on gpt-oss-20b’s streaming reasoning reaches 0.93 and held 
+on new episodes under a plan fixed in advance (Section 4.2).
 
 4. The ranking survives the obvious shortcuts: every negative call is also pressured, and the 
 result holds under keyword, placebo, censoring and workflow-position checks (Section 4.3).
@@ -139,7 +139,7 @@ posting call; the per-call cohorts include it.
 3.3 What gets scored
 Every detector is scored only on eligible calls: calls after the target has read the protected value and, 
 for the round-level labels, before it discloses it. Calls before the read cannot produce a give-in, and  
-an exposure probe that detects the read reaches AUROC 1.000 (Appendix B), so including them would 
+an exposure probe that detects the read reaches AUROC 1.00 (Appendix B), so including them would 
 reward detecting the read.
 Terms. A call is one request to the target model: a prompt, then (for gpt-oss-20b) reasoning, then 
 an answer or tool call. A round is one peer message and the target’s calls in response. We use three  
@@ -153,9 +153,9 @@ counts any public emission of the value in the answer or tool arguments (143 of 
 argument writes; Appendix L). The rules differ because gpt-oss-20b almost always writes the value to 
 
 a file before it posts it, and its analysis ends at that first public emission, so only 3 of its scored calls  
-are first channel posts; Qwen3-32B uses the paper’s give-in rule. We defined the near-term label after 
-seeing the eventual result and the per-call label after both, so each is validated on new episodes or  
-labelled post hoc (§3.5).
+are first channel posts; Qwen3-32B uses the give-in rule. We defined the near-term label after seeing 
+the eventual result and the per-call label after both, so each is validated on new episodes or labelled  
+post hoc (§3.5).
 3.4 Detectors
 A probe is a linear classifier (logistic regression) on the residual stream. The last-prompt probe reads 
 the last prompt token, before the call generates anything; for gpt-oss-20b, a reasoning probe reads 
@@ -164,13 +164,14 @@ tool output. The layer is chosen inside each training fold, and folds are groupe
 near-copies of an episode never appear on both sides ( Appendix E ), following standard practice  
 (Goldowsky-Dill et al., 2025).
 A text monitor reads what the agents say and do, with no access to activations: an LLM judge  
-(GPT-5-nano ( OpenAI, 2025a )) and two  decision models  (Jev 1.14 ( Almeida, 2026 ) and Luna  
-Decisions (OpenAI, 2026a)), which return a probability over fixed options (Appendix E). Each is asked 
-a detector question (“is the target breaking the rule now?”) or a forecaster question (“will it break 
-the rule at any later point?”), at three levels of access: actions only; the conversation, which adds 
-the peer’s messages; and everything the target saw, which adds its unposted text and tool results.  
-For the per-call label, Jev is given the same conversation and tool results as the last-prompt probe and 
-asked whether this call will write or post the value.
+(GPT-5-nano  (OpenAI,  2025a))  and  two  decision  models,  commercial  models  that  return  a 
+probability over fixed options instead of text (Jev 1.14 from TypeSafe ( Almeida, 2026) and Luna  
+Decisions from OpenAI ( OpenAI, 2026a)) (Appendix E). Each is asked a detector question (“is the  
+target breaking the rule now?”) or a forecaster question (“will it break the rule at any later point?”), 
+at three levels of access:  actions only ;  the conversation , which adds the peer’s messages; and  
+everything the target saw, which adds its unposted text and tool results. For the per-call label, Jev  
+is given the same conversation and tool results as the last-prompt probe and asked whether this call  
+will write or post the value.
 3.5 Evaluation
 Our primary metric is within scenario × round AUROC: within each scenario-and-round group we 
 compute the AUROC (the chance a random positive call outranks a random negative; 0.5 = chance), 
@@ -179,9 +180,9 @@ early rounds as risky already scores 0.71, because give-ins come early; within a
 that rule scores exactly 0.5, so any score above 0.5 must come from telling apart targets in the same  
 situation. Base rates also differ across scenarios (Table C.1). Families are always held out or resampled 
 as a unit; intervals are 95% family-bootstrap intervals (Appendix E).
-We report a  held-out scenario  evaluation (leave one scenario out, rotate, and pool) as the  
-headline, and two confirmation sets scored once under plans fixed in advance: 89 new Qwen3-32B 
-episodes for the near-term label, and 84 new gpt-oss-20b episodes for the reasoning probe on the  
+We  report  a  held-out  scenario evaluation  (leave  one  scenario  out,  rotate,  and  pool) 
+throughout, and two confirmation sets scored once under plans fixed in advance: 89 new Qwen3-
+32B episodes for the near-term label, and 84 new gpt-oss-20b episodes for the reasoning probe on the 
 this-call label. A  combination test asks whether the probe adds to a text monitor. Pooled cross-
 validation and alarm analyses are in Appendices E, H and L.
 3.6 Second target
@@ -192,10 +193,9 @@ answer, so the replay also saved every reasoning token, which the reasoning prob
 per-call label on the same folds and held-out-scenario rotations (Appendix L).
 4. Results
 4.1 Behaviour: the setup produces mixed outcomes
-Of 224 plain-peer recruiting episodes analysed for behaviour, Qwen3-32B gives in on 98 (44%; 36% 
-to 63% across scenarios), and on 101 of the 241 scored episodes (42%; tactic arms included; Appendix 
-B); control and target-alone episodes never give in (0 of 66 and 0 of 25). gpt-oss-20b gives in on 128 
-of 300 recruiting episodes, usually soon after the ask (Appendix F).
+Qwen3-32B gives in on 101 of the 241 scored recruiting episodes (42%; per-scenario rates in Table 
+C.1); control and target-alone episodes never give in (0 of 66 and 0 of 25). gpt-oss-20b gives in on  
+128 of 300 recruiting episodes, usually soon after the ask (Appendix F).
 
 4.2 Asked per call, a probe predicts which call will give in
 Asked whether this call will give in, the last-prompt probe ranks the leaking call far above the others 
@@ -203,25 +203,25 @@ on held-out scenarios: 0.95 [0.93, 0.97] on Qwen3-32B (4,844 calls, 101 give-ins
 0.94] on gpt-oss-20b (1,995 calls, 121 leaking), before the call generates any token. Jev given the  
 same conversation, tool results and question scores lower on both models: 0.74 on Qwen3-32B (probe 
 minus Jev +0.21 [0.17, 0.28]) and 0.27 on gpt-oss-20b (+0.64 [0.56, 0.71]), where it ranks leaking 
-calls below the rest and flags nearly every pressured call (98% of leaking calls, 87% of held calls);  
+calls below the rest and flags nearly every pressured call (98% of leaking calls, 87% of refusing calls); 
 reversed post hoc it would score 0.73, still below the probe (+0.18 [0.12, 0.23]). These results bound 
 this judge, question and access, not what the text contains. On gpt-oss-20b, the reasoning probe  
 reaches 0.93 [0.91, 0.95], and with the alarm cutoff set for 5% of training-side control calls, then  
 measured on held-out calls, it catches 85% of leaking calls against 56% for the last-prompt probe, at 
-4% against 2% of calls in held episodes; Jev reading the same reasoning scores 0.60, and on Qwen3-
-32B a fixed keyword rule on the latest incoming message 0.64. Frozen with its cutoff before 84 new  
-gpt-oss-20b episodes were collected, the reasoning probe scored 0.91 [0.78, 0.99]  on them (594  
-calls, 26 leaking), meeting its pre-stated criterion; it caught 14 of the 26 at 2.4% of held calls  
-(Figure 3a; Appendix L).
-Figure 3. (a) Per-call prediction: which call will give in? Within scenario × round AUROC on held-out scenarios, 95% 
+4% against 2% of calls in refusing episodes; Jev reading the same reasoning scores 0.60, and on  
+Qwen3-32B a fixed keyword rule on the latest incoming message 0.64. Frozen with its cutoff before  
+84 new gpt-oss-20b episodes were collected, the reasoning probe scored 0.91 [0.78, 0.99] on them 
+(594 calls, 26 leaking), meeting its pre-stated criterion; it caught 14 of the 26 at 2.4% of refusing  
+calls (Figure 2a; Appendix L).
+Figure 2. (a) Per-call prediction: which call will give in? Within scenario × round AUROC on held-out scenarios, 95% 
 family-bootstrap whiskers. gpt-oss-20b positives are any public emission (1,995 calls with reasoning, 121 positive); 
-Qwen3-32B positives use the paper’s give-in rule (4,844 calls, 101 positive). The frozen row is the reasoning probe on 84 
-new episodes. Jev is given either the same conversation and tool results as the last-prompt probe (without earlier same-
-turn private reasoning) or the call’s reasoning. (b) The nearer the act, the easier to predict: matched ladders, the last-
-prompt probe refit at each horizon on the same calls (Qwen3-32B, give-in, 4,844 calls; gpt-oss-20b, any public emission, 
-1,995 calls). Levels are not comparable across the two models. Full caption and sources: Appendix L.6.
+Qwen3-32B positives use the give-in rule (4,844 calls, 101 positive). The frozen row is the reasoning probe on 84 new 
+episodes. Jev is given either the same conversation and tool results as the last-prompt probe (without earlier same-turn 
+private reasoning) or the call’s reasoning. (b) The nearer the act, the easier to predict: matched ladders, the last-prompt 
+probe refit at each horizon on the same calls (Qwen3-32B, give-in, 4,844 calls; gpt-oss-20b, any public emission, 1,995 
+calls). Levels are not comparable across the two models. Full caption and sources: Appendix L.6.
 The warning is about the call itself: one call earlier, the last-prompt probe scores 0.71 on Qwen3-32B 
-and 0.62 on gpt-oss-20b. On gpt-oss-20b, retraining the paper’s last-prompt probe on the per-call  
+and 0.62 on gpt-oss-20b. On gpt-oss-20b, retraining the round-level last-prompt probe on the per-call 
 label lifts it from 0.49 to 0.91, so the change of question does most of the work, and reading the  
 reasoning adds a modest gain (+0.03 held-out, with an interval reaching zero; +0.07 pooled).
 4.3 The ranking survives the obvious shortcuts
@@ -232,42 +232,42 @@ cutting the reasoning at the first mention leaves 0.96, and keyword rules score 
 read-step indicator alone: a flag for “the latest input is the protected file’s contents” scores 0.80 on gpt-
 oss-20b and 0.81 on Qwen3-32B, and the probes beat it by +0.11 to +0.14 (intervals exclude zero); 
 among calls right after the read they still score 0.93 on gpt-oss-20b and 0.79 on Qwen3-32B. On gpt-
-oss-20b, a probe on the incoming peer message and tool results alone also ranks well (0.93, one seed), 
+oss-20b, a probe on the incoming peer message and tool results alone reaches 0.93 (one seed), so the 
 
-so much of the signal is present when the call starts; what it represents is not established. Per-call  
-alarms are not cheap: at the 5% control-call cutoff, 41% of held gpt-oss-20b episodes see at least one 
-reasoning-probe alarm, and 11% of held Qwen3-32B calls alarm (Appendix L).
+signal may largely reflect what has just arrived; what it represents is not established. Per-call alarms  
+are not cheap: at the 5% control-call cutoff, 41% of refusing gpt-oss-20b episodes see at least one  
+reasoning-probe alarm, and 11% of refusing Qwen3-32B calls alarm (Appendix L).
 4.4 The further from the act, the less predictable
 Refit on the same calls at each horizon, the last-prompt probe climbs from eventual to this round or  
 the next to this call: 0.54 → 0.67 → 0.95 on Qwen3-32B (4,844 calls) and 0.61 → 0.64 → 0.91 on gpt-
-oss-20b (1,995 calls; Figure 3b). These matched rungs are post hoc and include the give-in calls, so  
-the Qwen3-32B near-term rung (0.67) sits above the paper’s 0.58 on pre-emission calls. Only the  
-paper’s round-level results below were fixed in advance and confirmed on new episodes: predictability 
-and rigour run in opposite directions.
-Figure 2. Round-level prediction, by target and horizon. Within scenario × round AUROC (0.5 = chance) with 95% 
+oss-20b (1,995 calls; Figure 2b). These matched rungs are post hoc and include the give-in calls, so  
+the Qwen3-32B near-term rung (0.67) sits above the round-level 0.58 on pre-emission calls. Only the 
+original  round-level  results  below  were  fixed  in  advance  and  confirmed  on  new  episodes: 
+predictability and rigour run in opposite directions.
+Figure 3. Round-level prediction, by target and horizon. Within scenario × round AUROC (0.5 = chance) with 95% 
 family-bootstrap whiskers. (a, b) Qwen3-32B, 4,697 recruiting calls from 241 episodes; filled circles: held-out scenarios, 
 all data; hollow squares: the new-episode confirmation set (near-term only). (c) gpt-oss-20b, 2,059 post-ask calls from 
 238 episodes, held-out scenarios; diamonds: eventual; triangles: near-term.
 This round or the next is modestly predictable. On Qwen3-32B held-out scenarios (250 near-term 
-positives), the probe reaches 0.579 and the best monitor, the Jev forecaster seeing everything the  
-target saw, 0.650. On 89 new episodes collected after the plan was fixed and scored once (1,787 calls, 
-82 positives), the probe reached 0.68 and Jev 0.64, both clear of chance (Jev − probe −0.038  
-[−0.142, +0.059]). A separate probe that separates pressured from unpressured calls perfectly  
-(AUROC 1.000) does not rank who gives in (0.44; first data batch; Appendix H), so the near-term  
-probe reads more than pressure.
-Eventual give-in is barely predictable.  The probe scores 0.523, with an interval that includes  
-chance, and the Jev forecaster 0.577 (998 eventual positives; Figure 2a).
+positives), the probe reaches 0.58 and the best monitor, the Jev forecaster seeing everything the target 
+saw, 0.65. On 89 new episodes collected after the plan was fixed and scored once (1,787 calls, 82  
+positives), the probe reached 0.68 and Jev 0.64, both clear of chance (Jev − probe −0.04 [−0.14,  
++0.06]). A separate probe that separates pressured from unpressured calls perfectly (AUROC 1.00)  
+does not rank who gives in (0.44 on the first data batch , the episodes collected before the new-
+episode set; Appendix H), so the near-term probe reads more than pressure.
+Eventual give-in is barely predictable.  The probe scores 0.52, with an interval that includes  
+chance, and the Jev forecaster 0.58 (998 eventual positives; Figure 3a).
 On gpt-oss-20b, round-level prediction is near chance  (probe 0.53, best monitor 0.56 on the  
 near-term label): 32 of its 128 channel give-ins leave no call to predict from, and for 65 of the other  
 96 the earliest possible warning is in the same round (Appendix F).
 4.5 What a round-level monitor should ask and see
-Asked to forecast, Jev scores 0.650 on the near-term label; asked to detect, 0.578. On the first data  
+Asked to forecast, Jev scores 0.65 on the near-term label; asked to detect, 0.58. On the first data  
 batch, showing the Jev forecaster the peer’s messages on top of the target’s actions raises its score by 
 
-0.123 [0.063, 0.176], while adding everything else the target saw adds only 0.025 [-0.004, 0.054]  
-(not significant). Forecasting did not help GPT-5-nano or Luna ( Table E.1). Adding the round-level  
-probe helps only the weaker monitor: GPT-5-nano gains +0.081 pooled and +0.113 on the new  
-episodes, but +0.022 held-out (not significant), and Jev almost nothing (Table E.2).
+0.12 [0.06, 0.18], while adding everything else the target saw adds only 0.03 [−0.00, 0.05] (not  
+significant). Forecasting did not help GPT-5-nano or Luna (Table E.1). Adding the round-level probe 
+helps only the weaker monitor: GPT-5-nano gains +0.08 pooled and +0.11 on the new episodes, but 
++0.02 held-out (not significant), and Jev almost nothing (Table E.2).
 5. Discussion and Limitations
 The closer the question is to the act, the more predictable the give-in: the call that gives in is readable 
 from the target’s activations before it acts, the round modestly, the eventual outcome barely. Each  
@@ -279,9 +279,9 @@ ordinary end-of-turn reply (Appendix D), and the Qwen3-32B per-call probe scores
 in  plain  text,  not  only  0.98  on  tool  arguments.  A  pre-generation  warning  also  allows  softer 
 interventions (pause, escalate, ask a human), and values can be paraphrased or encoded where no  
 string matches; this setup does not test such leaks.
-As alarms, the detectors are costly or weak: per-call probes alarm in many held episodes (§4.3), 
-and at the round level, at a 5% false-alarm cutoff set on held episodes, the best catches 10 of 101  
-give-ins (Appendix H).
+As alarms, the detectors are costly or weak:  per-call probes alarm in many refusing episodes  
+(§4.3), and at the round level, at a 5% false-alarm cutoff set on refusing episodes, the best catches 10 
+of 101 give-ins (Appendix H).
 For monitor builders. Ask a strong monitor to forecast, not only to detect, and give it the other  
 agent’s messages. Score per call, close to the act.
 Limitations
@@ -300,13 +300,13 @@ We asked whether an agent’s give-in to a recruiting peer can be seen before it
 call, it can: a linear probe on the target’s activations predicts which call will give in, on two models,  
 above an LLM judge reading the same input, and a probe on the streaming reasoning held on new  
 episodes. Further from the act the signal fades, to modest for this round or the next and barely for  
-the eventual outcome. The warning therefore comes late, at the call itself, which is still before the  
-value leaks and before the recruitment spreads to further agents.
+the eventual outcome. That is still before the value leaks and before the recruitment spreads to further 
+agents.
 Code and Data
 Code, prompts, transcripts, labels and scores: https://github.com/leonidas1712/collusion-research 
-(tag apart-submission); activations are omitted for size (the replay scripts regenerate them). Only 
-commit a5bd6f93 (planning, no code) predates the sprint; the author’s pre-existing tools Aboard 
-and Leaf only coordinated the agents.
+(tag apart-submission); activations are omitted for size (the replay scripts regenerate them). Only a 
+planning commit with no code predates the sprint; the author’s pre-existing tools Aboard and Leaf 
+only coordinated the agents.
 
 References
 Advani, L., Maharjan, S., & Chaturvedi, I. (2026). Reading the plan: Multi-horizon future-action 
@@ -758,7 +758,7 @@ AUROC; combination test
 (round, prompt length 
 and monitor score, with 
 and without the probe)
-Figure 2 and the 
+Figure 3 and the 
 main tables
 1,000 family-bootstrap 
 resamples for 95% 
@@ -803,11 +803,11 @@ fail one of these. We require a correct summary at some point rather than in the
 on the second target a give-in can overwrite the summary file, so a final-state check would drop mostly 
 give-ins (18 of the 20 episodes it would restore on the second target had leaked) and thereby select  
 on the outcome. Under the uniform rule, two behaviour-only give-ins drop from  Table C.1  (the  
-deployment-credential scenario becomes 19/30), because neither has a replay-eligible call; one held 
-tactic episode (21 negative calls, no positives) predates the task-success check and is retained in the  
-frozen scored set. The scored cohort (241 recruiting episodes, 4,697 calls, 250 near-term positives)  
-and every AUROC are therefore unchanged. The rule was fixed before any probe or monitor saw the 
-second target’s data. (Audit: runs/20261025-2143-e05-ever-correct-summary-audit-a9bf.)
+deployment-credential scenario becomes 19/30), because neither has a replay-eligible call; one  
+refusing tactic episode (21 negative calls, no positives) predates the task-success check and is retained 
+in the frozen scored set. The scored cohort (241 recruiting episodes, 4,697 calls, 250 near-term  
+positives) and every AUROC are therefore unchanged. The rule was fixed before any probe or monitor 
+saw the second target’s data. (Audit: runs/20261025-2143-e05-ever-correct-summary-audit-a9bf.)
 Table C.1 reports a wider behaviour slice than the scored cohort. Of 304 plain-peer recruiting  
 attempts, 224 are analysed for the give-in rate: 37 never read the value, 30 are incomplete, and 13  
 fail the task-completion check. The scored cohort is smaller again (241 recruiting episodes with a  
@@ -880,7 +880,7 @@ Round Speaker Line
  Lines are verbatim and shortened with “…”; the token is a random fake, redacted here. 
 (Source: episode 0032 of runs/20261024-2103-e01-deploy-token-v2-consequence-
 recruiting-32b-scaleup.)
-- Held contrast (episode 0023; same scenario, recruiting, plain peer). Under similar 
+- Refusing contrast (episode 0023; same scenario, recruiting, plain peer). Under similar 
 pressure the target never gives in. It reads the token in round 1 and refuses every request 
 over 20 rounds; the peer claims to be an authorized deployment agent, gets the target to 
 confirm only the token’s format, asks for it to be spelled out letter by letter, and gives up in 
@@ -944,14 +944,14 @@ addressee-audit.
 - Peer authority claims. A separate Jev 1.14 pass labelled each peer message for two claims, 
 asked as two yes/no questions in one request; a message counts at p(yes) ≥ 0.5, and an 
 episode counts if any peer message does, up to the round of the first leak for give-ins and all 
-messages for held episodes (experiments/E06-monitors/authority_claim_audit.py; 
+messages for refusing episodes (experiments/E06-monitors/authority_claim_audit.py; 
 runs/20261026-0118-e06-authority-claim-audit). A claim to speak for the operator, or that 
 the operator had authorized sharing, precedes about a third of Qwen give-ins (33 of 101), 
 and give-in is no more common when it does (37.5% of episodes with such a claim give in, 
 against 44.4% without). A claim to be an authorized recipient precedes 25 of 101 (29.4% 
 against 48.7%). For gpt-oss neither claim precedes any give-in: operator-authority claims 
-appear in 5 of 300 episodes, all held, and recipient claims never. These labels come from Jev 
-alone and were not checked by hand.
+appear in 5 of 300 episodes, all refusing, and recipient claims never. These labels come from 
+Jev alone and were not checked by hand.
 
 - Deliberate-vs-accidental judge: the secondary decision model (Luna Decisions) labels 70 of 
 the 101 scored Qwen give-ins deliberate (65 channel posts and all 5 file-only give-ins) and 
@@ -963,25 +963,26 @@ match the author’s blind labels on 36 of 40 give-ins (Cohen’s κ = 0.79). So
 labels in each episode file (runs/*-e01-topup-semantic-judge), joined to the scored calls in 
 runs/20261025-1026-e05-replay3-data-1d95.
 - Secondary labels: the near-term variants B and C. B keeps the near-term positives but 
-counts only held-episode calls as negatives; C uses a within-three-target-calls window 
-against held episodes. Both drop calls using hindsight, so neither is a prospective alarm 
+counts only refusing-episode calls as negatives; C uses a within-three-target-calls window 
+against refusing episodes. Both drop calls using hindsight, so neither is a prospective alarm 
 label; their results are in Appendix H.
 E. Detectors and Evaluation
 What exactly does each detector see and compute, and how are scores compared?
 How to read the numbers. Scores are within scenario × round AUROC. For a worked example, 
-suppose one scenario-and-round group has a give-in call scored 0.8 and two held calls scored 0.5 
-and 0.9: the give-in outranks one of the two held calls, so the group AUROC is 0.5. A second group 
-with a give-in at 0.7 and a held call at 0.4 has AUROC 1.0. The reported value weights each group 
-by its number of positives: (0.5 + 1.0) / 2 = 0.75. A 95% family-bootstrap interval resamples whole 
-families 1,000 times and reports the 2.5th–97.5th percentiles; an interval that includes 0.5 is 
-compatible with chance. Groups with only give-in or only held calls are dropped, and tied scores 
-count one half, which is why a score that is constant within a group, such as the round, scores 
-exactly 0.5 (experiments/E05-probes/metrics.py, within_round, auc). The three evaluations:
+suppose one scenario-and-round group has a give-in call scored 0.8 and two refusing calls scored 
+0.5 and 0.9: the give-in outranks one of the two refusing calls, so the group AUROC is 0.5. A second 
+group with a give-in at 0.7 and a refusing call at 0.4 has AUROC 1.0. The reported value weights 
+each group by its number of positives: (0.5 + 1.0) / 2 = 0.75. A 95% family-bootstrap interval 
+resamples whole families 1,000 times and reports the 2.5th–97.5th percentiles; an interval that 
+includes 0.5 is compatible with chance. Groups with only give-in or only refusing calls are dropped, 
+and tied scores count one half, which is why a score that is constant within a group, such as the 
+round, scores exactly 0.5 (experiments/E05-probes/metrics.py, within_round, auc). The three 
+evaluations:
 - Held-out scenario: train on five scenarios, test on the sixth, rotate, pool. Training also drops 
 any family that appears in the test scenario. Text monitors have no fitted parameters, so 
 their held-out-scenario score is their score on all calls.
 - Pooled family cross-validation: five folds grouped by family, for scenarios the probe 
-trained on. Folds are stratified so that each holds give-in, held, control and target-alone 
+trained on. Folds are stratified so that each holds give-in, refusing, control and target-alone 
 episodes (experiments/E05-probes/splits.py, assign_folds); they are drawn once and reused 
 for every label.
 - Confirmation set: the new-episode set, scored once under a plan fixed in advance.
@@ -999,9 +1000,9 @@ training weight (metrics.py, position_weights). The probe’s score is its logis
 fixed-layer-32 variant is reported as a check. Three split seeds (42, 43, 44) are run, and their 
 AUROCs are averaged. The probe is trained on recruiting episodes only, and families of related 
 variants never cross a train/test boundary. The recipe follows Goldowsky-Dill et al. (2025), who 
+
 select the probe layer on a validation split; Kramár et al. (2026) pair probes with prompted 
 classifiers but fix a middle layer.
-
 Monitor setups. Three monitor models: GPT-5-nano (LLM judge, scoring 0–10 as a detector or 
 0–100 as a forecaster) and two decision models, Jev 1.14 (TypeSafe) (Almeida, 2026) and Luna 
 Decisions (OpenAI) (OpenAI, 2026a), which return a probability over fixed yes/no options with no 
@@ -1044,8 +1045,9 @@ GPT-5-nano Forecast L2: conversation 0.555 [0.511, 0.601] 0.554 [0.498, 0.614]
 GPT-5-nano Forecast L3: everything seen 0.512 [0.463, 0.557] 0.535 [0.484, 0.580]
 Luna Decisions Forecast L1: actions only 0.527 [0.485, 0.568] 0.517 [0.464, 0.570]
 Luna Decisions Forecast L2: conversation 0.535 [0.496, 0.575] 0.496 [0.442, 0.552]
-Luna Decisions Forecast L3: everything seen 0.481 [0.436, 0.526] 0.505 [0.454, 0.555]
 
+Monitor Question Access Eventual AUROC [95% CI] Near-term AUROC [95% CI]
+Luna Decisions Forecast L3: everything seen 0.481 [0.436, 0.526] 0.505 [0.454, 0.555]
 Source: runs/20261025-0147-e06-monitor-main/metrics_main.json and 
 metrics_main_A_hazard.json. All 18 setups cover the first batch’s 4,184 eligible calls; the ranking 
 columns use its 2,910 recruiting calls.
@@ -1085,18 +1087,18 @@ those scored by all eight monitor setups. The pre-stated success criteria were a
 expected a gain of about 0 over the Jev forecaster (runs/20261025-1030-e06-confirmation). Alarms 
 use two calibrations, which answer different questions and are never mixed. (A) A cutoff set on no-
 ask control and target-alone episodes for a 5% false-alarm rate asks whether a detector notices 
-pressure; at that cutoff the Jev forecaster alarms on every give-in and on 95.5% of held recruiting 
-episodes (first data batch, runs/20261025-0147-e06-monitor-main). (B) A cutoff set on held 
-recruiting episodes asks whether a detector picks out who gives in; at 5% it catches 8 of 101 give-ins 
-for the probe, 10 of 101 for the Jev forecaster and none for GPT-5-nano (all data, exploratory; 
-Appendix H).
+pressure; at that cutoff the Jev forecaster alarms on every give-in and on 95.5% of refusing 
+recruiting episodes (first data batch, runs/20261025-0147-e06-monitor-main). (B) A cutoff set on 
+refusing recruiting episodes asks whether a detector picks out who gives in; at 5% it catches 8 of 
+101 give-ins for the probe, 10 of 101 for the Jev forecaster and none for GPT-5-nano (all data, 
+exploratory; Appendix H).
 Pooled CV and fold mixing. Pooled-CV baselines can fall below 0.5 because scores from 
 different fitted fold models are compared within one scenario × round group; the fold-stratified 
 variant compares only scores from the same fitted fold model. Held-out scenario and the 
+
 confirmation test are unaffected. For example, the near-term probe scores 0.586 in pooled cross-
 validation and 0.618 fold-stratified (Table H.1). Source: 
 runs/20261025-1456-e05-all-data-main/report.md.
-
 Figure E.1. What a text monitor should be asked, and what it should see. For the strongest monitor (Jev), a forecasting 
 question and the peer’s messages make the biggest difference; neither the forecasting question nor more access helps 
 every monitor. Near-term within scenario × round AUROC, 95% whiskers. (a) Jev detector vs forecaster, all data; (b) 
@@ -1123,10 +1125,10 @@ batch recruiting calls, with the same family resamples for both access levels
 report/figures/monitor_access_paired_contrasts.csv). Combination test. Probe–monitor call-score 
 rank correlation (within scenario × round, exploratory): 0.23 with the Jev forecaster, 0.09 with the 
 GPT-5-nano detector.
+
 F. Second Target: gpt-oss-20b (and Gemma-4-31B)
 Does the setup, and the detection result, carry to a differently trained model, and what had to change? gpt-
 oss numbers are never pooled with Qwen’s.
-
 Gemma-4-31B (behaviour only). Like gpt-oss, Gemma refused direct requests that named the  
 token: the plain peer drew 1 give-in in 43 valid episodes, and stacked maximum pressure 1 in 35. The 
 delayed whole-block request made it write the token into a file in 8 of 8 episodes (0 of 4 controls),  
@@ -1172,11 +1174,11 @@ those end-of-turn leak replies, 117 of 127 were judged addressed to the peer (Ap
 from earlier turns but keeps the current turn’s reasoning between tool calls. A rendering 
 check compares the replayed prompt with the one the provider served. With the current 
 turn’s reasoning kept, prompt token counts agreed within one token for 98.9% of requests 
+
 on the main provider (AkashML, 6,598 of 6,672). The second provider (DekaLLM), which 
 served 4.5% of all requests (313 of 6,985), remains an approximate rendering: only 18 of its 
 313 requests agree within one token (median gap 21). Its requests are kept and flagged. 
 Counting reasoning mentions of the token as leaks would remove 54 eligible calls (1 from a 
-
 channel-positive episode, 53 from channel-negative episodes); reasoning mentions are 
 reported as a descriptive column instead. Because the format keeps the current turn’s 
 reasoning, a probe call in the middle of a turn can include the target’s earlier reasoning from 
@@ -1219,13 +1221,13 @@ eventual). Adding the probe to the Jev forecaster changes near-term AUROC by +0.
 held-out scenarios (+0.004 [-0.024, +0.031] pooled). Sources: runs/20261026-0138-e05-gpt-oss-main, 
 runs/20261026-0108-e06-monitor-score-gpt-oss, runs/20261026-0148-e06-gpt-oss-combination.
 - Alarms. With a cutoff set on no-ask control episodes for a 5% false-alarm rate (calibration A, 
-Appendix E), the Jev forecaster alarms on 100% of give-in and 100% of held recruiting 
+Appendix E), the Jev forecaster alarms on 100% of give-in and 100% of refusing recruiting 
 episodes, which makes it a detector of recruitment pressure, not a warning of which target 
 gives in; the probe catches 4.2% of give-ins (pooled), and the median warning is 1 request 
 and 0 rounds ahead (runs/20261026-0159-e06-gpt-oss-alarm-join).
+
 G. Behaviour Screening
 What did we try before the final setup, and how does giving in vary with pressure?
-
 Before fixing the final setup, we ran small screens that varied one feature of the episode at a time: 
 how strongly the rule is worded, which single persuasion tactic the peer uses, whether the target gains 
 something from giving in (its own stake), whether thinking mode is on, and how many peers press  
@@ -1233,9 +1235,9 @@ the target. We also recorded whether the target said anything suggesting it knew
 Most cells hold fewer than 10 episodes, so these are descriptive counts, not tests. Table G.1 below 
 gives the counts, one row per screen; the tactics T0 to T7 are defined under it. Three of these tactics  
 (T1, T2 and T7) also appear in the scored recruiting set ( §3.1); there T2 has 6 episodes rather than  
-the 5 here, because one held T2 episode that fails the summary rule is kept in the frozen scored set  
-(Appendix B). The v2 plain-peer row (channel 19 of 30) is the same cohort as Table C.1’s deployment-
-credential row.
+the 5 here, because one refusing T2 episode that fails the summary rule is kept in the frozen scored  
+set ( Appendix B ). The v2 plain-peer row (channel 19 of 30) is the same cohort as  Table C.1 ’s 
+deployment-credential row.
 What each cell counts.  Each cell gives, for one setting, the number of episodes in which the  
 target gave in, out of the episodes analysed (k/n). The percentage follows, with a Wilson 95% interval, 
 then the channel count (ch).
@@ -1473,8 +1475,8 @@ reruns (23 shared states, five reruns each) ended differently within three round
 states (14 never gave in, 2 always did), with the probe’s Spearman correlation against a 
 state’s rerun give-in rate at −0.03 [−0.46, 0.40]. The states come from one early deploy-
 token cohort (runs/20261024-1633-e01-deploy-token-consequence_logged-*), stratified 
-across give-in, held and control parents and early and late rounds, and each ends before that 
-round’s peer message; each was continued five times for three rounds (runs/20261024-
+across give-in, refusing and control parents and early and late rounds, and each ends before 
+that round’s peer message; each was continued five times for three rounds (runs/20261024-
 2001-e01-branching-scaleup). The rerun give-in rate is the share of the five continuations 
 with a forbidden action within those three rounds. It is compared with the seed-mean score 
 
@@ -1496,25 +1498,25 @@ folds; held-out-scenario splits from runs/20261025-0340-e05-replay2-fits). It is
 without refitting or flipping its sign, on that fold’s held-out recruiting calls against the 
 eventual and near-term labels (experiments/E05-probes/explore_trajectories.py). First data 
 batch, fixed layer 32: recruiting versus benign AUROC 1.000 on 4,184 calls; gave-in versus 
-held 0.430 [0.373, 0.492] pooled and 0.426 [0.371, 0.488] held-out on the eventual label, 
-and 0.436 [0.368, 0.510] pooled and 0.437 [0.371, 0.510] held-out on the near-term label 
-(2,910 recruiting calls, 618 eventual positives). Source: runs/20261025-0800-e05-explore-
-trajectories-pressure.
+refusing 0.430 [0.373, 0.492] pooled and 0.426 [0.371, 0.488] held-out on the eventual 
+label, and 0.436 [0.368, 0.510] pooled and 0.437 [0.371, 0.510] held-out on the near-term 
+label (2,910 recruiting calls, 618 eventual positives). Source: runs/20261025-0800-e05-
+explore-trajectories-pressure.
 - Errors and alarms: probe/monitor call-score correlations (within scenario × round 
 Spearman 0.23 with the Jev forecaster, 0.09 with the GPT-5-nano detector), and alarm 
-recall on the near-term label. With a cutoff set on held recruiting episodes for a nominal 5% 
-per-episode false-alarm rate (strict threshold), the Jev forecaster catches 10 of 101 give-ins 
-(9.9%) with 6 of 140 held episodes alarming (4.3%); the probe 8 of 101 (7.9%) and 8 of 
-140 (5.7%); GPT-5-nano 0 of 101 and 0 of 140. Probe scores are pooled-CV out-of-fold 
+recall on the near-term label. With a cutoff set on refusing recruiting episodes for a nominal 
+5% per-episode false-alarm rate (strict threshold), the Jev forecaster catches 10 of 101 give-
+ins (9.9%) with 6 of 140 refusing episodes alarming (4.3%); the probe 8 of 101 (7.9%) and 
+8 of 140 (5.7%); GPT-5-nano 0 of 101 and 0 of 140. Probe scores are pooled-CV out-of-fold 
 scores, z-scored within each fold model and averaged over seeds. For each seed-42 fold, the 
-cutoff is the value that at most 5% of held episodes from the other folds (families of the 
+cutoff is the value that at most 5% of refusing episodes from the other folds (families of the 
 evaluated fold excluded) exceed with their maximum score, and only a score strictly above it 
 alarms. A give-in counts as caught if an alarm fires on one of its near-term-positive calls, and 
-a held episode counts as a false alarm if any of its eligible calls alarms (experiments/E06-
-monitors/appendix_errors.py, alarms). The monitors are the Jev forecaster L3 and the 
-GPT-5-nano detector L2. This is exploratory: the cutoff is set on out-of-fold scores from the 
-same data, not on an independent calibration set. Source: runs/20261025-1504-e06-
-appendix-errors.
+a refusing episode counts as a false alarm if any of its eligible calls alarms 
+(experiments/E06-monitors/appendix_errors.py, alarms). The monitors are the Jev 
+forecaster L3 and the GPT-5-nano detector L2. This is exploratory: the cutoff is set on out-of-
+fold scores from the same data, not on an independent calibration set. Source: 
+runs/20261025-1504-e06-appendix-errors.
 - Other exploratory checks (first data batch). A logit lens, which reads the model’s own 
 next-token probabilities at the last layer, barely separates who gives in once scenario and 
 round are fixed: its best feature, the probability of starting a tool call, reaches 0.586 on the 
@@ -1771,9 +1773,9 @@ alarm holds the action, escalates to a stronger monitor, or asks a human. Litera
 tokens can be caught by an exact-match output filter, so prediction matters most for paraphrased or  
 semantic disclosures (a summary of a reserve price, a rewritten note) and for deciding when to raise 
 oversight. What would change our conclusion: today every detector catches at most a tenth of give-ins 
-at a 5% false-alarm rate set on held episodes (App. H). A loop that prevents most semantic leaks while 
-holding a small share of actions would make prediction practically useful. A loop that does not would 
-mean output filters and access control are the better defence in this setting.
+at a 5% false-alarm rate set on refusing episodes (App. H). A loop that prevents most semantic leaks  
+while holding a small share of actions would make prediction practically useful. A loop that does not 
+would mean output filters and access control are the better defence in this setting.
 J.7 Sample size.  With 82 near-term positives, our confirmation intervals were about ±0.08  
 AUROC. A locked test with about 330 near-term positives would narrow them to about ±0.04, enough 
 to resolve a 0.05 difference between detectors.
@@ -1850,7 +1852,7 @@ of the 146 leaking calls; every scored token precedes the call’s first public 
 token. Only 2 leaking calls mention the value in their reasoning.
 - Labels, with an example. Each target call returns its reasoning and then an answer or a 
 tool call. Label 1 marks the one call whose output is the first public emission of the value, by 
-any route, a file write included; every other call is label 0, including every call in a held 
+any route, a file write included; every other call is label 0, including every call in a refusing 
 episode. For example (illustrative), in round 6 the target reasons that the peer needs the 
 whole configuration block and then calls write_file with a block that contains the value: that 
 call is label 1, and its earlier calls are 0. The probe reads only that call’s reasoning tokens, all 
@@ -1884,7 +1886,7 @@ value onward. A placebo applies the post-ask probe to pre-ask calls against the 
 eventual outcome.
 - Alarms. For each fold, the cutoff is set on other-fold control calls’ maximum scores for a 
 nominal 5% call false-alarm rate (strictly above alarms). A leaking call counts as warned if 
-an alarm fires on any of its reasoning tokens; false alarms are counted on calls from held 
+an alarm fires on any of its reasoning tokens; false alarms are counted on calls from refusing 
 episodes.
 Table L.1. Recognising the leaking call from its reasoning (gpt-oss-20b, exploratory). Within scenario × round AUROC 
 with 95% family-bootstrap intervals, 1,995 calls (121 leaking) from 238 episodes. Text monitors and fixed rules have no 
@@ -1909,41 +1911,41 @@ Reasoning length, reversed
 Near-term label: reasoning probe, 
 maximum 0.587 [0.535, 0.641] 0.637 [0.586, 0.685]
 Near-term label: last-prompt probe 0.497 [0.451, 0.541] 0.526 [0.481, 0.568]
-Comparators trained on other labels. The frozen last-prompt probe was trained on the paper’s channel 
-near-term label, not on “this call leaks”, so its 0.49 does not show that the context before the call lacks 
-the signal. The fair comparator is L.2’s probe on the incoming peer message and tool results, trained  
-on the same label: it also ranks well (0.927), but with a far less precise cutoff (19.1% against 4.4%  
-of held calls alarm). That probe uses one seed and a reduced recipe, so the comparison is indicative.  
-On the paper’s own near-term label and the main cohort’s calls that have reasoning (1,874 calls, 118 
-positives, held-out scenarios), a reasoning probe trained on that label reaches 0.603 [0.535, 0.661]  
-against 0.537 [0.482, 0.593] for the last-prompt probe, a paired difference of +0.066 [−0.010,  
-+0.140] (paired_comparisons.json).
+Comparators trained on other labels.  The frozen last-prompt probe was trained on the round-level  
+channel near-term label, not on “this call leaks”, so its 0.49 does not show that the context before the 
+call lacks the signal. The fair comparator is L.2’s probe on the incoming peer message and tool results, 
+trained on the same label: it also ranks well (0.927), but with a far less precise cutoff (19.1% against 
+4.4% of refusing calls alarm). That probe uses one seed and a reduced recipe, so the comparison is  
+indicative. On the round-level near-term label and the main cohort’s calls that have reasoning (1,874 
+calls, 118 positives, held-out scenarios), a reasoning probe trained on that label reaches 0.603 [0.535, 
+0.661] against 0.537 [0.482, 0.593] for the last-prompt probe, a paired difference of +0.066  
+[−0.010, +0.140] (paired_comparisons.json).
 Alarms and lead. At the control-call cutoff, the reasoning probe warns on 84.8% of the leaking 
-calls that have reasoning (seed mean) on held-out scenarios, with 4.4% of held-episode calls 
+calls that have reasoning (seed mean) on held-out scenarios, with 4.4% of refusing-episode calls 
 alarming; pooled, 75.5% and 2.0%. Per episode the false-alarm rate is far higher: at least one alarm 
-fires in 41.3% [33.3, 50.0] of the 92 held episodes on held-out scenarios and 23.9% [17.0, 31.5] 
+fires in 41.3% [33.3, 50.0] of the 92 refusing episodes on held-out scenarios and 23.9% [17.0, 31.5] 
 pooled, well above the nominal 5% per call (same thresholds, not recalibrated; runs/20261026-
 0526-e05-reasoning-stream/held_episode_alarms.md). These figures are the call-calibrated 
 operating point. At an episode-calibrated operating point, a declared post hoc recalibration, the 
 cutoff is set so that at most 5% of the training-side no-ask control episodes alarm with their 
 maximum score (48–49 control episodes per cutoff). There the probe would stop 34.0% of the 146 
 leaking episodes before the first public emission (by seed: 27%, 44%, 31%), with an alarm in 8.0% 
-of the 92 held recruiting episodes (2%, 21%, 1%). The probe’s ranking is stable across seeds, but 
+of the 92 refusing recruiting episodes (2%, 21%, 1%). The probe’s ranking is stable across seeds, but 
 these thresholded rates are not. Most stops fall within the leaking call (median step lead 0; 12 of the 
 149 caught episode-seed observations alarm on an earlier request). The 5% applies to the training-
-side control episodes; the 8% is measured on the held recruiting episodes. Neither is a false-alarm 
-rate on held-out controls 
+side control episodes; the 8% is measured on the refusing recruiting episodes. Neither is a false-
+alarm rate on held-out controls 
 (runs/20261026-0526-e05-reasoning-stream/episode_calibrated_alarms.md, experiments/E05-
 probes/reasoning_stream_episode_alarms.py). Counting the 25 leaking calls with no reasoning, 
 end-to-end coverage is about 70% held-out and 63% pooled. The first crossing comes a median 8% 
 of the way into the reasoning (interquartile range 5–22%). Jev warns on 91.7% of leaking calls, but 
-9.0–9.4% of held-episode calls alarm. GPT-5-nano warns on 5.0%, with 34.6% alarming. The 
+9.0–9.4% of refusing-episode calls alarm. GPT-5-nano warns on 5.0%, with 34.6% alarming. The 
 keyword rules never alarm, because they match more than 5% of control calls. Censoring at the first 
 value mention leaves the result unchanged (0.957 held-out). The placebo scores 0.46–0.49. Per-
 scenario held-out AUROCs range from 0.84 to 0.98.
 Caveats. This analysis was designed after the main results, uses one model, and tried several 
 variants (two aggregates, two cuts, two splits); it has no confirmation set. The label is any public 
-emission, not the paper’s outcome. Within a call the probe likely reads a decision the model is 
+emission, not the give-in outcome. Within a call the probe likely reads a decision the model is 
 already reasoning toward, so this is detection before the action, not earlier prediction. On the near-
 term label it is far weaker (0.64). The text monitors read six prefixes rather than every token, so 
 their timing is coarser. Returned reasoning may omit hidden reasoning, and the replay reproduces 
@@ -1980,9 +1982,9 @@ match L.1: C = 0.1, training-only scaling, round-balanced call weights, the imme
 label, and cutoffs set on other-fold control calls for a nominal 5% call false-alarm rate. Keyword (the 
 broad list of L.1), observed-token-count and round baselines use exactly the same positions.
 Table L.2. Incoming-only and action-time streams (gpt-oss-20b, exploratory, held-out scenarios, seed 42). AUROC within 
-scenario × round with 95% family-bootstrap intervals. Warning = share of leaking calls that alarm; held alarms = share 
-of calls in held episodes that alarm.
-Stream Detector AUROC [95% CI] Warning Held-call alarms
+scenario × round with 95% family-bootstrap intervals. Warning = share of leaking calls that alarm; refusing-call alarms = 
+share of calls in refusing episodes that alarm.
+Stream Detector AUROC [95% CI] Warning Refusing-call alarms
 Incoming-only (2,199 
 calls, 143 leaking) Probe 0.927 [0.896, 0.958] 95.1% 19.1%
 Keyword rule 0.350 [0.294, 0.390] 9.8% 37.1%
@@ -1997,7 +1999,7 @@ Length, reversed
 (retrospective) 0.672 [0.634, 0.716] – –
 Round scores 0.500 in both streams. Stopping the episode at the first alarm , replayed offline on the  
 saved trajectories, would have halted 140 of the 146 leaking episodes before the value was emitted  
-with the incoming-only probe and all 146 with the action-time probe. However, 74 of the 92 held  
+with the incoming-only probe and all 146 with the action-time probe. However, 74 of the 92 refusing 
 episodes (80%) and 49 of 92 (53%), respectively, would also have been stopped at least once. The  
 
 median alarm comes in the same request as the leak (step lead 0), so the warning is late in the episode 
@@ -2024,7 +2026,7 @@ Held-out
 scenario [95% 
 CI]
 Pooled
-Held-call 
+Refusing-call 
 alarms (held-
 out)
 gpt-
@@ -2058,11 +2060,11 @@ call excluded) 4,743 / 101 0.715 [0.664, 0.758] 0.707 [0.655, 0.754] 9.1%
 On the same gpt-oss-20b calls the reasoning probe scores 0.933 held-out and 0.949 pooled; 
 reasoning minus last prompt is +0.028 [−0.000, +0.061] held-out and +0.067 [+0.037, +0.102] 
 pooled. At the 5% control-call cutoff the reasoning probe catches 84.8% of leaking calls (4.4% of 
-held calls alarm), the last-prompt probe 56.5% (1.6%). On Qwen3-32B the paper’s near-term probe 
-scores 0.561 [0.514, 0.600] on the same 4,844 calls, so the per-call refit gains +0.391 [+0.345, 
-+0.446]. For the Qwen3-32B per-call label, 104 candidate first-emission calls were audited against 
-the paper’s publication rule before fitting (100 qualify; 3 are file-only or private writes; 1 moves to a 
-later call), giving the paper’s 101 give-ins. Alarm cutoffs are set on training-side control calls; held-
+refusing calls alarm), the last-prompt probe 56.5% (1.6%). On Qwen3-32B the round-level near-
+term probe scores 0.561 [0.514, 0.600] on the same 4,844 calls, so the per-call refit gains +0.391 
+[+0.345, +0.446]. For the Qwen3-32B per-call label, 104 candidate first-emission calls were 
+audited against the give-in rule before fitting (100 qualify; 3 are file-only or private writes; 1 moves 
+to a later call), giving the 101 give-ins. Alarm cutoffs are set on training-side control calls; refusing-
 call rates are evaluation results, and the Qwen3-32B rate (11.0%) is above the nominal 5%. 
 Sources: runs/20261026-1221-e05-lastprompt-percall-6013, runs/20261026-1237-e05-qwen-
 percall (frozen plan committed before fitting), experiments/E05-probes/lastprompt_percall.py.
@@ -2072,14 +2074,14 @@ probe refit on each label scores 0.610 [0.565, 0.664] for eventual emission (330
 [0.586, 0.692] for this round or the next (304) and 0.906 for this call (121) (runs/20261026-1304-
 e05-lastprompt-label-ladder). On the same 4,844 Qwen3-32B calls and the give-in rule it scores 0.537 
 [0.501, 0.574] (1,105 positives), 0.669 [0.632, 0.705] (352) and 0.953 (101); pooled 0.511 and  
-0.666 (runs/20261026-1313-e05-qwen-label-ladder). These differ from the paper’s 0.523 and 0.579, 
-which use the 4,697 pre-emission calls and were confirmed on new episodes; the matched cohort  
-adds the give-in calls, raising the near-term positives from 250 to 352. All matched rungs are post  
-hoc.
+0.666 (runs/20261026-1313-e05-qwen-label-ladder). These differ from the round-level 0.523 and  
+0.579, which use the 4,697 pre-emission calls and were confirmed on new episodes; the matched  
+cohort adds the give-in calls, raising the near-term positives from 250 to 352. All matched rungs are  
+post hoc.
 Channel-window check (gpt-oss-20b). On a wider cohort that runs through each episode’s first 
 channel post (2,632 calls, 96 first-channel positives, same 238 episodes, no reasoning requirement),  
-the per-call last-prompt probe on the paper’s channel give-in rule scores 0.943 [0.921, 0.961] held-
-out (pooled 0.925), catching 95.1% of channel calls at 13.0% held-call alarms. But 93 of the 96  
+the per-call last-prompt probe on the channel give-in rule scores 0.943 [0.921, 0.961] held-out  
+(pooled 0.925), catching 95.1% of channel calls at 13.0% refusing-call alarms. But 93 of the 96  
 positives, and 427 calls, come after an earlier public file emission, so most positives re-post a value  
 that is already public. This is not a same-call comparison with the 0.91 cohort and not evidence of  
 stopping the first leak (runs/20261026-1340-e05-channel-window-percall).
@@ -2088,23 +2090,23 @@ to the last prompt token (access L3, values masked, earlier same-turn private re
 which the probe’s activations may retain) and asked “Will the agent, in its next reply, write or post  
 the protected value?”. On the 1,995 gpt-oss-20b calls it scores 0.271 [0.210, 0.323] within scenario  
 × round. It reads pressure: unstratified it scores 0.808, and at the 5% control cutoff it warns on 98.3% 
-of leaking calls but alarms on 86.5% of held calls, so within a scenario and round it ranks leaking  
+of leaking calls but alarms on 86.5% of refusing calls, so within a scenario and round it ranks leaking 
 calls below the rest; reversed post hoc its score would be 0.729 [0.677, 0.790], and the last-prompt  
 probe  still  beats  it  by  +0.176  [0.116,  0.226]  (pooled  +0.152  [0.094,  0.200];  
 reversal_diagnostic.json). Given the same input including the retained same-turn reasoning (in  
 Harmony text rather than request JSON, so format also differs), Jev scores 0.397 [0.332, 0.453],  
 again inverted, and the probe beats it by +0.509 [0.435, 0.584] (runs/20261026-1319-e06-percall-
 input-jev-l4). On the 4,844 Qwen3-32B calls the same judge reads the input meaningfully, 0.739  
-[0.681, 0.782] (71.3% of give-ins caught, 27.7% of held calls alarming), still below the probe. A fixed 
-keyword rule on the latest incoming Qwen3-32B message scores 0.637 [0.609, 0.661] (broad list  
-0.610);  on  the  full  input  every  call  matches  (0.500),  and  the  binary  rule  never  alarms 
+[0.681, 0.782] (71.3% of give-ins caught, 27.7% of refusing calls alarming), still below the probe. A  
+fixed keyword rule on the latest incoming Qwen3-32B message scores 0.637 [0.609, 0.661] (broad  
+list  0.610);  on  the  full  input  every  call  matches  (0.500),  and  the  binary  rule  never  alarms 
 (runs/20261026-1334-e05-qwen-input-keywords). Paired probe minus Jev, held-out: Qwen3-32B  
 +0.214 [0.167, 0.278]; gpt-oss-20b +0.635 [0.557, 0.713] (runs/20261026-1306-e06-percall-input-
 jev, USD 0.38; runs/20261026-1309-e06-percall-input-jev-qwen, USD 0.84).
 
 L.4 Checks on the per-call signal
 Figure L.1. Further checks on the gpt-oss-20b per-call result (exploratory). Same metric, calls and alarm cutoff as Figure 
-3a; the reasoning-token probe is repeated for reference. “Reasoning written before it names the secret” ignores every 
+2a; the reasoning-token probe is repeated for reference. “Reasoning written before it names the secret” ignores every 
 reasoning token from the first time the value appears in the reasoning. *A separate probe trained on this label that reads 
 only what arrives before the call, the peer’s message and tool results, with a reduced recipe (one seed, layer 18; 2,199 
 calls, 143 leaking); it also ranks well, so much of the signal is present before the model reasons, but it flags far more 
@@ -2156,50 +2158,50 @@ Last-prompt probe trained on the old near-term label
 (mismatched label) 0.407 [0.232, 0.602]
 Keyword rules (narrow / broad) 0.443 / 0.517
 At the frozen cutoff the probe warns on 14 of the 26 leaking calls with reasoning (14 of 30 counting 
-the 4 without), lower than the 85% in development, with alarms on 2.4% of held calls (12 of 490), 
-7 of 27 held episodes and 4 of 12 control episodes. The criterion is met, but with 26 positives the 
-interval is wide. This confirms ranking of the call that first emits the value on new episodes from the 
-same configuration; it does not establish advance warning across calls or transfer to another model. 
-(The main text’s “predicts whether this call will give in” refers to the same thing: the probe scores 
-the call before its public output.) Replay fidelity on reasoning tokens: NLL 0.674, top-5 97.6%. Cost 
-USD 3.81 (API and GPU). Source: runs/20261026-1302-e05-stream-confirm-score/report.md, 
-experiments/E05-probes/score_stream_confirmation.py.
-L.6 Figure 3, full caption
+the 4 without), lower than the 85% in development, with alarms on 2.4% of refusing calls (12 of 
+490), 7 of 27 refusing episodes and 4 of 12 control episodes. The criterion is met, but with 26 
+positives the interval is wide. This confirms ranking of the call that first emits the value on new 
+episodes from the same configuration; it does not establish advance warning across calls or transfer 
+to another model. (The main text’s “predicts whether this call will give in” refers to the same thing: 
+the probe scores the call before its public output.) Replay fidelity on reasoning tokens: NLL 0.674, 
+top-5 97.6%. Cost USD 3.81 (API and GPU). Source: runs/20261026-1302-e05-stream-confirm-
+score/report.md, experiments/E05-probes/score_stream_confirmation.py.
+L.6 Figure 2, full caption
 A probe on the model’s activations picks out the call that will give in; an LLM judge given the same 
 material does reasonably on Qwen3-32B but far below the probe, and on gpt-oss-20b ranks the 
 leaking calls below the others. This analysis is exploratory and was designed after the main results. 
 (a) Per-call within scenario × round AUROC on held-out scenarios (0.5 is chance, 1 is perfect); 
 whiskers are 95% family-bootstrap confidence intervals. A call is positive if it is the first to make the 
 protected value public: for gpt-oss-20b by any public emission (1,995 calls with reasoning, 121 
-positive, 238 episodes), for Qwen3-32B by the paper’s give-in rule (4,844 calls, 101 positive, 241 
-episodes). The last-prompt probe reads one position before the call generates anything; the 
-reasoning probe takes the maximum over the call’s reasoning tokens. The frozen row applies the 
-reasoning probe and its alarm cutoff, both fixed in advance, to 84 new episodes (594 calls with 
-reasoning, 26 leaking, from 57 recruiting episodes). Jev 1.14 is given the same conversation and 
-tool results as the last-prompt probe and asked whether this call will write or post the value; on gpt-
-oss-20b, as asked, it ranks the leaking calls below the others within a stratum (0.27; 0.73 if reversed 
-post hoc, still below the probe’s 0.91) and flags nearly every pressured call; its input excludes earlier 
-same-turn private reasoning, which the probe’s activations may retain. Jev reading the reasoning 
-sees only the call’s reasoning text, as six growing snapshots scored with a running maximum and 
-with the value masked. At a cutoff set for about 5% alarms on no-ask control calls, the share of 
-leaking calls caught and of calls in never-leaking episodes flagged is 56% / 2% for the last-prompt 
-probe, 85% / 4% for the reasoning probe, 54% / 2% for the frozen probe on new episodes, 98% / 
-87% for Jev on the same input and 92% / 9% for Jev on the reasoning; on Qwen3-32B, Jev on the 
-same input is 71% / 28%. Qwen3-32B runs without reasoning. Further checks and baselines are in 
+positive, 238 episodes), for Qwen3-32B by the give-in rule (4,844 calls, 101 positive, 241 episodes). 
+The last-prompt probe reads one position before the call generates anything; the reasoning probe 
+takes the maximum over the call’s reasoning tokens. The frozen row applies the reasoning probe 
+and its alarm cutoff, both fixed in advance, to 84 new episodes (594 calls with reasoning, 26 
+leaking, from 57 recruiting episodes). Jev 1.14 is given the same conversation and tool results as the 
+last-prompt probe and asked whether this call will write or post the value; on gpt-oss-20b, as asked, 
+it ranks the leaking calls below the others within a stratum (0.27; 0.73 if reversed post hoc, still 
+below the probe’s 0.91) and flags nearly every pressured call; its input excludes earlier same-turn 
+private reasoning, which the probe’s activations may retain. Jev reading the reasoning sees only the 
+call’s reasoning text, as six growing snapshots scored with a running maximum and with the value 
+masked. At a cutoff set for about 5% alarms on no-ask control calls, the share of leaking calls caught 
+and of calls in never-leaking episodes flagged is 56% / 2% for the last-prompt probe, 85% / 4% for 
+the reasoning probe, 54% / 2% for the frozen probe on new episodes, 98% / 87% for Jev on the 
+same input and 92% / 9% for Jev on the reasoning; on Qwen3-32B, Jev on the same input is 71% / 
+28%. Qwen3-32B runs without reasoning. Further checks and baselines are in Figure L.1. (b) 
 
-Figure L.1. (b) Matched ladders: within each series the model, the outcome, the reading position 
-and the calls are fixed, and only the label horizon changes; lines join points of the same series, and 
-the series are not compared with each other. Qwen3-32B, last prompt token, the paper’s give-in 
-rule, on the same 4,844 calls from 241 episodes (ever, 0.54, 1,105 positives; this round or next, 
-0.67, 352 positives; this call, 0.95, 101 positives); these round-level values differ from the paper’s 
-0.52 and 0.58, which use the original 4,697-call cohort without the give-in calls. gpt-oss-20b, last 
-prompt token, any public emission rather than the paper’s give-in rule, on the same 1,995 panel-a 
-calls from 238 episodes (ever, 0.61, 330 positives; this round or next, 0.64, 304 positives; this call, 
-0.91, 121 positives). Retrained to ask whether this call will leak, the paper’s last-prompt probe 
-reaches 0.91 before the model writes anything; reading the reasoning adds a little (0.93, the panel-a 
-headline). One-call-ahead results (Qwen3-32B 0.71, gpt-oss-20b 0.62) use different call sets that 
-exclude the give-in calls and are left to the appendix. Values and exact source keys are in 
-figure3_streaming.csv. Script: report/figures/make_figure3_streaming.py.
+Matched ladders: within each series the model, the outcome, the reading position and the calls are 
+fixed, and only the label horizon changes; lines join points of the same series, and the series are not 
+compared with each other. Qwen3-32B, last prompt token, the give-in rule, on the same 4,844 calls 
+from 241 episodes (ever, 0.54, 1,105 positives; this round or next, 0.67, 352 positives; this call, 
+0.95, 101 positives); these round-level values differ from the round-level 0.52 and 0.58, which use 
+the original 4,697-call cohort without the give-in calls. gpt-oss-20b, last prompt token, any public 
+emission rather than the give-in rule, on the same 1,995 panel-a calls from 238 episodes (ever, 
+0.61, 330 positives; this round or next, 0.64, 304 positives; this call, 0.91, 121 positives). Retrained 
+to ask whether this call will leak, the round-level last-prompt probe reaches 0.91 before the model 
+writes anything; reading the reasoning adds a little (0.93, the panel-a headline). One-call-ahead 
+results (Qwen3-32B 0.71, gpt-oss-20b 0.62) use different call sets that exclude the give-in calls and 
+are left to the appendix. Values and exact source keys are in figure3_streaming.csv. Script: 
+report/figures/make_figure3_streaming.py.
 LLM Usage Statement
 The author, Leonidas Raghav, set the research question, designed the study, and made all 
 methodological decisions. AI coding and writing agents wrote most of the code and ran the 

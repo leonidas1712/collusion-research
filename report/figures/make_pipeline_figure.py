@@ -25,7 +25,7 @@ COUNTS = {
                  "129 episodes: 110 recruiting, 19 control"),
     "gave_in": ("63 kept recruiting episodes gave in", "38 gave in"),
     "kept": ("230 kept, 38 dropped", "108 kept, 21 dropped"),
-    "steps": ("4,184 eligible steps", "2,220 eligible steps"),
+    "steps": ("4,184 eligible calls", "2,220 eligible calls"),
     "requests": ("6,003 target requests", "3,112 target requests"),
     "fidelity": ("NLL 0.249, top-5 99.79%", "NLL 0.227, top-5 99.82%"),
 }
@@ -89,9 +89,9 @@ def main():
          "to the channel or, outside deploy-token, written to another file. A decision-model judge marks",
          "each give-in deliberate or accidental.",
          f"Out: one label per episode. {c['gave_in'][first]}  |  {c['gave_in'][new]}"], STAGE)
-    box(ax, x, ys[2], w, h, "3  Select eligible steps",
-        ["Keep steps after the protected value is read and before it is disclosed. Drop episodes that are",
-         "incomplete, never read the value or fail the ordinary task, or have no step in that window.",
+    box(ax, x, ys[2], w, h, "3  Select eligible calls",
+        ["Keep calls after the protected value is read and before it is disclosed. Drop episodes that are",
+         "incomplete, never read the value or fail the ordinary task, or have no call in that window.",
          f"{c['kept'][first]}; {c['steps'][first]}  |  {c['kept'][new]}; {c['steps'][new]}"], STAGE)
     box(ax, x, ys[3], w, h, "4  GPU replay",
         ["Each target request runs once through the open weights (bf16, pinned revision 9216db5, A100-80GB).",
@@ -107,21 +107,21 @@ def main():
     box(ax, x, yb, bw, hb, "5  Train probes",
         ["Logistic regression on one layer's 5,120-", "dim vector; layer picked from 17 inside each",
          "training fold; families kept apart; held-out-", "scenario rotation; seeds 42, 43, 44.",
-         "Recruiting steps: 2,910  |  1,787."], PROBE)
+         "Recruiting calls: 2,910  |  1,787."], PROBE)
     box(ax, x + bw + 0.02, yb, bw, hb, "6  Run text monitors",
         ["Jev, Luna Decisions, GPT-5-nano; 3 access", "levels x 2 questions (detect, forecast).",
-         "First batch: all 18 setups, all 4,184 steps.", "New-episode set: 8 setups fixed in advance,",
-         "all 2,220 steps. The probe's steps exactly."], MONITOR)
+         "First batch: all 18 setups, all 4,184 calls.", "New-episode set: 8 setups fixed in advance,",
+         "all 2,220 calls. The probe's calls exactly."], MONITOR)
     merge(ax, [x + w / 2], ys[3], [xl, xr], yb + hb)
 
     h7 = 0.11
     y7 = yb - gap - h7
     box(ax, x, y7, bw, h7, "7  Score (all data)",
         ["Within scenario x round AUROC; 1,000", "family-bootstrap resamples; combination test.",
-         "6,404 steps from 338 episodes.", "Out: Figure 2 and the main tables."], SCORE)
+         "6,404 calls from 338 episodes.", "Out: Figure 3 and the main tables."], SCORE)
     box(ax, x + bw + 0.02, y7, bw, h7, "8  Confirmation (new-episode set)",
         ["Probe and combination models trained on the", "first data batch only, frozen, scored once.",
-         "1,787 recruiting steps (82 positive), 89 episodes.", "Out: the confirmation numbers."], SCORE)
+         "1,787 recruiting calls (82 positive), 89 episodes.", "Out: the confirmation numbers."], SCORE)
     merge(ax, [xl, xr], yb, [xl, xr], y7 + h7)
 
     # Second lane, reserved: never merged with the first.
@@ -133,7 +133,7 @@ def main():
         ("Same stages 1-8", "with its own counts;", "never pooled with Qwen3-32B."),
         ("1  Collect", "peer DeepSeek-V4-Pro,", "delayed whole-block ask;", "300 recruiting, 60 control"),
         ("2  Label", "give-ins, channel only:", "128 of 300"),
-        ("3  Eligible steps", "after the ask: 2,059 steps,", "238 episodes; pre-ask", "placebo: 1,141 steps"),
+        ("3  Eligible calls", "after the ask: 2,059 calls,", "238 episodes; pre-ask", "placebo: 1,141 calls"),
         ("4  Replay", "6,985 requests, all verified;", "24 layers saved; NLL 0.41,", "top-5 99.0% on all reply", "tokens (main provider)"),
         ("5-8  Score", "near-term positives: 148;", "probes and the same", "monitors, plus a", "reasoning level"),
     ]
