@@ -4,7 +4,7 @@
 An overseer cannot tell early which episode will leak, but it can tell which call is about to.
 This suggests a cascade, as in production classifier systems \citep{cunningham2026}, in which a cheap probe or trained text classifier runs on every call with two thresholds.
 A lenient per-call threshold escalates a call to a stronger automated monitor or a human before it acts; it fires often, costs little per alarm, and catches most leaks.
-A strict per-episode threshold halts the agent; it fires rarely, so an honest agent is seldom interrupted (\cref{sec:cost}).
+A strict per-episode threshold halts the agent and should fire rarely, so that an honest agent is seldom interrupted, and it must be set on held-out honest traffic rather than on the episodes the detector was trained on (\cref{sec:cost}).
 Further from the act the signal fades, so our results do not support warnings rounds ahead.
 The same per-call signal is also readable without activations: a cheap text classifier trained on labelled calls recovers most of it, far above a zero-shot monitor, which matters for agents whose weights an overseer cannot inspect.
 Whether that holds outside templated scenarios like ours is open.
