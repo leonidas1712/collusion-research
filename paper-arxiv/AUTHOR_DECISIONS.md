@@ -9,3 +9,10 @@
 4. **Title.** Agents propose a title, keeping "Recruited" as the lead word, with alternatives in HANDOVER.md.
 5. **Repository.** Work only on the `followup` branch of a fresh clone. Agents may push to `followup` all night. Never commit to `main`. Never move or delete the `apart-submission` tag. `BRIEF.md` and `WRITING.md` may be public on `followup` only.
 6. **Blind-review rounds are bounded.** Run at most 3 to 5 rounds of the clarity and rigour reviews. Stop earlier when the reviewers are only raising small or irrelevant points, since an AI reviewer asked to find problems will always find something. Fix only what matters: anything under WRITING.md §8 questions 6–7, and anything that changes a headline. Record the final verdicts and the reason for stopping in HANDOVER.md.
+7. **Qwen per-call fresh-episode test (route 1, approved).**
+   - Fit the Qwen per-call probe on the development episodes only.
+   - Commit a freeze file (probe recipe, layer rule, label, metric, comparison, pass threshold) before any fresh-set scoring.
+   - Score the 89 fresh episodes once.
+   - Report it plainly in the main results as a held-out test on fresh episodes. Add one line in the analysis-history appendix noting that the sprint's pooled analyses had already looked at those episodes, so the test was not pre-registered.
+   - Write the result in plain, confident sentences. Do not hedge it.
+8. **Logged for later, not tonight (route 2).** A clean pre-registered confirmation of the per-call result on brand-new Qwen episodes: freeze, collect new episodes, score once. It needs GPU and peer API, roughly $20–40. Revisit only if needed, e.g. for a workshop submission.
