@@ -22,7 +22,7 @@ def get(data, macro):
     return data.get(macro, dict(macro=macro, value=None, status='pending', key='unregistered'))
 
 
-def draw(ax, x, y, entry, model, kind='activation', horizontal=False, fresh=False):
+def draw(ax, x, y, entry, model, kind='activation', horizontal=False, fresh=False, marker=None):
     if entry.get('value') is None:
         return False
     color = MODEL_COLORS[model]
@@ -31,7 +31,7 @@ def draw(ax, x, y, entry, model, kind='activation', horizontal=False, fresh=Fals
     error = [[value-ci[0]], [ci[1]-value]] if ci else None
     ax.errorbar(value if horizontal else x, y if horizontal else value,
                 xerr=error if horizontal else None, yerr=None if horizontal else error,
-                marker=DETECTOR_MARKERS[kind], color=color, markersize=6,
+                marker=marker or DETECTOR_MARKERS[kind], color=color, markersize=6,
                 markerfacecolor=color if fresh or entry['status']=='confirmed' else 'white',
                 capsize=2, linewidth=1, linestyle='none', zorder=3)
     return True
@@ -42,7 +42,7 @@ def save(fig, stem, rows, sha):
     fig.savefig(OUT/f'{stem}.png', bbox_inches=None, dpi=180, facecolor='white')
     fields=['panel','label','macro','key','value','ci_low','ci_high','status','dataset','evaluation','run']
     with (OUT/f'{stem}.csv').open('w') as f:
-        w=csv.DictWriter(f,fieldnames=fields);w.writeheader()
+        w=csv.DictWriter(f,fieldnames=fields,lineterminator='\n');w.writeheader()
         for panel,label,e in rows:
             ci=e.get('ci') or [None,None]
             w.writerow(dict(panel=panel,label=label,macro=e.get('macro'),key=e['key'],value=e.get('value'),
@@ -59,7 +59,7 @@ def save(fig, stem, rows, sha):
 
 def headline(data,sha):
     fig,axes=plt.subplots(1,2,figsize=(6.5,3.65),sharey=True)
-    fig.subplots_adjust(left=.10,right=.98,bottom=.34,top=.79,wspace=.13)
+    fig.subplots_adjust(left=.10,right=.98,bottom=.29,top=.79,wspace=.13)
     rows=[]
     for ax,model,title in zip(axes,['qwen','gpt_oss'],['Qwen3-32B','gpt-oss-20b']):
         prefix='qwen' if model=='qwen' else 'gptoss'
@@ -67,56 +67,99 @@ def headline(data,sha):
         values=[]
         for x,key in enumerate(keys):
             e=get(data,key);rows.append((title,['Ever','This/next round','This call'][x],e))
-            if draw(ax,x,None,e,model):values.append((x,e['value']))
-            else:ax.text(x,.11,'pending',ha='center',fontsize=8,color='#666666')
+            position = x - .13 if x == 2 else x
+            if draw(ax,position,None,e,model):values.append((position,e['value']))
         # Do not bridge an unobserved rung.
         for a,b in zip(values,values[1:]):
-            if b[0]==a[0]+1:ax.plot([a[0],b[0]],[a[1],b[1]],color=MODEL_COLORS[model],lw=.8,alpha=.6)
+            if .8 <= b[0]-a[0] <= 1:ax.plot([a[0],b[0]],[a[1],b[1]],color=MODEL_COLORS[model],lw=.8,alpha=.6)
         fresh=[(2,'qwenFreshCallProbe','activation')] if model=='qwen' else [(2,'gptossFreshReasoning','activation')]
         for i,(x,key,kind) in enumerate(fresh):
             e=get(data,key);rows.append((title,'Fresh test: '+key,e))
-            draw(ax,x+(.08 if kind=='text' else -.08),None,e,model,kind,fresh=True)
+            draw(ax,x+.13,None,e,model,kind,fresh=True,marker='D' if model=='gpt_oss' else 'o')
         ax.axhline(.5,color='#777777',ls='--',lw=.8)
         ax.set(xlim=(-.3,2.3),ylim=(0,1.03),xticks=[0,1,2],xticklabels=['Ever','This/next\nround','This call'],title=title)
         ax.grid(axis='y',alpha=.15)
     axes[0].set_ylabel('AUROC')
     fig.suptitle('The nearer the act, the more predictable the leak',fontsize=11,y=.98)
-    handles=[Line2D([],[],marker='o',mfc='white',color='#333333',ls='none',label='Development'),Line2D([],[],marker='o',color='#333333',ls='none',label='Fresh test')]
-    fig.legend(handles=handles,loc='lower center',bbox_to_anchor=(.5,.005),ncol=2,frameon=False,fontsize=8)
-    fig.text(.5,.13,'Fresh Qwen call test: out-of-sample, not preregistered.\nFresh gpt-oss call test: frozen reasoning probe.',ha='center',fontsize=7.5,color='#444444')
+    handles=[
+        Line2D([],[],marker='o',mfc='white',color='#333333',ls='none',label='Last-prompt probe: development'),
+        Line2D([],[],marker='o',color=MODEL_COLORS['qwen'],ls='none',label='Last-prompt probe: fresh Qwen test'),
+        Line2D([],[],marker='D',color=MODEL_COLORS['gpt_oss'],ls='none',label='Reasoning probe: fresh gpt-oss test')]
+    fig.legend(handles=handles,loc='lower center',bbox_to_anchor=(.5,0),ncol=1,frameon=False,fontsize=9)
     save(fig,'fig1_headline',rows,sha)
 
 
+def marker_legend(fig, kinds, fresh=False, y=.015):
+    names={'activation':'Activation probe', 'text':'Text monitor', 'rule':'Rule', 'control':'Pre-ask control'}
+    handles=[Line2D([],[],marker=DETECTOR_MARKERS[k],mfc='#555555' if fresh else 'white',
+                    color='#555555',ls='none',label=names[k]) for k in kinds]
+    fig.legend(handles=handles,loc='lower center',bbox_to_anchor=(.5,y),
+               ncol=len(kinds),frameon=False,fontsize=9)
+
+
 def forest(data,sha,stem,title,panels):
-    fig,axes=plt.subplots(1,len(panels),figsize=(6.5,3.5),squeeze=False)
-    fig.subplots_adjust(left=.03,right=.98,bottom=.25,top=.79,wspace=.40)
+    compact=stem=='fig_round_confirmation'
+    fig,axes=plt.subplots(1,len(panels),figsize=(3.9,3.0) if compact else (6.5,3.8),squeeze=False)
+    fig.subplots_adjust(left=.06,right=.97,bottom=.38 if compact else .31,top=.77,wspace=.40)
     rows=[]
     for ax,(model,panel,items) in zip(axes[0],panels):
         ax.set_title(panel,fontsize=10)
         for y,(label,key,kind) in enumerate(items):
             e=get(data,key);rows.append((panel,label,e))
-            if not draw(ax,None,y,e,model,kind,horizontal=True):
-                ax.text(.99,y,'pending',ha='right',va='center',fontsize=8,color='#777777')
-            ax.text(.02,y-.30,label,va='center',fontsize=8,transform=ax.get_yaxis_transform())
+            draw(ax,None,y,e,model,kind,horizontal=True)
+            ax.text(.02,y-.30,label,va='center',fontsize=10 if compact else 9,
+                    transform=ax.get_yaxis_transform())
         ax.set(xlim=(0,1.03),ylim=(len(items)-.4,-.8),yticks=[],xlabel='AUROC',xticks=[0,.5,1])
         ax.axvline(.5,color='#777777',ls='--',lw=.8)
         ax.spines['left'].set_visible(False)
     fig.suptitle(title,fontsize=11,y=.98)
-    note = ('Filled markers: frozen fresh-test results.' if all(e.get('status')=='confirmed' for _,_,e in rows) else 'Hollow markers: development results.')
-    fig.text(.5,.035,note+' Whiskers: source confidence intervals.',ha='center',fontsize=8)
+    kinds=list(dict.fromkeys(kind for _,_,items in panels for _,_,kind in items))
+    marker_legend(fig,kinds,fresh=compact)
+    fig.text(.5,.13,'Whiskers: 95% CI; dashed line: chance',ha='center',fontsize=9)
     save(fig,stem,rows,sha)
+
+
+def shortcuts(data,sha):
+    fig,axes=plt.subplots(1,2,figsize=(6.5,4.7),gridspec_kw={'width_ratios':[1.35,1]})
+    fig.subplots_adjust(left=.05,right=.98,bottom=.34,top=.80,wspace=.22)
+    panels=[('Other explanations',[
+        ('Last-prompt probe','gptossCallProbe','activation'),
+        ('Reasoning probe','gptossCallReasoning','activation'),
+        ('Call reads the protected file','gptossReadStep','rule'),
+        ('Keywords in reasoning','gptossKeyword','rule'),
+        ('Before the peer asks (other calls)','gptossPlacebo','control')]),
+        ('What arrived in the context',[
+        ('Incoming messages + tool results\n(one seed; different calls)','gptossIncomingProbe','activation')])]
+    rows=[]
+    reference=get(data,'gptossCallProbe').get('value')
+    for index,(ax,(title,items)) in enumerate(zip(axes,panels)):
+        ax.set_title(title,fontsize=10)
+        for y,(label,key,kind) in enumerate(items):
+            e=get(data,key);rows.append((title,label,e))
+            draw(ax,None,y,e,'gpt_oss',kind,horizontal=True)
+            ax.text(.02,y-.33,label,fontsize=9,va='bottom',transform=ax.get_yaxis_transform())
+        ax.set(xlim=(0,1.03),ylim=(len(items)-.4,-.85 if index==0 else -1.1),yticks=[],
+               xlabel='AUROC',xticks=[0,.5,1])
+        ax.axvline(.5,color='#888888',ls=':',lw=.8)
+        if reference is not None:
+            ax.axvline(reference,color=MODEL_COLORS['gpt_oss'],ls='--',lw=.9)
+        ax.spines['left'].set_visible(False)
+        if index==1:ax.set_facecolor('#f3f3f3')
+    fig.suptitle('gpt-oss-20b: what can explain the signal?',fontsize=11,y=.98)
+    fig.text(.05,.16,'Lower rule/control scores leave a gap to explain.\nHigh incoming-only performance leaves the mechanism open.',fontsize=9)
+    fig.text(.5,.09,'Dashed: last-prompt probe; dotted: chance; whiskers: 95% CI',ha='center',fontsize=9)
+    marker_legend(fig,['activation','rule','control'],y=.005)
+    save(fig,'fig4_shortcuts',rows,sha)
 
 
 def main():
     configure();data,sha=registry();OUT.mkdir(exist_ok=True)
     headline(data,sha)
-    forest(data,sha,'fig_round_confirmation','Frozen round-level confirmation', [('qwen','Qwen3-32B: original frozen label/window', [('Probe','qwenFreshNearProbe','activation'),('Jev','qwenFreshNearJev','text')])])
+    forest(data,sha,'fig_round_confirmation','Pre-registered Qwen test', [('qwen','Will it leak this round or next?', [('Probe','qwenFreshNearProbe','activation'),('Jev','qwenFreshNearJev','text')])])
     forest(data,sha,'fig3_percall','Which call will leak?',[
         ('qwen','Qwen3-32B',[('Last-prompt probe','qwenCallProbe','activation'),('Jev: conversation + tool results','qwenCallJev','text')]),
         ('gpt_oss','gpt-oss-20b',[('Last-prompt probe','gptossCallProbe','activation'),('Reasoning probe','gptossCallReasoning','activation'),('Jev: including same-turn reasoning','gptossCallJev','text')])])
-    forest(data,sha,'fig4_shortcuts','What can explain the signal?',[
-        ('gpt_oss','gpt-oss-20b',[('Last-prompt probe','gptossCallProbe','activation'),('Reasoning probe','gptossCallReasoning','activation'),('Protected-read flag','gptossReadStep','rule')]),
-        ('gpt_oss','Additional checks',[('Keywords on reasoning','gptossKeyword','rule'),('Pre-ask placebo (different calls)','gptossPlacebo','control'),('Incoming-only probe (one seed)','gptossIncomingProbe','activation')])])
+    shortcuts(data,sha)
 
 
 if __name__=='__main__':main()
