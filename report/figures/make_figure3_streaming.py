@@ -93,21 +93,21 @@ def collect():
     return rows
 
 
-CAPTION = """Figure 3. On gpt-oss-20b, a probe reading the model's reasoning picks out the reply that will leak the secret, and reading the text of the same reasoning does not. This analysis is exploratory and was designed after the main results. (a) Each row scores the same 1,995 replies that have reasoning (121 of them leak) from 238 episodes, on held-out scenarios. A reply counts as leaking if it is the first to make the secret public, by any route. AUROC measures how well a score ranks leaking replies above the others: 0.5 is chance and 1 is perfect. Whiskers are 95% bootstrap confidence intervals. The right-hand column shows the practical trade-off: each detector's alarm cutoff is set so that about 5% of no-ask control replies alarm, and the column gives the share of leaking replies that cutoff catches and the share of normal replies in pressured episodes that never leak on which it fires. The keyword rule never fires, because it matches more than 5% of control replies. The two LLM judges (Jev and GPT-5-nano) read only the reasoning text of the call, as six growing snapshots scored with a running maximum and with the secret masked; they see no conversation or tool results, whereas the probes' activations reflect the full context. "Last prompt token" is the paper's main probe, read at the last prompt token before the model writes anything, retrained to ask whether this call will leak (1,995 replies, 121 leaking; three seeds). "Same, frozen, on 84 new episodes" applies the reasoning probe and its alarm cutoff, both fixed before the episodes were collected, to new episodes (594 replies with reasoning, 26 leaking, from 57 recruiting episodes). "Stopped before the secret is mentioned" ignores every reasoning token from the first time the secret appears in the reasoning. The length row uses the final length of the reasoning, which is known only after the reply, so it is not a usable alarm. *A separate probe, trained on this label for each call, that reads only what arrives before the reply: the peer's message and tool results. It used a reduced recipe (one seed, layer 18; 2,199 replies, 143 leaking). It also scores 0.93, so much of the signal is already there before the model reasons, but it alarms far more often on normal replies. †The same probe, scored on replies from before the peer asks, against whether the episode ever leaks (628 replies, 388 positives); it stays at chance, as it should. (b) Matched ladders: within each series the model, the outcome and the reading position are fixed and only the horizon changes; lines join points of the same series, and the series are not compared with each other. Qwen3-32B, last prompt token, the paper's give-in outcome: the paper's eventual and near-term results (0.52 and 0.58; 4,697 steps from 241 episodes), and the same recipe fit per call (this call, 0.95, on 4,844 calls; next call, 0.71, on 4,743 calls; 101 positives each). gpt-oss-20b, last prompt token, any public emission rather than the paper's give-in rule: fit at each horizon on the same 1,995 panel-a calls (ever, 0.61, 330 positives; this round or next, 0.64, 304 positives; this call, 0.91, 121 positives); its one-call-ahead result (0.62) is on a different call set that excludes the emitting calls and mostly reflects the read step, so it is left to Appendix J.8. Retrained to ask whether this call will leak, the paper's last-prompt probe reaches 0.91 before the model writes anything; reading the reasoning adds a little (0.93, the panel-a headline). "Next call" excludes the leaking calls themselves, so it ranks the call just before the leak. Values and exact source keys are in figure3_streaming.csv.
+CAPTION = """Figure 3. On gpt-oss-20b, a probe reading the model's reasoning picks out the reply that will leak the secret, and reading the text of the same reasoning does not. This analysis is exploratory and was designed after the main results. (a) Each row scores the same 1,995 replies that have reasoning (121 of them leak) from 238 episodes, on held-out scenarios. A reply counts as leaking if it is the first to make the secret public, by any route. AUROC measures how well a score ranks leaking replies above the others: 0.5 is chance and 1 is perfect. Whiskers are 95% bootstrap confidence intervals. The right-hand column shows the practical trade-off: each detector's alarm cutoff is set so that about 5% of no-ask control replies alarm, and the column gives the share of leaking replies that cutoff catches and the share of normal replies in pressured episodes that never leak on which it fires. The keyword rule never fires, because it matches more than 5% of control replies. Rows with \u21b3 are variants of the reasoning-token probe. The two LLM judges (Jev and GPT-5-nano) read only the reasoning text of the call, as six growing snapshots scored with a running maximum and with the secret masked; they see no conversation or tool results, whereas the probes' activations reflect the full context. "Its last prompt token" is the paper's main probe, read at the last prompt token before the call writes anything, retrained to ask whether this call will leak (1,995 replies, 121 leaking; three seeds). "Same probe frozen, on 84 new episodes" applies the reasoning probe and its alarm cutoff, both fixed before the episodes were collected, to new episodes (594 replies with reasoning, 26 leaking, from 57 recruiting episodes). "Only reasoning before the secret is named" ignores every reasoning token from the first time the secret appears in the reasoning. The length row uses the final length of the reasoning, which is known only after the reply, so it is not a usable alarm. *A separate probe, trained on this label for each call, that reads only what arrives before the reply: the peer's message and tool results. It used a reduced recipe (one seed, layer 18; 2,199 replies, 143 leaking). It also scores 0.93, so much of the signal is already there before the model reasons, but it alarms far more often on normal replies. †The same probe, scored on replies from before the peer asks, against whether the episode ever leaks (628 replies, 388 positives); it stays at chance, as it should. (b) Matched ladders: within each series the model, the outcome and the reading position are fixed and only the horizon changes; lines join points of the same series, and the series are not compared with each other. Qwen3-32B, last prompt token, the paper's give-in outcome: the paper's eventual and near-term results (0.52 and 0.58; 4,697 steps from 241 episodes), and the same recipe fit per call (this call, 0.95, on 4,844 calls; next call, 0.71, on 4,743 calls; 101 positives each). gpt-oss-20b, last prompt token, any public emission rather than the paper's give-in rule: fit at each horizon on the same 1,995 panel-a calls (ever, 0.61, 330 positives; this round or next, 0.64, 304 positives; this call, 0.91, 121 positives); its one-call-ahead result (0.62) is on a different call set that excludes the emitting calls and mostly reflects the read step, so it is left to Appendix J.8. Retrained to ask whether this call will leak, the paper's last-prompt probe reaches 0.91 before the model writes anything; reading the reasoning adds a little (0.93, the panel-a headline). "Next call" excludes the leaking calls themselves, so it ranks the call just before the leak. Values and exact source keys are in figure3_streaming.csv.
 """
 
 
-DISPLAY_A = {  # CSV label -> (display label, panel-a row position, top to bottom)
-    'Reasoning-token probe': ("Probe on the model's reasoning", 10.8),
-    'Before value mention': ('Same, stopped before secret is mentioned', 9.9),
-    'Frozen probe, new episodes': ('Same, frozen, on 84 new episodes', 9.0),
-    'Last-prompt probe retrained per call': ('Last prompt token (before the call starts)', 8.1),
-    'Incoming-message probe*': ('Probe on incoming message + tool results*', 7.2),
-    'Length (hindsight)': ('Reasoning length (known only afterwards)', 5.3),
-    'Jev on reasoning': ('LLM judge (Jev) on the reasoning', 4.4),
-    'Keywords': ('Keyword search', 3.5),
-    'GPT-5-nano on reasoning': ('Small LLM (GPT-5-nano) on the reasoning', 2.6),
-    'Pre-ask placebo†': ('Probe before any request (should be ~0.5)†', .7),
+DISPLAY_A = {  # CSV label -> (display label, panel-a row position top to bottom, indent level)
+    'Reasoning-token probe': ('its reasoning tokens, as they stream', 10.8, 0),
+    'Before value mention': ('\u21b3 only reasoning before the secret is named', 9.9, 1),
+    'Frozen probe, new episodes': ('\u21b3 same probe frozen, on 84 new episodes', 9.0, 1),
+    'Last-prompt probe retrained per call': ('its last prompt token, before the call starts', 8.1, 0),
+    'Incoming-message probe*': ('the incoming message + tool results*', 7.2, 0),
+    'Length (hindsight)': ('reasoning length (known only afterwards)', 5.3, 0),
+    'Jev on reasoning': ('Jev reading the reasoning', 4.4, 0),
+    'Keywords': ('keyword search', 3.5, 0),
+    'GPT-5-nano on reasoning': ('GPT-5-nano reading the reasoning', 2.6, 0),
+    'Pre-ask placebo†': ('probe before any request (expect ~0.5)†', .7, 0),
 }
 # Alarm column: % of leaking replies flagged / % of normal held-episode replies flagged, at a cutoff
 # set for ~5% alarms on no-ask control replies. Sources: report/paper.md Appendix J.8 "Alarms and lead"
@@ -119,8 +119,8 @@ DISPLAY_A = {  # CSV label -> (display label, panel-a row position, top to botto
 ALARMS = {'Reasoning-token probe': '85% / 4%', 'Frozen probe, new episodes': '54% / 2%', 'Last-prompt probe retrained per call': '56% / 2%', 'Incoming-message probe*': '95% / 19%',
           'Jev on reasoning': '92% / 9%', 'GPT-5-nano on reasoning': '5% / 35%',
           'Keywords': 'never fires'}
-GROUP_HEADINGS = [(11.55, "Probe reading the model's internals", '#087f8c'),
-                  (6.05, 'Reading the text instead', '#334155'),
+GROUP_HEADINGS = [(11.55, 'Linear probe on activations, reading:', '#087f8c'),
+                  (6.05, 'LLM judge or rule reading the text:', '#334155'),
                   (1.45, 'Sanity check', '#64748b')]
 # Panel b: matched ladders. Within a series the model, the outcome and the reading position are fixed and
 # only the horizon changes. To add a rung, add a CSV row and map its label in B_ROWS; blank rows are skipped.
@@ -159,10 +159,11 @@ def render(rows, output):
     right = fig.add_axes([.725, .245, .255, .60])
     col = blended_transform_factory(fig.transFigure, left.transData)
     ALARM_X = .617
+    LABEL_X = .018  # left edge of row labels (figure fraction); group headings sit slightly left
 
     # (a) recognising the leaking reply
     for r in (r for r in rows if r['panel'] == 'a'):
-        label, y = DISPLAY_A[r['label']]
+        label, y, indent = DISPLAY_A[r['label']]
         color, marker = STYLE[r['group']]
         head = r['label'] == 'Reasoning-token probe'
         left.errorbar(r['estimate'], y, xerr=[[r['estimate']-r['low']], [r['high']-r['estimate']]],
@@ -173,17 +174,17 @@ def render(rows, output):
         alarm = ALARMS.get(r['label'], '–')
         left.text(ALARM_X, y, alarm, transform=col, ha='center', va='center', fontsize=6.6,
                   color=GREY if alarm in ('–', 'never fires') else SLATE, weight='bold' if head else 'normal')
-        left.text(-.03, y, label, transform=left.get_yaxis_transform(), ha='right', va='center',
+        left.text(LABEL_X + .016 * indent, y, label, transform=col, ha='left', va='center',
                   fontsize=6.5, weight='bold' if head else 'normal')
     for y, text, color in GROUP_HEADINGS:
-        left.text(-.03, y, text, transform=left.get_yaxis_transform(), ha='right', va='center',
+        left.text(LABEL_X - .006, y, text, transform=col, ha='left', va='center',
                   fontsize=6.2, style='italic', color=color)
     left.set_yticks([])
     left.set(xlim=(.25, 1), ylim=(.1, 12.0))
     left.set_xticks([.3, .5, .7, .9])
     left.spines['left'].set_visible(False)
     for y in [6.6, 1.95]:  # group separators
-        left.axhline(y, xmin=-1.7, xmax=2.0, color='#CBD5E1', linewidth=.6, clip_on=False)
+        left.axhline(y, xmin=-1.89, xmax=2.0, color='#CBD5E1', linewidth=.6, clip_on=False)
     left.axvline(.5, color=GREY, linestyle='--', linewidth=.8, zorder=0)
     auroc_x = left.transData.transform((1.012, 0))[0] / fig.bbox.width
     fig.text(auroc_x, .893, 'AUROC', ha='left', va='bottom', fontsize=6.4, weight='bold')
@@ -191,10 +192,6 @@ def render(rows, output):
     fig.text(ALARM_X, .862, '(% leaks / % normal)', ha='center', va='bottom', fontsize=6, color=GREY)
     left.text(.5, 12.0, 'chance', ha='center', va='bottom', fontsize=6, color=GREY)
     left.grid(axis='x', alpha=.15)
-    left.annotate('warns before the\nreply\'s output', xy=(.93, 9.9), xytext=(.85, 9.9),
-                  ha='right', va='center', fontsize=6, color=TEAL, linespacing=1.1,
-                  bbox=dict(boxstyle='square,pad=0.15', facecolor='white', edgecolor='none'),
-                  arrowprops=dict(arrowstyle='->', color=TEAL, linewidth=.6))
     fig.text(.395, .145, 'AUROC: how well it ranks leaking replies first\n(0.5 = chance, 1 = perfect)',
              fontsize=6.6, ha='center', va='top', linespacing=1.1)
     fig.text(.012, .955, '(a) gpt-oss-20b: which call will leak the secret?', weight='bold', fontsize=7.8)
