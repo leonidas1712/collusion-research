@@ -77,6 +77,13 @@ episodes — a deployed alarm needs episode-level calibration.
 point *replacing* the 0.98/0.75 call-AUROC pair keeps the count roughly flat and arguably reads stronger
 (an operating point beats a bare AUROC). Leo's call.
 
+### 4. Final-rigour reviewer's three title/abstract framing points (rigour R3, "narrow result survives review"; for Leo's title/abstract call)
+
+The final rigour round flagged three framings needing Leo's decision; each ties to an item above, and the body already states the underlying facts correctly:
+1. **"Activations reveal" overleans** — a trained text classifier does almost as well (item 1); the title/abstract should not imply the signal is uniquely in activations.
+2. **The abstract's per-call false-alarm rate needs its per-episode companion** — don't give the call-level operating point without the episode-level rate (item 3; 59% Qwen / 26% gpt-oss).
+3. **The Qwen 0.98 should not read as "fresh held-out" without noting those episodes were already inspected** — it is out-of-sample but not pre-registered (item 2); prefer "on fresh episodes held out from training" and keep "pre-registered" for gpt-oss only.
+
 ## Technical decisions
 
 - **ICLR header on the arXiv draft (codex #2373, via claude #2374).** With `\iclrfinalcopy` the ICLR 2027
