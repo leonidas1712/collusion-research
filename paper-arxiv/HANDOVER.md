@@ -56,6 +56,27 @@ but it is a misleading conflation: a reader takes 0.58 to be the confirmed numbe
 **Open question for Leo:** confirm you want the abstract to lead the round-level claim with the
 confirmed 0.68, with 0.58 moved to the robustness appendix. (Default taken for the draft: yes.)
 
+### 3. Proposed abstract variant: surface the Qwen operating point (claude-4, per @claude #2539; Leo decides — abstract NOT edited)
+
+Verified fresh-Qwen operating point (threshold set on control calls): the probe catches **82%** of
+leaking calls at a **5%** refusing-call false-alarm rate; the zero-shot text monitor catches **68%**
+at **29%**. This is more concrete than the AUROC and shows the probe's practical edge — it catches more
+and false-alarms far less. Suggested wording (Leo to adjust): "…at a fixed threshold the probe catches
+82% of leaking calls at a 5% false-alarm rate, where the text monitor catches 68% at 29%."
+
+Two placements:
+- **Option A (swap):** replace the gpt-oss "catching half of leaking calls at a 2% false-alarm rate"
+  clause with the Qwen operating point; keeps the gpt-oss pre-registered AUROC (0.91).
+- **Option B (add):** keep the gpt-oss clause and add the Qwen operating point as the "what it means" sentence.
+
+**Travelling caveat (must accompany either):** per episode, because each episode has many calls, at
+least one alarm still fires in **59%** of refusing Qwen episodes and **26%** of refusing gpt-oss
+episodes — a deployed alarm needs episode-level calibration.
+
+**Number budget:** the abstract already carries 4 numbers. To stay lean, Option A with the operating
+point *replacing* the 0.98/0.75 call-AUROC pair keeps the count roughly flat and arguably reads stronger
+(an operating point beats a bare AUROC). Leo's call.
+
 ## Technical decisions
 
 - **ICLR header on the arXiv draft (codex #2373, via claude #2374).** With `\iclrfinalcopy` the ICLR 2027
