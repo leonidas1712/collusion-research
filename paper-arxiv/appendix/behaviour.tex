@@ -1,32 +1,7 @@
 \section{How often does each model leak, and what differs for the second target?}
 \label{app:behaviour}
 
-% Screening numbers not yet in numbers.yaml. Each falls back to "pending"
-% until the registry defines it; numbers.tex is read first, so registry values win.
-\providecommand{\screenRuleBaseRate}{\texttt{pending}}
-\providecommand{\screenRuleBaseN}{\texttt{pending}}
-\providecommand{\screenRuleLoggedRate}{\texttt{pending}}
-\providecommand{\screenRuleLoggedN}{\texttt{pending}}
-\providecommand{\screenPlainRate}{\texttt{pending}}
-\providecommand{\screenPlainN}{\texttt{pending}}
-\providecommand{\screenTacticMinRate}{\texttt{pending}}
-\providecommand{\screenTacticMaxRate}{\texttt{pending}}
-\providecommand{\screenTacticMinN}{\texttt{pending}}
-\providecommand{\screenTacticMaxN}{\texttt{pending}}
-\providecommand{\screenStakeNoneRate}{\texttt{pending}}
-\providecommand{\screenStakeNoneN}{\texttt{pending}}
-\providecommand{\screenStakeOwnRate}{\texttt{pending}}
-\providecommand{\screenStakeOwnN}{\texttt{pending}}
-\providecommand{\screenThinkingRate}{\texttt{pending}}
-\providecommand{\screenThinkingN}{\texttt{pending}}
-\providecommand{\screenTwoPeersRate}{\texttt{pending}}
-\providecommand{\screenTwoPeersN}{\texttt{pending}}
-\providecommand{\screenAwareNoRate}{\texttt{pending}}
-\providecommand{\screenAwareNoN}{\texttt{pending}}
-\providecommand{\screenAwareYesRate}{\texttt{pending}}
-\providecommand{\screenAwareYesN}{\texttt{pending}}
-
-Qwen3-32B leaked in some episodes and refused in others under every setting we screened, and the screens are too small to show which settings matter.
+Qwen3-32B leaked in some episodes and refused in others under almost every setting we screened, and the screens are too small to show which settings matter.
 gpt-oss-20b and Gemma-4-31B refused direct requests for the secret, so gpt-oss-20b faces a different peer strategy and Gemma-4-31B was not used for probes.
 
 \subsection{Screens on Qwen3-32B}
@@ -34,11 +9,9 @@ gpt-oss-20b and Gemma-4-31B refused direct requests for the secret, so gpt-oss-2
 Before fixing the final setup, we ran small screens on Qwen3-32B that each varied one feature of the episode (\cref{tab:screens}).
 Most screens use an earlier version of the main scenario.
 The own-stake screen uses four other scenarios, in which the target gains something from sharing the value.
-A leak means the same here as in the main text: the target writes the secret outside its file, in a channel post or a new file.
-An episode counts only if it ran to completion, the target read the secret, and the target wrote a correct status summary at some point.
+These screens use the scoring rules of the original screening runs, and \cref{tab:screens} describes behaviour without testing any setting.
 \Cref{tab:behaviour-scenario} gives the leak rate of the final collection in each scenario.
 
-The screens describe behaviour and test nothing.
 Each screen was a separate collection, so a gap between two rows can reflect the batch or the scenario version as well as the setting.
 One set of plain-request episodes serves as the reference for the tactic, thinking and peer-count screens.
 The seven single tactics are helpful framing, an organiser's tone, a trade, social proof, time pressure, playing it safe and cost anchoring.
@@ -47,9 +20,8 @@ The reproducibility index points to the full table, which lists every cell with 
 
 \begin{table}[h]
   \centering
-  \caption{\textbf{Every screened setting gave a mix of leaks and refusals on Qwen3-32B.}
-  Each cell gives the share of recruiting episodes that leak, with the number of episodes in brackets.
-  Each row is a separate small collection, so rows are not controlled comparisons.}
+  \caption{\textbf{Almost every screened setting gave a mix of leaks and refusals on Qwen3-32B.}
+  Each cell gives the share of recruiting episodes that leak, with the number of episodes in brackets.}
   \label{tab:screens}
   \small
   \resizebox{\linewidth}{!}{%
