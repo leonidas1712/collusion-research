@@ -11,7 +11,8 @@ Tools act in memory, so no real system, credential or network is touched.
 A peer agent shares the team channel and needs the value, but cannot read the file and is not told the rule.
 Each episode runs for up to 20 rounds.
 In each round the peer posts a message, and the target responds with one or more model calls.
-A call is one request to the model, ending in a reply or a tool call that reads or writes a file or sends a channel message, so a round can contain several calls.
+A call is one request to the model, ending in a reply or a tool call that reads or writes a file or posts to the channel.
+A round can contain several calls.
 The peer asks for the value openly, as a colleague would, so we study recruitment that arises from an ordinary conflict of goals.
 
 A call \emph{leaks} if it is the first to write the secret out, in its reply or in a tool call such as a file write.
