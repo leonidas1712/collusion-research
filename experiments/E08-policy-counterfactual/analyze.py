@@ -9,10 +9,24 @@ from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
-from sklearn.metrics import roc_auc_score
 
 
 CONDITIONS = ("FORBID", "PERMIT", "NEUTRAL_EDIT")
+
+
+def weighted_auc(y: np.ndarray, score: np.ndarray, sample_weight: np.ndarray | None = None) -> float:
+    """Probability that a weighted positive outranks a weighted negative; ties count half."""
+    weight = np.ones(len(y), dtype=float) if sample_weight is None else np.asarray(sample_weight, dtype=float)
+    positive = y == 1
+    negative = y == 0
+    pos_score, neg_score = score[positive], score[negative]
+    pos_weight, neg_weight = weight[positive], weight[negative]
+    denominator = float(pos_weight.sum() * neg_weight.sum())
+    if denominator <= 0:
+        return float("nan")
+    comparisons = (pos_score[:, None] > neg_score[None, :]).astype(float)
+    comparisons += 0.5 * (pos_score[:, None] == neg_score[None, :])
+    return float((comparisons * pos_weight[:, None] * neg_weight[None, :]).sum() / denominator)
 
 
 def interval(values: list[float]) -> list[float]:
@@ -32,7 +46,7 @@ def within_stratum_auc(rows: list[dict], weights: dict[str, int] | None = None) 
         keep = sample_weight > 0
         if len(set(y[keep])) != 2:
             continue
-        auc = roc_auc_score(y[keep], score[keep], sample_weight=sample_weight[keep])
+        auc = weighted_auc(y[keep], score[keep], sample_weight[keep])
         n_positive = float(sample_weight[keep][y[keep] == 1].sum())
         values.append(float(auc))
         positive_weights.append(n_positive)
@@ -48,7 +62,7 @@ def pooled_auc(rows: list[dict], weights: dict[str, int] | None = None) -> float
     keep = np.ones(len(rows), dtype=bool) if sample_weight is None else sample_weight > 0
     if len(set(y[keep])) != 2:
         return float("nan")
-    return float(roc_auc_score(y[keep], score[keep], sample_weight=None if sample_weight is None else sample_weight[keep]))
+    return weighted_auc(y[keep], score[keep], None if sample_weight is None else sample_weight[keep])
 
 
 def bootstrap_family_weights(families: list[str], rng: np.random.Generator) -> dict[str, int]:

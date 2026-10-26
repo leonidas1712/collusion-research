@@ -36,6 +36,7 @@ image = (
 if modal.is_local():
     image = image.add_local_dir(ROOT / "src" / "collusion", remote_path="/app/src/collusion", ignore=["__pycache__/**"])
     image = image.add_local_file(E02 / "replay.py", "/app/e02/replay.py")
+    image = image.add_local_file(E02 / "fidelity.py", "/app/e02/fidelity.py")
     image = image.add_local_file(HERE / "counterfactual.py", "/app/e08/counterfactual.py")
 
 
@@ -45,9 +46,10 @@ def execute(plan: dict, payload: list[dict], probe_models: list[dict], provenanc
 
     import numpy as np
     import torch
-    from transformers import AutoConfig, AutoModel, AutoTokenizer
+    from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 
     from counterfactual import CONDITIONS, digest, edit_request, score_activation
+    from fidelity import reply_tokens
     from replay import capture, decoder_layers, render
 
     if mode not in ("benchmark", "full"):
@@ -95,12 +97,16 @@ def execute(plan: dict, payload: list[dict], probe_models: list[dict], provenanc
             for condition in CONDITIONS:
                 request = edit_request(item["request"], item["call"]["scenario"], condition, plan)
                 rendered, ids, changes, thinking = render(tokenizer, request, "from-request")
-                if len(ids) > config.max_position_embeddings:
+                full_reply_ids, serialization = reply_tokens(tokenizer, request, item["record"], rendered, thinking)
+                if not full_reply_ids:
+                    raise ValueError(f"Saved reply cannot be teacher-forced: {item['call']['call_id']} {condition}: {serialization}")
+                reply_ids = full_reply_ids[:64]
+                if len(ids) + len(reply_ids) > config.max_position_embeddings:
                     raise ValueError(f"Prompt exceeds context: {item['call']['call_id']} {condition}")
-                rendered_inputs.append((item, condition, request, rendered, ids, changes, thinking))
+                rendered_inputs.append((item, condition, request, rendered, ids, reply_ids, serialization, changes, thinking))
 
         load_started = time.perf_counter()
-        model = AutoModel.from_pretrained(
+        causal_model = AutoModelForCausalLM.from_pretrained(
             model_id,
             revision=revision,
             dtype=torch.bfloat16,
@@ -109,6 +115,7 @@ def execute(plan: dict, payload: list[dict], probe_models: list[dict], provenanc
             attn_implementation="sdpa",
             local_files_only=True,
         )
+        model = causal_model.base_model
         model.eval()
         model_load_seconds = time.perf_counter() - load_started
         layers_path, layers = decoder_layers(model)
@@ -120,16 +127,18 @@ def execute(plan: dict, payload: list[dict], probe_models: list[dict], provenanc
         rows = []
         activation_seconds = 0.0
         prompt_tokens = 0
+        forward_tokens = 0
         activation_dir = run.dir / "activations"
         activation_dir.mkdir(parents=True, exist_ok=True)
-        for index, (item, condition, request, rendered, ids, changes, thinking) in enumerate(rendered_inputs):
+        for index, (item, condition, request, rendered, ids, reply_ids, serialization, changes, thinking) in enumerate(rendered_inputs):
             if mode == "full" and time.perf_counter() - wall_started > plan["benchmark"]["full_timeout_seconds"]:
                 raise TimeoutError("Frozen E08 full-run wall guard reached")
             started = time.perf_counter()
-            values = capture(model, capture_layers, ids, input_device)
+            values = capture(model, capture_layers, ids + reply_ids, input_device, prompt_length=len(ids))
             elapsed = time.perf_counter() - started
             activation_seconds += elapsed
             prompt_tokens += len(ids)
+            forward_tokens += len(ids) + len(reply_ids)
             layer_values = {layer: values[offset] for offset, layer in enumerate(selected_layers)}
             score, seed_scores = score_activation(layer_values, probe_models)
             key = hashlib.sha256(f'{item["call"]["call_id"]}|{condition}'.encode()).hexdigest()[:20]
@@ -139,6 +148,7 @@ def execute(plan: dict, payload: list[dict], probe_models: list[dict], provenanc
                     residual_last=values.astype(np.float32),
                     layer_indices=np.asarray(selected_layers, dtype=np.int64),
                     input_ids=np.asarray(ids, dtype=np.int64),
+                    reply_ids=np.asarray(reply_ids, dtype=np.int64),
                 )
             (activation_dir / f"{key}.tmp").replace(activation_dir / f"{key}.npz")
             rows.append({
@@ -149,6 +159,8 @@ def execute(plan: dict, payload: list[dict], probe_models: list[dict], provenanc
                 "seed43_score": seed_scores[1],
                 "seed44_score": seed_scores[2],
                 "n_tokens": len(ids),
+                "teacher_forced_reply_tokens": len(reply_ids),
+                "reply_serialization": serialization,
                 "input_ids_sha256": digest(ids),
                 "rendered_prompt_sha256": digest(rendered.encode()),
                 "edited_request_sha256": digest(request),
@@ -171,6 +183,7 @@ def execute(plan: dict, payload: list[dict], probe_models: list[dict], provenanc
             "source_calls": len(payload),
             "forwards": len(rows),
             "prompt_tokens": prompt_tokens,
+            "forward_tokens": forward_tokens,
             "model_load_seconds": model_load_seconds,
             "activation_seconds": activation_seconds,
             "wall_seconds": time.perf_counter() - wall_started,

@@ -83,5 +83,5 @@ def pack_inputs(plan: dict, old_root: Path) -> list[dict]:
         request = record["request"]
         if digest(request) != call["request_sha256"]:
             raise ValueError(f"Request hash mismatch: {call['call_id']}")
-        packed.append({"call": call, "request": request})
+        packed.append({"call": call, "request": request, "record": record})
     return packed
