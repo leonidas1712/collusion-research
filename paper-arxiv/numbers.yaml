@@ -5900,6 +5900,42 @@
           "messages"
         ]
       }
+    },
+    "qwenFreshJevCaught": {
+      "value": 0.6842105263157895,
+      "macro": "qwenFreshJevCaught",
+      "dataset": "Qwen fresh test episodes",
+      "evaluation": "saved control-call threshold; mean across seeds",
+      "status": "exploratory",
+      "run": "runs/20261026-2250-e05-arxiv-alarm-tradeoffs",
+      "format": "percent",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261026-2250-e05-arxiv-alarm-tradeoffs/metrics.json",
+        "value_path": [
+          "operating_points",
+          1,
+          "leaking_call_alarm"
+        ]
+      }
+    },
+    "qwenFreshJevAlarm": {
+      "value": 0.287135749822317,
+      "macro": "qwenFreshJevAlarm",
+      "dataset": "Qwen fresh test episodes",
+      "evaluation": "saved control-call threshold; mean across seeds",
+      "status": "exploratory",
+      "run": "runs/20261026-2250-e05-arxiv-alarm-tradeoffs",
+      "format": "percent",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261026-2250-e05-arxiv-alarm-tradeoffs/metrics.json",
+        "value_path": [
+          "operating_points",
+          1,
+          "refusing_call_alarm"
+        ]
+      }
     }
   },
   "aliases": {
@@ -5948,7 +5984,9 @@
     "gptossWriteBaseline": "gptossWriteFlag",
     "gptossWriteBaselineCI": "gptossWriteFlagCI",
     "gptossWriteBaselineLow": "gptossWriteFlagLow",
-    "gptossWriteBaselineHigh": "gptossWriteFlagHigh"
+    "gptossWriteBaselineHigh": "gptossWriteFlagHigh",
+    "qwenFreshProbeCaught": "qwenFreshInputLeakCaught",
+    "qwenFreshProbeAlarm": "qwenFreshInputRefusingAlarm"
   },
   "tables": {
     "monitor_grid": {
