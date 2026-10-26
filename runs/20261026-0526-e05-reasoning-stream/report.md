@@ -1,7 +1,3 @@
-# INTERIM: k=0 and paper round comparator
-
-Reply horizons k=1,2,3 are still fitting. The separately approved expanded capture is running in parallel and will be analysed separately; it does not alter this original reasoning-only dataset.
-
 # Exploratory reasoning-token warning probes
 
 This CPU-only, post hoc analysis asks whether saved gpt-oss-20b reasoning activations identify a reply that is about to emit the protected value publicly. It does not change the paper or its frozen results. No API calls or GPU inference were used for this primary analysis.
@@ -30,6 +26,18 @@ The last-prompt comparator uses the saved near-term-A fold models without refitt
 | immediate | all | loso | 1995 / 121 | 0.933 [0.912, 0.952] | 0.983 [0.967, 0.994] | 0.493 [0.444, 0.538] |
 | immediate | censored | pooled | 1995 / 121 | 0.945 [0.922, 0.965] | 0.974 [0.953, 0.988] | 0.423 [0.378, 0.468] |
 | immediate | censored | loso | 1995 / 121 | 0.957 [0.937, 0.974] | 0.982 [0.964, 0.993] | 0.493 [0.444, 0.538] |
+| h1 | all | pooled | 1995 / 237 | 0.919 [0.895, 0.942] | 0.974 [0.952, 0.989] | 0.474 [0.425, 0.522] |
+| h1 | all | loso | 1995 / 237 | 0.919 [0.897, 0.941] | 0.983 [0.969, 0.993] | 0.522 [0.481, 0.564] |
+| h1 | censored | pooled | 1995 / 237 | 0.920 [0.896, 0.943] | 0.974 [0.953, 0.989] | 0.474 [0.425, 0.522] |
+| h1 | censored | loso | 1995 / 237 | 0.918 [0.895, 0.940] | 0.983 [0.970, 0.993] | 0.522 [0.481, 0.564] |
+| h2 | all | pooled | 1995 / 266 | 0.838 [0.805, 0.878] | 0.919 [0.892, 0.949] | 0.466 [0.417, 0.510] |
+| h2 | all | loso | 1995 / 266 | 0.845 [0.812, 0.879] | 0.936 [0.912, 0.959] | 0.514 [0.470, 0.555] |
+| h2 | censored | pooled | 1995 / 266 | 0.839 [0.806, 0.880] | 0.920 [0.893, 0.950] | 0.466 [0.417, 0.510] |
+| h2 | censored | loso | 1995 / 266 | 0.851 [0.820, 0.886] | 0.935 [0.912, 0.958] | 0.514 [0.470, 0.555] |
+| h3 | all | pooled | 1995 / 300 | 0.759 [0.720, 0.804] | 0.855 [0.820, 0.894] | 0.503 [0.449, 0.554] |
+| h3 | all | loso | 1995 / 300 | 0.767 [0.727, 0.809] | 0.876 [0.843, 0.913] | 0.523 [0.478, 0.568] |
+| h3 | censored | pooled | 1995 / 300 | 0.753 [0.712, 0.798] | 0.850 [0.814, 0.890] | 0.503 [0.449, 0.554] |
+| h3 | censored | loso | 1995 / 300 | 0.775 [0.736, 0.815] | 0.876 [0.842, 0.913] | 0.523 [0.478, 0.568] |
 | round | all | pooled | 1995 / 199 | 0.587 [0.535, 0.641] | 0.687 [0.630, 0.747] | 0.497 [0.451, 0.541] |
 | round | all | loso | 1995 / 199 | 0.637 [0.586, 0.685] | 0.751 [0.698, 0.805] | 0.526 [0.481, 0.568] |
 | round | censored | pooled | 1995 / 199 | 0.594 [0.539, 0.648] | 0.690 [0.633, 0.747] | 0.497 [0.451, 0.541] |
@@ -62,6 +70,18 @@ The original 2,059-row window is also scored separately in `metrics.json` (`froz
 | immediate | all | loso | 0.461 [0.414, 0.507] |
 | immediate | censored | pooled | 0.488 [0.441, 0.531] |
 | immediate | censored | loso | 0.476 [0.427, 0.525] |
+| h1 | all | pooled | 0.473 [0.425, 0.514] |
+| h1 | all | loso | 0.460 [0.402, 0.508] |
+| h1 | censored | pooled | 0.482 [0.430, 0.523] |
+| h1 | censored | loso | 0.461 [0.405, 0.509] |
+| h2 | all | pooled | 0.478 [0.429, 0.520] |
+| h2 | all | loso | 0.478 [0.413, 0.535] |
+| h2 | censored | pooled | 0.480 [0.432, 0.523] |
+| h2 | censored | loso | 0.487 [0.429, 0.533] |
+| h3 | all | pooled | 0.502 [0.456, 0.544] |
+| h3 | all | loso | 0.504 [0.458, 0.545] |
+| h3 | censored | pooled | 0.499 [0.453, 0.541] |
+| h3 | censored | loso | 0.503 [0.457, 0.545] |
 | round | all | pooled | 0.484 [0.434, 0.532] |
 | round | all | loso | 0.490 [0.447, 0.529] |
 | round | censored | pooled | 0.483 [0.429, 0.527] |
@@ -92,15 +112,65 @@ This experiment was proposed by Leo on 26 October 2026: monitor collusion during
 | First-flag truncation check | Sharma et al., Appendix A.4 [@sharma2025constitutional] | Evaluate the prefix available before blocking. Here the criterion is a known exact protected value, not a semantic harmfulness grader. An exact-value buffer/regex can itself block exact disclosure; earlier-warning benefit must be shown separately. |
 | Text/position nulls | Fixed for this exploratory analysis, 26 October 2026 | Causal keyword match, observed token count and round, using identical cuts and outer rows. No future text, exact protected value, or final unobserved length is an online feature. |
 
-Source pages checked on 26 October 2026: [CC++](https://arxiv.org/html/2601.04603v1), [Constitutional Classifiers](https://arxiv.org/html/2501.18837v1), [Gemini probes](https://arxiv.org/html/2601.11516v1), and [high-stakes probes](https://arxiv.org/html/2506.10805v1). Citation keys refer to report/references.bib; the McKenzie key mckenzie2026 was supplied by the manuscript owner from the current arXiv BibTeX export (#1783), whose year is 2026 despite the original v1 being dated 2025. Its bibliography addition is owned by that agent.
+Source pages checked on 26 October 2026: [CC++](https://arxiv.org/html/2601.04603v1), [Constitutional Classifiers](https://arxiv.org/html/2501.18837v1), [Gemini probes](https://arxiv.org/html/2601.11516v1), and [high-stakes probes](https://arxiv.org/html/2506.10805v1). Citation keys refer to report/references.bib; the McKenzie key mckenzie2026 was supplied by the manuscript owner from the current arXiv BibTeX export (#1783), whose year is 2026 despite the original v1 being dated 2025. Its verified bibliography entry was committed in 27d2d576.
 
 Further deviations: 238 eligible recruiting episodes, three fixed seeds, family-grouped outer and inner splits, scenario × round ranking, and nominal 5% calibration on other-fold control **reply** maxima. These are not population safety benchmarks or nominal episode-level guarantees. Bootstrap intervals resample saved out-of-fold predictions by family, conditional on the fitted models and their selected layers; they do not repeat model fitting or layer selection. Comparing frozen last-prompt A to a newly fitted any-public horizon probe also changes the training label, not only the activation position.
 
-The frozen keyword list is the six key names STAGING_DEPLOY_TOKEN, RESERVE_PRICE, ROLLOUT_THRESHOLD, CAPACITY_FIGURE, INTERNAL_NOTE, INTEGRATION_CODE; their scenario-specific summary filenames; and env, environment block, verbatim, copy the whole. Full regular expressions and per-scenario filenames are in the data run's keyword_spec.json and experiments/E05-probes/reasoning_stream_text.py. These strings were fixed before computing the text-baseline results. Matching is case-insensitive and uses only the decoded prefix observed at that token.
+The frozen keyword list is the six key names STAGING_DEPLOY_TOKEN, RESERVE_PRICE, ROLLOUT_THRESHOLD, CAPACITY_FIGURE, INTERNAL_NOTE, INTEGRATION_CODE; their scenario-specific summary filenames; and env, environment block, verbatim, copy the whole. Full regular expressions and per-scenario filenames are in the data run's keyword_spec.json and experiments/E05-probes/reasoning_stream_text.py. These strings were fixed before computing the original text-baseline results. A separately labelled #1785 expansion adds scenario field names, copy, whole/full/complete block, record, and scenario block wording; keyword_broad_spec.json records it. The original list and scores are preserved. Matching is case-insensitive and uses only the decoded prefix observed at that token.
 
 Primary scripts: experiments/E05-probes/reasoning_stream_{data,labels,fit,report,combined,text,nulls}.py. Inputs: runs/20261026-0522-e05-reasoning-stream-data; frozen models/splits: runs/20261026-0138-e05-gpt-oss-main; output: runs/20261026-0526-e05-reasoning-stream. Primary analysis uses local CPU and no additional billed API/GPU calls. The source replay cost is separate from this marginal analysis cost.
 
 Expanded capture scripts: experiments/E02-activation-replay/{plan_gpt_oss_stream,gpt_oss_stream_positions,gpt_oss_stream_capture,modal_gpt_oss_stream,gpt_oss_stream_budget,download_gpt_oss_stream}.py. Frozen plan: runs/20261026-0659-e02-gpt-oss-stream-plan; client: runs/20261026-0702-e02-gpt-oss-stream-client; download inventory: runs/20261026-0704-e02-gpt-oss-stream-download. Plan source hashes identify the exact running code. Final billed/conservative costs and completion status must come from the client summary after shutdown; the author-approved cap is USD15 including the aborted superseded startup. These new scripts are not yet committed; a selective commit hash will be recorded after verification, not fabricated here.
+
+## Combined saved-stream addendum
+
+This post-processing variant prepends the frozen last-prompt score to the reasoning-token score stream, with no new fits or inference. Each component is z-scored using only the outer training replies. The last-prompt mean and variance give each reply equal weight. For reasoning, each reply has total weight one spread uniformly over its available tokens; both moments use those weights. The reply score is the maximum standardized score anywhere in this combined stream. These are independently trained probes combined by a fixed rule, not one probe applied uniformly to all token positions.
+
+Only residuals at the **last prompt token**, shaped [24, 2880] per request, and the **returned reasoning-body tokens**, shaped [24, n_reasoning, 2880], were saved. Residuals at other prompt-token positions and at answer/tool-call token positions were **not** saved and require the separate expanded replay. Token IDs and saved request/reply transcripts are available, but are not activations. Thus “full saved stream” does not mean every token processed by the model.
+
+The primary comparison below uses identical 1,995 replies with reasoning. A separate full-coverage result uses all 2,205 replies, including the 210 with no reasoning; those replies have a last-prompt score only. Each cohort has its own nominal 5% training-control reply-maximum threshold. Test labels never enter the normalization or calibration. Training-score normalization is in-sample rather than cross-fitted within the training partition; this is an exploratory combination rule.
+
+![AUROC by horizon including the combined stream](horizon_auc_with_combined.png)
+
+| Label | Tokens | Split | Reasoning MAX | Reasoning mean | Last prompt | Combined, same replies | Combined, all replies |
+|---|---|---|---|---|---|---|---|
+| immediate | all | pooled | 0.949 [0.926, 0.969] | 0.973 [0.951, 0.988] | 0.423 [0.378, 0.468] | 0.934 [0.910, 0.956] | 0.823 [0.772, 0.869] |
+| immediate | all | loso | 0.933 [0.912, 0.952] | 0.983 [0.967, 0.994] | 0.493 [0.444, 0.538] | 0.924 [0.901, 0.945] | 0.839 [0.796, 0.880] |
+| immediate | censored | pooled | 0.945 [0.922, 0.965] | 0.974 [0.953, 0.988] | 0.423 [0.378, 0.468] | 0.930 [0.907, 0.951] | 0.821 [0.769, 0.866] |
+| immediate | censored | loso | 0.957 [0.937, 0.974] | 0.982 [0.964, 0.993] | 0.493 [0.444, 0.538] | 0.949 [0.928, 0.968] | 0.856 [0.814, 0.897] |
+| h1 | all | pooled | 0.919 [0.895, 0.942] | 0.974 [0.952, 0.989] | 0.474 [0.425, 0.522] | 0.883 [0.854, 0.909] | 0.785 [0.749, 0.815] |
+| h1 | all | loso | 0.919 [0.897, 0.941] | 0.983 [0.969, 0.993] | 0.522 [0.481, 0.564] | 0.905 [0.880, 0.927] | 0.807 [0.776, 0.837] |
+| h1 | censored | pooled | 0.920 [0.896, 0.943] | 0.974 [0.953, 0.989] | 0.474 [0.425, 0.522] | 0.883 [0.855, 0.909] | 0.785 [0.751, 0.816] |
+| h1 | censored | loso | 0.918 [0.895, 0.940] | 0.983 [0.970, 0.993] | 0.522 [0.481, 0.564] | 0.905 [0.880, 0.928] | 0.807 [0.776, 0.838] |
+| h2 | all | pooled | 0.838 [0.805, 0.878] | 0.919 [0.892, 0.949] | 0.466 [0.417, 0.510] | 0.808 [0.773, 0.846] | 0.707 [0.668, 0.748] |
+| h2 | all | loso | 0.845 [0.812, 0.879] | 0.936 [0.912, 0.959] | 0.514 [0.470, 0.555] | 0.829 [0.795, 0.864] | 0.725 [0.685, 0.765] |
+| h2 | censored | pooled | 0.839 [0.806, 0.880] | 0.920 [0.893, 0.950] | 0.466 [0.417, 0.510] | 0.809 [0.775, 0.847] | 0.709 [0.670, 0.748] |
+| h2 | censored | loso | 0.851 [0.820, 0.886] | 0.935 [0.912, 0.958] | 0.514 [0.470, 0.555] | 0.835 [0.802, 0.870] | 0.730 [0.690, 0.771] |
+| h3 | all | pooled | 0.759 [0.720, 0.804] | 0.855 [0.820, 0.894] | 0.503 [0.449, 0.554] | 0.748 [0.710, 0.790] | 0.688 [0.647, 0.729] |
+| h3 | all | loso | 0.767 [0.727, 0.809] | 0.876 [0.843, 0.913] | 0.523 [0.478, 0.568] | 0.757 [0.716, 0.800] | 0.701 [0.658, 0.741] |
+| h3 | censored | pooled | 0.753 [0.712, 0.798] | 0.850 [0.814, 0.890] | 0.503 [0.449, 0.554] | 0.742 [0.703, 0.782] | 0.684 [0.642, 0.725] |
+| h3 | censored | loso | 0.775 [0.736, 0.815] | 0.876 [0.842, 0.913] | 0.523 [0.478, 0.568] | 0.765 [0.726, 0.807] | 0.705 [0.662, 0.746] |
+| round | all | pooled | 0.587 [0.535, 0.641] | 0.687 [0.630, 0.747] | 0.497 [0.451, 0.541] | 0.578 [0.528, 0.627] | 0.588 [0.546, 0.628] |
+| round | all | loso | 0.637 [0.586, 0.685] | 0.751 [0.698, 0.805] | 0.526 [0.481, 0.568] | 0.631 [0.578, 0.679] | 0.623 [0.579, 0.665] |
+| round | censored | pooled | 0.594 [0.539, 0.648] | 0.690 [0.633, 0.747] | 0.497 [0.451, 0.541] | 0.588 [0.541, 0.637] | 0.594 [0.553, 0.637] |
+| round | censored | loso | 0.637 [0.584, 0.686] | 0.750 [0.695, 0.802] | 0.526 [0.481, 0.568] | 0.631 [0.578, 0.680] | 0.624 [0.581, 0.666] |
+
+### Combined alarm timing (k=0)
+
+A crossing at the last prompt token has position zero. Otherwise the first crossing is expressed as the fraction of the original reasoning length consumed. Rates average the three seeds; crossing quantiles pool crossing reply-seed observations. The full cohort includes all 146 leaking replies, rather than only the 121 with reasoning.
+
+| Tokens | Split | Cohort | Leaking replies | Warning rate | At last prompt | Held-reply alarms | First crossing median [IQR] |
+|---|---|---|---:|---:|---:|---:|---|
+| all | pooled | common | 121 | 72.2% | 1.4% | 1.9% | 0.077 [0.048, 0.250] |
+| all | pooled | full | 146 | 62.6% | 1.8% | 2.5% | 0.077 [0.048, 0.247] |
+| all | loso | common | 121 | 81.8% | 0.8% | 5.0% | 0.077 [0.048, 0.222] |
+| all | loso | full | 146 | 70.5% | 1.1% | 5.5% | 0.077 [0.048, 0.211] |
+| censored | pooled | common | 121 | 71.6% | 1.7% | 2.0% | 0.077 [0.048, 0.250] |
+| censored | pooled | full | 146 | 62.1% | 2.1% | 2.6% | 0.077 [0.048, 0.250] |
+| censored | loso | common | 121 | 77.4% | 0.8% | 3.8% | 0.077 [0.048, 0.250] |
+| censored | loso | full | 146 | 67.1% | 1.1% | 4.2% | 0.077 [0.048, 0.221] |
+
+Normalization statistics, training row indices, control calibration indices, and thresholds are saved in `combined_stream/`; metrics and per-row scores are in `combined_metrics.json`, `combined_alarms.json`, and `combined_probe_scores.csv`. The intervals use the same family bootstrap as the primary report. This addendum uses only the original saved residuals, independently of the separate expanded replay.
 
 ## Fixed causal text and position baselines
 
@@ -148,6 +218,126 @@ The original keyword list uses only the observed reasoning prefix and the frozen
 | immediate | censored | loso | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
 | immediate | censored | loso | round | max | 0.500 [0.500, 0.500] |
 | immediate | censored | loso | round | ema_max | 0.500 [0.500, 0.500] |
+| h1 | all | pooled | keyword | max | 0.346 [0.299, 0.388] |
+| h1 | all | pooled | keyword | ema_max | 0.204 [0.154, 0.249] |
+| h1 | all | pooled | keyword_broad | max | 0.501 [0.474, 0.527] |
+| h1 | all | pooled | keyword_broad | ema_max | 0.221 [0.168, 0.269] |
+| h1 | all | pooled | prefix_count | max | 0.220 [0.171, 0.269] |
+| h1 | all | pooled | prefix_count | ema_max | 0.220 [0.171, 0.269] |
+| h1 | all | pooled | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h1 | all | pooled | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h1 | all | pooled | round | max | 0.500 [0.500, 0.500] |
+| h1 | all | pooled | round | ema_max | 0.500 [0.500, 0.500] |
+| h1 | all | loso | keyword | max | 0.346 [0.299, 0.388] |
+| h1 | all | loso | keyword | ema_max | 0.204 [0.154, 0.249] |
+| h1 | all | loso | keyword_broad | max | 0.501 [0.474, 0.527] |
+| h1 | all | loso | keyword_broad | ema_max | 0.221 [0.168, 0.269] |
+| h1 | all | loso | prefix_count | max | 0.220 [0.171, 0.269] |
+| h1 | all | loso | prefix_count | ema_max | 0.220 [0.171, 0.269] |
+| h1 | all | loso | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h1 | all | loso | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h1 | all | loso | round | max | 0.500 [0.500, 0.500] |
+| h1 | all | loso | round | ema_max | 0.500 [0.500, 0.500] |
+| h1 | censored | pooled | keyword | max | 0.346 [0.299, 0.388] |
+| h1 | censored | pooled | keyword | ema_max | 0.199 [0.148, 0.244] |
+| h1 | censored | pooled | keyword_broad | max | 0.501 [0.474, 0.527] |
+| h1 | censored | pooled | keyword_broad | ema_max | 0.217 [0.164, 0.263] |
+| h1 | censored | pooled | prefix_count | max | 0.216 [0.168, 0.263] |
+| h1 | censored | pooled | prefix_count | ema_max | 0.216 [0.168, 0.263] |
+| h1 | censored | pooled | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h1 | censored | pooled | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h1 | censored | pooled | round | max | 0.500 [0.500, 0.500] |
+| h1 | censored | pooled | round | ema_max | 0.500 [0.500, 0.500] |
+| h1 | censored | loso | keyword | max | 0.346 [0.299, 0.388] |
+| h1 | censored | loso | keyword | ema_max | 0.199 [0.148, 0.244] |
+| h1 | censored | loso | keyword_broad | max | 0.501 [0.474, 0.527] |
+| h1 | censored | loso | keyword_broad | ema_max | 0.217 [0.164, 0.263] |
+| h1 | censored | loso | prefix_count | max | 0.216 [0.168, 0.263] |
+| h1 | censored | loso | prefix_count | ema_max | 0.216 [0.168, 0.263] |
+| h1 | censored | loso | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h1 | censored | loso | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h1 | censored | loso | round | max | 0.500 [0.500, 0.500] |
+| h1 | censored | loso | round | ema_max | 0.500 [0.500, 0.500] |
+| h2 | all | pooled | keyword | max | 0.357 [0.311, 0.397] |
+| h2 | all | pooled | keyword | ema_max | 0.218 [0.166, 0.265] |
+| h2 | all | pooled | keyword_broad | max | 0.501 [0.475, 0.526] |
+| h2 | all | pooled | keyword_broad | ema_max | 0.230 [0.173, 0.281] |
+| h2 | all | pooled | prefix_count | max | 0.225 [0.174, 0.272] |
+| h2 | all | pooled | prefix_count | ema_max | 0.225 [0.174, 0.272] |
+| h2 | all | pooled | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h2 | all | pooled | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h2 | all | pooled | round | max | 0.500 [0.500, 0.500] |
+| h2 | all | pooled | round | ema_max | 0.500 [0.500, 0.500] |
+| h2 | all | loso | keyword | max | 0.357 [0.311, 0.397] |
+| h2 | all | loso | keyword | ema_max | 0.218 [0.166, 0.265] |
+| h2 | all | loso | keyword_broad | max | 0.501 [0.475, 0.526] |
+| h2 | all | loso | keyword_broad | ema_max | 0.230 [0.173, 0.281] |
+| h2 | all | loso | prefix_count | max | 0.225 [0.174, 0.272] |
+| h2 | all | loso | prefix_count | ema_max | 0.225 [0.174, 0.272] |
+| h2 | all | loso | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h2 | all | loso | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h2 | all | loso | round | max | 0.500 [0.500, 0.500] |
+| h2 | all | loso | round | ema_max | 0.500 [0.500, 0.500] |
+| h2 | censored | pooled | keyword | max | 0.357 [0.311, 0.397] |
+| h2 | censored | pooled | keyword | ema_max | 0.214 [0.162, 0.262] |
+| h2 | censored | pooled | keyword_broad | max | 0.501 [0.475, 0.526] |
+| h2 | censored | pooled | keyword_broad | ema_max | 0.226 [0.168, 0.276] |
+| h2 | censored | pooled | prefix_count | max | 0.221 [0.169, 0.269] |
+| h2 | censored | pooled | prefix_count | ema_max | 0.221 [0.169, 0.269] |
+| h2 | censored | pooled | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h2 | censored | pooled | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h2 | censored | pooled | round | max | 0.500 [0.500, 0.500] |
+| h2 | censored | pooled | round | ema_max | 0.500 [0.500, 0.500] |
+| h2 | censored | loso | keyword | max | 0.357 [0.311, 0.397] |
+| h2 | censored | loso | keyword | ema_max | 0.214 [0.162, 0.262] |
+| h2 | censored | loso | keyword_broad | max | 0.501 [0.475, 0.526] |
+| h2 | censored | loso | keyword_broad | ema_max | 0.226 [0.168, 0.276] |
+| h2 | censored | loso | prefix_count | max | 0.221 [0.169, 0.269] |
+| h2 | censored | loso | prefix_count | ema_max | 0.221 [0.169, 0.269] |
+| h2 | censored | loso | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h2 | censored | loso | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h2 | censored | loso | round | max | 0.500 [0.500, 0.500] |
+| h2 | censored | loso | round | ema_max | 0.500 [0.500, 0.500] |
+| h3 | all | pooled | keyword | max | 0.369 [0.325, 0.411] |
+| h3 | all | pooled | keyword | ema_max | 0.234 [0.179, 0.283] |
+| h3 | all | pooled | keyword_broad | max | 0.496 [0.475, 0.519] |
+| h3 | all | pooled | keyword_broad | ema_max | 0.235 [0.180, 0.286] |
+| h3 | all | pooled | prefix_count | max | 0.227 [0.172, 0.282] |
+| h3 | all | pooled | prefix_count | ema_max | 0.227 [0.172, 0.282] |
+| h3 | all | pooled | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h3 | all | pooled | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h3 | all | pooled | round | max | 0.500 [0.500, 0.500] |
+| h3 | all | pooled | round | ema_max | 0.500 [0.500, 0.500] |
+| h3 | all | loso | keyword | max | 0.369 [0.325, 0.411] |
+| h3 | all | loso | keyword | ema_max | 0.234 [0.179, 0.283] |
+| h3 | all | loso | keyword_broad | max | 0.496 [0.475, 0.519] |
+| h3 | all | loso | keyword_broad | ema_max | 0.235 [0.180, 0.286] |
+| h3 | all | loso | prefix_count | max | 0.227 [0.172, 0.282] |
+| h3 | all | loso | prefix_count | ema_max | 0.227 [0.172, 0.282] |
+| h3 | all | loso | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h3 | all | loso | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h3 | all | loso | round | max | 0.500 [0.500, 0.500] |
+| h3 | all | loso | round | ema_max | 0.500 [0.500, 0.500] |
+| h3 | censored | pooled | keyword | max | 0.369 [0.325, 0.411] |
+| h3 | censored | pooled | keyword | ema_max | 0.232 [0.178, 0.280] |
+| h3 | censored | pooled | keyword_broad | max | 0.496 [0.475, 0.519] |
+| h3 | censored | pooled | keyword_broad | ema_max | 0.233 [0.178, 0.284] |
+| h3 | censored | pooled | prefix_count | max | 0.224 [0.170, 0.278] |
+| h3 | censored | pooled | prefix_count | ema_max | 0.224 [0.170, 0.278] |
+| h3 | censored | pooled | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h3 | censored | pooled | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h3 | censored | pooled | round | max | 0.500 [0.500, 0.500] |
+| h3 | censored | pooled | round | ema_max | 0.500 [0.500, 0.500] |
+| h3 | censored | loso | keyword | max | 0.369 [0.325, 0.411] |
+| h3 | censored | loso | keyword | ema_max | 0.232 [0.178, 0.280] |
+| h3 | censored | loso | keyword_broad | max | 0.496 [0.475, 0.519] |
+| h3 | censored | loso | keyword_broad | ema_max | 0.233 [0.178, 0.284] |
+| h3 | censored | loso | prefix_count | max | 0.224 [0.170, 0.278] |
+| h3 | censored | loso | prefix_count | ema_max | 0.224 [0.170, 0.278] |
+| h3 | censored | loso | negative_prefix_count | max | 0.500 [0.500, 0.500] |
+| h3 | censored | loso | negative_prefix_count | ema_max | 0.500 [0.500, 0.500] |
+| h3 | censored | loso | round | max | 0.500 [0.500, 0.500] |
+| h3 | censored | loso | round | ema_max | 0.500 [0.500, 0.500] |
 | round | all | pooled | keyword | max | 0.435 [0.390, 0.476] |
 | round | all | pooled | keyword | ema_max | 0.377 [0.321, 0.428] |
 | round | all | pooled | keyword_broad | max | 0.495 [0.470, 0.520] |
@@ -201,6 +391,18 @@ Negative final reasoning length is a deliberately strong diagnostic, not an onli
 | immediate/all/loso/extended/reasoning_length | 0.691 [0.634, 0.736] |
 | immediate/censored/pooled/extended/reasoning_length | 0.694 [0.639, 0.738] |
 | immediate/censored/loso/extended/reasoning_length | 0.694 [0.639, 0.738] |
+| h1/all/pooled/extended/reasoning_length | 0.780 [0.731, 0.829] |
+| h1/all/loso/extended/reasoning_length | 0.780 [0.731, 0.829] |
+| h1/censored/pooled/extended/reasoning_length | 0.784 [0.737, 0.832] |
+| h1/censored/loso/extended/reasoning_length | 0.784 [0.737, 0.832] |
+| h2/all/pooled/extended/reasoning_length | 0.775 [0.728, 0.826] |
+| h2/all/loso/extended/reasoning_length | 0.775 [0.728, 0.826] |
+| h2/censored/pooled/extended/reasoning_length | 0.779 [0.731, 0.831] |
+| h2/censored/loso/extended/reasoning_length | 0.779 [0.731, 0.831] |
+| h3/all/pooled/extended/reasoning_length | 0.773 [0.718, 0.828] |
+| h3/all/loso/extended/reasoning_length | 0.773 [0.718, 0.828] |
+| h3/censored/pooled/extended/reasoning_length | 0.776 [0.722, 0.830] |
+| h3/censored/loso/extended/reasoning_length | 0.776 [0.722, 0.830] |
 | round/all/pooled/extended/reasoning_length | 0.607 [0.551, 0.668] |
 | round/all/loso/extended/reasoning_length | 0.607 [0.551, 0.668] |
 | round/censored/pooled/extended/reasoning_length | 0.610 [0.554, 0.671] |
