@@ -62,3 +62,13 @@ confirmed 0.68, with 0.58 moved to the robustness appendix. (Default taken for t
   wording is accurate and correctly scopes "no mix" to the *delayed* strategy. Caveat for the audit:
   the *natural* (non-delayed) prompt gave 6/8 (a mix), so the scoping to the delayed block request
   must stay explicit; do not state "no mix" of Gemma in general.
+
+## Figure structure (claude-4, verified)
+
+- **Round-level confirmation is its own figure, separate from the per-call ladder.** The headline
+  ladder (Fig `fig:headline`) is now a single per-call panel (ever / this-round-or-next / this-call,
+  both models, hollow=development, filled=fresh). The Qwen round-level near-term confirmation is a
+  separate figure in §4.1 (`fig:round`, from `fig_round_confirmation.pdf`), captioned with its own
+  pre-registered leak label. Separation verified clean: §4.1 references `fig:round` (no stale
+  `fig:headline`(b)); no panel-b references to the ladder remain. This resolves the earlier Fig 1
+  overload and the two-labels-on-one-axis risk.
