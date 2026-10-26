@@ -110,6 +110,10 @@ On gpt-oss-20b, Jev flags nearly every call that leaks, but also most calls in r
 Within a scenario and round it ranks the leaking calls below the others.
 Even with its ranking reversed after the fact, it stays below the probe (\cref{app:monitors}).
 
+A text classifier trained on the same input does much better than Jev.
+A bag-of-words classifier trained on the latest incoming message scores \qwenTextClassifierLatest{} on Qwen3-32B, close to the probe, which keeps a small edge on both models (\cref{app:shortcuts}).
+Most of the probe's margin over Jev therefore comes from training on these labels, and reading activations adds a little on top.
+
 \subsection{What the probe is not reading}
 \label{sec:shortcuts}
 

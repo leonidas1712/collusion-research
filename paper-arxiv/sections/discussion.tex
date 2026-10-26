@@ -36,7 +36,7 @@ A deployed alarm would need a threshold set per episode, which catches fewer lea
 
 \paragraph{The text baselines.}
 Our main text monitor is one decision model used zero-shot, with no prompt tuning, while the probe is trained.
-On gpt-oss-20b, a trained bag-of-words classifier on the same input comes close (\gptossTextClassifier{}), so the probe's edge over a trained text baseline is small (\cref{app:shortcuts}).
+A bag-of-words text classifier trained on the same input comes close to the probe on both models, so the probe's edge over a trained text baseline is small (\cref{app:shortcuts}).
 
 \paragraph{Automated labels.}
 The leak label is an exact match on the tool log.
