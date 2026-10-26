@@ -3860,7 +3860,7 @@
     "qwen_no_source_writeback_auroc": {
       "value": 0.959567013095031,
       "macro": "qwenNoSourceWriteback",
-      "dataset": "Qwen development episodes; affected episode excluded",
+      "dataset": "Qwen development episodes; one development source-writeback episode excluded (the other affected episode is fresh)",
       "evaluation": "held-out scenarios",
       "status": "exploratory",
       "run": "runs/20261026-2201-e05-arxiv-qwen-any-public",
@@ -4696,7 +4696,7 @@
       "value": 0.6111662808021784,
       "macro": "qwenRoundALosoSelected",
       "dataset": "original Qwen development round cohort",
-      "evaluation": "held-out scenarios",
+      "evaluation": "Held-out scenarios; A_hazard-trained and inner-layer-selected probe; same 2910 calls/168 positives as eventual-trained no-refit comparison",
       "status": "exploratory",
       "run": "runs/20261025-0730-e05-near-term",
       "format": "decimal",
@@ -5238,7 +5238,7 @@
       "value": 0.5694555842976289,
       "macro": "qwenOriginalNeartermProbe",
       "dataset": "original Qwen development round cohort",
-      "evaluation": "held-out scenarios",
+      "evaluation": "Held-out scenarios; eventual-label-trained probe evaluated against A_hazard without refit; same 2910 calls/168 positives as near-term-refit comparison",
       "status": "exploratory",
       "run": "runs/20261025-0147-e06-monitor-main",
       "format": "decimal",
@@ -12577,6 +12577,140 @@
           "max_absolute_error"
         ]
       }
+    },
+    "qwenSourceWritebackCalls": {
+      "value": 2,
+      "macro": "qwenSourceWritebackCalls",
+      "dataset": "Qwen scored development/fresh calls",
+      "evaluation": "Saved source-file-writeback and round-label audit",
+      "status": "verified",
+      "run": "runs/20261027-0242-e05-arxiv-round2-audit",
+      "format": "integer",
+      "source": {
+        "file": "runs/20261027-0242-e05-arxiv-round2-audit/audit.json",
+        "value_path": [
+          "writebacks",
+          "all",
+          "calls"
+        ]
+      }
+    },
+    "qwenSourceWritebackEpisodes": {
+      "value": 2,
+      "macro": "qwenSourceWritebackEpisodes",
+      "dataset": "Qwen scored development/fresh calls",
+      "evaluation": "Saved source-file-writeback and round-label audit",
+      "status": "verified",
+      "run": "runs/20261027-0242-e05-arxiv-round2-audit",
+      "format": "integer",
+      "source": {
+        "file": "runs/20261027-0242-e05-arxiv-round2-audit/audit.json",
+        "value_path": [
+          "writebacks",
+          "all",
+          "episodes"
+        ]
+      }
+    },
+    "qwenDevSourceWritebackCalls": {
+      "value": 1,
+      "macro": "qwenDevSourceWritebackCalls",
+      "dataset": "Qwen scored development/fresh calls",
+      "evaluation": "Saved source-file-writeback and round-label audit",
+      "status": "verified",
+      "run": "runs/20261027-0242-e05-arxiv-round2-audit",
+      "format": "integer",
+      "source": {
+        "file": "runs/20261027-0242-e05-arxiv-round2-audit/audit.json",
+        "value_path": [
+          "writebacks",
+          "development",
+          "calls"
+        ]
+      }
+    },
+    "qwenDevSourceWritebackEpisodes": {
+      "value": 1,
+      "macro": "qwenDevSourceWritebackEpisodes",
+      "dataset": "Qwen scored development/fresh calls",
+      "evaluation": "Saved source-file-writeback and round-label audit",
+      "status": "verified",
+      "run": "runs/20261027-0242-e05-arxiv-round2-audit",
+      "format": "integer",
+      "source": {
+        "file": "runs/20261027-0242-e05-arxiv-round2-audit/audit.json",
+        "value_path": [
+          "writebacks",
+          "development",
+          "episodes"
+        ]
+      }
+    },
+    "qwenFreshSourceWritebackCalls": {
+      "value": 1,
+      "macro": "qwenFreshSourceWritebackCalls",
+      "dataset": "Qwen scored development/fresh calls",
+      "evaluation": "Saved source-file-writeback and round-label audit",
+      "status": "verified",
+      "run": "runs/20261027-0242-e05-arxiv-round2-audit",
+      "format": "integer",
+      "source": {
+        "file": "runs/20261027-0242-e05-arxiv-round2-audit/audit.json",
+        "value_path": [
+          "writebacks",
+          "fresh",
+          "calls"
+        ]
+      }
+    },
+    "qwenFreshSourceWritebackEpisodes": {
+      "value": 1,
+      "macro": "qwenFreshSourceWritebackEpisodes",
+      "dataset": "Qwen scored development/fresh calls",
+      "evaluation": "Saved source-file-writeback and round-label audit",
+      "status": "verified",
+      "run": "runs/20261027-0242-e05-arxiv-round2-audit",
+      "format": "integer",
+      "source": {
+        "file": "runs/20261027-0242-e05-arxiv-round2-audit/audit.json",
+        "value_path": [
+          "writebacks",
+          "fresh",
+          "episodes"
+        ]
+      }
+    },
+    "qwenRoundLegacyCalls": {
+      "value": 2910,
+      "macro": "qwenRoundLegacyCalls",
+      "dataset": "Qwen scored development/fresh calls",
+      "evaluation": "Saved source-file-writeback and round-label audit",
+      "status": "verified",
+      "run": "runs/20261027-0242-e05-arxiv-round2-audit",
+      "format": "integer",
+      "source": {
+        "file": "runs/20261027-0242-e05-arxiv-round2-audit/audit.json",
+        "value_path": [
+          "round_table_reconciliation",
+          "rows"
+        ]
+      }
+    },
+    "qwenRoundLegacyPositives": {
+      "value": 168,
+      "macro": "qwenRoundLegacyPositives",
+      "dataset": "Qwen scored development/fresh calls",
+      "evaluation": "Saved source-file-writeback and round-label audit",
+      "status": "verified",
+      "run": "runs/20261027-0242-e05-arxiv-round2-audit",
+      "format": "integer",
+      "source": {
+        "file": "runs/20261027-0242-e05-arxiv-round2-audit/audit.json",
+        "value_path": [
+          "round_table_reconciliation",
+          "positives"
+        ]
+      }
     }
   },
   "aliases": {
@@ -13098,7 +13232,7 @@
       "rows": [
         [
           "GPT-OSS",
-          "Input probe",
+          "Last-prompt probe",
           {
             "key": "gptoss_percall_lastprompt_auroc",
             "ci": true
@@ -13138,7 +13272,7 @@
         ],
         [
           "Qwen",
-          "Input probe",
+          "Last-prompt probe",
           {
             "key": "qwen_percall_probe_auroc",
             "ci": true
@@ -13220,7 +13354,7 @@
         ],
         [
           "Qwen",
-          "Exclude source-writeback episode",
+          "Exclude development writeback episode",
           {
             "key": "qwen_no_source_writeback_auroc",
             "ci": true
@@ -13634,7 +13768,7 @@
         [
           "Qwen development",
           "Near-term",
-          "Probe",
+          "Probe (no refit)",
           {
             "key": "qwenOriginalNeartermProbe",
             "ci": true
@@ -13938,10 +14072,10 @@
           "None"
         ],
         [
-          "E08 Qwen diagnostic (1700/1703)",
+          "E08 Qwen replay",
           "Current-call emission",
           "Existing calls; no generation",
-          "Rejected: prompt-only FORBID failed reproduction; accepted 1717 used saved-reply teacher forcing."
+          "A first replay did not reproduce the frozen scores and was discarded; the reported replay holds the saved reply fixed and reproduces them."
         ]
       ],
       "columns": "llll"
