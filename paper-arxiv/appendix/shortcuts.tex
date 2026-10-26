@@ -31,7 +31,7 @@ A baseline that knows only whether the call's action is a file write scores well
 \paragraph{A trained text classifier.}
 To test whether the same input text carries the signal, we trained a bag-of-words classifier (TF-IDF features and logistic regression) on each call's input, with the secret masked, on the same calls, folds and weights as the probe.
 On gpt-oss-20b it comes close to the last-prompt probe, and the probe's paired edge is small but its interval excludes zero (\cref{tab:text-baselines}).
-So most of the per-call signal is present in the text the model reads, and the probe's advantage over the zero-shot monitor comes mostly from training, not from access to activations.
+So on gpt-oss-20b most of the per-call signal is present in the text the model reads, and the probe's advantage over the zero-shot monitor comes mostly from training rather than from reading activations, though the probe keeps a small, reliable edge over the trained text classifier.
 
 \begin{table}[h]
   \centering
