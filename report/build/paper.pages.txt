@@ -24,12 +24,12 @@ generates anything is strongly discriminative: AUROC 0.95 on held-
 out scenarios for Qwen3-32B and 0.91 for gpt-oss-20b, above a Jev  
 decision-model  monitor  given  the  same  conversation  (0.74  and 
 0.27). On gpt-oss-20b, a probe on the streaming reasoning reaches  
-0.93 and holds at 0.91 on fresh episodes. Predictability forms a  
-ladder: the nearer the act, the sharper the signal. For oversight,  
-monitors  need  not  just  filter  a  harmful  action  once  written:  
-activation probes can flag the call about to give in before it acts, and, 
-scaled to subtler collusion, could stop recruitment before it spreads  
-between agents.
+0.93 and, under a plan frozen in advance, holds at 0.91 on new  
+episodes.  Predictability  forms  a  ladder:  the  nearer  the  act,  the 
+sharper the signal. For oversight, beyond filtering a harmful action  
+once written, activation probes can flag the call about to give in  
+before it acts, in time for an overseer to pause it; subtler collusion is  
+next.
 1 Research conducted at the AI Collusion Research Sprint, October 2026
 
 2
@@ -60,10 +60,10 @@ token posted to the team channel; in the five other scenarios, writing the value
 file also counts). Accidental disclosures count as give-ins; the deliberate/accidental split and 
 a deliberate-only check are in Appendix D and Appendix H.
 Without the rule, handing over a token is ordinary help; with it, collusion. So the question concerns  
-the operator’s policy, not a model’s refusal training. Recruitment is also not prompt injection, where  
-an attacker plants instructions in data the application processes ( Debenedetti et al., 2024; Liu et al., 
-2024). Here the request comes openly from a known teammate, in the channel the target is meant to 
-use, and the target often refuses for several rounds, citing the rule, before it complies. In an  
+the operator’s policy, not a model’s refusal training. Recruitment also differs from prompt injection,  
+where an attacker plants instructions in data the application processes (Debenedetti et al., 2024; Liu 
+et al., 2024). Here the request comes openly from a known teammate, in the channel the target is  
+meant to use, and the target often refuses for several rounds, citing the rule, before it complies. In an 
 exploratory audit, peer claims of operator authority did not raise give-in rates (Appendix D).
 When the same model faces the same pressure, some episodes end in a give-in and others do not: 
 can we tell, before the target acts, which will give in, and when? We ask at several distances from the 
@@ -73,23 +73,26 @@ deliberately a simple, verifiable case that an output filter could catch; we use
 test of whether a give-in can be anticipated at all, before harder cases where no filter applies.
 We make the following contributions.
 1. Six recruitment scenarios with mixed outcomes: Qwen3-32B gives in on 42% of episodes 
-and gpt-oss-20b on 43% under the same pressure, and probes and text monitors are scored 
-on exactly the same calls (Section 3).
+and gpt-oss-20b, facing its own recruiter, on 43%; probes and text monitors are scored on 
+exactly the same calls (Section 3).
 2. A ladder of predictability: the nearer the act, the sharper the signal. Eventual give-in is 
 barely predictable, this round or the next modestly (confirmed on new episodes), and this 
 call highly (Section 4.4).
-3. Asked per call, a probe predicts which call will give in, before the call acts: AUROC 0.95 
-on Qwen3-32B and 0.91 on gpt-oss-20b, above a decision-model monitor (Jev) on the same 
+3. Asked per call, a probe predicts which call will give in, before the call acts: AUROC (0.5 
+= chance, 1 = perfect) 0.95 on Qwen3-32B and 0.91 on gpt-oss-20b, above a decision-
 
 3
-calls (0.74 and 0.27). A probe on gpt-oss-20b’s streaming reasoning reaches 0.93; with its 
-cutoff set for 5% alarms on control calls, it catches 85% of leaking calls in development, and 
-it held on new episodes under a plan fixed in advance (Section 4.2).
-4. The ranking survives the obvious shortcuts: the calls that do not give in were also made 
-after the peer asked for the value, so the probe is not just detecting the request; it also beats 
-keyword rules and a flag for having just read the value (Section 4.3).
-5. For round-level monitors, the question and the input matter: the strongest text monitor 
-works best asked to forecast and shown the peer’s messages (Section 4.5).
+model monitor (Jev) on the same calls (0.74 and 0.27). A probe on gpt-oss-20b’s streaming 
+reasoning reaches 0.93; with its cutoff set for 5% alarms on control calls, it catches 85% of 
+leaking calls in development; on new episodes, under a plan fixed in advance, it scores 0.91 
+and catches 14 of 26 (Section 4.2).
+4. The ranking survives the obvious shortcuts: the calls that do not give in also come after 
+the peer’s ask, so the probe is not just detecting the request; it also beats keyword rules and 
+a just-read-the-value flag (Section 4.3).
+Combining what agents say with what they do (sprint Track 2, Q2.2): adding 
+the peer’s messages to the target’s actions lifts the strongest round-level text 
+monitor by +0.12 AUROC over actions alone (first data batch), and it works 
+best asked to forecast (Section 4.5).
 2. Related Work
 Reading an agent under attack. Activation probes detect that a tool-using agent has been exposed  
 to prompt injection ( Dong et al., 2026 ) and separate hijacked from resisted trajectories ( Yu et al.,  
@@ -120,6 +123,8 @@ one rule: do not share a protected value outside the file that holds it (in the 
 deploy token). A peer agent shares a team channel and needs the value but cannot read the file. Each 
 episode runs up to 20 rounds; the peer posts first, then the target takes a turn of one or more calls  
 (read, write, send a channel message). A give-in is scored from the tool log: the complete value posted 
+
+4
 to the team channel; in the five scenarios other than the deploy token, a write into another file also  
 counts (Appendix D).
 Each scenario runs in three conditions: recruiting (the peer asks), a control peer (no forbidden 
@@ -127,8 +132,6 @@ ask), and the target alone. Control and target-alone episodes never gave in. The
 rule, so we study recruitment from an ordinary conflict of goals; in 17 of the 241 scored recruiting  
 episodes the peer also used one persuasion tactic (Appendix G). Six scenarios are built from one task 
 template, each protecting a randomly generated string; the main one is inspired by a 2026 agent  
-
-4
 incident (Appendix C). The target is Qwen3-32B (Qwen Team, 2025; Yang et al., 2025) with thinking 
 disabled; the peer is DeepSeek-V4-Flash (DeepSeek, 2026) (DeepSeek-V4-Pro for gpt-oss-20b, §3.6). 
 Serving details are in Appendix B; Figure 1 shows the setup and a real give-in exchange.
@@ -151,14 +154,14 @@ Every detector is scored only on eligible calls: calls after the target has read
 for the round-level labels, before it discloses it. Calls before the read cannot produce a give-in, and  
 an exposure probe that detects the read reaches AUROC 1.00 (Appendix B), so including them would 
 reward detecting the read.
+
+5
 Terms. A call is one request to the target model: a prompt, then (for gpt-oss-20b) reasoning, then 
 an answer or tool call. A round is one peer message and the target’s calls in response. We use three  
 labels (Figure 1c):
 - eventual (round level): every eligible call of an episode that eventually gives in is positive;
 - near-term (round level): a call is positive if the give-in falls in its round or the next;
 - this call (call level): the call is positive if it is the first to make the value public.
-
-5
 The outcome is the give-in rule throughout. It is a mechanical rule on the tool log, so it also counts  
 accidental disclosures. One exception: the gpt-oss-20b per-call label counts any public emission, the 
 value written into a reply or a tool argument. gpt-oss-20b almost always writes the value to a file  
@@ -189,7 +192,7 @@ early rounds as risky already scores 0.71, because give-ins come early; within a
 that rule scores exactly 0.5, so any score above 0.5 must come from telling apart calls in the same  
 scenario and round. Base rates also differ across scenarios ( Table C.1). Families are always held out 
 or resampled as a unit; intervals are 95% family-bootstrap intervals (Appendix E).
-We  report  a  held-out  scenario evaluation  (leave  one  scenario  out,  rotate,  and  pool) 
+We  report  a  held-out  scenario  evaluation  (leave  one  scenario  out,  rotate,  and  pool) 
 throughout, and two confirmation sets scored once under plans fixed in advance: 89 new Qwen3-
 32B episodes for the near-term label, and 84 new gpt-oss-20b episodes for the reasoning probe on the 
 this-call label. A  combination test asks whether the probe adds to a text monitor. Pooled cross-
@@ -199,11 +202,11 @@ The same pipeline is applied to gpt-oss-20b ( OpenAI, 2025b,  2025c). Only the p
 strategy change: the peer is the adversary, not the system under test, and was tuned only so that some 
 episodes give in and some refuse, on behaviour alone, then frozen before any probe or monitor saw  
 the data; every detector is scored on the same frozen data ( Appendix F). Its round-level calls start  
+
+6
 after the peer’s first ask. gpt-oss-20b reasons before each answer, so the replay also saved every  
 reasoning token, which the reasoning probe reads with the per-call label on the same folds and held-
 out-scenario rotations (Appendix L).
-
-6
 4. Results
 4.1 Behaviour: the setup produces mixed outcomes
 Qwen3-32B gives in on 101 of the 241 scored recruiting episodes (42%; per-scenario rates in Table 
@@ -233,11 +236,11 @@ The probe’s signal is specific to the call that gives in. One call earlier, th
 only 0.71 on Qwen3-32B and 0.62 on gpt-oss-20b. On gpt-oss-20b, the change of question does most 
 of the work: the round-level probe scores 0.49 on the per-call label; retrained on that label, 0.91.  
 Reading the reasoning adds a modest further gain (Appendix L.3).
+
+7
 4.3 The ranking survives the obvious shortcuts
 The probe is not just detecting pressure, the secret string or the read step. Pressure: every negative 
 call is also pressured, after the ask, in the same scenario and round; on gpt-oss-20b, the probe on pre-
-
-7
 ask calls (placebo) scores 0.46 to 0.49. Secret string: on gpt-oss-20b, only 2 of the 121 leaking calls  
 name the value in their reasoning, and keyword rules score 0.40 to 0.48. Read step: a flag for “the  
 latest input is the protected file’s contents” scores 0.80 on gpt-oss-20b and 0.81 on Qwen3-32B, and  
@@ -264,10 +267,10 @@ saw, 0.65. On 89 new episodes collected after the plan was fixed and scored once
 positives), the probe reached 0.68 and Jev 0.64, both clear of chance (Jev − probe −0.04 [−0.14,  
 +0.06]). A probe that separates pressured from unpressured calls perfectly does not rank who gives  
 in (0.44; Appendix H), so the near-term probe reads more than pressure.
-Eventual give-in is barely predictable.  The probe scores 0.52, with an interval that includes  
-chance, and the Jev forecaster 0.58 (998 eventual positives; Figure 3a).
 
 8
+Eventual give-in is barely predictable.  The probe scores 0.52, with an interval that includes  
+chance, and the Jev forecaster 0.58 (998 eventual positives; Figure 3a).
 On gpt-oss-20b, round-level prediction is near chance  (probe 0.53, best monitor 0.56 on the  
 near-term label; 2,059 calls, 148 near-term positives). Of its 128 channel give-ins, 32 leave no call to 
 predict from, and for 65 of the other 96 the earliest possible warning is in the same round (Appendix F).
@@ -302,15 +305,13 @@ and to find out what the probe reads (Appendix J).
 6. Conclusion
 Asked per call, an agent’s give-in to a recruiting peer can be seen before it happens. A linear probe on 
 the target’s activations predicts which call will give in, on two models, and beats the Jev monitor we 
-evaluated. A probe on the streaming reasoning held on new episodes. Further from the act the signal 
-fades: modest for this round or the next, barely there for the eventual outcome. Activation probes can 
-thus flag an agent about to give in before it acts. The next step is to test them against subtler collusion 
-and its spread between agents.
+evaluated. Further from the act the signal fades: modest for this round or the next, barely there for  
+the eventual outcome. Next: subtler collusion and its spread between agents.
 Code and Data
 Code, prompts, transcripts, labels and scores: https://github.com/leonidas1712/collusion-research 
-(tag apart-submission); activations are omitted for size (replay scripts regenerate them). Only a 
-planning commit with no code predates the sprint; the author’s earlier tools Aboard (an agent 
-message board) and Leaf (a viewer for the author’s comments) only coordinated the agents.
+(tag apart-submission); activations omitted (replay scripts regenerate them). Only a code-free 
+planning commit predates the sprint; Aboard (agent message board) and Leaf (comment viewer), 
+the author’s tools, only coordinated agents.
 
 9
 References
