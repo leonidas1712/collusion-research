@@ -150,7 +150,7 @@ Next steps are to score per-call probes in larger multi-agent settings, with sev
 
 ## 6. Conclusion
 
-We asked whether an agent's give-in to a recruiting peer can be seen before it happens. Asked per call, it can: a linear probe on the target's activations predicts which call will give in, on two models, above the evaluated Jev monitor, and a probe on the streaming reasoning held on new episodes. Further from the act the signal fades, to modest for this round or the next and barely for the eventual outcome. This supports further study of warnings before the output; preventing recruitment and its spread remains untested.
+We asked whether an agent's give-in to a recruiting peer can be seen before it happens. Asked per call, it can: a linear probe on the target's activations predicts which call will give in, on two models, above the evaluated Jev monitor, and a probe on the streaming reasoning held on new episodes. Further from the act the signal fades, to modest for this round or the next and barely for the eventual outcome. Activation probes can thus flag an agent about to give in before it acts; the next step is to test them against subtler collusion and its spread between agents.
 
 ---
 
