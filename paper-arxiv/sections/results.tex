@@ -8,7 +8,7 @@ Two were pre-registered: before collecting the fresh test episodes, we wrote dow
   \centering
   \caption{\textbf{Results at a glance.} AUROC within scenario and round. Development results are on held-out scenarios; intervals are shown in the figures. ``Pre-registered'' means the test was fixed in a committed plan before its episodes were collected.}
   \label{tab:glance}
-  \footnotesize
+  \small
   \begin{tabular}{@{}llllc l@{}}
     \toprule
     Question & Model & Detector & Episodes & Pre-registered & AUROC \\
@@ -16,8 +16,11 @@ Two were pre-registered: before collecting the fresh test episodes, we wrote dow
     This call? & gpt-oss-20b & reasoning probe & fresh test & yes & \gptossFreshReasoning{} \\
     This round or next? & Qwen3-32B & probe / Jev & fresh test & yes & \qwenFreshNearProbe{} / \qwenFreshNearJev{} \\
     This call? & Qwen3-32B & last-prompt probe & fresh test & no & \qwenFreshCallProbe{} \\
+    This call? & gpt-oss-20b & last-prompt probe & fresh test & no & \gptossFreshCallProbe{} \\
     This call? & Qwen3-32B & last-prompt probe / Jev & development & no & \qwenCallProbe{} / \qwenCallJev{} \\
     This call? & gpt-oss-20b & last-prompt probe / Jev & development & no & \gptossCallProbe{} / \gptossCallJev{} \\
+    This round or next? & Qwen3-32B & last-prompt probe & development & no & \qwenNearProbe{} \\
+    This round or next? & gpt-oss-20b & last-prompt probe & development & no & \gptossNearProbe{} \\
     Ever? & Qwen3-32B & last-prompt probe & development & no & \qwenEverProbe{} \\
     Ever? & gpt-oss-20b & last-prompt probe & development & no & \gptossEverProbe{} \\
     \bottomrule
@@ -58,8 +61,8 @@ It scores \qwenCallProbe{} on Qwen3-32B, reading one position before the call wr
 The Qwen3-32B probe holds on fresh episodes.
 We fit it on the development episodes only, committed it, and then scored it once on the fresh test episodes, which were never used to fit or choose anything for it (AUROC~\qwenFreshCallProbe{}).
 
-Reading the reasoning adds little on gpt-oss-20b.
-The reasoning probe scores \gptossCallReasoning{} on held-out scenarios, close to the last-prompt probe, so most of the signal is present before the model starts to reason.
+On gpt-oss-20b, the last-prompt probe tested the same way scores lower on its fresh episodes (\gptossFreshCallProbe{}) than the pre-registered reasoning probe does on the same calls.
+On development episodes the two probes score about the same (\gptossCallReasoning{} for the reasoning probe), so most of the signal is present before the model starts to reason, but on fresh episodes reading the reasoning helped.
 
 The signal is specific to the call that leaks.
 Asked instead whether the next call will leak, with the leaking call itself removed, the probe scores only \qwenStrictNextProbe{} on Qwen3-32B.
