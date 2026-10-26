@@ -7,7 +7,7 @@ Leo rewrote the abstract for clarity. Use it **verbatim** as the arXiv abstract.
 
 > Just before an AI agent gives in and breaks its operator's rule, a linear probe on its activations can tell. We study recruitment, a common first step of collusion: a peer agent presses a target agent, over many rounds, to reveal a secret its operator told it to keep, such as a deploy token. The target often refuses at first, then gives in. Read at each call before the model generates anything, a probe tells whether that call is about to leak the secret, with AUROC 0.95 on Qwen3-32B. A text monitor given the same conversation scores 0.74. On gpt-oss-20b, a reasoning probe scores 0.91 in a pre-registered test on fresh episodes, catching half of leaking calls at a 2% false-alarm rate.
 >
-> The signal is sharp but short-range. Checked at each call, the probe can tell when the very next output will leak the secret, but it weakens when asked about the next round, and nearly disappears when asked whether an episode will ever leak.
+> The signal is sharp but short-range. Checked at each call, the probe can tell when the very next output will leak the secret, but it weakens when asked about the next round, and is weak when asked whether an episode will ever leak.
 >
 > For multi-agent oversight, this suggests a cheap monitor that runs on every call and pauses an agent just before it gives in, catching what a text monitor misses. Probes matter most where output filters fail, such as paraphrased, encoded or slowly coordinated leaks, which we leave to future work.
 
@@ -24,3 +24,6 @@ Leo rewrote the abstract for clarity. Use it **verbatim** as the arXiv abstract.
 **"Pre-registered".** Keep this one word for the gpt-oss test. It is the strongest rigour signal, and it costs a single word. Add no other status words anywhere in the abstract.
 
 **Length.** The author's abstract has more than three numbers. The author's choice overrides the WRITING.md limit here.
+
+## Author edit (26 Oct, ~22:45)
+'nearly disappears' was changed to 'is weak', so the sentence holds for both models (Qwen 0.53, gpt-oss 0.61).

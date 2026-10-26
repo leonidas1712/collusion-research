@@ -16,3 +16,8 @@
    - Report it plainly in the main results as a held-out test on fresh episodes. Add one line in the analysis-history appendix noting that the sprint's pooled analyses had already looked at those episodes, so the test was not pre-registered.
    - Write the result in plain, confident sentences. Do not hedge it.
 8. **Logged for later, not tonight (route 2).** A clean pre-registered confirmation of the per-call result on brand-new Qwen episodes: freeze, collect new episodes, score once. It needs GPU and peer API, roughly $20–40. Revisit only if needed, e.g. for a workshop submission.
+9. **How codex/GPT feedback is used.** Codex and GPT-harness agents are valuable for checking accuracy, but they tend to push toward softening, hedging and qualifier-heavy wording. That is the main source of the sprint paper's poor readability. Their accuracy findings must be acted on. But the *wording* of every fix is decided by a Claude writer under WRITING.md: make the claim precisely true in plain words, or move the detail to the appendix or Limitations. Never paste a codex-suggested qualifier into prose verbatim.
+10. **Two new figures, approved.**
+    - **Probe score through an episode.** Include it only if the spike-at-the-leak behaviour really is there. Choose the episode or episodes by a fixed rule, not by cherry-picking.
+    - **Alarm trade-off curve.** Plot the share of leaks caught against the false-alarm rate, for the probe and for the text monitor, with the operating point marked.
+    The writers decide where each figure goes, keeping the main text at 9–10 pages.
