@@ -4,6 +4,43 @@ Shared notes (not paper prose). Append your own entries; keep sections by owner 
 
 ---
 
+## ROUND 1 (Leo's feedback, 27 Oct ~00:30–02:00): what changed (coordinator)
+
+**Applied from `FEEDBACK_round1.md` and `FEEDBACK_round1b_s44.md`:**
+- **Title and footnote.** New title. A first-page footnote names the sprint; "sprint" appears nowhere else except the analysis-history appendix.
+- **Introduction.** Five paragraphs, with no abstract sentences reused and no priority claim.
+- **Method.** The trained text classifier is now a third detector.
+- **Results.**
+  - §4.1 has the trajectory figure.
+  - New §4.4, "What would deployment cost?", covers the Qwen alarm panel, per-call vs per-episode false alarms, precision (24%) and an episode-level threshold (26% caught, labelled descriptive).
+- **Discussion.** The cascade with two thresholds.
+- **Figures and navigation.** Fig 3 gains the trained-text bar and its new title. A clickable Contents follows the references (41 entries, all verified).
+- **Abstract.** Your text, verbatim.
+- **"Sprint cohort" removed.** The per-episode checks were recounted on the current development episodes, and the unsupported checks were dropped.
+- **Small items.** `claims.md` is updated, and the small fixes are done.
+
+**Corrections to your notes, where the data said otherwise:**
+- **Episode length.** A refusing fresh Qwen episode has a median of **23** calls, not 17. Independence would give 1 − 0.95²³ ≈ 69%; the observed rate is **59%** because flags cluster.
+- **Strict threshold.** Holding refusing episodes to about 5% needs about **0.2%** per call, not 0.3%.
+- **The recalled gpt-oss "a third / 8%".** That was a development figure. The paper now uses fresh-episode numbers.
+- **"Control calibration underestimates refusing false alarms."** The data don't support this in general: it is a slight underestimate on Qwen and an overestimate on gpt-oss. The paper makes no general claim.
+- **Setting the episode threshold on development episodes and applying it to fresh.** Tried and rejected. The probes were trained on those episodes, so their scores there are in-sample, and the threshold alarmed in about three in ten refusing fresh episodes. This becomes one sentence ("set thresholds on held-out traffic"). The paper's per-episode point is a descriptive calibration on the fresh episodes, applied the same way to all three detectors.
+
+**New experiment E08, the policy counterfactual. You approved it; it cost about $1.04 of the $6 cap.**
+- **Design.** The same fresh leaking and matched non-leaking calls, with the saved reply held fixed, under three system prompts: the original rule, a permitting rule, and a neutral rewording.
+- **Result.** On both models the score is essentially unchanged: Qwen +0.003 [−0.03, +0.07]; gpt-oss last-prompt probe +0.002 [−0.02, +0.03]. The probes **mostly track the imminent emission, not the rule violation**.
+- **Integrity.** The first Qwen run failed to reproduce the frozen scores, so it was rejected. It is logged in the history appendix only.
+- **Where it appears.** An appendix section, "Does the probe track the rule, or the emission?"; one sentence in §4.3; the Discussion framing as a "pre-emission detector"; and Limitations.
+- **Future work** now leads with training detectors that tell a permitted disclosure from a forbidden one of the same value.
+
+**Fresh blind reviews on the round-1 build (`reviews/fb1_reviews_summary.md`):**
+- **Clarity: 4/5, PASS.** The story and intro checks both came back "yes".
+- **Rigour:** "the core finding survives; fixable, none headline-reversing". All fixable items were applied: "small" edge without "reliable"; "beats each of three shortcuts"; which probe held on fresh per model; the count reconciliations; "median 23"; and the reproducibility tables. The E08 addition was audited by claude-4: PASS.
+
+**Your remaining calls:** items 5 and 6 under "For Leo first".
+
+---
+
 ## START HERE (Leo): summary of the overnight run, 26–27 Oct (coordinator)
 
 **What to open.**
