@@ -27,9 +27,9 @@ Predictions are scored with AUROC within scenario × round: the chance that a ra
 - **The round-level results are the lower rungs.** For Qwen3-32B, whether the target gives in this round or the next is modestly predictable (probe 0.58, best text monitor 0.65 on held-out scenarios; both held on 89 new episodes under an [analysis plan fixed in advance](docs/confirmatory_plan.md)). Whether it will *ever* give in is barely predictable. On gpt-oss-20b the round-level channel give-in is near chance (0.53).
 - **The warning comes within the call, not rounds ahead.** The call just before the leak is far less predictable (0.71 on Qwen3-32B, 0.62 on gpt-oss-20b). Oversight would therefore need to check each call close to the action.
 
-![Figure 3: per-call prediction (a) and the ladder from eventual to this call (b)](report/figures/figure3_streaming.png)
+![Figure 2: per-call prediction (a) and the ladder from eventual to this call (b)](report/figures/figure3_streaming.png)
 
-Figure 2 ([`report/figures/figure2_prediction.png`](report/figures/figure2_prediction.png)) shows the round-level results. The paper has the full results and their limits. [`docs/per_call_probe_report.md`](docs/per_call_probe_report.md) is a longer working report on the per-call and streaming probes; it explains how the paper's framing moved from round-level forecasting to per-call prediction.
+Figure 3 ([`report/figures/figure2_prediction.png`](report/figures/figure2_prediction.png)) shows the round-level results. The paper has the full results and their limits. [`docs/per_call_probe_report.md`](docs/per_call_probe_report.md) is a longer working report on the per-call and streaming probes; it explains how the paper's framing moved from round-level forecasting to per-call prediction.
 
 ## Terms
 
@@ -147,9 +147,9 @@ These steps use only what is committed and cost nothing. Figure and paper steps 
 | Set up | `uv sync`, then the two `uv venv` / `uv pip sync` commands above | The three Python environments | a few minutes |
 | Run the tests | the pytest command in [Setup](#setup) | 74 pass, 3 skip | under a minute |
 | Figure 1 | `uv run --no-project --with matplotlib python report/figures/make_figure1.py` | `report/figures/figure1_setup.*` | about 2 s |
-| Figure 3 and Figure L.1 | `uv run --with matplotlib python report/figures/make_figure3_streaming.py` | `report/figures/figure3_streaming.*` and `figure3b_appendix_checks.*`, with every plotted value and its source key in `figure3_streaming.csv` (reads the tracked run folders; `--input-csv` re-renders from the CSV alone) | about 2 s |
-| Data figures and tables | `OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 experiments/E05-probes/.venv/bin/python report/make_data_figures.py` | Table C.1, Table E.2, Figure E.1 and a Qwen-only draft of Figure 2. **This overwrites the committed two-target Figure 2; the next row restores it.** | about 5 s |
-| Figure 2 with both targets | `uv run --with matplotlib python report/figures/make_figure2_targets.py` (always right after the step above) | `report/figures/figure2_prediction.*` | about 1 s |
+| Figure 2 and Figure L.1 | `uv run --with matplotlib python report/figures/make_figure3_streaming.py` | `report/figures/figure3_streaming.*` and `figure3b_appendix_checks.*`, with every plotted value and its source key in `figure3_streaming.csv` (reads the tracked run folders; `--input-csv` re-renders from the CSV alone) | about 2 s |
+| Data figures and tables | `OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 experiments/E05-probes/.venv/bin/python report/make_data_figures.py` | Table C.1, Table E.2, Figure E.1 and a Qwen-only draft of Figure 3. **This overwrites the committed two-target Figure 3; the next row restores it.** | about 5 s |
+| Figure 3 with both targets | `uv run --with matplotlib python report/figures/make_figure2_targets.py` (always right after the step above) | `report/figures/figure2_prediction.*` | about 1 s |
 | The paper | `uv run --with python-docx --with lxml --with pillow --with pypdf python report/build_paper.py` | `report/build/paper.docx` and `paper.pdf` | about 20 s |
 | Browse the transcripts | `uv run python experiments/E01-behaviour-pilot/build_viewer.py` | `runs/viewer.html` (see [Trace viewer](#trace-viewer)) | about 20 s |
 
@@ -163,7 +163,7 @@ The pipeline runs in this order: collect episodes with the agent harness (E01, o
 
 Commands below run from the repository root. `E05py` stands for `experiments/E05-probes/.venv/bin/python` and `E02py` for `experiments/E02-activation-replay/.venv/bin/python`. Several newer scripts import the shared run helper, so set `PYTHONPATH=src` if a script cannot import `collusion`.
 
-### Per-call and streaming probes (§4.2–4.4, Figure 3, Appendix L)
+### Per-call and streaming probes (§4.2–4.4, Figure 2, Appendix L)
 
 All of this is exploratory and designed after the round-level results, except the frozen confirmation. Probe steps run on CPU but need the activation-derived arrays from the GPU replays.
 
@@ -171,8 +171,8 @@ All of this is exploratory and designed after the round-level results, except th
 |---|---|---|---|
 | **gpt-oss-20b per-call last-prompt probe** (§4.2 0.91; Table in L.3, incl. next call 0.62) | `E05py experiments/E05-probes/lastprompt_percall.py` | `runs/20261026-1221-e05-lastprompt-percall-6013` | CPU; gpt-oss call features and folds from `runs/20261025-2305-e05-gpt-oss-full-data` and `runs/20261026-0138-e05-gpt-oss-main` |
 | **Qwen3-32B per-call last-prompt probe** (§4.2 0.95; L.3; plan committed before fitting) | `PYTHONPATH=src E05py experiments/E05-probes/qwen_percall.py --audit`, commit the audit, then `… qwen_percall.py --fit --out <run> --workers 3 --threads 2`, then `qwen_percall_check.py`, `qwen_percall_routes.py` and `qwen_percall_structure.py`, each with `--out <run>` | `runs/20261026-1237-e05-qwen-percall` (plan: `frozen_plan.json`, `label_audit.json`) | CPU; Qwen call features from the replay |
-| Matched gpt-oss ladder: eventual 0.61, near-term 0.64, this call 0.91 (§4.4, Figure 3b) | `PYTHONPATH=src E05py experiments/E05-probes/lastprompt_label_ladder.py`, then `lastprompt_ladder_check.py --out <run>` | `runs/20261026-1304-e05-lastprompt-label-ladder` | CPU; as the gpt-oss per-call row |
-| Matched Qwen3-32B ladder (not yet in the paper; Figure 3b's Qwen points come from other call sets) | `PYTHONPATH=src E05py experiments/E05-probes/qwen_label_ladder.py --out <run>`, then `qwen_label_ladder_check.py --out <run>` | `runs/20261026-1313-e05-qwen-label-ladder` (fits were still running at the last README update) | CPU |
+| Matched gpt-oss ladder: eventual 0.61, near-term 0.64, this call 0.91 (§4.4, Figure 2b) | `PYTHONPATH=src E05py experiments/E05-probes/lastprompt_label_ladder.py`, then `lastprompt_ladder_check.py --out <run>` | `runs/20261026-1304-e05-lastprompt-label-ladder` | CPU; as the gpt-oss per-call row |
+| Matched Qwen3-32B ladder: eventual 0.54, near-term 0.67, this call 0.95 (§4.4, Figure 2b) | `PYTHONPATH=src E05py experiments/E05-probes/qwen_label_ladder.py --out <run>`, then `qwen_label_ladder_check.py --out <run>` | `runs/20261026-1313-e05-qwen-label-ladder` | CPU |
 | Reasoning-stream call table (2,205 calls; 1,995 with reasoning) | `E02py experiments/E05-probes/reasoning_stream_data.py` | `runs/20261026-0522-e05-reasoning-stream-data` (not in git: about 14.6 GB of arrays) | CPU; reasoning-token residuals from the gpt-oss replay (`runs/20261026-0138-e02-gpt-oss-full-completion`) |
 | **Reasoning-token probe** (§4.2 0.93; Table L.1; alarms; per scenario) | `E05py experiments/E05-probes/reasoning_stream_fit.py --data runs/20261026-0522-e05-reasoning-stream-data --out runs/20261026-0526-e05-reasoning-stream --workers 2`, then `E05py experiments/E05-probes/reasoning_stream_report.py --out runs/20261026-0526-e05-reasoning-stream` | `runs/20261026-0526-e05-reasoning-stream` | CPU; the call table above |
 | Keyword, length and placebo baselines; combined stream; episode-level alarms (Table L.1, §4.3) | `reasoning_stream_text.py --data <data run>` (add `--broad` for the broad list), `reasoning_stream_nulls.py --out <stream run>`, `reasoning_stream_combined.py --out <stream run>`, `reasoning_stream_episode_alarms.py` | outputs in `runs/20261026-0526-e05-reasoning-stream` (`text_comparators.json`, `causal_null_*.json`, `combined_*.json`, `episode_calibrated_alarms.md`, `held_episode_alarms.md`) | CPU |
@@ -199,12 +199,12 @@ All of this is exploratory and designed after the round-level results, except th
 | GPU replay, new-episode set | `plan_replay3.py`, then `modal_budget_client3.py` | `runs/20261025-0838-e02-replay3-plan`, `runs/20261025-0921-e02-replay3-modal-client`, `runs/20261025-0923-e02-replay3-completion` |
 | Call table (6,404 eligible calls, 338 episodes) | `experiments/E05-probes/replay2_data.py`, `replay3_data.py` | `runs/20261025-1026-e05-replay3-data-1d95` |
 
-### Round-level results (§4.1, §4.4–4.5, Figure 2)
+### Round-level results (§4.1, §4.4–4.5, Figure 3)
 
 | Result in the paper | Script | Run |
 |---|---|---|
 | §4.1 and Table C.1 (behaviour rates) | `uv run --with numpy python report/make_behaviour_table_input.py` (re-audit local episode files); `report/make_data_figures.py` (render committed compact input) | `report/figures/behaviour_uniform_input.json` and `report/figures/table1_behaviour.csv` |
-| §4.4, Figure 2 (probe vs monitors, eventual and near-term labels) | `all_data_main.py --workers 3`, then `finalize_all_data.py 20261025-1317-e05-all-data-main 20261025-1456-e05-all-data-audit` (both in `experiments/E05-probes/`, run with its environment) | `runs/20261025-1317-e05-all-data-main`, `runs/20261025-1456-e05-all-data-audit`, `runs/20261025-1456-e05-all-data-main` |
+| §4.4, Figure 3 (probe vs monitors, eventual and near-term labels) | `all_data_main.py --workers 3`, then `finalize_all_data.py 20261025-1317-e05-all-data-main 20261025-1456-e05-all-data-audit` (both in `experiments/E05-probes/`, run with its environment) | `runs/20261025-1317-e05-all-data-main`, `runs/20261025-1456-e05-all-data-audit`, `runs/20261025-1456-e05-all-data-main` |
 | Near-term labels | `experiments/E05-probes/near_term.py` | `runs/20261025-0730-e05-near-term` |
 | Text monitors, first data batch (18 setups; Table E.1) | `experiments/E06-monitors/monitors.py --steps-file runs/20261025-0119-e02-replay2-plan/all.jsonl` | `runs/20261025-0147-e06-monitor-main` |
 | Text monitors, new-episode set (8 setups) | `monitors.py --steps-file runs/20261025-0838-e02-replay3-plan/all.jsonl` | `runs/20261025-0841-e06-monitor-main-balanced` |
@@ -251,8 +251,8 @@ All of this is exploratory and designed after the round-level results, except th
 | Output | Script |
 |---|---|
 | Figure 1 (a real exchange, the setup, a toy timeline) | `report/figures/make_figure1.py` (a schematic; the quotes are from episode 0032 of the deploy-token recruiting run) |
-| Figure 2 (round level; Qwen3-32B and gpt-oss-20b panels) | `report/figures/make_figure2_targets.py`, run after `make_data_figures.py` |
-| Figure 3 (per call and the ladder) and Figure L.1 (checks) | `report/figures/make_figure3_streaming.py`; values and source keys in `report/figures/figure3_streaming.csv` |
+| Figure 3 (round level; Qwen3-32B and gpt-oss-20b panels) | `report/figures/make_figure2_targets.py`, run after `make_data_figures.py` |
+| Figure 2 (per call and the ladder) and Figure L.1 (checks) | `report/figures/make_figure3_streaming.py`; values and source keys in `report/figures/figure3_streaming.csv` |
 | Table C.1 (behaviour; file `table1_behaviour`), Table E.2 (combination; file `table2_combination`) and Figure E.1 (monitor design) | `report/make_data_figures.py` (sources listed in [`report/figures/DATA_FIGURES.md`](report/figures/DATA_FIGURES.md)) |
 | Figure B.1 (pipeline) | `report/figures/make_pipeline_figure.py` |
 | Appendix G coverage table | `report/make_appendix_coverage.py` |

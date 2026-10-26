@@ -14,8 +14,8 @@ This report was first written as the consolidated report on the streaming reason
 
 - **Headline.** Asked whether *this call* will give in, a last-prompt probe ranks the call that gives in far above the others on held-out scenarios, before the call generates anything: 0.95 on Qwen3-32B and 0.91 on gpt-oss-20b. Jev given the same conversation and tool results scores 0.74 and 0.27. On gpt-oss-20b, the reasoning-token probe reaches 0.93. Frozen before 84 new episodes were collected, it scored 0.91 on them and met its pre-stated criterion.
 - **What drove the change.** The label-versus-position decomposition (Section 6.1 below) showed that the gpt-oss-20b null came mostly from the question asked, not from where the probe looked. The paper's round-level probe scores 0.49 on these calls. The same position refit on the per-call label scores 0.91. Reading the reasoning adds a modest further gain, to 0.93.
-- **The ladder is now a contribution.** Predictability falls as the question moves away from the act: this call, then this round or the next, then eventually. On the same 1,995 gpt-oss-20b calls, one last-prompt recipe refit on each label scores 0.61 (eventual), 0.64 (this round or the next) and 0.91 (this call) (`runs/20261026-1304-e05-lastprompt-label-ladder`). Figure 3b shows the ladder. Section 10.1 below is the earlier, descriptive version, which mixes models, labels and cohorts.
-- **Round-level results are the lower rungs.** They are reported unchanged (paper §4.4–4.5, Figure 2). They are the most rigorous rungs, being pre-registered and confirmed on new episodes, and the least predictable.
+- **The ladder is now a contribution.** Predictability falls as the question moves away from the act: this call, then this round or the next, then eventually. On the same 1,995 gpt-oss-20b calls, one last-prompt recipe refit on each label scores 0.61 (eventual), 0.64 (this round or the next) and 0.91 (this call) (`runs/20261026-1304-e05-lastprompt-label-ladder`). On the same 4,844 Qwen3-32B calls, the matched refits score 0.54, 0.67 and 0.95 (`runs/20261026-1313-e05-qwen-label-ladder`). Figure 2b shows both matched ladders. Section 10.1 below is the earlier, descriptive version, which mixes models, labels and cohorts.
+- **Round-level results are the lower rungs.** They are reported unchanged (paper §4.4–4.5, Figure 3). They are the most rigorous rungs, being pre-registered and confirmed on new episodes, and the least predictable.
 
 **What did not change.**
 
@@ -25,7 +25,7 @@ This report was first written as the consolidated report on the streaming reason
 **Reading this report against the paper.**
 
 - *Terms.* This report says "reply" for what the paper calls a **call**. The "immediate" label is the paper's **this call** label. "Any public emission" is the gpt-oss-20b per-call outcome.
-- *Status.* Sections 8 and 8.1 were written while three items were still running: the frozen confirmation, the Qwen3-32B per-call replication and Jev reading the per-call input. All three have finished. Their results are in paper §4.2 and Appendix L.3–L.5, and in `runs/20261026-1302-e05-stream-confirm-score`, `runs/20261026-1237-e05-qwen-percall`, `runs/20261026-1306-e06-percall-input-jev`, `runs/20261026-1309-e06-percall-input-jev-qwen` and `runs/20261026-1319-e06-percall-input-jev-l4`. The body below was not re-edited. Where it says "pending", the paper is the current source.
+- *Status.* Sections 8 and 8.1 were written while three items were still running: the frozen confirmation, the Qwen3-32B per-call replication and Jev reading the per-call input. All three have finished. Their results are in paper §4.2 and Appendix L.3–L.5, and in `runs/20261026-1302-e05-stream-confirm-score`, `runs/20261026-1237-e05-qwen-percall`, `runs/20261026-1306-e06-percall-input-jev`, `runs/20261026-1309-e06-percall-input-jev-qwen` and `runs/20261026-1319-e06-percall-input-jev-l4`. Figure references below use the current numbering; the earlier analysis narrative is retained as a dated working record. Where it says "pending", the paper is the current source.
 - *Numbers.* No number in the sections below was changed when this section was added.
 
 ---
@@ -85,7 +85,7 @@ All numbers below come from files in this repository, cited by path relative to 
   - A probe on generated tokens up to just before the value scores 1.000. That is an output filter: for an exact string, a regex does the same job.
   - The work so far cost about USD 6.62 beyond the main replay, plus GPU time for the confirmation capture, which is still running (Section 12).
   - Pending: the frozen gpt-oss confirmation (84 new episodes collected, GPU capture in progress), a Qwen3-32B per-call replication, a route split, and a Jev monitor reading the per-call input (Section 8).
-  - Figure 3 (`report/figures/figure3_streaming.png`, [link](../report/figures/figure3_streaming.png)) shows the result. Panel (a) shows each method's AUROC with a catch / false-alarm column. Panel (b) includes the retrained last-prompt point (0.91).
+  - Figure 2 (`report/figures/figure3_streaming.png`, [link](../report/figures/figure3_streaming.png)) shows the result. Panel (a) shows each method's AUROC with a catch / false-alarm column. Panel (b) includes the retrained last-prompt point (0.91).
 - **How this differs from exposure detection.** Earlier probe work detects that a prompt injection has entered an agent's input (Dong et al. 2026). Related work recovers directions that separate hijacked from resisted trajectories (Yu et al. 2026). Here every call is already under the same kind of pressure. Within scenario × round AUROC holds the scenario and round fixed, so the probe has to predict whether *this* model call will comply, not whether pressure is present.
 
 ---
@@ -300,7 +300,7 @@ The frozen last-prompt probe in this table was trained on the paper's channel ne
 
 Figures:
 
-- Figure 3 of the paper draft, `report/figures/figure3_streaming.png` ([link](../report/figures/figure3_streaming.png)). Panel (a) shows the probe against every baseline. Panel (b) shows the ladder from "will it ever leak" to "leak in this reply".
+- Figure 2 of the paper draft, `report/figures/figure3_streaming.png` ([link](../report/figures/figure3_streaming.png)). Panel (a) shows the probe against every baseline. Panel (b) shows the ladder from "will it ever leak" to "leak in this reply".
 - Per-horizon AUROC: `runs/20261026-0526-e05-reasoning-stream/horizon_auc.png` ([link](../runs/20261026-0526-e05-reasoning-stream/horizon_auc.png)).
 - The same, with the combined stream: `horizon_auc_with_combined.png` ([link](../runs/20261026-0526-e05-reasoning-stream/horizon_auc_with_combined.png)).
 
@@ -774,14 +774,14 @@ experiments/E05-probes/.venv/bin/python experiments/E05-probes/freeze_stream_con
 
 This is a proposed split. The main text carries the result and the evidence a reader needs to trust it. The appendix carries everything else.
 
-**Main text (one short subsection, plus Figure 3):**
+**Main text (one short subsection, plus Figure 2):**
 
 1. **The decomposition, as the headline.** On gpt-oss-20b held-out scenarios, three numbers: the paper's round-level probe at 0.49 on these calls, the same last-prompt position with the per-call label at 0.91, and reading the reasoning at 0.93. Asking per call works before the current call generates anything, and streaming the reasoning adds a modest gain: +0.03 held-out and +0.07 pooled, with recall of 85% against 57% at the same cutoff and false alarms of 4.4% against 1.6%.
 2. **Baselines on the same reasoning.** Jev 0.60, GPT-5-nano 0.36, keyword rules 0.40 to 0.48, reversed length 0.69. Censored 0.957, and only 2 of 121 leaking calls contain the value in their reasoning.
 3. **Incoming comparator.** A probe on the incoming peer message and tool results ranks at 0.93. The signal is present at the onset of the call. What it represents is open.
 4. **Alarm trade-off, in one line.** At a 5% control-call cutoff, the reasoning probe warns on 85% of leaking calls with reasoning, while 4.4% of held calls alarm; but 41% of held episodes see at least one alarm.
 5. **One sentence on one call ahead.** The call before the leak ranks at 0.88, but that ranking is largely the protected-file read step (a read indicator alone gives 0.85).
-6. **Figure 3.** `report/figures/figure3_streaming.png`, in its current state. Panel (a) has a catch / false-alarm column. Panel (b) includes the retrained last-prompt point (0.91). Its row label "Last prompt token (before any output)" should read "before the current call generates anything". It should also carry a note that panel (b) is a descriptive ladder, not a controlled comparison.
+6. **Figure 2.** `report/figures/figure3_streaming.png`, in its current state. Panel (a) has a catch / false-alarm column. Panel (b) includes the retrained last-prompt point (0.91). Its row label "Last prompt token (before any output)" should read "before the current call generates anything". At that stage panel (b) was a descriptive ladder, not a controlled comparison; the current paper replaces it with the matched ladders described above.
 7. **One sentence of limits.** Post hoc, one model, exact-string leak, and confirmation pending.
 
 **Appendix (everything else):**
@@ -803,4 +803,4 @@ This is a proposed split. The main text carries the result and the evidence a re
 - The confirmation design.
 - Costs and reproduction.
 
-One point for the Figure 3 caption: panel (b) puts the reasoning probe's paper-label score (0.60, main-cohort calls) next to its per-call score (0.93, a different label and cohort). The caption should say so.
+Historical caption note (superseded by the matched ladders in the current Figure 2b): panel (b) then put the reasoning probe's paper-label score (0.60, main-cohort calls) next to its per-call score (0.93, a different label and cohort). That earlier caption needed to say so.
