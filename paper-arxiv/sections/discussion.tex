@@ -35,12 +35,10 @@ The signal may reflect what has just arrived in the input (\cref{sec:shortcuts})
 No episode writes the secret with permission, so the probe may track emitting the value rather than breaking the rule.
 
 \paragraph{False alarms per episode.}
-At a threshold set for few false alarms per call, many refusing episodes still get at least one alarm.
-A deployed alarm would need a threshold set per episode, which catches fewer leaks (\cref{app:alarms}).
+At a per-call threshold, most refusing episodes see at least one flag, which suits escalating single calls rather than halting the agent (\cref{sec:cost}).
 
-\paragraph{The text baselines.}
+\paragraph{An untuned text monitor.}
 Our main text monitor is one decision model used zero-shot, with no prompt tuning, while the probe is trained.
-A bag-of-words text classifier trained on the same input comes close to the probe on both models, so the probe's edge over a trained text baseline is small (\cref{app:shortcuts}).
 
 \paragraph{Automated labels.}
 The leak label is an exact match on the tool log.
