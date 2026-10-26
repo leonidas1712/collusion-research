@@ -2,6 +2,7 @@
 \label{sec:results}
 
 \Cref{tab:glance} collects the per-call results on both models.
+Apart from two pre-registered tests, the analyses in this section were designed after earlier results, and we evaluate them on held-out scenarios and on the fresh test episodes.
 
 \begin{table}[t]
   \centering
@@ -35,7 +36,6 @@ The probe picks out the call that leaks on both models, before the call writes a
 On gpt-oss-20b, the pre-registered reasoning probe ranked the calls that leak above the others on the fresh test episodes (AUROC~\gptossFreshReasoning{}), meeting its success criterion.
 At its frozen threshold it caught about half of the leaking calls, while few calls in refusing episodes alarmed (\cref{app:confirmation}).
 On Qwen3-32B, the last-prompt probe, fit on development episodes only and frozen, scored \qwenFreshCallProbe{} on the fresh test episodes.
-Apart from the two pre-registered tests, the analyses in this section were designed after earlier results, and we evaluate them on held-out scenarios and on the fresh test episodes.
 
 Most of the signal is present before the model starts to reason.
 On gpt-oss-20b, the last-prompt probe and the reasoning probe score about the same on development episodes, and the gap between them on the fresh episodes is within noise.
