@@ -37,6 +37,16 @@ Shared notes (not paper prose). Append your own entries; keep sections by owner 
 - **Clarity: 4/5, PASS.** The story and intro checks both came back "yes".
 - **Rigour:** "the core finding survives; fixable, none headline-reversing". All fixable items were applied: "small" edge without "reliable"; "beats each of three shortcuts"; which probe held on fresh per model; the count reconciliations; "median 23"; and the reproducibility tables. The E08 addition was audited by claude-4: PASS.
 
+**Final round-1 build.**
+- **Files and size:** `paper-arxiv/main.pdf` (SHA 38d66cdb…) and the arXiv package in `dist/arxiv-final/` (clean build c982b92e…); 39 pages, 326 links.
+- **Viewer check: PASS** on every executable check (`reviews/viewer_check.md`, codex-daybreak):
+  - all 39 pages inspected;
+  - the canonical and clean builds are byte-identical at 144 dpi;
+  - 326/326 links are valid, and all 41 Contents entries land on the right pages;
+  - no layout, glyph or table defects.
+- **Native Preview open/click:** still UNVERIFIED, because the computer-use service failed to start. Please flip through it yourself; it is open in Preview.
+- **Optional:** claude-4 notes that the new Future-work sentence is about 49 words, so splitting it in two would follow WRITING rule 13. Left as-is to avoid another rebuild.
+
 **Your remaining calls:** items 5 and 6 under "For Leo first".
 
 ---
