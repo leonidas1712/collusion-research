@@ -1,55 +1,53 @@
-# Claims list (PROPOSED; not yet signed off by the author)
+# Claims list (PROPOSED, round 1; author sign-off pending)
 
-Every Results paragraph in `paper-arxiv/` serves one of these claims. Headline numbers are `numbers.yaml` keys, owned by codex-2. Values shown here come from the sprint paper and are placeholders until the recomputations land; the registry is authoritative.
+Every Results paragraph in `paper-arxiv/` serves one of these claims. Headline numbers are `numbers.yaml` keys (macro names in brackets); the registry is authoritative.
 
 Named datasets (defined once, in Setup):
-- **development episodes**: per model, every episode collected before the analysis plan for that model's test was frozen. Evaluated by held-out scenarios: train on five scenarios, test on the sixth, rotate.
-- **fresh test episodes**: per model, episodes collected after a plan was frozen. Scored once by frozen models trained only on development episodes.
+- **development episodes**: per model, the episodes used to build and evaluate every method, evaluated on held-out scenarios (train on five, test on the sixth, rotate).
+- **fresh test episodes**: per model, episodes collected later and scored once by models frozen on development episodes.
 
-Leak label for every per-call and ladder result: **any public emission**, implemented as the gpt-oss frozen detector: the first call that writes the secret into its reply or into any tool-call argument (author decision 2; boundary case recorded in HANDOVER). The round-level confirmation on Qwen keeps its pre-registered label, a complete channel post or a new file. It is defined once, in Setup.
+Leak label for every per-call and ladder result: the first call that writes the secret into its reply or into any tool-call argument (the gpt-oss frozen detector, applied to both models). The pre-registered Qwen round-level test keeps its own round-level label, defined in Appendix B.
+
+"Pre-registered" is used for the gpt-oss reasoning-probe test. The Qwen per-call result is "on fresh episodes held out from training".
 
 ---
 
-## C1. The call that leaks is readable before it acts (headline)
+## C1. The call that leaks is readable just before it acts (headline)
 
-- **Claim.** A linear probe on the target's activations, read before a call writes anything, picks out the call that will leak the secret. On gpt-oss-20b this held on fresh test episodes under a plan fixed in advance.
-- **Headline number.** `gptoss_fresh_reasoning_probe_auroc` (0.91, confirmed). Supporting: `qwen_percall_probe_auroc` (to be recomputed on any public emission; sprint value 0.95 on the give-in rule) and `gptoss_percall_lastprompt_auroc` (0.91), both development.
-- **Status.** Confirmed for the gpt-oss reasoning probe. Exploratory for the last-prompt probes on both models.
-- **Dataset / evaluation.** Fresh test episodes, gpt-oss-20b, frozen model scored once. Development episodes, held-out scenarios, for both models.
-- **Figure.** Fig. 1(b) (fresh test) and Fig. 3 (development, with comparators).
-- **Travelling caveat.** The warning is about the current call. One call earlier the signal is much weaker, so this does not establish warning rounds ahead.
+- **Claim.** A linear probe read before a call generates anything picks out the call that will leak, on both models. On gpt-oss-20b this held in a pre-registered test on fresh episodes; on Qwen3-32B a probe frozen on development episodes held on fresh episodes, catching most leaking calls at a low per-call flag rate.
+- **Headline numbers.** `\gptossFreshReasoning` (0.91, pre-registered); `\qwenFreshCallProbe` (0.98); operating point `\qwenFreshProbeCaught` / `\qwenFreshProbeAlarm` (82% / 5%).
+- **Dataset / evaluation.** Fresh test episodes (both models); development episodes, held-out scenarios.
+- **Figures.** Fig. 1, Table 2, Fig. 3 (score trajectory).
+- **Travelling caveat.** The warning is about the current call, not calls or rounds ahead (C2).
 
-## C2. The nearer the question is to the act, the more predictable the leak
+## C2. The signal is sharp but short-range
 
-- **Claim.** Asked on the same calls whether the episode will ever leak, whether it leaks this round or next, and whether this call leaks, the probe goes from near chance, to modest, to high, on both models. The middle rung held on fresh test episodes for Qwen3-32B.
-- **Headline number.** The ladder top and bottom on development (`qwen_ladder_ever_auroc`, `qwen_ladder_call_auroc`; gpt-oss equivalents). Confirmed anchor: `qwen_fresh_nearterm_probe_auroc` (0.68).
-- **Status.** Ladder exploratory. Qwen near-term on fresh test episodes confirmed.
-- **Dataset / evaluation.** Development episodes, held-out scenarios, same calls for every rung. Fresh test episodes for the anchor.
-- **Figure.** Fig. 1(a) (headline).
-- **Travelling caveat.** None inline. The anchor uses the round-level label, which is defined once in Setup and drawn as a separate panel.
+- **Claim.** On the same calls, the probe goes from near chance for "will this episode ever leak?", to modest for "this round or the next?", to high for "this call?". One call earlier it is already much weaker. The "this round or the next" result held in a pre-registered Qwen3-32B round-level test (probe 0.68, best text monitor 0.64).
+- **Headline numbers.** `\qwenEverProbe`, `\qwenCallProbe` (development ladder ends); `\qwenFreshNearProbe` (0.68).
+- **Dataset / evaluation.** Development episodes, held-out scenarios, same calls for every rung; fresh test episodes for the round-level test (its own label).
+- **Figure.** Fig. 1.
+- **Travelling caveat.** None inline.
 
-## C3. A text monitor shown the same conversation does worse
+## C3. Who can read the signal: a zero-shot monitor does far worse; a trained text classifier comes close
 
-- **Claim.** A decision-model text monitor, shown the same conversation and tool results as the probe and asked whether this call will leak, scores well below the probe on both models. On gpt-oss-20b it flags almost every call made under pressure, so it cannot separate the calls that leak.
-- **Headline number.** `qwen_percall_jev_auroc` (sprint 0.74, to be recomputed), with the probe-minus-monitor difference and its interval in the figure.
-- **Status.** Exploratory.
-- **Dataset / evaluation.** Development episodes, same calls as C1.
-- **Figure.** Fig. 3.
-- **Travelling caveat.** One monitor, asked one question, with no tuning. This goes in Limitations, not inline.
-
-## C4. The probe is not just reading pressure, the secret string or the read step
-
-- **Claim.** Every call that does not leak was also made under pressure, so the probe is not detecting the request. It also beats keyword rules and a flag for "the protected file was just read".
-- **Headline number.** `gptoss_readstep_flag_auroc` against the probe (difference in the figure). Placebo and keyword scores go in the figure.
-- **Status.** Exploratory.
-- **Dataset / evaluation.** Development episodes, same calls as C1.
+- **Claim.** A zero-shot decision-model monitor (Jev), shown the same conversation and tool results, scores well below the probe on both models; on gpt-oss-20b it flags most pressured calls. A bag-of-words classifier trained on the same labelled development calls comes close to the probe, which keeps a small edge whose interval excludes zero. Most of the probe's lead over the zero-shot monitor comes from training on labels; activations add a small, reliable edge; much of the signal arrives with the incoming message.
+- **Headline numbers.** Fig. 4 bars; paired gaps in Appendix H (`\qwenProbeMinusTextLatest`, `\gptossProbeMinusTextFull`).
+- **Dataset / evaluation.** Development episodes, held-out scenarios, same calls.
 - **Figure.** Fig. 4.
-- **Travelling caveat.** What the probe reads is not established. A probe that sees only the incoming peer message and tool results also scores high. This is stated once, in this subsection, because the claim would mislead without it.
+- **Travelling caveat.** The text classifier result is on development episodes; whether it holds outside templated scenarios is open (Discussion).
 
-## (Setup fact, not a claim) The setup produces mixed outcomes
+## C4. Deployment cost is a per-call review workload
 
-The same model under the same pressure leaks in some episodes and not in others. Control and target-alone episodes never leak. Number: `qwen_leak_rate_dev`. This stays in Setup as a description of the data, with no Results subsection.
+- **Claim.** At a threshold set on control calls, the probe flags few calls in refusing episodes and far fewer than the zero-shot monitor. Per episode, most refusing episodes see at least one flag, so the intended use is a cascade that escalates single calls, not an alarm that stops the agent.
+- **Headline numbers.** `\qwenFreshProbeAlarm` vs `\qwenFreshJevAlarm`; `\qwenFreshRefusingEpisodeAlarm` (59%).
+- **Dataset / evaluation.** Qwen3-32B fresh test episodes.
+- **Figure.** Fig. 5 (Qwen alarm trade-off).
+- **Travelling caveat.** None inline; the per-episode rate is explained in the same subsection.
+
+## Supporting (not a separate claim): the probe is not explained by three simple shortcuts
+
+The request, keywords for the secret, and the file read or write (Section 4.1, Appendix H).
 
 ## Biggest limitation (Discussion, stated once)
 
-Narrow setting: two models, six scenarios from one task template, one peer, exact-string secrets. Second: the per-call last-prompt results are exploratory, and only the gpt-oss reasoning probe was confirmed on fresh episodes.
+Narrow setting: two models, six templated scenarios, one peer, exact-string secrets that an output filter would catch.

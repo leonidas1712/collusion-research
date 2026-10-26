@@ -36,9 +36,8 @@ At that threshold the reasoning probe catches most leaking calls in development 
 Counted per episode, however, a sizeable share of refusing episodes get at least one alarm, because each episode has many calls.
 A threshold set so that about 5\% of control episodes alarm catches about a third of leaking episodes before the first leak.
 On the fresh test episodes, the frozen threshold caught about half of the leaking calls (\cref{app:confirmation}).
-On the fresh Qwen3-32B episodes, at thresholds set on control calls, the probe catches \qwenFreshProbeCaught{} of leaking calls while alarming on \qwenFreshProbeAlarm{} of calls in refusing episodes, and Jev catches \qwenFreshJevCaught{} while alarming on \qwenFreshJevAlarm{}.
-Even for the probe, at least one alarm fires in \qwenFreshRefusingEpisodeAlarm{} of refusing fresh episodes, because each episode has many calls.
-A deployed alarm would need its threshold set per episode, as \citet{gao2026} also argue.
+The fresh Qwen3-32B operating points, and how per-call and per-episode rates relate, are in \cref{sec:cost}.
+A deployed alarm would need its threshold set per episode, as \citet{gao2026} also argues.
 \Cref{fig:alarm-tradeoff} shows the full trade-off between leaking calls caught and refusing calls alarmed for the probe and Jev on the same calls.
 
 \begin{figure}[h]

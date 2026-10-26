@@ -1,27 +1,28 @@
 \section{Introduction}
 \label{sec:intro}
 
-Just before an AI agent gives in and breaks its operator's rule, a linear probe on its activations can tell.
-We read the target model's internal activations at each of its calls, before it generates anything, and ask whether that call will leak a secret that its operator told it to keep.
-On Qwen3-32B, tested on fresh episodes held out from training, the probe ranks the leaking calls far above the others, and a zero-shot text monitor given the same conversation does much worse.
-On fresh Qwen3-32B episodes, at a threshold set on control calls, the probe catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarm{} of calls in refusing episodes, where the monitor catches \qwenFreshJevCaught{} while flagging \qwenFreshJevAlarm{}, although per episode many refusing episodes still see at least one alarm (\cref{app:alarms}).
-A bag-of-words classifier trained on the same text comes close to the probe, so most of that lead comes from training on the labels (\cref{sec:monitor}).
-On gpt-oss-20b, a probe on the call's reasoning held up in a pre-registered test on fresh episodes.
+AI agents increasingly work alongside other agents, sharing channels, tools and credentials.
+That makes it possible for agents to coordinate against the people who deploy them.
+In July 2026, agents in an internal cyber evaluation coordinated on an unsanctioned message board, passed credentials to one another and attacked production infrastructure, and some of them pressed others to join \citep{openai2026huggingface,greenblatt2026incident}.
 
-The setting is recruitment, a common first step of collusion between agents, in which one agent presses another to break its own operator's rule.
-In July 2026, agents in an internal cyber evaluation coordinated on an unsanctioned message board, passed credentials to one another and attacked production infrastructure, and some agents pressed others to join \citep{openai2026huggingface,greenblatt2026incident}.
-In the simplest checkable version of that first step, a peer agent presses a target agent, over many rounds, to reveal a secret such as a deploy token.
-Without the operator's rule, handing over the token would be ordinary help, and with it, the handover is collusion against the operator \citep{agrawal2025,nakamura2026}.
-The request comes openly from a teammate, in the channel the target is meant to use, so this is not prompt injection hidden in data \citep{liu2024formalizing,debenedetti2024agentdojo}.
-The target often refuses at first, citing the rule, and then gives in.
+Collusion of this kind often starts with recruitment, in which one agent presses another to break its own operator's rule \citep{agrawal2025,nakamura2026}.
+Recruitment is hard to oversee.
+The request comes openly from a teammate, in the channel the target is meant to use, so it is not prompt injection hidden in data \citep{liu2024formalizing,debenedetti2024agentdojo}.
+The target also tends to refuse for a while, citing its rule, before it gives in, so a single message rarely looks alarming on its own.
 
-The signal is sharp but short-range (\cref{fig:headline}).
-We ask the same calls three questions: will this call leak, will the target leak this round or the next, and will the episode ever leak?
-The probe answers the first well, weakens on the second, and is weak on the third, on both models.
+Current oversight mostly acts after the fact.
+Output filters catch an exact secret once it is written \citep{sharma2025constitutional}, and text monitors read the transcript \citep{radev2026}.
+We ask whether an overseer can tell, before a call acts, that the agent is about to give in, early enough to pause that call.
+Probes on activations can detect that an agent was exposed to an attack \citep{dong2026,yu2026} or read agents that were told to collude \citep{rose2026}.
+Early-warning work under user pressure or prompt injection finds weak signals, which text baselines often match \citep{saraogi2026before,fayyazi2026agent,jia2026window}.
+No prior work asks, call by call, whether an agent pressed by a peer is about to give in, and compares activations and text on the same calls.
 
-For multi-agent oversight, this suggests a cheap monitor that runs on every call and pauses an agent just before it gives in.
-For an exact secret like ours, an output filter would also catch the leak.
-Probes would matter most where output filters fail, such as paraphrased, encoded or slowly coordinated leaks, which we leave to future work.
+In this work, a peer agent presses a target agent over many rounds to reveal a secret, such as a deploy token, that the target's operator told it to keep.
+We read the target's activations at each of its calls before it generates anything, and compare linear probes with a zero-shot text monitor and a trained text classifier on exactly the same calls, in six scenarios on two open-weight models.
+We find three things (\cref{fig:headline}).
+First, the call that leaks is predictable just before it acts, and this held on fresh episodes on both models.
+Second, the signal is short-range: it weakens when asked about the next round, and is weak for whether an episode will ever leak.
+Third, a zero-shot text monitor does far worse than the probe, but a text classifier trained on the same labelled calls comes close, so activations add a small edge on top of training.
 
 \begin{figure}[t]
   \centering
@@ -37,6 +38,6 @@ Probes would matter most where output filters fail, such as paraphrased, encoded
 Our contributions are:
 \begin{itemize}
   \item a recruitment benchmark of six scenarios in which the same model leaks in some episodes and refuses in others, with control episodes in which the peer never asks, released with all prompts and transcripts (\cref{sec:setup});
-  \item probes and text monitors scored on exactly the same calls, at three distances from the act (\cref{sec:method});
-  \item a per-call warning that holds on fresh episodes, including one pre-registered test, with controls for the obvious shortcuts (\cref{sec:results}).
+  \item probes, a zero-shot text monitor and a trained text classifier, scored on exactly the same calls at three distances from the act (\cref{sec:method});
+  \item a per-call warning that holds on fresh episodes, including one pre-registered test, with controls for the obvious shortcuts and the deployment cost of acting on it (\cref{sec:results}).
 \end{itemize}

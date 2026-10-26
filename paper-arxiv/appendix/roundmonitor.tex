@@ -1,13 +1,12 @@
-\section{What do round-level detectors achieve on the sprint cohort?}
+\section{What do round-level detectors achieve?}
 \label{app:roundmonitor}
 
-On Qwen3-32B, whether the target leaks this round or the next is modestly predictable; the strongest text monitor scores a little above the probe on the sprint cohort, and about the same on the fresh episodes.
+On Qwen3-32B, whether the target leaks this round or the next is modestly predictable; the strongest text monitor scores a little above the probe on the episodes collected before the round-level plan, and about the same on the fresh episodes.
 Whether an episode will ever leak is barely predictable by either.
 
 \paragraph{The round-level setup.}
 These analyses are separate from the ladder of \cref{fig:headline}, which uses one set of calls and one label for all three questions.
-Apart from the pre-registered fresh test, they use the sprint cohort of Qwen3-32B episodes and its round-level label (\cref{app:sprint}).
-They use the round-level label of \cref{app:labels} and stop scoring before the secret is first written out, so they never include the leaking call.
+They use the round-level label of \cref{app:labels} on the Qwen3-32B episodes scored for the round-level plan, and stop scoring before the secret is first written out, so they never include the leaking call.
 Three monitor models, asked two questions at three levels of access, were scored on the same calls (\cref{app:monitors}).
 The strongest is Jev asked to forecast a leak at any later point, shown everything the target had seen.
 
@@ -26,7 +25,7 @@ Branching reruns from the same state often end differently, which suggests the o
 
 \begin{table}[h]
   \centering
-  \caption{Round-level results on Qwen3-32B, sprint cohort with its original round-level label, not the development episodes of \cref{fig:headline}: probe and monitors on the same calls, and the gain from adding the probe to a monitor.}
+  \caption{Round-level results on Qwen3-32B, with the round-level label (\cref{app:labels}) and its own call set, not those of \cref{fig:headline}: probe and monitors on the same calls, and the gain from adding the probe to a monitor.}
   \label{tab:combination}
   \small
   \input{tables/round_level.tex}

@@ -2,7 +2,7 @@
 \label{sec:results}
 
 \Cref{tab:glance} collects the per-call results on both models.
-Apart from two pre-registered tests, the analyses in this section were designed after earlier results, and we evaluate them on held-out scenarios and on the fresh test episodes.
+Apart from the planned tests on fresh episodes, the analyses in this section were designed after earlier results, and we evaluate them on held-out scenarios and on the fresh test episodes.
 
 \begin{table}[t]
   \centering
@@ -45,6 +45,17 @@ It is not detecting the request, because every call that does not leak also face
 It is not matching the secret, because keyword rules that look for the secret's words in the model's reasoning do no better than chance.
 It is not detecting the file read, because it beats a flag for ``the protected file was just read'', including among the calls that write the handoff file, the shared status file that the target writes for the peer.
 
+Followed through an episode, the median probe score stays low over the calls before the leak and jumps at the leaking call, on both models and on both sets of episodes (\cref{fig:trajectory-main}).
+Individual episodes vary, and \cref{app:ahead} shows examples chosen by a fixed rule.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig6_trajectory_aggregate.pdf}
+  \caption{\textbf{The probe score jumps at the call that leaks.}
+  Median last-prompt probe score over all leaking episodes, as a percentile among that model's scored calls, aligned on each episode's leaking call; the shaded band is the middle 50\% of fresh episodes.}
+  \label{fig:trajectory-main}
+\end{figure}
+
 \subsection{The warning is short-range}
 \label{sec:ladder}
 
@@ -55,28 +66,46 @@ gpt-oss-20b follows the same pattern, with the largest jump at the call itself, 
 Even one call earlier the probe drops well below its score on the leaking call (\cref{tab:glance}).
 On gpt-oss-20b, what it detects there is mostly the read of the protected file that usually comes just before the leak (\cref{app:ahead}).
 
-The ``this round or the next'' result held in a pre-registered test on fresh Qwen3-32B episodes, on a slightly different leak label (\cref{app:labels}): the probe scored \qwenFreshNearProbe{} and the best text monitor \qwenFreshNearJev{} (\cref{app:confirmation}).
+The ``this round or the next'' result also held on fresh Qwen3-32B episodes held out from training, in a test planned before scoring and on a slightly different leak label (\cref{app:labels}): the probe scored \qwenFreshNearProbe{} and the best text monitor \qwenFreshNearJev{} (\cref{app:confirmation}).
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig3_percall.pdf}
-  \caption{\textbf{A probe picks out the call that leaks; a text monitor shown the same input does not.}
+  \caption{\textbf{A probe picks out the call that leaks; a zero-shot monitor does not, and a trained text classifier comes close.}
   Per-call AUROC on held-out scenarios, development episodes, with 95\% bootstrap intervals.
-  The text monitor (Jev) sees the conversation and tool results that the last-prompt probe sees, with the secret masked; on gpt-oss-20b it scores below chance because it flags almost every call made under pressure.}
+  The zero-shot monitor (Jev) sees the conversation and tool results that the last-prompt probe sees, with the secret masked; on gpt-oss-20b it scores below chance because it flags almost every call made under pressure. The trained text classifier reads the latest message on Qwen3-32B and the full input on gpt-oss-20b (\cref{app:shortcuts}).}
   \label{fig:percall}
 \end{figure}
 
 \subsection{Who can read the signal}
 \label{sec:monitor}
 
-A zero-shot text monitor shown the same conversation and tool results scores well below the probe on both models (\cref{fig:percall}).
+A zero-shot text monitor shown the same conversation and tool results scores well below the probe on both models, and a trained text classifier comes close (\cref{fig:percall}).
 On gpt-oss-20b, Jev flags nearly every call that leaks but also most calls in refusing episodes, so it cannot separate the calls that leak.
+The bag-of-words classifier, trained on the same labelled development calls, scores close to the probe on both models, and the probe keeps a small edge whose interval excludes zero (\cref{app:shortcuts}).
 
-A text classifier trained on the same input comes much closer.
-On both models, a bag-of-words classifier trained on these labels comes close to the probe, which keeps a small edge (\cref{app:shortcuts}).
-Most of the probe's margin over Jev therefore comes from training on these labels, and reading activations adds a little on top.
-
-\label{sec:shortcuts}
-The signal sits largely in the input.
+Most of the probe's lead over the zero-shot monitor therefore comes from training on labelled calls, and activations add a small, reliable edge.
+Much of the signal also arrives with the incoming message.
+\label{sec:shortcuts}%
 On gpt-oss-20b, a separate probe that reads only the tokens new to the call, the latest peer message and tool results, also scores high, and the layers chosen for the last-prompt probe are early to middle ones.
 Whether the probe reads a decision or the situation that prompts one is open (\cref{app:shortcuts}).
+
+\subsection{What would deployment cost?}
+\label{sec:cost}
+
+At a threshold set on control calls, the probe catches most leaking calls while flagging few other calls, and far fewer than the zero-shot monitor (\cref{fig:qwen-alarms}).
+On fresh Qwen3-32B episodes, it catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarm{} of the calls in refusing episodes, where Jev catches \qwenFreshJevCaught{} while flagging \qwenFreshJevAlarm{}.
+
+The cost of those flags depends on what a flag does.
+If each flag sends one call to review, the per-call rate is the review workload.
+If a flag instead stops the whole agent, what matters is whether an episode sees at least one flag.
+A refusing episode has about \qwenFreshMedianRefusingCalls{} scored calls.
+If each call were flagged independently at that rate, about \qwenEpisodeAlarmIndependent{} of episodes would see at least one flag; in practice \qwenFreshRefusingEpisodeAlarm{} do, because flags cluster in the same episodes.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\linewidth]{fig7_qwen_alarms.pdf}
+  \caption{\textbf{The probe catches more leaks with far fewer false alarms than the zero-shot monitor.}
+  Share of leaking calls caught against the share of calls in refusing episodes flagged, as the threshold moves, on fresh Qwen3-32B episodes; marked points are the thresholds set on control calls.}
+  \label{fig:qwen-alarms}
+\end{figure}
