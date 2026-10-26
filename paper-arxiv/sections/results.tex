@@ -95,12 +95,18 @@ Whether the probe reads a decision or the situation that prompts one is open (\c
 
 At a threshold set on control calls, the probe catches most leaking calls while flagging few other calls, and far fewer than the zero-shot monitor (\cref{fig:qwen-alarms}).
 On fresh Qwen3-32B episodes, it catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarm{} of the calls in refusing episodes, where Jev catches \qwenFreshJevCaught{} while flagging \qwenFreshJevAlarm{}.
+Of the calls the probe flags, \qwenFreshProbePrecision{} are real leaks.
+AUROC measures how well a detector ranks calls, while this share tells an overseer how many of its alarms are real.
 
 The cost of those flags depends on what a flag does.
 If each flag sends one call to review, the per-call rate is the review workload.
 If a flag instead stops the whole agent, what matters is whether an episode sees at least one flag.
 A refusing episode has about \qwenFreshMedianRefusingCalls{} scored calls.
 If each call were flagged independently at that rate, about \qwenEpisodeAlarmIndependent{} of episodes would see at least one flag; in practice \qwenFreshRefusingEpisodeAlarm{} do, because flags cluster in the same episodes.
+
+A stricter threshold, set so that about one refusing episode in twenty sees a flag, still catches \qwenEpisodeCalCaught{} of leaking episodes by their first leak.
+It implies a much lower per-call flag rate, and so catches fewer leaking calls (\cref{tab:episode-calibration}).
+Thresholds set on control episodes do not transfer exactly to refusing episodes, and the gap differs by model and by level, so a deployed threshold should be set on realistic honest traffic (\cref{app:alarms}).
 
 \begin{figure}[t]
   \centering
