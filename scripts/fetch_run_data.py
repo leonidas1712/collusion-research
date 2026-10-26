@@ -1,9 +1,10 @@
-"""Restore run archives from a local directory or a published release URL.
+"""Restore checksum-pinned run archives from the data-v1 release or a local folder.
 
 Example (local archive verification):
   scripts/fetch_run_data.sh --source private/release_archives --destination /tmp/run-data-check
-For a release, supply --source https://.../releases/download/TAG and the published
---manifest-sha256. Existing differing files are never overwritten.
+With no arguments, use the pinned data-v1 GitHub release. Private/draft access
+uses an authenticated gh CLI; public releases also work over HTTPS without gh.
+For another release, supply --source and its trusted --manifest-sha256. Existing differing files are never overwritten.
 """
 import argparse
 import hashlib
@@ -11,6 +12,8 @@ import json
 import os
 from pathlib import Path, PurePosixPath
 import shutil
+import subprocess
+import re
 import tarfile
 import tempfile
 import urllib.request
@@ -24,15 +27,24 @@ def sha256(path):
     return h.hexdigest()
 
 
+DEFAULT_SOURCE = "github:leonidas1712/collusion-research@data-v1"
+DEFAULT_MANIFEST_SHA256 = "518352c0bceaaabf65917f68f2af0b751df9e0fb515ff0fd0cedfdac1f00cf6a"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--source', required=True, help='Local asset folder or HTTPS release asset base URL')
+    parser.add_argument('--source', default=DEFAULT_SOURCE, help='Local folder, HTTPS base URL, or github:OWNER/REPO@TAG (default: data-v1 release)')
     parser.add_argument('--destination', type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument('--manifest-sha256', help='Required for remote downloads; hash of manifest.json')
     args = parser.parse_args()
-    remote = args.source.startswith('https://')
+    github = re.fullmatch(r'github:([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)@([A-Za-z0-9][A-Za-z0-9_.-]*)', args.source)
+    if args.source.startswith('github:') and not github:
+        parser.error('Expected github:OWNER/REPO@TAG')
+    if args.source == DEFAULT_SOURCE and args.manifest_sha256 is None:
+        args.manifest_sha256 = DEFAULT_MANIFEST_SHA256
+    remote = args.source.startswith('https://') or github is not None
     if '://' in args.source and not remote:
-        parser.error('Only HTTPS downloads or local paths are supported')
+        parser.error('Only HTTPS downloads, GitHub releases or local paths are supported')
     if remote and not args.manifest_sha256:
         parser.error('Remote downloads require --manifest-sha256 from trusted release metadata')
     root = args.destination.resolve()
@@ -46,8 +58,19 @@ def main():
             if not remote:
                 return Path(args.source) / name
             dest = cache / name
-            with urllib.request.urlopen(args.source.rstrip('/') + '/' + name) as src, dest.open('wb') as out:
-                shutil.copyfileobj(src, out)
+            if github and shutil.which('gh'):
+                repo, tag = github.groups()
+                subprocess.run(['gh', 'release', 'download', tag, '--repo', repo, '--pattern', name, '--dir', str(cache)], check=True)
+            else:
+                url = (f'https://github.com/{github[1]}/releases/download/{github[2]}/{name}' if github
+                       else args.source.rstrip('/') + '/' + name)
+                try:
+                    with urllib.request.urlopen(url) as src, dest.open('wb') as out:
+                        shutil.copyfileobj(src, out)
+                except Exception as exc:
+                    if github:
+                        raise RuntimeError('Release download failed. For a private/draft release, install gh and run gh auth login with repository access.') from exc
+                    raise
             return dest
 
         manifest_path = fetch('manifest.json')

@@ -66,6 +66,20 @@ The paper defines its terms in §3.3. Run files written earlier in the sprint so
 
 Other terms are defined in plain language in [`explainers/GLOSSARY.md`](explainers/GLOSSARY.md).
 
+## Getting the full run data
+
+The [data-v1 release](https://github.com/leonidas1712/collusion-research/releases/tag/untagged-a2a572b94f857e992207) holds the saved transcripts, per-call scores and monitor caches. From the repository root, restore them with:
+
+```bash
+scripts/fetch_run_data.sh
+```
+
+The release is currently a private draft. Until it is published, install the [GitHub CLI](https://cli.github.com/) and run `gh auth login` with an account that has access to this repository. The command uses that authentication; after public publication, it can also download over HTTPS without the CLI.
+
+The download is about 1.6 GB and expands to about 8.5 GB. The script checks the pinned manifest and every archive/file SHA-256, restores the original paths, and refuses to overwrite a differing local file. It includes all 360 original gpt-oss episodes and the 84 confirmation episodes. Activations and model weights are separate: regenerate or download those as described below.
+
+Fetch before rebuilding the trace viewer, auditing episodes, running `report/make_data_figures.py`, or re-scoring saved per-call/monitor outputs. The compact Figure 1, Figure 2 and Figure 3 commands and the paper build do not need this download. Probe fitting still needs the activation arrays in addition to these run data.
+
 ## Setup
 
 You can read every result without running anything. Each run folder in `runs/` keeps its command, settings and outputs, and the tables below say which folder backs which number.
