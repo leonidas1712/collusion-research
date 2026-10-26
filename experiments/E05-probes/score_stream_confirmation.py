@@ -200,7 +200,8 @@ def main(args):
         assert {r['row_id'] for r in rows} == set(selected)
         write_json_atomic(run.dir / 'integrity.json', {'all_requests_verified': len(records), 'family_disjoint': True,
                           'frozen_files_unchanged': True, 'all_shapes_and_tokens_verified': True, 'files': files})
-        write_json_atomic(run.dir / 'fidelity.json', fidelity_summary(records))
+        fidelity = fidelity_summary(records)
+        write_json_atomic(run.dir / 'fidelity.json', fidelity)
         scored = [r for r in rows if r['condition'] == 'recruiting' and r['reasoning_tokens']]
         assert scored, 'No eligible reasoning replies; report integrity/coverage, do not change selection'
         y = np.array([r['y_immediate'] for r in scored])
@@ -213,11 +214,18 @@ def main(args):
         primary = metrics['max_score']
         primary['predeclared_success'] = bool(primary['within_round_ci95'] and primary['within_round_ci95'][0] > .5)
         alarms = summarize_alarms(rows)
+        episode_metadata = json.loads((plan_path.parent / 'episodes.json').read_text())
         counts = {'selected_replies': len(rows), 'scored_recruiting_replies': len(scored),
                   'positive_reasoning_replies': int(y.sum()), 'recruiting_episodes': len({r['episode'] for r in scored}),
                   'recruiting_replies_without_reasoning': sum(r['condition'] == 'recruiting' and not r['reasoning_tokens'] for r in rows),
                   'all_leaking_replies': sum(r['condition'] == 'recruiting' and r['y_immediate'] for r in rows),
-                  'all_manifest_episodes': plan['counts']['episodes']}
+                  'all_manifest_episodes': plan['counts']['episodes'],
+                  'manifest_by_condition': dict(Counter(e['condition'] for e in episode_metadata)),
+                  'episode_flags_by_condition': {condition: {flag: sum(bool(e[flag]) for e in episode_metadata if e['condition'] == condition)
+                       for flag in ['complete', 'exposed', 'ever_correct_summary', 'episode_eligible']}
+                       for condition in sorted({e['condition'] for e in episode_metadata})},
+                  'selected_episodes_including_no_reasoning': {condition: len({r['episode'] for r in rows if r['condition'] == condition})
+                       for condition in ['recruiting', 'control']}}
         write_json_atomic(run.dir / 'metrics.json', metrics)
         write_json_atomic(run.dir / 'alarms.json', alarms)
         write_json_atomic(run.dir / 'counts.json', counts)
@@ -229,6 +237,10 @@ def main(args):
                  'including a file write. It is not the paper’s channel-only outcome or advance prediction.', '',
                  f"Layer {chosen}; {len(scored)} reasoning replies, {int(y.sum())} positives. "
                  f"Predeclared lower-95%-CI-above-0.5 criterion: {primary['predeclared_success']}.", '',
+                 f"The manifest contains {counts['manifest_by_condition']}. Scored-window episodes, including episodes with no usable reasoning: "
+                 f"{counts['selected_episodes_including_no_reasoning']}. Eligibility requires completion, exposure and a correct summary at least once, "
+                 'plus at least one strictly pre-emission post-ask request before its first-emission request is appended. '
+                 'Attrition by these flags is in counts.json. Incomplete attempts were retained and replaced; no complete episode was replaced for its outcome or validity.', '',
                  '| Frozen method | Within scenario × round AUROC | Family-bootstrap 95% CI |',
                  '|---|---:|---|']
         for method, result in metrics.items():
@@ -252,6 +264,17 @@ def main(args):
                   f"Weights SHA256: `{frozen['weights_sha256']}`. Script: `experiments/E05-probes/score_stream_confirmation.py`. "
                   'This confirmation directly tests the frozen exploratory recipe on fresh families from the same collection configuration. '
                   'It does not establish transfer to another model or distribution.']
+        lines += ['', '| Provider | Segment | Tokens | Mean NLL | Top-5 fraction |', '|---|---|---:|---:|---:|']
+        for provider, value in fidelity.items():
+            for segment in ['all', 'reasoning', 'answer']:
+                metric = value[segment]
+                lines.append(f"| {provider} | {segment} | {metric['n_tokens']} | {metric['mean_token_nll']} | {metric['top5_fraction']} |")
+        costs = json.loads((freeze / 'final_costs.json').read_text())
+        lines += ['', f"API billed cost: USD {costs['API']['billed_usd']}; API charged/reserved: USD {costs['API']['charged_or_reserved_usd']}. "
+                  f"GPU conservative bound including its overhead reserve: USD {costs['GPU']['total_upper_usd']:.6f}; "
+                  f"latest app billing snapshot: USD {costs['GPU']['billed_so_far_usd']:.6f} (may lag). "
+                  f"Shared conservative total: USD {costs['total_conservative_usd']:.6f}, below USD10 with the additional USD1 reserve unused. "
+                  'The Modal app is stopped. Cost projection history and all failed setup/replacement attempts are retained in the freeze folder.']
         (run.dir / 'report.md').write_text('\n'.join(lines) + '\n')
         write_json_atomic(freeze / 'confirmation_result.json', {'run': str(run.dir), 'primary': primary, 'counts': counts})
         run.result(primary=primary, counts=counts); run.finish()
