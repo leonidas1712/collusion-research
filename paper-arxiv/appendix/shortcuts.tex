@@ -20,10 +20,10 @@ These within-subset scores, and the handoff-write score below, use only the scen
 
 \paragraph{The target's own earlier promise.}
 The probe reads the whole input, including the target's own earlier messages, so it might read back an earlier promise such as ``fine, I'll send it''.
-We flagged every scored call on the fresh test episodes whose earlier target messages agree or offer to share the value, by asking Jev with the value masked, and rescored the frozen probes without the flagged calls (\cref{tab:precommitment}).
+We flagged every scored call on the fresh test episodes whose earlier target messages agree or offer to share the value, by asking Jev with the value masked, and recomputed the frozen probes' AUROC from their saved scores without the flagged calls (\cref{tab:precommitment}).
 On Qwen3-32B such earlier promises are rare.
 On gpt-oss-20b about one leaking call in five follows one, mostly in its earlier reasoning in the same turn.
-Removing those calls changes the score little on both models, although we did not run a paired test of the difference.
+Removing those calls changes the score little on both models.
 A blind reviewer agreed with Jev's flag on \precommitJevReviewAgreements{} of \precommitJevReviewSample{} sampled calls, counting earlier reasoning as a promise; a fixed keyword list agreed poorly, so we do not use it.
 
 \begin{table}[h]
