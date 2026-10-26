@@ -39,6 +39,10 @@ The Qwen3-32B fresh test episodes contain none from the main scenario, and in th
   \input{tables/datasets_fresh.tex}
 \end{table}
 
+\paragraph{Leaking episodes and leaking calls.}
+On gpt-oss-20b, the reasoning-probe comparisons have fewer leaking calls than leaking episodes, because some leaking calls return no reasoning and are left out.
+Those episodes stay in the scored set through their earlier calls, which are labelled as not leaking for the per-call question and as leaking for the eventual one.
+
 \paragraph{Reading the activations.}
 We re-run every saved target prompt once through the open-weight checkpoint, on one GPU, with no generation.
 For Qwen3-32B we save every decoder layer at the last prompt token.
