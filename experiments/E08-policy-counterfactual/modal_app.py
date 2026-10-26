@@ -1,0 +1,257 @@
+"""Modal prefill replay for E08. Importing this module does not submit work."""
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+import modal
+
+
+HERE = Path(__file__).resolve().parent if modal.is_local() else Path("/app/e08")
+ROOT = HERE.parents[1] if modal.is_local() else Path("/app")
+OLD_ROOT = Path("/Users/leo/collusion-research")
+E02 = ROOT / "experiments/E02-activation-replay" if modal.is_local() else Path("/app/e02")
+sys.path[:0] = [str(HERE), str(E02)]
+
+app = modal.App("collusion-e08-policy-counterfactual")
+weights_volume = modal.Volume.from_name("collusion-weights", create_if_missing=False)
+outputs_volume = modal.Volume.from_name("collusion-activations", create_if_missing=False)
+image = (
+    modal.Image.debian_slim(python_version="3.11")
+    .pip_install(
+        "torch==2.14.1",
+        "transformers==5.20.2",
+        "accelerate==1.15.0",
+        "safetensors==0.8.0",
+        "numpy==2.4.6",
+        "huggingface-hub==2.3.0",
+    )
+    .env({"HF_HOME": "/weights/huggingface", "PYTHONPATH": "/app/src:/app/e02:/app/e08"})
+)
+if modal.is_local():
+    image = image.add_local_dir(ROOT / "src" / "collusion", remote_path="/app/src/collusion", ignore=["__pycache__/**"])
+    image = image.add_local_file(E02 / "replay.py", "/app/e02/replay.py")
+    image = image.add_local_file(HERE / "counterfactual.py", "/app/e08/counterfactual.py")
+
+
+def execute(plan: dict, payload: list[dict], probe_models: list[dict], provenance: dict, mode: str) -> dict:
+    import csv
+    import os
+
+    import numpy as np
+    import torch
+    from transformers import AutoConfig, AutoModel, AutoTokenizer
+
+    from counterfactual import CONDITIONS, digest, edit_request, score_activation
+    from replay import capture, decoder_layers, render
+
+    if mode not in ("benchmark", "full"):
+        raise ValueError("mode must be benchmark or full")
+    os.environ["HF_HUB_OFFLINE"] = "1"
+    os.environ["TRANSFORMERS_OFFLINE"] = "1"
+    model_spec = plan["model"]
+    model_id = model_spec["name"]
+    revision = model_spec["revision"]
+    if not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise ValueError("Pinned 40-character model revision required")
+    marker = Path("/weights/ready") / model_id.replace("/", "--") / f"{revision}.json"
+    if not marker.is_file():
+        raise FileNotFoundError(f"Prefetched model marker missing: {marker}")
+    if mode == "benchmark":
+        allowed = set(plan["benchmark"]["call_ids"])
+        payload = [item for item in payload if item["call"]["call_id"] in allowed]
+        if len(payload) != plan["benchmark"]["source_calls"]:
+            raise ValueError("Benchmark subset differs from frozen plan")
+    elif len(payload) != plan["selection"]["source_calls"]:
+        raise ValueError("Full payload differs from frozen plan")
+
+    import collusion.runs as run_helpers
+
+    run_helpers.RUNS = Path("/outputs/runs")
+    run_helpers.INDEX = run_helpers.RUNS / "index.jsonl"
+    run = run_helpers.start_run(
+        "e08-policy-counterfactual",
+        experiment="E08",
+        settings={"mode": mode, "plan_sha256": provenance["plan_sha256"], "conditions": list(CONDITIONS)},
+        parents=["20261026-2212-e05-arxiv-qwen-fresh-percall"],
+        model=model_id,
+        tags=["prefill", "counterfactual", mode],
+    )
+    wall_started = time.perf_counter()
+    try:
+        torch.set_num_threads(4)
+        torch.manual_seed(0)
+        tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision, trust_remote_code=False, local_files_only=True)
+        config = AutoConfig.from_pretrained(model_id, revision=revision, trust_remote_code=False, local_files_only=True)
+
+        # Validate every edit and render before allocating model weights.
+        rendered_inputs = []
+        for item in payload:
+            for condition in CONDITIONS:
+                request = edit_request(item["request"], item["call"]["scenario"], condition, plan)
+                rendered, ids, changes, thinking = render(tokenizer, request, "from-request")
+                if len(ids) > config.max_position_embeddings:
+                    raise ValueError(f"Prompt exceeds context: {item['call']['call_id']} {condition}")
+                rendered_inputs.append((item, condition, request, rendered, ids, changes, thinking))
+
+        load_started = time.perf_counter()
+        model = AutoModel.from_pretrained(
+            model_id,
+            revision=revision,
+            dtype=torch.bfloat16,
+            device_map="auto",
+            trust_remote_code=False,
+            attn_implementation="sdpa",
+            local_files_only=True,
+        )
+        model.eval()
+        model_load_seconds = time.perf_counter() - load_started
+        layers_path, layers = decoder_layers(model)
+        selected_layers = [int(layer) for layer in model_spec["layers"]]
+        capture_layers = [layers[layer] for layer in selected_layers]
+        input_device = model.get_input_embeddings().weight.device
+        torch.cuda.reset_peak_memory_stats()
+
+        rows = []
+        activation_seconds = 0.0
+        prompt_tokens = 0
+        activation_dir = run.dir / "activations"
+        activation_dir.mkdir(parents=True, exist_ok=True)
+        for index, (item, condition, request, rendered, ids, changes, thinking) in enumerate(rendered_inputs):
+            if mode == "full" and time.perf_counter() - wall_started > plan["benchmark"]["full_timeout_seconds"]:
+                raise TimeoutError("Frozen E08 full-run wall guard reached")
+            started = time.perf_counter()
+            values = capture(model, capture_layers, ids, input_device)
+            elapsed = time.perf_counter() - started
+            activation_seconds += elapsed
+            prompt_tokens += len(ids)
+            layer_values = {layer: values[offset] for offset, layer in enumerate(selected_layers)}
+            score, seed_scores = score_activation(layer_values, probe_models)
+            key = hashlib.sha256(f'{item["call"]["call_id"]}|{condition}'.encode()).hexdigest()[:20]
+            with (activation_dir / f"{key}.tmp").open("wb") as handle:
+                np.savez_compressed(
+                    handle,
+                    residual_last=values.astype(np.float32),
+                    layer_indices=np.asarray(selected_layers, dtype=np.int64),
+                    input_ids=np.asarray(ids, dtype=np.int64),
+                )
+            (activation_dir / f"{key}.tmp").replace(activation_dir / f"{key}.npz")
+            rows.append({
+                **item["call"],
+                "condition": condition,
+                "score": score,
+                "seed42_score": seed_scores[0],
+                "seed43_score": seed_scores[1],
+                "seed44_score": seed_scores[2],
+                "n_tokens": len(ids),
+                "input_ids_sha256": digest(ids),
+                "rendered_prompt_sha256": digest(rendered.encode()),
+                "edited_request_sha256": digest(request),
+                "enable_thinking": thinking,
+                "normalization_count": len(changes),
+                "activation_seconds": elapsed,
+                "activation_file": f"activations/{key}.npz",
+            })
+            if (index + 1) % 25 == 0:
+                print(json.dumps({"completed": index + 1, "total": len(rendered_inputs), "prompt_tokens": prompt_tokens}), flush=True)
+                outputs_volume.commit()
+
+        fieldnames = list(rows[0])
+        with (run.dir / "scores.csv").open("w", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
+        summary = {
+            "mode": mode,
+            "source_calls": len(payload),
+            "forwards": len(rows),
+            "prompt_tokens": prompt_tokens,
+            "model_load_seconds": model_load_seconds,
+            "activation_seconds": activation_seconds,
+            "wall_seconds": time.perf_counter() - wall_started,
+            "tokens_per_activation_second": prompt_tokens / activation_seconds,
+            "peak_cuda_memory_bytes": torch.cuda.max_memory_allocated(),
+            "selected_layers": selected_layers,
+            "layers_path": layers_path,
+            "plan_sha256": provenance["plan_sha256"],
+        }
+        (run.dir / "plan.json").write_text(json.dumps(plan, indent=2, sort_keys=True) + "\n")
+        (run.dir / "input_manifest.json").write_text(json.dumps(provenance, indent=2, sort_keys=True) + "\n")
+        (run.dir / "gpu_summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+        run.result(**summary)
+        run.finish()
+        outputs_volume.commit()
+        return {"path": str(run.dir.relative_to("/outputs")), "summary": summary}
+    except BaseException as error:
+        run.finish("failed", f"{type(error).__name__}: {error}")
+        outputs_volume.commit()
+        raise
+
+
+@app.function(
+    image=image,
+    gpu="A100-80GB",
+    timeout=20 * 60,
+    volumes={"/weights": weights_volume, "/outputs": outputs_volume},
+    max_containers=1,
+    cpu=(4, 4),
+    memory=(32768, 65536),
+    scaledown_window=2,
+)
+def benchmark_remote(plan: dict, payload: list[dict], probe_models: list[dict], provenance: dict):
+    return execute(plan, payload, probe_models, provenance, "benchmark")
+
+
+@app.function(
+    image=image,
+    gpu="A100-80GB",
+    timeout=105 * 60,
+    volumes={"/weights": weights_volume, "/outputs": outputs_volume},
+    max_containers=1,
+    cpu=(4, 4),
+    memory=(32768, 65536),
+    scaledown_window=2,
+)
+def full_remote(plan: dict, payload: list[dict], probe_models: list[dict], provenance: dict):
+    return execute(plan, payload, probe_models, provenance, "full")
+
+
+@app.local_entrypoint()
+def main(mode: str = "benchmark", plan_path: str = "experiments/E08-policy-counterfactual/plan.json"):
+    if mode not in ("benchmark", "full"):
+        raise ValueError("mode must be benchmark or full")
+    from counterfactual import digest, load_probe_weights, pack_inputs
+
+    path = (ROOT / plan_path).resolve()
+    plan = json.loads(path.read_text())
+    if plan["status"] != "frozen_before_gpu":
+        raise ValueError("Plan is not frozen")
+    tracked = subprocess.run(["git", "ls-files", "--error-unmatch", str(path.relative_to(ROOT))], cwd=ROOT, capture_output=True)
+    dirty = subprocess.run(["git", "status", "--porcelain", "--", str(path.relative_to(ROOT))], cwd=ROOT, capture_output=True, text=True)
+    if tracked.returncode or dirty.stdout.strip():
+        raise ValueError("plan.json must be committed and clean before a GPU call")
+    payload = pack_inputs(plan, OLD_ROOT)
+    probe_models = load_probe_weights(plan, ROOT)
+    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+    provenance = {
+        "plan_sha256": digest(path.read_bytes()),
+        "local_git_commit": commit,
+        "code_sha256": {
+            name: digest((HERE / name).read_bytes())
+            for name in ("counterfactual.py", "modal_app.py", "make_plan.py")
+        },
+        "source_requests": [
+            {key: item["call"][key] for key in ("call_id", "episode_sha256", "request_sha256")}
+            for item in payload
+        ],
+    }
+    function = benchmark_remote if mode == "benchmark" else full_remote
+    result = function.remote(plan, payload, probe_models, provenance)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    print("mkdir -p ./modal-results")
+    print(f'modal volume get collusion-activations {result["path"]} ./modal-results')
