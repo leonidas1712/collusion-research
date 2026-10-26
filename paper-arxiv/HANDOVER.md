@@ -194,6 +194,19 @@ The 5% (5.5%, 77/1,407) is measured on **calls in refusing episodes**, not on al
 that way. If you want the abstract to match exactly: "flagging 5% of **calls in refusing episodes**". The
 same denominator applies to Jev's 29%. Your text is unchanged until you decide.
 
+### 6. Three author calls from the round-1 fresh reviews (`reviews/fb1_reviews_summary.md`, item 9)
+
+The fresh rigour review found the core result sound and left these three framing choices to you. The body
+already states each fact; the question is how much of it the title and abstract carry.
+1. **"Gives in" framing.** The title and abstract say the probe tells when an agent *gives in*. What the
+   probe actually reads is open: it may read the situation that prompts a leak rather than a decision
+   (§4.3; Limitations). Keep "gives in", or soften to "is about to leak".
+2. **The abstract's operating point has no precision or per-episode rate.** It gives 82% caught at 5% flagged.
+   On the same fresh Qwen calls, only 24% of the probe's flags are real leaks, and 59% of refusing episodes
+   see at least one flag (§4.4). Consider adding one of these, or accept the per-call framing as is.
+3. **The gpt-oss 0.91 rests on 26 leaking calls.** It is the one pre-registered result, and its interval
+   is wide (0.78 to 0.99). The abstract states it without that context; the body and Limitations say it.
+
 ## Technical decisions
 
 - **ICLR header on the arXiv draft (codex #2373, via claude #2374).** With `\iclrfinalcopy` the ICLR 2027
