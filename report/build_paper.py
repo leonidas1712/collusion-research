@@ -318,8 +318,31 @@ def format_docx(path, template, paragraph_layout='template'):
             for attr in ['themeColor', 'themeTint', 'themeShade']:
                 color.attrib.pop(qn('w:'+attr), None)
             props.get_or_add_u().set(qn('w:val'), 'none')
+    add_page_numbers(doc)
     doc.save(path)
     copy_title_footnote(path, template, footnote_id)
+
+
+def add_page_numbers(doc):
+    """Place a PAGE field in the bottom margin without changing the text area."""
+    for section in doc.sections:
+        section.different_first_page_header_footer = False
+        section.footer_distance = Inches(0.4)
+        paragraph = section.footer.paragraphs[0]
+        paragraph.clear()
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        fmt = paragraph.paragraph_format
+        fmt.first_line_indent = Inches(0)
+        fmt.left_indent = fmt.right_indent = Inches(0)
+        fmt.space_before = fmt.space_after = Pt(0)
+        fmt.line_spacing = 1
+        fmt.keep_with_next = False
+        field = OxmlElement('w:fldSimple')
+        field.set(qn('w:instr'), 'PAGE')
+        run = paragraph.add_run('1')
+        set_run_font(run, name='XCharter', size=9)
+        field.append(run._r)
+        paragraph._p.append(field)
 
 
 def build(args):
@@ -400,19 +423,21 @@ def measure_pages(output):
     pages=[p.extract_text() for p in PdfReader(pdf).pages]
     marker=re.compile(r'^References\s*$',re.M)
     boundary=next(i for i,p in enumerate(pages) if marker.search(p))
-    before=marker.split(pages[boundary])[0].strip()
-    body_pages=boundary+bool(before)
     bbox = ET.fromstring(subprocess.check_output(['pdftotext', '-bbox-layout', str(pdf), '-']))
     ns = {'x': 'http://www.w3.org/1999/xhtml'}
     body_words = []
+    section = Document(output).sections[0]
+    body_bottom = section.page_height.pt - section.bottom_margin.pt
     for page_number, page in enumerate(bbox.findall('.//x:page', ns), 1):
-        words = page.findall('.//x:word', ns)
+        words = [w for w in page.findall('.//x:word', ns)
+                 if not (w.text == str(page_number) and float(w.get('yMin')) > body_bottom)]
         stop = next((i for i, word in enumerate(words)
                      if page_number == boundary+1 and word.text == 'References'), None)
         body_words.extend((page_number, float(w.get('yMax'))) for w in words[:stop])
         if stop is not None:
             break
     last_page = body_words[-1][0]
+    body_pages = last_page
     last_y = max(y for page, y in body_words if page == last_page)
     section = Document(output).sections[0]
     top = section.top_margin.pt
