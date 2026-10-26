@@ -31,6 +31,17 @@ Branching reruns from the same state often end differently, which suggests the o
   \input{tables/round_level.tex}
 \end{table}
 
+\paragraph{Robustness.}
+The round-level ``this round or the next'' result on Qwen3-32B holds across two label variants that use hindsight to choose negatives, a fixed middle layer, weighting scenarios equally, and a small neural network instead of logistic regression (\cref{tab:robust-round}).
+
+\begin{table}[h]
+  \centering
+  \caption{Round-level robustness on Qwen3-32B, with the round-level label (\cref{app:labels}).}
+  \label{tab:robust-round}
+  \small
+  \input{tables/robust_round.tex}
+\end{table}
+
 \subsection{Why is round-level prediction near chance on gpt-oss-20b with a channel-only label?}
 \label{app:gptoss-round}
 
