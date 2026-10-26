@@ -1,0 +1,33 @@
+{
+  "id": "20261026-2212-e05-arxiv-qwen-fresh-percall",
+  "experiment": "E05",
+  "name": "e05-arxiv-qwen-fresh-percall",
+  "tags": [
+    "held-out",
+    "cpu-only"
+  ],
+  "settings": {
+    "plan_sha256": "dd1a9d4a6a7e002e647dd53f89f9fec26aa0d702eab309413140fe06e113e001",
+    "freeze_pushed_before_scoring": true
+  },
+  "parents": [
+    "20261026-2207-e05-arxiv-qwen-percall-freeze"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research-followup/experiments/E05-probes/.venv/bin/python experiments/E05-probes/arxiv_frozen_percall.py --score paper-arxiv/frozen/qwen_percall_plan.json",
+  "git_commit": "a1f825e48b8f1d44c82ed46a8448e0442bb1cad5",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T22:12:29",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T22:12:30",
+  "results": {
+    "auc": 0.9755173189383717,
+    "ci95": [
+      0.9430512977793153,
+      0.9950315421293682
+    ]
+  }
+}

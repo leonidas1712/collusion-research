@@ -1,0 +1,49 @@
+{
+  "id": "20261026-2245-e05-arxiv-qwen-text-workflow",
+  "experiment": "E05",
+  "name": "e05-arxiv-qwen-text-workflow",
+  "tags": [
+    "cpu-only",
+    "post-hoc"
+  ],
+  "settings": {
+    "same_calls": true,
+    "api_spend_usd": 0,
+    "gpu_spend_usd": 0
+  },
+  "parents": [
+    "20261026-2201-e05-arxiv-qwen-any-public"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research-followup/experiments/E05-probes/.venv/bin/python experiments/E05-probes/arxiv_text_workflow.py --model qwen --restore-root /tmp/collusion-public-check-20261026",
+  "git_commit": "45cc406f3530c683f501e5274a76d4452f546c4c",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T22:45:03",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T22:45:19",
+  "results": {
+    "metrics": {
+      "last_prompt": 0.9601796341087426,
+      "full_input": 0.7103315744982052,
+      "latest_input": 0.9251344019507147,
+      "write_file": 0.5288083061621334,
+      "handoff_write": 0.4909295182833455,
+      "last_prompt_within_write_file": NaN
+    },
+    "counts": {
+      "write_file": {
+        "calls": 160,
+        "positives": 5,
+        "negatives": 155
+      },
+      "handoff_write": {
+        "calls": 152,
+        "positives": 0,
+        "negatives": 152
+      }
+    }
+  }
+}

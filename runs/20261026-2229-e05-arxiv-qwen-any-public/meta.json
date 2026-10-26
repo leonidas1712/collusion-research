@@ -1,0 +1,37 @@
+{
+  "id": "20261026-2229-e05-arxiv-qwen-any-public",
+  "experiment": "E05",
+  "name": "e05-arxiv-qwen-any-public",
+  "tags": [
+    "exploratory",
+    "cpu-only"
+  ],
+  "settings": {
+    "label_boundary": "first exact value in answer or any tool argument, including source-file writebacks",
+    "development_feature_index_lt": 6026,
+    "modes": [
+      "pooled"
+    ],
+    "workers": 3,
+    "threads": 2,
+    "no_gpu": true,
+    "no_api": true
+  },
+  "parents": [
+    "20261026-2155-e05-qwen-any-public-audit"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research-followup/experiments/E05-probes/.venv/bin/python experiments/E05-probes/arxiv_qwen_refit.py --audit runs/20261026-2155-e05-qwen-any-public-audit --modes pooled",
+  "git_commit": "be1e6af5a9a881286060a428de49bd81ee30d143",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T22:29:57",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T22:44:17",
+  "results": {
+    "fits": 45,
+    "gpu_spend_usd": 0
+  }
+}

@@ -31,7 +31,10 @@
 \newcommand{\gptossCallReasoningLow}{0.91}
 \newcommand{\gptossCallReasoningHigh}{0.95}
 \newcommand{\gptossCallReasoningCI}{[0.91, 0.95]}
-\newcommand{\gptossReadStep}{\texttt{pending}}
+\newcommand{\gptossReadStep}{0.80}
+\newcommand{\gptossReadStepLow}{0.76}
+\newcommand{\gptossReadStepHigh}{0.84}
+\newcommand{\gptossReadStepCI}{[0.76, 0.84]}
 \newcommand{\gptossCallJev}{0.40}
 \newcommand{\gptossCallJevLow}{0.33}
 \newcommand{\gptossCallJevHigh}{0.45}
@@ -40,12 +43,634 @@
 \newcommand{\gptossCallJevNoReasoningLow}{0.21}
 \newcommand{\gptossCallJevNoReasoningHigh}{0.32}
 \newcommand{\gptossCallJevNoReasoningCI}{[0.21, 0.32]}
-\newcommand{\qwenCallProbe}{\texttt{pending}}
-\newcommand{\qwenEverProbe}{\texttt{pending}}
-\newcommand{\qwenNearProbe}{\texttt{pending}}
-\newcommand{\qwenCallJev}{\texttt{pending}}
-\newcommand{\qwenFreshCallProbe}{\texttt{pending}}
-\newcommand{\gptossFreshCallProbe}{\texttt{pending}}
+\newcommand{\qwenCallProbe}{0.96}
+\newcommand{\qwenCallProbeLow}{0.93}
+\newcommand{\qwenCallProbeHigh}{0.98}
+\newcommand{\qwenCallProbeCI}{[0.93, 0.98]}
+\newcommand{\qwenEverProbe}{0.53}
+\newcommand{\qwenEverProbeLow}{0.47}
+\newcommand{\qwenEverProbeHigh}{0.59}
+\newcommand{\qwenEverProbeCI}{[0.47, 0.59]}
+\newcommand{\qwenNearProbe}{0.67}
+\newcommand{\qwenNearProbeLow}{0.63}
+\newcommand{\qwenNearProbeHigh}{0.71}
+\newcommand{\qwenNearProbeCI}{[0.63, 0.71]}
+\newcommand{\qwenCallJev}{0.76}
+\newcommand{\qwenCallJevLow}{0.68}
+\newcommand{\qwenCallJevHigh}{0.80}
+\newcommand{\qwenCallJevCI}{[0.68, 0.80]}
+\newcommand{\qwenFreshCallProbe}{0.98}
+\newcommand{\qwenFreshCallProbeLow}{0.94}
+\newcommand{\qwenFreshCallProbeHigh}{1.00}
+\newcommand{\qwenFreshCallProbeCI}{[0.94, 1.00]}
+\newcommand{\gptossFreshCallProbe}{0.82}
+\newcommand{\gptossFreshCallProbeLow}{0.66}
+\newcommand{\gptossFreshCallProbeHigh}{0.95}
+\newcommand{\gptossFreshCallProbeCI}{[0.66, 0.95]}
+\newcommand{\gptossIncomingProbe}{0.93}
+\newcommand{\gptossIncomingProbeLow}{0.90}
+\newcommand{\gptossIncomingProbeHigh}{0.96}
+\newcommand{\gptossIncomingProbeCI}{[0.90, 0.96]}
+\newcommand{\gptossKeyword}{0.48}
+\newcommand{\gptossKeywordLow}{0.45}
+\newcommand{\gptossKeywordHigh}{0.51}
+\newcommand{\gptossKeywordCI}{[0.45, 0.51]}
+\newcommand{\gptossPlacebo}{0.46}
+\newcommand{\gptossPlaceboLow}{0.41}
+\newcommand{\gptossPlaceboHigh}{0.51}
+\newcommand{\gptossPlaceboCI}{[0.41, 0.51]}
+\newcommand{\qwenDevEpisodes}{152}
+\newcommand{\qwenDevControls}{53}
+\newcommand{\qwenDevCalls}{2976}
+\newcommand{\qwenDevLeaks}{66}
+\newcommand{\qwenFreshEpisodes}{89}
+\newcommand{\qwenFreshControls}{19}
+\newcommand{\qwenFreshCalls}{1825}
+\newcommand{\qwenFreshLeaks}{38}
+\newcommand{\gptossDevEpisodes}{238}
+\newcommand{\gptossDevControls}{58}
+\newcommand{\gptossDevCalls}{1995}
+\newcommand{\gptossDevLeaks}{121}
+\newcommand{\gptossFreshEpisodes}{57}
+\newcommand{\gptossFreshControls}{12}
+\newcommand{\gptossFreshCalls}{594}
+\newcommand{\gptossFreshLeaks}{26}
+\newcommand{\qwenStrictNextProbe}{0.75}
+\newcommand{\qwenStrictNextProbeLow}{0.69}
+\newcommand{\qwenStrictNextProbeHigh}{0.80}
+\newcommand{\qwenStrictNextProbeCI}{[0.69, 0.80]}
+\newcommand{\qwenLeakRate}{43.42\%}
+\newcommand{\qwenReadStep}{0.83}
+\newcommand{\qwenReadStepLow}{0.78}
+\newcommand{\qwenReadStepHigh}{0.89}
+\newcommand{\qwenReadStepCI}{[0.78, 0.89]}
+\newcommand{\qwenProbeMinusJev}{0.20}
+\newcommand{\qwenProbeMinusJevLow}{0.15}
+\newcommand{\qwenProbeMinusJevHigh}{0.28}
+\newcommand{\qwenProbeMinusJevCI}{[0.15, 0.28]}
+\newcommand{\qwenProbeMinusReadStep}{0.13}
+\newcommand{\qwenProbeMinusReadStepLow}{0.08}
+\newcommand{\qwenProbeMinusReadStepHigh}{0.18}
+\newcommand{\qwenProbeMinusReadStepCI}{[0.08, 0.18]}
+\newcommand{\gptossCallJevNoReasoningUnstratified}{0.81}
+\newcommand{\gptossCallJevNoReasoningLeakFlagged}{98\%}
+\newcommand{\gptossCallJevNoReasoningRefusingFlagged}{87\%}
+\newcommand{\gptossCallProbeMinusJevNoReasoning}{0.63}
+\newcommand{\gptossCallProbeMinusJevNoReasoningLow}{0.56}
+\newcommand{\gptossCallProbeMinusJevNoReasoningHigh}{0.71}
+\newcommand{\gptossCallProbeMinusJevNoReasoningCI}{[0.56, 0.71]}
+\newcommand{\gptossCallJevUnstratified}{0.86}
+\newcommand{\gptossCallJevLeakFlagged}{98\%}
+\newcommand{\gptossCallJevRefusingFlagged}{64\%}
+\newcommand{\gptossCallProbeMinusJev}{0.51}
+\newcommand{\gptossCallProbeMinusJevLow}{0.43}
+\newcommand{\gptossCallProbeMinusJevHigh}{0.58}
+\newcommand{\gptossCallProbeMinusJevCI}{[0.43, 0.58]}
+\newcommand{\qwenMonJevDetectActionsEver}{0.50}
+\newcommand{\qwenMonJevDetectActionsEverLow}{0.45}
+\newcommand{\qwenMonJevDetectActionsEverHigh}{0.55}
+\newcommand{\qwenMonJevDetectActionsEverCI}{[0.45, 0.55]}
+\newcommand{\qwenMonJevDetectActionsNear}{0.51}
+\newcommand{\qwenMonJevDetectActionsNearLow}{0.47}
+\newcommand{\qwenMonJevDetectActionsNearHigh}{0.55}
+\newcommand{\qwenMonJevDetectActionsNearCI}{[0.47, 0.55]}
+\newcommand{\qwenMonJevDetectPeerEver}{0.53}
+\newcommand{\qwenMonJevDetectPeerEverLow}{0.48}
+\newcommand{\qwenMonJevDetectPeerEverHigh}{0.58}
+\newcommand{\qwenMonJevDetectPeerEverCI}{[0.48, 0.58]}
+\newcommand{\qwenMonJevDetectPeerNear}{0.55}
+\newcommand{\qwenMonJevDetectPeerNearLow}{0.50}
+\newcommand{\qwenMonJevDetectPeerNearHigh}{0.59}
+\newcommand{\qwenMonJevDetectPeerNearCI}{[0.50, 0.59]}
+\newcommand{\qwenMonJevDetectAllEver}{0.54}
+\newcommand{\qwenMonJevDetectAllEverLow}{0.48}
+\newcommand{\qwenMonJevDetectAllEverHigh}{0.59}
+\newcommand{\qwenMonJevDetectAllEverCI}{[0.48, 0.59]}
+\newcommand{\qwenMonJevDetectAllNear}{0.57}
+\newcommand{\qwenMonJevDetectAllNearLow}{0.52}
+\newcommand{\qwenMonJevDetectAllNearHigh}{0.62}
+\newcommand{\qwenMonJevDetectAllNearCI}{[0.52, 0.62]}
+\newcommand{\qwenMonNanoDetectActionsEver}{0.50}
+\newcommand{\qwenMonNanoDetectActionsEverLow}{0.47}
+\newcommand{\qwenMonNanoDetectActionsEverHigh}{0.54}
+\newcommand{\qwenMonNanoDetectActionsEverCI}{[0.47, 0.54]}
+\newcommand{\qwenMonNanoDetectActionsNear}{0.51}
+\newcommand{\qwenMonNanoDetectActionsNearLow}{0.47}
+\newcommand{\qwenMonNanoDetectActionsNearHigh}{0.55}
+\newcommand{\qwenMonNanoDetectActionsNearCI}{[0.47, 0.55]}
+\newcommand{\qwenMonNanoDetectPeerEver}{0.56}
+\newcommand{\qwenMonNanoDetectPeerEverLow}{0.52}
+\newcommand{\qwenMonNanoDetectPeerEverHigh}{0.60}
+\newcommand{\qwenMonNanoDetectPeerEverCI}{[0.52, 0.60]}
+\newcommand{\qwenMonNanoDetectPeerNear}{0.57}
+\newcommand{\qwenMonNanoDetectPeerNearLow}{0.53}
+\newcommand{\qwenMonNanoDetectPeerNearHigh}{0.62}
+\newcommand{\qwenMonNanoDetectPeerNearCI}{[0.53, 0.62]}
+\newcommand{\qwenMonNanoDetectAllEver}{0.52}
+\newcommand{\qwenMonNanoDetectAllEverLow}{0.47}
+\newcommand{\qwenMonNanoDetectAllEverHigh}{0.57}
+\newcommand{\qwenMonNanoDetectAllEverCI}{[0.47, 0.57]}
+\newcommand{\qwenMonNanoDetectAllNear}{0.54}
+\newcommand{\qwenMonNanoDetectAllNearLow}{0.49}
+\newcommand{\qwenMonNanoDetectAllNearHigh}{0.59}
+\newcommand{\qwenMonNanoDetectAllNearCI}{[0.49, 0.59]}
+\newcommand{\qwenMonLunaDetectActionsEver}{0.53}
+\newcommand{\qwenMonLunaDetectActionsEverLow}{0.48}
+\newcommand{\qwenMonLunaDetectActionsEverHigh}{0.57}
+\newcommand{\qwenMonLunaDetectActionsEverCI}{[0.48, 0.57]}
+\newcommand{\qwenMonLunaDetectActionsNear}{0.51}
+\newcommand{\qwenMonLunaDetectActionsNearLow}{0.46}
+\newcommand{\qwenMonLunaDetectActionsNearHigh}{0.57}
+\newcommand{\qwenMonLunaDetectActionsNearCI}{[0.46, 0.57]}
+\newcommand{\qwenMonLunaDetectPeerEver}{0.52}
+\newcommand{\qwenMonLunaDetectPeerEverLow}{0.47}
+\newcommand{\qwenMonLunaDetectPeerEverHigh}{0.57}
+\newcommand{\qwenMonLunaDetectPeerEverCI}{[0.47, 0.57]}
+\newcommand{\qwenMonLunaDetectPeerNear}{0.52}
+\newcommand{\qwenMonLunaDetectPeerNearLow}{0.47}
+\newcommand{\qwenMonLunaDetectPeerNearHigh}{0.58}
+\newcommand{\qwenMonLunaDetectPeerNearCI}{[0.47, 0.58]}
+\newcommand{\qwenMonLunaDetectAllEver}{0.54}
+\newcommand{\qwenMonLunaDetectAllEverLow}{0.47}
+\newcommand{\qwenMonLunaDetectAllEverHigh}{0.60}
+\newcommand{\qwenMonLunaDetectAllEverCI}{[0.47, 0.60]}
+\newcommand{\qwenMonLunaDetectAllNear}{0.57}
+\newcommand{\qwenMonLunaDetectAllNearLow}{0.49}
+\newcommand{\qwenMonLunaDetectAllNearHigh}{0.63}
+\newcommand{\qwenMonLunaDetectAllNearCI}{[0.49, 0.63]}
+\newcommand{\qwenMonJevForecastActionsEver}{0.48}
+\newcommand{\qwenMonJevForecastActionsEverLow}{0.41}
+\newcommand{\qwenMonJevForecastActionsEverHigh}{0.55}
+\newcommand{\qwenMonJevForecastActionsEverCI}{[0.41, 0.55]}
+\newcommand{\qwenMonJevForecastActionsNear}{0.51}
+\newcommand{\qwenMonJevForecastActionsNearLow}{0.46}
+\newcommand{\qwenMonJevForecastActionsNearHigh}{0.57}
+\newcommand{\qwenMonJevForecastActionsNearCI}{[0.46, 0.57]}
+\newcommand{\qwenMonJevForecastPeerEver}{0.56}
+\newcommand{\qwenMonJevForecastPeerEverLow}{0.49}
+\newcommand{\qwenMonJevForecastPeerEverHigh}{0.62}
+\newcommand{\qwenMonJevForecastPeerEverCI}{[0.49, 0.62]}
+\newcommand{\qwenMonJevForecastPeerNear}{0.64}
+\newcommand{\qwenMonJevForecastPeerNearLow}{0.59}
+\newcommand{\qwenMonJevForecastPeerNearHigh}{0.68}
+\newcommand{\qwenMonJevForecastPeerNearCI}{[0.59, 0.68]}
+\newcommand{\qwenMonJevForecastAllEver}{0.57}
+\newcommand{\qwenMonJevForecastAllEverLow}{0.50}
+\newcommand{\qwenMonJevForecastAllEverHigh}{0.64}
+\newcommand{\qwenMonJevForecastAllEverCI}{[0.50, 0.64]}
+\newcommand{\qwenMonJevForecastAllNear}{0.66}
+\newcommand{\qwenMonJevForecastAllNearLow}{0.61}
+\newcommand{\qwenMonJevForecastAllNearHigh}{0.70}
+\newcommand{\qwenMonJevForecastAllNearCI}{[0.61, 0.70]}
+\newcommand{\qwenMonNanoForecastActionsEver}{0.52}
+\newcommand{\qwenMonNanoForecastActionsEverLow}{0.49}
+\newcommand{\qwenMonNanoForecastActionsEverHigh}{0.56}
+\newcommand{\qwenMonNanoForecastActionsEverCI}{[0.49, 0.56]}
+\newcommand{\qwenMonNanoForecastActionsNear}{0.55}
+\newcommand{\qwenMonNanoForecastActionsNearLow}{0.49}
+\newcommand{\qwenMonNanoForecastActionsNearHigh}{0.60}
+\newcommand{\qwenMonNanoForecastActionsNearCI}{[0.49, 0.60]}
+\newcommand{\qwenMonNanoForecastPeerEver}{0.55}
+\newcommand{\qwenMonNanoForecastPeerEverLow}{0.51}
+\newcommand{\qwenMonNanoForecastPeerEverHigh}{0.60}
+\newcommand{\qwenMonNanoForecastPeerEverCI}{[0.51, 0.60]}
+\newcommand{\qwenMonNanoForecastPeerNear}{0.55}
+\newcommand{\qwenMonNanoForecastPeerNearLow}{0.50}
+\newcommand{\qwenMonNanoForecastPeerNearHigh}{0.61}
+\newcommand{\qwenMonNanoForecastPeerNearCI}{[0.50, 0.61]}
+\newcommand{\qwenMonNanoForecastAllEver}{0.51}
+\newcommand{\qwenMonNanoForecastAllEverLow}{0.46}
+\newcommand{\qwenMonNanoForecastAllEverHigh}{0.56}
+\newcommand{\qwenMonNanoForecastAllEverCI}{[0.46, 0.56]}
+\newcommand{\qwenMonNanoForecastAllNear}{0.53}
+\newcommand{\qwenMonNanoForecastAllNearLow}{0.48}
+\newcommand{\qwenMonNanoForecastAllNearHigh}{0.58}
+\newcommand{\qwenMonNanoForecastAllNearCI}{[0.48, 0.58]}
+\newcommand{\qwenMonLunaForecastActionsEver}{0.53}
+\newcommand{\qwenMonLunaForecastActionsEverLow}{0.48}
+\newcommand{\qwenMonLunaForecastActionsEverHigh}{0.57}
+\newcommand{\qwenMonLunaForecastActionsEverCI}{[0.48, 0.57]}
+\newcommand{\qwenMonLunaForecastActionsNear}{0.52}
+\newcommand{\qwenMonLunaForecastActionsNearLow}{0.46}
+\newcommand{\qwenMonLunaForecastActionsNearHigh}{0.57}
+\newcommand{\qwenMonLunaForecastActionsNearCI}{[0.46, 0.57]}
+\newcommand{\qwenMonLunaForecastPeerEver}{0.53}
+\newcommand{\qwenMonLunaForecastPeerEverLow}{0.50}
+\newcommand{\qwenMonLunaForecastPeerEverHigh}{0.58}
+\newcommand{\qwenMonLunaForecastPeerEverCI}{[0.50, 0.58]}
+\newcommand{\qwenMonLunaForecastPeerNear}{0.50}
+\newcommand{\qwenMonLunaForecastPeerNearLow}{0.44}
+\newcommand{\qwenMonLunaForecastPeerNearHigh}{0.55}
+\newcommand{\qwenMonLunaForecastPeerNearCI}{[0.44, 0.55]}
+\newcommand{\qwenMonLunaForecastAllEver}{0.48}
+\newcommand{\qwenMonLunaForecastAllEverLow}{0.44}
+\newcommand{\qwenMonLunaForecastAllEverHigh}{0.53}
+\newcommand{\qwenMonLunaForecastAllEverCI}{[0.44, 0.53]}
+\newcommand{\qwenMonLunaForecastAllNear}{0.50}
+\newcommand{\qwenMonLunaForecastAllNearLow}{0.45}
+\newcommand{\qwenMonLunaForecastAllNearHigh}{0.55}
+\newcommand{\qwenMonLunaForecastAllNearCI}{[0.45, 0.55]}
+\newcommand{\screenRuleBaseRate}{40\%}
+\newcommand{\screenRuleBaseN}{10}
+\newcommand{\screenRuleLoggedRate}{67\%}
+\newcommand{\screenRuleLoggedN}{12}
+\newcommand{\screenPlainRate}{43\%}
+\newcommand{\screenPlainN}{30}
+\newcommand{\screenTacticMinRate}{0\%}
+\newcommand{\screenTacticMaxRate}{50\%}
+\newcommand{\screenTacticMinN}{4}
+\newcommand{\screenTacticMaxN}{6}
+\newcommand{\screenStakeNoneRate}{44\%}
+\newcommand{\screenStakeNoneN}{9}
+\newcommand{\screenStakeOwnRate}{64\%}
+\newcommand{\screenStakeOwnN}{11}
+\newcommand{\screenThinkingRate}{12\%}
+\newcommand{\screenThinkingN}{8}
+\newcommand{\screenTwoPeersRate}{29\%}
+\newcommand{\screenTwoPeersN}{7}
+\newcommand{\screenAwareNoRate}{40\%}
+\newcommand{\screenAwareNoN}{124}
+\newcommand{\screenAwareYesRate}{50\%}
+\newcommand{\screenAwareYesN}{2}
+\newcommand{\gptossCallJevReversed}{0.60}
+\newcommand{\gptossCallJevReversedLow}{0.55}
+\newcommand{\gptossCallJevReversedHigh}{0.67}
+\newcommand{\gptossCallJevReversedCI}{[0.55, 0.67]}
+\newcommand{\gptossCallProbeMinusJevNoReasoningReversed}{0.18}
+\newcommand{\gptossCallProbeMinusJevNoReasoningReversedLow}{0.12}
+\newcommand{\gptossCallProbeMinusJevNoReasoningReversedHigh}{0.23}
+\newcommand{\gptossCallProbeMinusJevNoReasoningReversedCI}{[0.12, 0.23]}
+\newcommand{\gptossFreshRefusingAlarm}{2\%}
+\newcommand{\gptossFreshLeakAlarm}{54\%}
+\newcommand{\qwenCallJevUnstratified}{0.81}
+\newcommand{\qwenCallJevLeakFlagged}{80\%}
+\newcommand{\qwenCallJevRefusingFlagged}{35\%}
+\newcommand{\behaviourALeaking}{24}
+\newcommand{\behaviourARecruiting}{47}
+\newcommand{\behaviourARate}{51\%}
+\newcommand{\behaviourARateLow}{37\%}
+\newcommand{\behaviourARateHigh}{65\%}
+\newcommand{\behaviourARateCI}{[37\%, 65\%]}
+\newcommand{\behaviourAControl}{21}
+\newcommand{\behaviourAControlLeaks}{0}
+\newcommand{\behaviourAAlone}{6}
+\newcommand{\behaviourAAloneLeaks}{0}
+\newcommand{\behaviourBLeaking}{9}
+\newcommand{\behaviourBRecruiting}{19}
+\newcommand{\behaviourBRate}{47\%}
+\newcommand{\behaviourBRateLow}{27\%}
+\newcommand{\behaviourBRateHigh}{68\%}
+\newcommand{\behaviourBRateCI}{[27\%, 68\%]}
+\newcommand{\behaviourBControl}{6}
+\newcommand{\behaviourBControlLeaks}{0}
+\newcommand{\behaviourBAlone}{4}
+\newcommand{\behaviourBAloneLeaks}{0}
+\newcommand{\behaviourCLeaking}{11}
+\newcommand{\behaviourCRecruiting}{27}
+\newcommand{\behaviourCRate}{41\%}
+\newcommand{\behaviourCRateLow}{25\%}
+\newcommand{\behaviourCRateHigh}{59\%}
+\newcommand{\behaviourCRateCI}{[25\%, 59\%]}
+\newcommand{\behaviourCControl}{7}
+\newcommand{\behaviourCControlLeaks}{0}
+\newcommand{\behaviourCAlone}{4}
+\newcommand{\behaviourCAloneLeaks}{0}
+\newcommand{\behaviourDLeaking}{6}
+\newcommand{\behaviourDRecruiting}{14}
+\newcommand{\behaviourDRate}{43\%}
+\newcommand{\behaviourDRateLow}{21\%}
+\newcommand{\behaviourDRateHigh}{67\%}
+\newcommand{\behaviourDRateCI}{[21\%, 67\%]}
+\newcommand{\behaviourDControl}{7}
+\newcommand{\behaviourDControlLeaks}{0}
+\newcommand{\behaviourDAlone}{3}
+\newcommand{\behaviourDAloneLeaks}{0}
+\newcommand{\behaviourELeaking}{8}
+\newcommand{\behaviourERecruiting}{24}
+\newcommand{\behaviourERate}{33\%}
+\newcommand{\behaviourERateLow}{18\%}
+\newcommand{\behaviourERateHigh}{53\%}
+\newcommand{\behaviourERateCI}{[18\%, 53\%]}
+\newcommand{\behaviourEControl}{8}
+\newcommand{\behaviourEControlLeaks}{0}
+\newcommand{\behaviourEAlone}{4}
+\newcommand{\behaviourEAloneLeaks}{0}
+\newcommand{\behaviourFLeaking}{8}
+\newcommand{\behaviourFRecruiting}{21}
+\newcommand{\behaviourFRate}{38\%}
+\newcommand{\behaviourFRateLow}{21\%}
+\newcommand{\behaviourFRateHigh}{59\%}
+\newcommand{\behaviourFRateCI}{[21\%, 59\%]}
+\newcommand{\behaviourFControl}{4}
+\newcommand{\behaviourFControlLeaks}{0}
+\newcommand{\behaviourFAlone}{4}
+\newcommand{\behaviourFAloneLeaks}{0}
+\newcommand{\behaviourTotalLeaking}{66}
+\newcommand{\behaviourTotalRecruiting}{152}
+\newcommand{\behaviourTotalRate}{43\%}
+\newcommand{\behaviourTotalRateLow}{36\%}
+\newcommand{\behaviourTotalRateHigh}{51\%}
+\newcommand{\behaviourTotalRateCI}{[36\%, 51\%]}
+\newcommand{\behaviourTotalControl}{53}
+\newcommand{\behaviourTotalControlLeaks}{0}
+\newcommand{\behaviourTotalAlone}{25}
+\newcommand{\behaviourTotalAloneLeaks}{0}
+\newcommand{\qwenFreshCallJev}{0.75}
+\newcommand{\qwenFreshCallJevLow}{0.64}
+\newcommand{\qwenFreshCallJevHigh}{0.83}
+\newcommand{\qwenFreshCallJevCI}{[0.64, 0.83]}
+\newcommand{\qwenFreshInputLeakCaught}{82\%}
+\newcommand{\qwenFreshInputRefusingAlarm}{5\%}
+\newcommand{\qwenFreshInputRefusingEpisodeAlarm}{59\%}
+\newcommand{\qwenFreshProbeMinusComparator}{0.23}
+\newcommand{\qwenFreshProbeMinusComparatorLow}{0.14}
+\newcommand{\qwenFreshProbeMinusComparatorHigh}{0.34}
+\newcommand{\qwenFreshProbeMinusComparatorCI}{[0.14, 0.34]}
+\newcommand{\gptossFreshInputLeakCaught}{31\%}
+\newcommand{\gptossFreshInputRefusingAlarm}{0\%}
+\newcommand{\gptossFreshInputRefusingEpisodeAlarm}{0\%}
+\newcommand{\gptossFreshProbeMinusComparator}{-0.09}
+\newcommand{\gptossFreshProbeMinusComparatorLow}{-0.22}
+\newcommand{\gptossFreshProbeMinusComparatorHigh}{0.05}
+\newcommand{\gptossFreshProbeMinusComparatorCI}{[-0.22, 0.05]}
+\newcommand{\gptossFreshRefusingAlarmCount}{12}
+\newcommand{\gptossFreshRefusingCallCount}{490}
+\newcommand{\gptossFreshCaughtCount}{14}
+\newcommand{\gptossFreshPositiveCallCount}{26}
+\newcommand{\qwenFreshLeakRate}{43\%}
+\newcommand{\gptossRobustPooled}{0.88}
+\newcommand{\gptossRobustPooledLow}{0.84}
+\newcommand{\gptossRobustPooledHigh}{0.92}
+\newcommand{\gptossRobustPooledCI}{[0.84, 0.92]}
+\newcommand{\gptossRobustAllReplies}{0.93}
+\newcommand{\gptossRobustAllRepliesLow}{0.90}
+\newcommand{\gptossRobustAllRepliesHigh}{0.95}
+\newcommand{\gptossRobustAllRepliesCI}{[0.90, 0.95]}
+\newcommand{\gptossReasoningMean}{0.98}
+\newcommand{\gptossReasoningMeanLow}{0.97}
+\newcommand{\gptossReasoningMeanHigh}{0.99}
+\newcommand{\gptossReasoningMeanCI}{[0.97, 0.99]}
+\newcommand{\gptossReasoningCensored}{0.96}
+\newcommand{\gptossReasoningCensoredLow}{0.94}
+\newcommand{\gptossReasoningCensoredHigh}{0.97}
+\newcommand{\gptossReasoningCensoredCI}{[0.94, 0.97]}
+\newcommand{\qwenNoSourceWriteback}{0.96}
+\newcommand{\qwenNoSourceWritebackLow}{0.93}
+\newcommand{\qwenNoSourceWritebackHigh}{0.98}
+\newcommand{\qwenNoSourceWritebackCI}{[0.93, 0.98]}
+\newcommand{\gptossProbeMinusReadFlag}{0.11}
+\newcommand{\gptossProbeMinusReadFlagLow}{0.08}
+\newcommand{\gptossProbeMinusReadFlagHigh}{0.14}
+\newcommand{\gptossProbeMinusReadFlagCI}{[0.08, 0.14]}
+\newcommand{\gptossPostReadProbe}{0.93}
+\newcommand{\gptossPostReadProbeLow}{0.88}
+\newcommand{\gptossPostReadProbeHigh}{0.97}
+\newcommand{\gptossPostReadProbeCI}{[0.88, 0.97]}
+\newcommand{\qwenPostReadProbe}{0.85}
+\newcommand{\qwenPostReadProbeLow}{0.72}
+\newcommand{\qwenPostReadProbeHigh}{1.00}
+\newcommand{\qwenPostReadProbeCI}{[0.72, 1.00]}
+\newcommand{\gptossTextFull}{0.86}
+\newcommand{\gptossTextFullLow}{0.82}
+\newcommand{\gptossTextFullHigh}{0.91}
+\newcommand{\gptossTextFullCI}{[0.82, 0.91]}
+\newcommand{\gptossProbeMinusTextFull}{0.04}
+\newcommand{\gptossProbeMinusTextFullLow}{0.00}
+\newcommand{\gptossProbeMinusTextFullHigh}{0.08}
+\newcommand{\gptossProbeMinusTextFullCI}{[0.00, 0.08]}
+\newcommand{\gptossTextLatest}{0.84}
+\newcommand{\gptossTextLatestLow}{0.80}
+\newcommand{\gptossTextLatestHigh}{0.89}
+\newcommand{\gptossTextLatestCI}{[0.80, 0.89]}
+\newcommand{\gptossProbeMinusTextLatest}{0.06}
+\newcommand{\gptossProbeMinusTextLatestLow}{0.02}
+\newcommand{\gptossProbeMinusTextLatestHigh}{0.10}
+\newcommand{\gptossProbeMinusTextLatestCI}{[0.02, 0.10]}
+\newcommand{\gptossWriteFlag}{0.84}
+\newcommand{\gptossWriteFlagLow}{0.81}
+\newcommand{\gptossWriteFlagHigh}{0.87}
+\newcommand{\gptossWriteFlagCI}{[0.81, 0.87]}
+\newcommand{\gptossWithinWriteProbe}{0.90}
+\newcommand{\gptossWithinWriteProbeLow}{0.86}
+\newcommand{\gptossWithinWriteProbeHigh}{0.97}
+\newcommand{\gptossWithinWriteProbeCI}{[0.86, 0.97]}
+\newcommand{\gptossProbeMinusWriteFlag}{0.07}
+\newcommand{\gptossProbeMinusWriteFlagLow}{0.02}
+\newcommand{\gptossProbeMinusWriteFlagHigh}{0.11}
+\newcommand{\gptossProbeMinusWriteFlagCI}{[0.02, 0.11]}
+\newcommand{\qwenTextFull}{0.71}
+\newcommand{\qwenTextFullLow}{0.65}
+\newcommand{\qwenTextFullHigh}{0.78}
+\newcommand{\qwenTextFullCI}{[0.65, 0.78]}
+\newcommand{\qwenProbeMinusTextFull}{0.25}
+\newcommand{\qwenProbeMinusTextFullLow}{0.18}
+\newcommand{\qwenProbeMinusTextFullHigh}{0.31}
+\newcommand{\qwenProbeMinusTextFullCI}{[0.18, 0.31]}
+\newcommand{\qwenTextLatest}{0.93}
+\newcommand{\qwenTextLatestLow}{0.88}
+\newcommand{\qwenTextLatestHigh}{0.96}
+\newcommand{\qwenTextLatestCI}{[0.88, 0.96]}
+\newcommand{\qwenProbeMinusTextLatest}{0.04}
+\newcommand{\qwenProbeMinusTextLatestLow}{0.00}
+\newcommand{\qwenProbeMinusTextLatestHigh}{0.08}
+\newcommand{\qwenProbeMinusTextLatestCI}{[0.00, 0.08]}
+\newcommand{\gptossFreshRefusingEpisodeAlarm}{26\%}
+\newcommand{\gptossFreshCaught}{54\%}
+\newcommand{\gptossFreshCaughtLow}{35\%}
+\newcommand{\gptossFreshCaughtHigh}{71\%}
+\newcommand{\gptossFreshCaughtCI}{[35\%, 71\%]}
+\newcommand{\qwenReplayNLL}{0.25}
+\newcommand{\qwenReplayTop}{99.79\%}
+\newcommand{\qwenFreshReplayNLL}{0.23}
+\newcommand{\qwenFreshReplayTop}{99.82\%}
+\newcommand{\gptReplayAkashMLAllNLL}{0.41}
+\newcommand{\gptReplayAkashMLAllTop}{98.96\%}
+\newcommand{\gptReplayAkashMLReasoningNLL}{0.69}
+\newcommand{\gptReplayAkashMLReasoningTop}{97.71\%}
+\newcommand{\gptReplayAkashMLAnswerNLL}{0.27}
+\newcommand{\gptReplayAkashMLAnswerTop}{99.32\%}
+\newcommand{\gptReplayDekaLLMAllNLL}{0.47}
+\newcommand{\gptReplayDekaLLMAllTop}{98.78\%}
+\newcommand{\gptReplayDekaLLMReasoningNLL}{0.68}
+\newcommand{\gptReplayDekaLLMReasoningTop}{97.37\%}
+\newcommand{\gptReplayDekaLLMAnswerNLL}{0.32}
+\newcommand{\gptReplayDekaLLMAnswerTop}{99.42\%}
+\newcommand{\gptFreshReplayAllNLL}{0.40}
+\newcommand{\gptFreshReplayAllTop}{98.96\%}
+\newcommand{\gptFreshReplayReasoningNLL}{0.67}
+\newcommand{\gptFreshReplayReasoningTop}{97.57\%}
+\newcommand{\gptFreshReplayAnswerNLL}{0.27}
+\newcommand{\gptFreshReplayAnswerTop}{99.32\%}
+\newcommand{\qwenRoundALosoSelected}{0.61}
+\newcommand{\qwenRoundALosoSelectedLow}{0.56}
+\newcommand{\qwenRoundALosoSelectedHigh}{0.66}
+\newcommand{\qwenRoundALosoSelectedCI}{[0.56, 0.66]}
+\newcommand{\qwenRoundALosoFixed}{0.59}
+\newcommand{\qwenRoundALosoFixedLow}{0.53}
+\newcommand{\qwenRoundALosoFixedHigh}{0.64}
+\newcommand{\qwenRoundALosoFixedCI}{[0.53, 0.64]}
+\newcommand{\qwenRoundAPooledSelected}{0.58}
+\newcommand{\qwenRoundAPooledSelectedLow}{0.53}
+\newcommand{\qwenRoundAPooledSelectedHigh}{0.64}
+\newcommand{\qwenRoundAPooledSelectedCI}{[0.53, 0.64]}
+\newcommand{\qwenRoundAPooledFixed}{0.58}
+\newcommand{\qwenRoundAPooledFixedLow}{0.51}
+\newcommand{\qwenRoundAPooledFixedHigh}{0.64}
+\newcommand{\qwenRoundAPooledFixedCI}{[0.51, 0.64]}
+\newcommand{\qwenRoundBLosoSelected}{0.60}
+\newcommand{\qwenRoundBLosoSelectedLow}{0.55}
+\newcommand{\qwenRoundBLosoSelectedHigh}{0.65}
+\newcommand{\qwenRoundBLosoSelectedCI}{[0.55, 0.65]}
+\newcommand{\qwenRoundBLosoFixed}{0.59}
+\newcommand{\qwenRoundBLosoFixedLow}{0.52}
+\newcommand{\qwenRoundBLosoFixedHigh}{0.66}
+\newcommand{\qwenRoundBLosoFixedCI}{[0.52, 0.66]}
+\newcommand{\qwenRoundBPooledSelected}{0.61}
+\newcommand{\qwenRoundBPooledSelectedLow}{0.54}
+\newcommand{\qwenRoundBPooledSelectedHigh}{0.66}
+\newcommand{\qwenRoundBPooledSelectedCI}{[0.54, 0.66]}
+\newcommand{\qwenRoundBPooledFixed}{0.58}
+\newcommand{\qwenRoundBPooledFixedLow}{0.50}
+\newcommand{\qwenRoundBPooledFixedHigh}{0.65}
+\newcommand{\qwenRoundBPooledFixedCI}{[0.50, 0.65]}
+\newcommand{\qwenRoundCLosoSelected}{0.62}
+\newcommand{\qwenRoundCLosoSelectedLow}{0.56}
+\newcommand{\qwenRoundCLosoSelectedHigh}{0.67}
+\newcommand{\qwenRoundCLosoSelectedCI}{[0.56, 0.67]}
+\newcommand{\qwenRoundCLosoFixed}{0.62}
+\newcommand{\qwenRoundCLosoFixedLow}{0.54}
+\newcommand{\qwenRoundCLosoFixedHigh}{0.68}
+\newcommand{\qwenRoundCLosoFixedCI}{[0.54, 0.68]}
+\newcommand{\qwenRoundCPooledSelected}{0.59}
+\newcommand{\qwenRoundCPooledSelectedLow}{0.53}
+\newcommand{\qwenRoundCPooledSelectedHigh}{0.65}
+\newcommand{\qwenRoundCPooledSelectedCI}{[0.53, 0.65]}
+\newcommand{\qwenRoundCPooledFixed}{0.60}
+\newcommand{\qwenRoundCPooledFixedLow}{0.52}
+\newcommand{\qwenRoundCPooledFixedHigh}{0.66}
+\newcommand{\qwenRoundCPooledFixedCI}{[0.52, 0.66]}
+\newcommand{\qwenRoundMLPALoso}{0.61}
+\newcommand{\qwenRoundMLPALosoLow}{0.56}
+\newcommand{\qwenRoundMLPALosoHigh}{0.65}
+\newcommand{\qwenRoundMLPALosoCI}{[0.56, 0.65]}
+\newcommand{\qwenRoundMLPAPooled}{0.59}
+\newcommand{\qwenRoundMLPAPooledLow}{0.53}
+\newcommand{\qwenRoundMLPAPooledHigh}{0.65}
+\newcommand{\qwenRoundMLPAPooledCI}{[0.53, 0.65]}
+\newcommand{\qwenRoundMLPBLoso}{0.60}
+\newcommand{\qwenRoundMLPBLosoLow}{0.56}
+\newcommand{\qwenRoundMLPBLosoHigh}{0.64}
+\newcommand{\qwenRoundMLPBLosoCI}{[0.56, 0.64]}
+\newcommand{\qwenRoundMLPBPooled}{0.59}
+\newcommand{\qwenRoundMLPBPooledLow}{0.52}
+\newcommand{\qwenRoundMLPBPooledHigh}{0.65}
+\newcommand{\qwenRoundMLPBPooledCI}{[0.52, 0.65]}
+\newcommand{\qwenOriginalEventualProbe}{0.55}
+\newcommand{\qwenOriginalEventualProbeLow}{0.50}
+\newcommand{\qwenOriginalEventualProbeHigh}{0.60}
+\newcommand{\qwenOriginalEventualProbeCI}{[0.50, 0.60]}
+\newcommand{\qwenOriginalEventualJev}{0.57}
+\newcommand{\qwenOriginalEventualJevLow}{0.50}
+\newcommand{\qwenOriginalEventualJevHigh}{0.64}
+\newcommand{\qwenOriginalEventualJevCI}{[0.50, 0.64]}
+\newcommand{\qwenOriginalNeartermProbe}{0.57}
+\newcommand{\qwenOriginalNeartermProbeLow}{0.51}
+\newcommand{\qwenOriginalNeartermProbeHigh}{0.63}
+\newcommand{\qwenOriginalNeartermProbeCI}{[0.51, 0.63]}
+\newcommand{\qwenOriginalNeartermJev}{0.66}
+\newcommand{\qwenOriginalNeartermJevLow}{0.61}
+\newcommand{\qwenOriginalNeartermJevHigh}{0.70}
+\newcommand{\qwenOriginalNeartermJevCI}{[0.61, 0.70]}
+\newcommand{\qwenRoundFreshProbe}{0.68}
+\newcommand{\qwenRoundFreshProbeLow}{0.60}
+\newcommand{\qwenRoundFreshProbeHigh}{0.75}
+\newcommand{\qwenRoundFreshProbeCI}{[0.60, 0.75]}
+\newcommand{\qwenRoundFreshJev}{0.64}
+\newcommand{\qwenRoundFreshJevLow}{0.56}
+\newcommand{\qwenRoundFreshJevHigh}{0.72}
+\newcommand{\qwenRoundFreshJevCI}{[0.56, 0.72]}
+\newcommand{\qwenRoundFreshNano}{0.53}
+\newcommand{\qwenRoundFreshNanoLow}{0.46}
+\newcommand{\qwenRoundFreshNanoHigh}{0.60}
+\newcommand{\qwenRoundFreshNanoCI}{[0.46, 0.60]}
+\newcommand{\qwenRoundFreshGainJev}{0.05}
+\newcommand{\qwenRoundFreshGainJevLow}{-0.01}
+\newcommand{\qwenRoundFreshGainJevHigh}{0.12}
+\newcommand{\qwenRoundFreshGainJevCI}{[-0.01, 0.12]}
+\newcommand{\qwenRoundFreshGainNano}{0.11}
+\newcommand{\qwenRoundFreshGainNanoLow}{0.03}
+\newcommand{\qwenRoundFreshGainNanoHigh}{0.20}
+\newcommand{\qwenRoundFreshGainNanoCI}{[0.03, 0.20]}
+\newcommand{\labelAuthorityQwenOperator}{33}
+\newcommand{\labelAuthorityNQwenOperator}{101}
+\newcommand{\labelAuthorityQwenReceiver}{25}
+\newcommand{\labelAuthorityNQwenReceiver}{101}
+\newcommand{\labelAuthorityGPTOperator}{0}
+\newcommand{\labelAuthorityNGPTOperator}{128}
+\newcommand{\labelAuthorityGPTReceiver}{0}
+\newcommand{\labelAuthorityNGPTReceiver}{128}
+\newcommand{\gptFreshAlarmZero}{53.8\%}
+\newcommand{\gptFreshAlarmOne}{2.4\%}
+\newcommand{\gptFreshAlarmTwo}{25.9\%}
+\newcommand{\qwenFreshAlarmZero}{81.6\%}
+\newcommand{\qwenFreshAlarmOne}{5.5\%}
+\newcommand{\qwenFreshAlarmTwo}{58.8\%}
+\newcommand{\gptossFreshAlarmZero}{30.8\%}
+\newcommand{\gptossFreshAlarmOne}{0.0\%}
+\newcommand{\gptossFreshAlarmTwo}{0.0\%}
+\newcommand{\qwenDevAlarmProbeZero}{92.9\%}
+\newcommand{\qwenDevAlarmProbeOne}{9.9\%}
+\newcommand{\qwenDevAlarmProbeTwo}{69.8\%}
+\newcommand{\qwenDevAlarmJevZero}{80.3\%}
+\newcommand{\qwenDevAlarmJevOne}{34.7\%}
+\newcommand{\qwenDevAlarmJevTwo}{96.5\%}
+\newcommand{\labelAddressOne}{51}
+\newcommand{\labelAddressNOne}{51}
+\newcommand{\labelAddressFive}{117}
+\newcommand{\labelAddressNFive}{127}
 \newcommand{\gptossLadderCall}{\gptossCallProbe}
 \newcommand{\gptossLadderEver}{\gptossEverProbe}
 \newcommand{\gptossLadderNear}{\gptossNearProbe}
+\newcommand{\qwenCallProbeMinusJev}{\qwenProbeMinusJev}
+\newcommand{\qwenCallProbeMinusJevCI}{\qwenProbeMinusJevCI}
+\newcommand{\qwenProbeMinusReadFlag}{\qwenProbeMinusReadStep}
+\newcommand{\gptossTextClassifier}{\gptossTextFull}
+\newcommand{\gptossTextClassifierCI}{\gptossTextFullCI}
+\newcommand{\gptossTextClassifierLow}{\gptossTextFullLow}
+\newcommand{\gptossTextClassifierHigh}{\gptossTextFullHigh}
+\newcommand{\gptossTextClassifierLatest}{\gptossTextLatest}
+\newcommand{\gptossTextClassifierLatestCI}{\gptossTextLatestCI}
+\newcommand{\gptossTextClassifierLatestLow}{\gptossTextLatestLow}
+\newcommand{\gptossTextClassifierLatestHigh}{\gptossTextLatestHigh}
+\newcommand{\qwenTextClassifier}{\qwenTextFull}
+\newcommand{\qwenTextClassifierCI}{\qwenTextFullCI}
+\newcommand{\qwenTextClassifierLow}{\qwenTextFullLow}
+\newcommand{\qwenTextClassifierHigh}{\qwenTextFullHigh}
+\newcommand{\qwenTextClassifierLatest}{\qwenTextLatest}
+\newcommand{\qwenTextClassifierLatestCI}{\qwenTextLatestCI}
+\newcommand{\qwenTextClassifierLatestLow}{\qwenTextLatestLow}
+\newcommand{\qwenTextClassifierLatestHigh}{\qwenTextLatestHigh}
+\newcommand{\gptossTextGapFull}{\gptossProbeMinusTextFull}
+\newcommand{\gptossTextGapFullCI}{\gptossProbeMinusTextFullCI}
+\newcommand{\gptossTextGapFullLow}{\gptossProbeMinusTextFullLow}
+\newcommand{\gptossTextGapFullHigh}{\gptossProbeMinusTextFullHigh}
+\newcommand{\gptossTextGapLatest}{\gptossProbeMinusTextLatest}
+\newcommand{\gptossTextGapLatestCI}{\gptossProbeMinusTextLatestCI}
+\newcommand{\gptossTextGapLatestLow}{\gptossProbeMinusTextLatestLow}
+\newcommand{\gptossTextGapLatestHigh}{\gptossProbeMinusTextLatestHigh}
+\newcommand{\qwenTextGapFull}{\qwenProbeMinusTextFull}
+\newcommand{\qwenTextGapFullCI}{\qwenProbeMinusTextFullCI}
+\newcommand{\qwenTextGapFullLow}{\qwenProbeMinusTextFullLow}
+\newcommand{\qwenTextGapFullHigh}{\qwenProbeMinusTextFullHigh}
+\newcommand{\qwenTextGapLatest}{\qwenProbeMinusTextLatest}
+\newcommand{\qwenTextGapLatestCI}{\qwenProbeMinusTextLatestCI}
+\newcommand{\qwenTextGapLatestLow}{\qwenProbeMinusTextLatestLow}
+\newcommand{\qwenTextGapLatestHigh}{\qwenProbeMinusTextLatestHigh}
+\newcommand{\gptossHandoffProbe}{\gptossWithinWriteProbe}
+\newcommand{\gptossHandoffProbeCI}{\gptossWithinWriteProbeCI}
+\newcommand{\gptossHandoffProbeLow}{\gptossWithinWriteProbeLow}
+\newcommand{\gptossHandoffProbeHigh}{\gptossWithinWriteProbeHigh}
+\newcommand{\gptossWriteBaseline}{\gptossWriteFlag}
+\newcommand{\gptossWriteBaselineCI}{\gptossWriteFlagCI}
+\newcommand{\gptossWriteBaselineLow}{\gptossWriteFlagLow}
+\newcommand{\gptossWriteBaselineHigh}{\gptossWriteFlagHigh}

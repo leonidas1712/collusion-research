@@ -1,0 +1,50 @@
+{
+  "audit": "runs/20261026-2155-e05-qwen-any-public-audit",
+  "audit_sha256": "b98477dddf5403021f9f39f842eecdbf07bc683ac667ed545e38cd1948d2b824",
+  "feature_path": "/Users/leo/collusion-research/runs/20261025-1026-e05-replay3-data-1d95/features.npy",
+  "labels": [
+    "eventual",
+    "round_near",
+    "immediate"
+  ],
+  "candidates": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48,
+    52,
+    56,
+    60,
+    63
+  ],
+  "C": 0.1,
+  "scaling": "training-only StandardScaler",
+  "weights": "round-balanced; single-class rounds zero weight",
+  "inner_selection": "scenario x round AUROC; saved inner splits restricted to development; final models use development family holdout",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "bootstrap": {
+    "unit": "family",
+    "seed": 20261025,
+    "reps": 1000
+  },
+  "fresh_aggregation": "mean of three scores standardized by each final model training mean and SD",
+  "fresh_status": "exploratory out-of-sample; already inspected fresh outcomes, not a new confirmation",
+  "input_hashes": {
+    "rows.json": "e7e096f786a7798563e3f8cc995f54ebc2417698cb83e283cabcb3bcf428ecf2",
+    "plans.json": "36f8b36fe6f8d64e387f771a1a315412c068a4823e3dcc482e1ccd2b5426c3c6"
+  },
+  "frozen_confirmations_changed": false
+}

@@ -15,7 +15,7 @@ def pointer(data,path):
 def render(entry,value):
     kind=entry.get('format','decimal')
     if kind=='integer':return str(int(value))
-    if kind=='percent':return f'{100*value:.2f}'+r'\%'
+    if kind=='percent':return f'{100*value:.{entry.get("decimals",2)}f}'+r'\%'
     return f'{value:.2f}'
 
 def generate(check=False):
@@ -29,7 +29,9 @@ def generate(check=False):
             assert e['status']=='pending';lines.append('\\newcommand{\\'+macro+r'}{\texttt{pending}}');continue
         source=ROOT/e['source']['file'];data=json.loads(source.read_text())
         assert source.exists() and (ROOT/e['run']).is_dir()
-        value=pointer(data,e['source']['value_path']);assert value==e['value'],(key,value,e['value'])
+        value=pointer(data,e['source']['value_path'])
+        if 'divide_by_path' in e['source']:value/=pointer(data,e['source']['divide_by_path'])
+        assert value==e['value'],(key,value,e['value'])
         ci=e.get('ci')
         if ci is not None:assert pointer(data,e['source']['ci_path'])==ci,key
         lines.append('\\newcommand{\\'+macro+'}{'+render(e,value)+'}')
@@ -37,6 +39,7 @@ def generate(check=False):
             for suffix,v in [('Low',ci[0]),('High',ci[1])]:
                 assert macro+suffix not in seen;seen.add(macro+suffix)
                 lines.append('\\newcommand{\\'+macro+suffix+'}{'+render(e,v)+'}')
+            seen.add(macro+'CI')
             lines.append('\\newcommand{\\'+macro+'CI}{['+render(e,ci[0])+', '+render(e,ci[1])+']}')
         verified.append(dict(key=key,source=str(source.relative_to(ROOT)),sha256=hashlib.sha256(source.read_bytes()).hexdigest()))
     for alias,target in registry.get('aliases',{}).items():

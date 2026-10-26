@@ -1,0 +1,50 @@
+{
+  "id": "20261026-2242-e05-arxiv-gpt-text-workflow",
+  "experiment": "E05",
+  "name": "e05-arxiv-gpt-text-workflow",
+  "tags": [
+    "cpu-only",
+    "post-hoc"
+  ],
+  "settings": {
+    "same_calls": true,
+    "api_spend_usd": 0,
+    "gpu_spend_usd": 0
+  },
+  "parents": [
+    "20261026-1221-e05-lastprompt-percall-6013"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research-followup/experiments/E05-probes/.venv/bin/python experiments/E05-probes/arxiv_text_workflow.py --model gpt --restore-root /tmp/collusion-public-check-20261026",
+  "git_commit": "e30d5e1515d583a5ef784450ab32e6a689bbe11a",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T22:42:39",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T22:42:48",
+  "results": {
+    "metrics": {
+      "last_prompt": 0.9055172941208522,
+      "full_input": 0.8628839763868715,
+      "latest_input": 0.8431164102324914,
+      "write_file": 0.8387678798791914,
+      "handoff_write": 0.8387678798791914,
+      "last_prompt_within_write_file": 0.9030241827974191,
+      "last_prompt_within_handoff_write": 0.9030241827974191
+    },
+    "counts": {
+      "write_file": {
+        "calls": 221,
+        "positives": 109,
+        "negatives": 112
+      },
+      "handoff_write": {
+        "calls": 221,
+        "positives": 109,
+        "negatives": 112
+      }
+    }
+  }
+}
