@@ -72,13 +72,13 @@ def headline(data,sha):
         # Do not bridge an unobserved rung.
         for a,b in zip(values,values[1:]):
             if .8 <= b[0]-a[0] <= 1:ax.plot([a[0],b[0]],[a[1],b[1]],color=MODEL_COLORS[model],lw=.8,alpha=.6)
-        fresh=[(2,'qwenFreshCallProbe','activation')] if model=='qwen' else [(2,'gptossFreshCallProbe','activation'),(2,'gptossFreshReasoning','activation')]
+        fresh=[(2,'qwenFreshCallProbe','activation')] if model=='qwen' else [(2,'gptossFreshReasoning','activation')]
         for i,(x,key,kind) in enumerate(fresh):
             e=get(data,key);rows.append((title,'Fresh test: '+key,e))
-            draw(ax,x+(0 if model=='gpt_oss' and i==0 else .18),None,e,model,kind,fresh=True,
+            draw(ax,x+.18,None,e,model,kind,fresh=True,
                  marker='D' if key=='gptossFreshReasoning' else 'o')
         ax.axhline(.5,color='#777777',ls='--',lw=.8)
-        ax.set(xlim=(-.3,2.3),ylim=(0,1.03),xticks=[0,1,2],xticklabels=['Ever','This/next\nround','This call'],title=title)
+        ax.set(xlim=(-.3,2.3),ylim=(0,1.03),xticks=[0,1,2],xticklabels=['Will it\never leak?','This round\nor next?','This call?'],title=title)
         ax.grid(axis='y',alpha=.15)
     axes[0].set_ylabel('AUROC')
     fig.suptitle('The nearer the act, the more predictable the leak',fontsize=11,y=.98)
@@ -112,6 +112,8 @@ def forest(data,sha,stem,title,panels):
                     transform=ax.get_yaxis_transform())
         ax.set(xlim=(0,1.03),ylim=(len(items)-.4,-.8),yticks=[],xlabel='AUROC',xticks=[0,.5,1])
         ax.axvline(.5,color='#777777',ls='--',lw=.8)
+        if not compact:
+            ax.text(.5,1.02,'chance',ha='center',fontsize=9,transform=ax.get_xaxis_transform())
         ax.spines['left'].set_visible(False)
     fig.suptitle(title,fontsize=11,y=.98)
     kinds=list(dict.fromkeys(kind for _,_,items in panels for _,_,kind in items))
@@ -121,35 +123,33 @@ def forest(data,sha,stem,title,panels):
 
 
 def shortcuts(data,sha):
-    fig,axes=plt.subplots(1,2,figsize=(6.5,4.7),gridspec_kw={'width_ratios':[1.35,1]})
-    fig.subplots_adjust(left=.05,right=.98,bottom=.34,top=.80,wspace=.22)
-    panels=[('Other explanations',[
-        ('Last-prompt probe','gptossCallProbe','activation'),
-        ('Reasoning probe','gptossCallReasoning','activation'),
-        ('Call reads the protected file','gptossReadStep','rule'),
-        ('Keywords in reasoning','gptossKeyword','rule'),
-        ('Before the peer asks (other calls)','gptossPlacebo','control')]),
-        ('What arrived in the context',[
-        ('Incoming messages + tool results\n(one seed; different calls)','gptossIncomingProbe','activation')])]
+    fig,ax=plt.subplots(figsize=(6.5,4.2))
+    fig.subplots_adjust(left=.43,right=.97,bottom=.28,top=.84)
+    items=[
+        ('Last-prompt probe','gptossCallProbe','activation',0),
+        ('Reasoning probe','gptossCallReasoning','activation',1),
+        ('Call reads the protected file','gptossReadStep','rule',2),
+        ('Keywords in reasoning','gptossKeyword','rule',3),
+        ('Before the peer asks\n(other calls)','gptossPlacebo','control',4),
+        ('Incoming messages + tool results\n(one seed; different calls)','gptossIncomingProbe','activation',6)]
     rows=[]
+    for label,key,kind,y in items:
+        e=get(data,key);rows.append(('gpt-oss-20b',label,e))
+        draw(ax,None,y,e,'gpt_oss',kind,horizontal=True)
+    ax.set(xlim=(0,1.03),ylim=(6.7,-.7),yticks=[i[3] for i in items],
+           yticklabels=[i[0] for i in items],xlabel='AUROC',xticks=[0,.5,1])
+    ax.tick_params(axis='y',length=0,labelsize=9)
+    ax.axvline(.5,color='#777777',ls='-',lw=.8)
     reference=get(data,'gptossCallProbe').get('value')
-    for index,(ax,(title,items)) in enumerate(zip(axes,panels)):
-        ax.set_title(title,fontsize=10)
-        for y,(label,key,kind) in enumerate(items):
-            e=get(data,key);rows.append((title,label,e))
-            draw(ax,None,y,e,'gpt_oss',kind,horizontal=True)
-            ax.text(.02,y-.33,label,fontsize=9,va='bottom',transform=ax.get_yaxis_transform())
-        ax.set(xlim=(0,1.03),ylim=(len(items)-.4,-.85 if index==0 else -1.1),yticks=[],
-               xlabel='AUROC',xticks=[0,.5,1])
-        ax.axvline(.5,color='#888888',ls=':',lw=.8)
-        if reference is not None:
-            ax.axvline(reference,color=MODEL_COLORS['gpt_oss'],ls='--',lw=.9)
-        ax.spines['left'].set_visible(False)
-        if index==1:ax.set_facecolor('#f3f3f3')
+    if reference is not None:ax.axvline(reference,color=MODEL_COLORS['gpt_oss'],ls=(0,(6,3)),lw=1)
+    ax.axhline(5,color='#bbbbbb',lw=.6)
+    ax.spines['left'].set_visible(False)
     fig.suptitle('gpt-oss-20b: what can explain the signal?',fontsize=11,y=.98)
-    fig.text(.05,.16,'Lower rule/control scores leave a gap to explain.\nHigh incoming-only performance leaves the mechanism open.',fontsize=9)
-    fig.text(.5,.09,'Dashed: last-prompt probe; dotted: chance; whiskers: 95% CI',ha='center',fontsize=9)
-    marker_legend(fig,['activation','rule','control'],y=.005)
+    lines=[Line2D([],[],color='#777777',lw=.8,label='Chance'),
+           Line2D([],[],color=MODEL_COLORS['gpt_oss'],ls=(0,(6,3)),label='Last-prompt probe')]
+    fig.legend(handles=lines,loc='lower center',bbox_to_anchor=(.5,.12),ncol=2,frameon=False,fontsize=9)
+    marker_legend(fig,['activation','rule','control'],y=.045)
+    fig.text(.5,.005,'Whiskers: 95% CI',ha='center',fontsize=9)
     save(fig,'fig4_shortcuts',rows,sha)
 
 
