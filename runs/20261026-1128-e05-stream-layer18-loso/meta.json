@@ -1,0 +1,45 @@
+{
+  "id": "20261026-1128-e05-stream-layer18-loso",
+  "experiment": "E05",
+  "name": "e05-stream-layer18-loso",
+  "tags": [
+    "exploratory",
+    "cpu-only"
+  ],
+  "settings": {
+    "author_decision": "Aboard1823",
+    "layer": 18,
+    "layer_choice": "fixed before fitting respecified run, not outcome-selected",
+    "training_tokens_per_reply_max": 64,
+    "subsampling": "evenly spaced including endpoints; SWiM16 runs on sampled sequence, so its original-token span may exceed16",
+    "scoring": "all stream tokens",
+    "seed": 42,
+    "split": "LOSO6rotations",
+    "variant": "immediate",
+    "loss": "both",
+    "streams": [
+      "incoming",
+      "action_time"
+    ],
+    "C": 0.1,
+    "ema_alpha": 0.11764705882352941
+  },
+  "parents": [
+    "20261026-0813-e05-expanded-stream-data",
+    "20261026-0138-e05-gpt-oss-main"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python experiments/E05-probes/stream_capture_small.py --data runs/20261026-0813-e05-expanded-stream-data",
+  "git_commit": "60631f1c44b4bdfb2bc68c498a5e70afd4a8a79b",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T11:28:13",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T11:36:42",
+  "results": {
+    "fits": 12,
+    "seconds": 508.611662666779
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "id": "20261026-0822-e05-expanded-stream",
+  "experiment": "E05",
+  "name": "e05-expanded-stream",
+  "tags": [
+    "cpu-only",
+    "exploratory"
+  ],
+  "settings": {
+    "streams": [
+      "last_prompt",
+      "reasoning",
+      "incoming",
+      "action_time"
+    ],
+    "views": [
+      "projected",
+      "full"
+    ],
+    "ablations": [
+      "uniform",
+      "swim",
+      "softmax",
+      "both"
+    ],
+    "variants": [
+      "immediate",
+      "round",
+      "h1",
+      "h2",
+      "h3"
+    ],
+    "priority": "seed42 pooled complete5fold, k0+round; remaining folds then other horizons",
+    "fixed_views": true,
+    "candidate_layer_selection": "none; fixed4full layers or all24independent256sketches",
+    "single_token_ablations": "mathematically identical, alias uniform fit"
+  },
+  "parents": [
+    "20261026-0813-e05-expanded-stream-data",
+    "20261026-0138-e05-gpt-oss-main"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research/experiments/E05-probes/.venv/bin/python experiments/E05-probes/stream_capture_batch.py --data runs/20261026-0813-e05-expanded-stream-data",
+  "git_commit": "60631f1c44b4bdfb2bc68c498a5e70afd4a8a79b",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T08:23:08",
+  "status": "stopped",
+  "priority_change": "Aboard1820; original controller stopped at saved-job boundary, completed fits reused by continuation controller",
+  "stop_reason": "Author1823rescope:22prioritycellscomplete; remaininggriddeferredpostsubmission"
+}

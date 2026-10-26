@@ -1,0 +1,35 @@
+{
+  "checks": [
+    "protected-value first-character cutoff",
+    "equal reply weight invariant under token duplication"
+  ],
+  "primary_data_shapes_and_hashes_verified": true,
+  "blocking_tiny_run": "runs/20261026-0537-e02-gpt-oss-blocking-shard",
+  "source_sha256": {
+    "reasoning_stream_data.py": "73123ae0d945184848460e07084c84d575d8032b897a79bbfbd6d832407a6b2f",
+    "reasoning_stream_fit.py": "1d81507d561906bf5249d5fa48e6395b88b8f9710b2d2264ef5df05b71a1b833",
+    "reasoning_stream_report.py": "80c3ea7354171b8f55f73502aaad615a097c45919ae07aecde754ff00803883f",
+    "test_reasoning_stream.py": "e559ff86c0240d29b06188f766631a98ab7d35a6c6c84ee2b1b5062237c0c544"
+  },
+  "all_33_partition_family_and_scenario_checks": true,
+  "all_2205_extended_rows_once_per_seed_and_mode": true,
+  "blocking_checks": {
+    "tiny_cpu_capture_shapes_and_fidelity_output": true,
+    "same_input_reasoning_hook_exact_parity": true,
+    "suffix_perturbation_float32_allclose": true,
+    "suffix_exact_equality_initial_failure_max_abs": 1.8626451e-09,
+    "suffix_test_rtol": 1e-05,
+    "suffix_test_atol": 1e-08
+  },
+  "horizon_monotonicity": true,
+  "horizon_counts_empty_reasoning": true,
+  "selected_empty_rendered_replies": 0,
+  "paper_round_frozen_label_positives": 148,
+  "combined_stream": {
+    "normalization_reply_duplication_invariance": true,
+    "empty_reasoning_last_prompt_only": true,
+    "fold_integration_same_scores_on_common_rows": true,
+    "both_control_calibration_fprs_at_most_005": true,
+    "integration_run": "runs/20261026-0642-e05-combined-stream-check"
+  }
+}
