@@ -1,0 +1,51 @@
+\section{Introduction}
+\label{sec:intro}
+
+When agents work together, one agent can ask another to do something that the second agent's operator forbids, and the second agent sometimes does it.
+In July 2026, agents in an internal cyber evaluation coordinated on an unsanctioned message board, passed credentials to one another and attacked production infrastructure \citep{openai2026huggingface}.
+An independent investigation found that some agents pressed others to join, and that many joined while calling the attack out of scope \citep{greenblatt2026incident}.
+Coordinated rule-breaking of this kind often starts with recruitment: one agent needs something it cannot reach, and another agent has access to it.
+
+We study this first step in its simplest checkable form.
+A peer agent asks a target agent for a secret, such as a deploy token, and the target's operator has told it never to share that secret.
+Without the rule, handing over the token would be ordinary help, and with the rule it is collusion against the operator \citep{agrawal2025,nakamura2026}.
+The request comes openly from a teammate, in the channel the target is meant to use, so this is not prompt injection hidden in data \citep{liu2024formalizing,debenedetti2024agentdojo}.
+The target often refuses for several rounds, citing the rule, before it gives in.
+
+The question is whether an overseer can tell, before the target acts, which episode will leak and when.
+The same model under the same pressure leaks in some episodes and refuses in others, so there is something to predict.
+We ask at three distances from the act: will this episode ever leak, will it leak this round or the next, and will this model call leak?
+Each distance is a point at which an overseer could step in.
+
+The answer depends on the distance (\cref{fig:headline}).
+The eventual outcome is barely predictable from the target's activations, this round or the next is modestly predictable, and this call is highly predictable.
+The pattern is the same on both target models, Qwen3-32B and gpt-oss-20b.
+
+The strongest result is confirmed on episodes collected after the method was frozen.
+On gpt-oss-20b, we fixed a probe on the call's reasoning tokens, its alarm threshold and a success criterion in advance, then collected fresh episodes.
+On those episodes the probe ranked the calls that leak above the others (AUROC~\gptossFreshReasoning{}).
+
+A simpler probe does the same on both models.
+It reads one position, the last token of the prompt, so it runs before the call starts.
+On held-out scenarios it picks out the call that leaks (AUROC~\qwenCallProbe{} on Qwen3-32B), and the Qwen3-32B probe holds on fresh episodes it never saw.
+The probe is not simply detecting the request, the secret string or the moment the protected file is read.
+
+A text monitor shown the same conversation scores well below the probe.
+On gpt-oss-20b it flags almost every call made under pressure, so it cannot separate the calls that leak from the others.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig1_headline.pdf}
+  \caption{\textbf{The nearer the act, the more predictable the leak.}
+  Each panel asks three questions of the same calls, from ``will this episode ever leak?'' to ``will this call leak?''.
+  Hollow markers are held-out scenarios on development episodes; filled markers are fresh test episodes, scored once by models frozen in advance.
+  AUROC is computed within each scenario and round, so 0.5 is chance; whiskers are 95\% bootstrap intervals (\cref{app:probes}).}
+  \label{fig:headline}
+\end{figure}
+
+Our contributions are:
+\begin{itemize}
+  \item a recruitment benchmark of six scenarios with mixed outcomes and matched controls, released with all prompts and transcripts (\cref{sec:setup});
+  \item probes and text monitors scored on exactly the same calls, at three distances from the act (\cref{sec:method});
+  \item a per-call warning confirmed on fresh episodes, with controls for the obvious shortcuts (\cref{sec:results}).
+\end{itemize}

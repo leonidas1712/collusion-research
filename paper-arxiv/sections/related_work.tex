@@ -1,0 +1,21 @@
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Probes on agents under attack.}
+Probes can detect that a tool-using agent has been exposed to prompt injection \citep{dong2026}, separate hijacked from resisted trajectories \citep{yu2026}, and read agents that were told to collude \citep{rose2026}.
+\citet{fomin2026} warn that such probes may read the situation rather than the action.
+Every call we score has already been exposed to the same recruiting pressure, and our target is never told to collude, so the probe must separate calls that face the same situation.
+
+\paragraph{Early warning.}
+Closest to our question, \citet{saraogi2026before} read hidden states each turn as a user presses a model to drop a correct answer, and find a weak, model-specific signal.
+\citet{fayyazi2026agent} forecast unauthorised agent actions from internal states and from text, and find that text monitors often match the internal states.
+\citet{jia2026window} branch injected agents from identical states and find that early probes do not reliably beat text baselines, and \citet{gao2026} combine an activation monitor with outcome forecasts on AgentDojo.
+We find the same weak signal far from the act, and a strong one at the call itself, in a setting where the pressure comes from a peer.
+
+\paragraph{Streaming classifiers.}
+Production classifiers score a model's output as it streams and can stop it at the first flagged token \citep{sharma2025constitutional,cunningham2026}, and production probes aggregate token scores over a window \citep{mckenzie2026,kramar2026}.
+Our reasoning probe borrows the maximum over tokens, and our last-prompt probe scores the call before any token is generated.
+
+\paragraph{Monitors and persuasion between agents.}
+Monitors that see agents' messages catch more coordinated sabotage \citep{radev2026}, and persuasion between agents has been measured from text and outcomes \citep{tao2026}, as has yielding to sustained multi-turn pressure \citep{tang2026}.
+We add the persuaded agent's activations and score probes and text monitors on exactly the same calls.
