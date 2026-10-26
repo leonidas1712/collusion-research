@@ -92,10 +92,19 @@ DISPLAY_A = {  # CSV label -> (display label, panel-a row position, top to botto
 GROUP_HEADINGS = [(9.75, "Probe reading the model's internals", '#087f8c'),
                   (6.05, 'Reading the text instead', '#334155'),
                   (1.45, 'Sanity check', '#64748b')]
-# Panel b: two series. The extended-cohort near-term point (0.64) is left to Appendix J.8;
-# the this-reply point uses panel a's reply set, which adds the leaking replies (see caption).
-POS_B = {'Last prompt: eventual': (0, 'D'), 'Last prompt: near-term': (1.0, 'D'),
-         'Reasoning: paper cohort': (1.2, 'o'), 'Reasoning: this reply': (2.2, 'o')}
+# Panel b. To add a horizon: insert it into HORIZONS (left = far from the leak, right = nearest),
+# then map its CSV label in B_ROWS. Horizons with no plotted row are skipped automatically.
+# The extended-cohort near-term point (0.64) is left to Appendix J.8; the this-reply point uses
+# panel a's reply set, which adds the leaking replies (see caption).
+HORIZONS = [('eventual', 'Will it\never leak?'),
+            ('round', 'Leak this\nround or next?'),
+            ('reply', 'Leak in\nthis reply?')]
+SERIES_B = {'last-prompt': ('Probe at end of incoming message', 'D', -1),
+            'reasoning': ('Probe on reasoning', 'o', +1)}  # (legend, marker, side of value label)
+B_ROWS = {'Last prompt: eventual': ('eventual', 'last-prompt'),
+          'Last prompt: near-term': ('round', 'last-prompt'),
+          'Reasoning: paper cohort': ('round', 'reasoning'),
+          'Reasoning: this reply': ('reply', 'reasoning')}
 TEAL, SLATE, GREY = '#087f8c', '#334155', '#64748b'
 
 
@@ -135,7 +144,7 @@ def render(rows, output):
     left.axvline(.5, color=GREY, linestyle='--', linewidth=.8, zorder=0)
     left.text(.5, 10.2, 'chance', ha='center', va='bottom', fontsize=6, color=GREY)
     left.grid(axis='x', alpha=.15)
-    left.annotate('warns before the\nsecret is written', xy=(.905, 8.1), xytext=(.84, 8.1),
+    left.annotate('warns before the\nreply\'s output', xy=(.905, 8.1), xytext=(.84, 8.1),
                   ha='right', va='center', fontsize=6, color=TEAL, linespacing=1.1,
                   bbox=dict(boxstyle='square,pad=0.15', facecolor='white', edgecolor='none'),
                   arrowprops=dict(arrowstyle='->', color=TEAL, linewidth=.6))
@@ -144,28 +153,31 @@ def render(rows, output):
     fig.text(.012, .955, '(a) gpt-oss-20b: which reply will leak the secret?', weight='bold', fontsize=7.8)
 
     # (b) label ladder
-    for r in (r for r in rows if r['panel'] == 'b' and r['label'] in POS_B):
-        x, marker = POS_B[r['label']]
-        color, _ = STYLE[r['group']]
+    b_rows = [r for r in rows if r['panel'] == 'b' and r['label'] in B_ROWS]
+    used = [h for h, _ in HORIZONS if any(B_ROWS[r['label']][0] == h for r in b_rows)]
+    xpos = {h: 1.1 * i for i, h in enumerate(used)}
+    for r in b_rows:
+        horizon, series = B_ROWS[r['label']]
+        _, marker, side = SERIES_B[series]
+        shared = sum(B_ROWS[q['label']][0] == horizon for q in b_rows) > 1
+        x = xpos[horizon] + (.1 * side if shared else 0)
+        color = TEAL if series == 'reasoning' else SLATE
         right.errorbar(x, r['estimate'], yerr=[[r['estimate']-r['low']], [r['high']-r['estimate']]],
                        fmt=marker, color=color, markersize=4.2, capsize=1.8, linewidth=.9, zorder=3)
-        dx, ha = {'Last prompt: eventual': (-6, 'right'), 'Last prompt: near-term': (-6, 'right'),
-                  'Reasoning: paper cohort': (6, 'left'), 'Reasoning: this reply': (6, 'left')}[r['label']]
-        right.annotate(f"{r['estimate']:.2f}", (x, r['estimate']), xytext=(dx, 0), va='center',
-                       textcoords='offset points', ha=ha, fontsize=6.8, color=color,
-                       bbox=dict(boxstyle='square,pad=0.1', facecolor='white', edgecolor='none'))
-    right.set(xlim=(-.6, 2.75), ylim=(.4, 1.0))
+        right.annotate(f"{r['estimate']:.2f}", (x, r['estimate']), xytext=(6 * side, 0), va='center',
+                       textcoords='offset points', ha='left' if side > 0 else 'right', fontsize=6.8,
+                       color=color, bbox=dict(boxstyle='square,pad=0.1', facecolor='white', edgecolor='none'))
+    right.set(xlim=(-.6, xpos[used[-1]] + .55), ylim=(.4, 1.0))
     right.set_ylabel('AUROC', fontsize=7, labelpad=2)
-    right.set_xticks([0, 1.1, 2.2], ['Will it\never leak?', 'Leak this\nround or next?', 'Leak in\nthis reply?'],
+    right.set_xticks(list(xpos.values()), [dict(HORIZONS)[h] for h in used],
                      fontsize=6.6)
     right.tick_params(axis='x', length=0, pad=3)
     right.set_yticks([.5, .6, .7, .8, .9, 1.0])
     right.axhline(.5, color=GREY, linestyle='--', linewidth=.8, zorder=0)
     right.grid(axis='y', alpha=.15)
     fig.text(.525, .955, '(b) The nearer the leak, the easier to predict', weight='bold', fontsize=7.8)
-    handles = [Line2D([], [], marker='D', color=SLATE, linestyle='', markersize=4,
-                      label='Probe at end of incoming message'),
-               Line2D([], [], marker='o', color=TEAL, linestyle='', markersize=4, label='Probe on reasoning')]
+    handles = [Line2D([], [], marker=m, color=TEAL if k == 'reasoning' else SLATE, linestyle='',
+                      markersize=4, label=name) for k, (name, m, _) in SERIES_B.items()]
     right.legend(handles=handles, loc='upper left', bbox_to_anchor=(0, 1.02), ncol=1, frameon=False,
                  fontsize=6.3, handletextpad=.2, labelspacing=.35, borderaxespad=.2)
 
