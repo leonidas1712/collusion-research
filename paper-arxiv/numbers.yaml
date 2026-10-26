@@ -16085,46 +16085,31 @@
       ]
     },
     "precommitment": {
-      "columns": "@{}>{\\raggedright\\arraybackslash}p{0.39\\linewidth}>{\\raggedright\\arraybackslash}p{0.26\\linewidth}>{\\raggedright\\arraybackslash}p{0.26\\linewidth}@{}",
+      "columns": "@{}>{\\raggedright\\arraybackslash}p{0.18\\linewidth}>{\\raggedright\\arraybackslash}p{0.14\\linewidth}>{\\raggedright\\arraybackslash}p{0.15\\linewidth}>{\\raggedright\\arraybackslash}p{0.20\\linewidth}>{\\raggedright\\arraybackslash}p{0.20\\linewidth}@{}",
       "header": [
-        "Pre-commitment check",
-        "Qwen last-prompt probe",
-        "gpt-oss reasoning probe"
+        "Fresh cohort",
+        "Leaking calls flagged / total",
+        "Non-leaking calls flagged / total",
+        "AUROC: all calls",
+        "AUROC: unflagged calls"
       ],
       "rows": [
         [
-          "All calls: AUROC",
+          "Qwen fresh (last-prompt)",
+          "\\qwenPrecommitJevLeakingFlagged{} / \\qwenPrecommitJevLeakingTotal{}",
+          "\\qwenPrecommitJevNonleakingFlagged{} / \\qwenPrecommitJevNonleakingTotal{}",
           "\\qwenPrecommitAllAUROC{} \\qwenPrecommitAllAUROCCI{}",
-          "\\gptossPrecommitAllAUROC{} \\gptossPrecommitAllAUROCCI{}"
+          "\\qwenPrecommitNoJevAUROC{} \\qwenPrecommitNoJevAUROCCI{}"
         ],
         [
-          "Leaking / total calls",
-          "\\qwenPrecommitAllLeaks{} / \\qwenPrecommitAllCalls{}",
-          "\\gptossPrecommitAllLeaks{} / \\gptossPrecommitAllCalls{}"
-        ],
-        [
-          "After excluding Jev-flagged calls: AUROC",
-          "\\qwenPrecommitNoJevAUROC{} \\qwenPrecommitNoJevAUROCCI{}",
+          "gpt-oss fresh (reasoning)",
+          "\\gptossPrecommitJevLeakingFlagged{} / \\gptossPrecommitJevLeakingTotal{}",
+          "\\gptossPrecommitJevNonleakingFlagged{} / \\gptossPrecommitJevNonleakingTotal{}",
+          "\\gptossPrecommitAllAUROC{} \\gptossPrecommitAllAUROCCI{}",
           "\\gptossPrecommitNoJevAUROC{} \\gptossPrecommitNoJevAUROCCI{}"
         ],
         [
-          "Leaking / total calls remaining",
-          "\\qwenPrecommitNoJevLeaks{} / \\qwenPrecommitNoJevCalls{}",
-          "\\gptossPrecommitNoJevLeaks{} / \\gptossPrecommitNoJevCalls{}"
-        ],
-        [
-          "Jev-flagged leaking calls",
-          "\\qwenPrecommitJevLeakingFlagged{} / \\qwenPrecommitJevLeakingTotal{}",
-          "\\gptossPrecommitJevLeakingFlagged{} / \\gptossPrecommitJevLeakingTotal{}"
-        ],
-        [
-          "Jev-flagged non-leaking calls",
-          "\\qwenPrecommitJevNonleakingFlagged{} / \\qwenPrecommitJevNonleakingTotal{}",
-          "\\gptossPrecommitJevNonleakingFlagged{} / \\gptossPrecommitJevNonleakingTotal{}"
-        ],
-        [
-          "Blind Jev agreement (both models)",
-          "\\multicolumn{2}{l}{\\precommitJevReviewAgreements{}/\\precommitJevReviewSample{} = \\precommitJevReviewAgreement{}; $\\kappa$ = \\precommitJevReviewKappa{}}"
+          "\\multicolumn{5}{l}{Blind review, counting earlier reasoning: \\precommitJevReviewAgreements{}/\\precommitJevReviewSample{} agreement; $\\kappa$ = \\precommitJevReviewKappa{}.}"
         ]
       ]
     }

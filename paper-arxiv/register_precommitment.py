@@ -37,15 +37,16 @@ def main():
         add('precommitJevReview'+suffix, review+[field], fmt=fmt, decimals=0 if fmt=='percent' else 2)
     def macro(prefix, suffix): return '\\'+prefix+'Precommit'+suffix+'{}'
     rows = []
-    for label, suffix in [('All calls: AUROC', 'All'), ('After excluding Jev-flagged calls: AUROC', 'NoJev')]:
-        rows.append([label]+[macro(p,suffix+'AUROC')+' '+macro(p,suffix+'AUROCCI') for p in ('qwen','gptoss')])
-        rows.append(['Leaking / total calls'+(' remaining' if suffix=='NoJev' else '')]+[macro(p,suffix+'Leaks')+' / '+macro(p,suffix+'Calls') for p in ('qwen','gptoss')])
-    for label,suffix in [('Jev-flagged leaking calls','Leaking'),('Jev-flagged non-leaking calls','Nonleaking')]:
-        rows.append([label]+[macro(p,'Jev'+suffix+'Flagged')+' / '+macro(p,'Jev'+suffix+'Total') for p in ('qwen','gptoss')])
-    rows.append(['Blind Jev agreement (both models)', r'\multicolumn{2}{l}{\precommitJevReviewAgreements{}/\precommitJevReviewSample{} = \precommitJevReviewAgreement{}; $\kappa$ = \precommitJevReviewKappa{}}'])
+    for prefix, label in [('qwen', 'Qwen fresh (last-prompt)'), ('gptoss', 'gpt-oss fresh (reasoning)')]:
+        rows.append([label,
+                     macro(prefix, 'JevLeakingFlagged')+' / '+macro(prefix, 'JevLeakingTotal'),
+                     macro(prefix, 'JevNonleakingFlagged')+' / '+macro(prefix, 'JevNonleakingTotal'),
+                     macro(prefix, 'AllAUROC')+' '+macro(prefix, 'AllAUROCCI'),
+                     macro(prefix, 'NoJevAUROC')+' '+macro(prefix, 'NoJevAUROCCI')])
+    rows.append([r'\multicolumn{5}{l}{Blind review, counting earlier reasoning: \precommitJevReviewAgreements{}/\precommitJevReviewSample{} agreement; $\kappa$ = \precommitJevReviewKappa{}.}'])
     reg['tables']['precommitment'] = dict(
-        columns=r'@{}>{\raggedright\arraybackslash}p{0.39\linewidth}>{\raggedright\arraybackslash}p{0.26\linewidth}>{\raggedright\arraybackslash}p{0.26\linewidth}@{}',
-        header=['Pre-commitment check', 'Qwen last-prompt probe', 'gpt-oss reasoning probe'], rows=rows)
+        columns=r'@{}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.14\linewidth}>{\raggedright\arraybackslash}p{0.15\linewidth}>{\raggedright\arraybackslash}p{0.20\linewidth}>{\raggedright\arraybackslash}p{0.20\linewidth}@{}',
+        header=['Fresh cohort', 'Leaking calls flagged / total', 'Non-leaking calls flagged / total', 'AUROC: all calls', 'AUROC: unflagged calls'], rows=rows)
     (HERE/'numbers.yaml').write_text(json.dumps(reg, indent=2)+'\n')
 
 
