@@ -6,7 +6,6 @@ A probe that scores each call before it runs could pause that call and hand it t
 Further from the act the signal fades, so our results do not support warnings rounds ahead.
 
 For an exact secret, an output filter that matches the string would also stop the leak.
-On Qwen3-32B, about half of the leaks go out as an ordinary end-of-turn reply rather than a tool call, so a filter on tool calls alone would miss them (\cref{app:sprint}).
 The per-call probe matters most where no string filter can match, as with paraphrased or encoded leaks, and where an overseer wants to pause a call before it acts.
 
 \subsection*{Limitations}
@@ -40,7 +39,7 @@ A bag-of-words text classifier trained on the same input comes close to the prob
 
 \paragraph{Automated labels.}
 The leak label is an exact match on the tool log.
-Whether a leak was deliberate or accidental comes from an automated judge, which agrees well with the author's blind labels (\cref{app:sprint}).
+Whether a leak was deliberate or accidental, which we use only to describe the leaks, comes from an automated judge (\cref{app:sprint}).
 
 \paragraph{Future work.}
 Next steps are to test whether the probe direction causally affects the decision, to test the probe in other environments and on more models, and to study larger multi-agent settings, as in the 2026 incident \citep{greenblatt2026incident,pulipaka2026shareborne}.

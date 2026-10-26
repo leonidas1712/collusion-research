@@ -42,3 +42,15 @@ A second provider served a small share of requests with a less exact rendering, 
   \small
   \input{tables/replay.tex}
 \end{table}
+
+\paragraph{Generation and inference settings.}
+Both targets were served through an API at temperature 0.7 (\cref{tab:settings}), and their prompts were then re-run through the open weights to read the activations (\cref{tab:replay}).
+The chosen layers are those of the frozen per-call probes, one per seed.
+
+\begin{table}[h]
+  \centering
+  \caption{Generation and inference settings.}
+  \label{tab:settings}
+  \small
+  \input{tables/settings.tex}
+\end{table}

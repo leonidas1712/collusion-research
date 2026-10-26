@@ -36,7 +36,8 @@ Two were pre-registered: before collecting the fresh test episodes, we wrote dow
 \paragraph{Will this call leak? gpt-oss-20b.}
 The frozen reasoning probe ranked the calls that leak above the others on the fresh test episodes (AUROC~\gptossFreshReasoning{}).
 We had committed its layer, its weights, its alarm threshold and its success criterion, a lower interval bound above 0.5, and the criterion was met.
-At the frozen threshold it caught about half of the leaking calls, fewer than in development, while few calls in refusing episodes alarmed (\cref{app:confirmation}).
+At the frozen threshold it caught about half of the leaking calls, fewer than in development, while few calls in refusing episodes alarmed.
+Because each episode has many calls, \gptossFreshRefusingEpisodeAlarm{} of refusing fresh episodes still raised at least one alarm (\cref{app:confirmation}).
 
 \paragraph{Will the target leak this round or the next? Qwen3-32B.}
 This question was modestly predictable on the fresh test episodes, for the probe (\qwenFreshNearProbe{}) and for the text monitor fixed in the same plan, and neither was clearly better (\cref{fig:round}).

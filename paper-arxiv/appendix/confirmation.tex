@@ -9,7 +9,7 @@ Before the fresh test episodes were collected, we committed the probe's layer, c
 The success criterion was a lower 95\% bound above 0.5 on the per-call AUROC.
 The bound was above 0.5.
 With few leaking calls, the interval is wide.
-At the frozen threshold the probe caught about half of the leaking calls, fewer than in development, while alarming on few calls in refusing episodes (\cref{tab:fresh}).
+At the frozen threshold the probe caught \gptossFreshCaught{} of the leaking calls (binomial 95\% interval \gptossFreshCaughtCI{}), fewer than in development, while alarming on \gptossFreshRefusingAlarm{} of calls in refusing episodes and in \gptossFreshRefusingEpisodeAlarm{} of refusing episodes (\cref{tab:fresh}).
 
 \paragraph{Qwen3-32B round-level test.}
 The plan fixed the near-term label of \cref{app:labels}, the probe (one logistic model per seed trained on all development recruiting calls), and two text monitors chosen in advance.
