@@ -234,7 +234,8 @@ def main(args):
         lines = ['# Fresh reasoning-stream confirmation', '',
                  'The model and threshold were committed before these episodes existed (22a89d84). '
                  'The primary endpoint is recognition of the reply that first emits the protected value publicly, '
-                 'including a file write. It is not the paper’s channel-only outcome or advance prediction.', '',
+                 'including in tool arguments. Successful tool execution is not required: malformed or failed calls can qualify. '
+                 'It is not the paper’s channel-only outcome or advance prediction.', '',
                  f"Layer {chosen}; {len(scored)} reasoning replies, {int(y.sum())} positives. "
                  f"Predeclared lower-95%-CI-above-0.5 criterion: {primary['predeclared_success']}.", '',
                  f"The manifest contains {counts['manifest_by_condition']}. Scored-window episodes, including episodes with no usable reasoning: "
