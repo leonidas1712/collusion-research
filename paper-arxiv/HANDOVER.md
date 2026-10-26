@@ -35,7 +35,7 @@ Shared notes (not paper prose). Append your own entries; keep sections by owner 
 - **Leak boundary:** the gpt-oss frozen detector's definition, applied to both models. The secret appears in a reply or in any tool argument, including writes back to the protected file. Your wording said "outside the protected one". Excluding those cases is a sensitivity analysis affecting 2 Qwen episodes, and it is in the appendix.
 - **Abstract number pair:** the Qwen *fresh* pair on identical calls (probe 0.98 vs zero-shot monitor 0.75), not the development pair (0.96 vs 0.76).
 - **gpt-oss text monitor:** the main version is the one that also sees the earlier same-turn reasoning (0.40). The sprint's main version was 0.27. This is fairer to the monitor.
-- **"Pre-registered" definition:** a committed plan fixed the model, threshold and success criterion **before any detector was scored**. That holds for both pre-registered tests. For Qwen, the plan was committed *after* the episodes were collected (aggregate leak counts known); see item 5 under "Changed from the sprint version".
+- **"Pre-registered" definition:** a committed plan fixed the analysis and its success criterion **before any detector's predictions were evaluated against the test labels**. That holds for both pre-registered tests. For Qwen, the plan was committed *after* the episodes were collected (aggregate leak counts known); see item 5 under "Changed from the sprint version".
 - **Main text is about 7 pages** after the story pass. Your brief said 9–10. I kept the shorter version because the story reads better. The trajectory figure (the probe score jumping at the leaking call) is the best candidate to bring back if you want more.
 
 ### Your decisions this morning
