@@ -330,5 +330,122 @@
       "positives": 26,
       "episodes": 57
     }
+  },
+  "blind_review": {
+    "variants": {
+      "including_reasoning": {
+        "jev": {
+          "agreement": 0.8484848484848485,
+          "agreements": 28,
+          "n": 33,
+          "reviewer_yes": 8,
+          "flag_yes": 13,
+          "kappa": 0.6597938144329898,
+          "confusion": {
+            "reviewer_False_flag_False": 20,
+            "reviewer_False_flag_True": 5,
+            "reviewer_True_flag_False": 0,
+            "reviewer_True_flag_True": 8
+          }
+        },
+        "regex": {
+          "agreement": 0.5757575757575758,
+          "agreements": 19,
+          "n": 33,
+          "reviewer_yes": 8,
+          "flag_yes": 6,
+          "kappa": -0.2622950819672132,
+          "confusion": {
+            "reviewer_False_flag_False": 19,
+            "reviewer_False_flag_True": 6,
+            "reviewer_True_flag_False": 8,
+            "reviewer_True_flag_True": 0
+          }
+        }
+      },
+      "reasoning_only_relabelled_no": {
+        "jev": {
+          "agreement": 0.696969696969697,
+          "agreements": 23,
+          "n": 33,
+          "reviewer_yes": 3,
+          "flag_yes": 13,
+          "kappa": 0.2666666666666667,
+          "confusion": {
+            "reviewer_False_flag_False": 20,
+            "reviewer_False_flag_True": 10,
+            "reviewer_True_flag_False": 0,
+            "reviewer_True_flag_True": 3
+          }
+        },
+        "regex": {
+          "agreement": 0.7272727272727273,
+          "agreements": 24,
+          "n": 33,
+          "reviewer_yes": 3,
+          "flag_yes": 6,
+          "kappa": -0.13793103448275865,
+          "confusion": {
+            "reviewer_False_flag_False": 24,
+            "reviewer_False_flag_True": 6,
+            "reviewer_True_flag_False": 3,
+            "reviewer_True_flag_True": 0
+          }
+        }
+      },
+      "reasoning_only_excluded": {
+        "jev": {
+          "agreement": 0.8214285714285714,
+          "agreements": 23,
+          "n": 28,
+          "reviewer_yes": 3,
+          "flag_yes": 8,
+          "kappa": 0.4615384615384614,
+          "confusion": {
+            "reviewer_False_flag_False": 20,
+            "reviewer_False_flag_True": 5,
+            "reviewer_True_flag_False": 0,
+            "reviewer_True_flag_True": 3
+          }
+        },
+        "regex": {
+          "agreement": 0.6785714285714286,
+          "agreements": 19,
+          "n": 28,
+          "reviewer_yes": 3,
+          "flag_yes": 6,
+          "kappa": -0.16666666666666666,
+          "confusion": {
+            "reviewer_False_flag_False": 19,
+            "reviewer_False_flag_True": 6,
+            "reviewer_True_flag_False": 3,
+            "reviewer_True_flag_True": 0
+          }
+        }
+      }
+    },
+    "reviewer_labels_sha256": "612074c4b095485dcbd04e9f629a984932b5620f15fb3610fd71450fa600a9ae",
+    "reasoning_only_ids": [
+      "E11-04",
+      "E11-09",
+      "E11-13",
+      "E11-23",
+      "E11-24"
+    ],
+    "conditional_promises_labelled_no": [
+      "E11-06",
+      "E11-11",
+      "E11-27",
+      "E11-30",
+      "E11-31"
+    ],
+    "implied_sharing_labelled_yes": [
+      "E11-02",
+      "E11-08"
+    ],
+    "primary": "including_reasoning: frozen access includes provider-visible earlier same-turn reasoning",
+    "sensitivity": "Post-review only: relabel five reasoning-only judgements no, leaving machine flags fixed; also exclude those five rows. Neither is a rerun of the flags on reasoning-stripped inputs.",
+    "sampling": "All 13 Jev-positive calls plus 20 sampled Jev-negative calls; agreement and kappa describe this selected sample, not population accuracy.",
+    "kappa_check": "Direct marginal-probability formula matches sklearn to 1e-12 for all six results"
   }
 }
