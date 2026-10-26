@@ -2,29 +2,46 @@
 
 Date: 2026-10-27 (Asia/Singapore)
 
-## Final Round 2 inputs
+## Final E11 inputs
 
 | Build | Path | SHA-256 | Pages |
 |---|---|---|---:|
-| Canonical | `paper-arxiv/main.pdf` | `f99a4d7623aab3fa2bcd722c2087ac1458028a4090ee45c4aefbd0b9c19f0751` | 39 |
-| Clean arXiv package | `paper-arxiv/dist/arxiv-final/clean-build/main.pdf` | `c8069cd70b85d4c465ebf30de5059b3587e9e7b2df610e9dd4256a87fec3a911` | 39 |
-| arXiv source archive | `paper-arxiv/dist/arxiv-final/arxiv-source.tar.gz` | `77d1fda57b12e46571ac177a94d1a1480030247ab9160a165dd31c58339baad6` | - |
+| Canonical | `paper-arxiv/main.pdf` | `497834a0daf5a3110b81022adae4a33dd1c7c032edfe635d06f3260c91b93663` | 41 |
+| Clean arXiv package | `paper-arxiv/dist/arxiv-final/clean-build/main.pdf` | `7feb4b52aebb6f39a254612c253242c293dfb114d427b97b772f2b15fdefe6b8` | 41 |
+| arXiv source archive | `paper-arxiv/dist/arxiv-final/arxiv-source.tar.gz` | `48aa905ac569515d1c2899745811495ed0d7219de9b1ddbe447dd44aedd95de0` | - |
 
-The hashes matched the handoff before inspection and remained stable afterward. This was the requested focused Round 2 re-check of the title/abstract page, Contents pages and links, and representative references. The earlier full 39-page visual pass applied to superseded Round 1 hashes and is not represented as a full visual pass on these artifacts.
+The hashes matched the handoff before inspection and remained stable afterward. Both PDFs were rendered in full at 144 dpi.
 
-## Round 2 checklist
+## Checklist
 
 | Check | Result | Evidence / defect |
 |---|---|---|
-| PDF parsing and focused rendering | **PASS** | Both 39-page PDFs parse with `pypdf` and render the checked pages with Poppler without errors. |
-| Title and abstract, p. 1 | **PASS** | The title has the intended two-line break after the colon; “Probing When a Recruited Agent Gives In” remains on one line. The abstract, author block, first-page footnote, Introduction heading, and opening paragraphs are legible and inside the margins. No overlap or missing glyph was visible. |
-| Link appearance, p. 1 | **PASS** | Citations and the Section O footnote link use dark-blue text without visible borders. |
-| Contents appearance, pp. 13-14 | **PASS** | All 41 entries are legible, aligned, inside the margins, and use dark-blue linked text without visible borders. |
-| Contents destinations | **PASS** | All 41 links resolve in order to the printed destination pages: `1, 2, 3, 4, 5, 5, 6, 7, 7, 8, 9, 15, 16, 17, 20, 21, 21, 22, 22, 24, 25, 25, 26, 28, 28, 29, 31, 31, 32, 32, 33, 33, 33, 34, 35, 35, 35, 36, 36, 37, 39`. |
-| Representative citations and references | **PASS structurally** | First-page citation links resolve to bibliography pp. 10-12, and the footnote cross-reference resolves to Appendix O on p. 34. Sample reference URLs are non-empty. Across each PDF, all 329 annotations resolve: 280 internal and 49 external, with 0 missing or unsupported actions. |
-| Canonical/package equivalence on checked pages | **PASS** | The 168-dpi PNGs for pp. 1, 13 and 14 are byte-identical between the canonical and clean-package PDFs. Link counts and destinations also match exactly. |
-| Native macOS Preview | **UNVERIFIED** | The required retry failed before Preview opened with `Sky Computer Use service startup request failed`. No native open or click claim is made. |
+| Opens without errors or warnings | **PASS in independent PDF renderers; UNVERIFIED in Preview** | Both PDFs parse with `pypdf` and `pdftotext` and render all 41 pages with Poppler without errors. The final macOS Preview retry failed before the app opened with `Sky Computer Use service startup request failed`; no native-Preview claim is made. |
+| Fonts and glyphs | **PASS** | All 29 listed font resources are embedded and subset in both PDFs. Pages 1-41 show no missing-glyph boxes or substitutions. |
+| Figures sharp | **PASS** | All figures are sharp and legible; line work, markers, legends, error bars, labels, and raster elements render cleanly. |
+| Math and tables | **PASS** | Display math and all tables render without clipping, overlap, broken rules, or illegible symbols. The new E11 table on p. 27 is aligned, readable, and inside the margins. |
+| Link appearance | **PASS** | Internal references, citations, and URLs use dark-blue text with no visible link borders. |
+| Contents appearance and links | **PASS** | The 41 entries on pp. 14-15 are legible and aligned. Every link resolves in order to its printed destination page: `1, 2, 3, 4, 5, 5, 6, 7, 7, 8, 9, 16, 17, 18, 21, 22, 22, 23, 23, 25, 26, 26, 28, 29, 30, 30, 33, 33, 33, 33, 33, 35, 35, 35, 36, 36, 37, 37, 38, 39, 40`. |
+| Cross-references and citations | **PASS structurally** | Each PDF has 340 valid link annotations: 288 internal and 52 external, with 0 missing or unsupported actions. First-page citations resolve to bibliography pp. 10-13, the first-page Section O link resolves to p. 35, and sampled reference URLs are non-empty. Native click interaction remains unverified because Preview did not start. |
+| No overflow or overlap | **PASS** | Every page was inspected. No text, figure, table, header, footer, or annotation runs off the page or overlaps other content. The short final bibliography page (p. 13) and final prompt page (p. 41) have intentional white space. |
+| Canonical/package equivalence | **PASS** | All 41 canonical/package raster page pairs are byte-identical; extracted text is identical; page, font, and link counts match. |
+| Placeholder scan | **PASS** | Extracted text contains no `??`, `Undefined`, `TODO`, `PENDING`, or `[?]` markers. |
+
+## Page-by-page inspection log
+
+| Pages | Result | Notes |
+|---|---|---|
+| 1-4 | PASS | Title/footnote, abstract, introduction, setup, definitions, Figures 1-2, and Table 1. |
+| 5-9 | PASS | Method, main results, Figures 3-5, Tables 2, related work, discussion, and limitations. |
+| 10-13 | PASS | Usage statement and complete references; linked URLs remain inside margins. Page 13 ends the bibliography with intentional white space. |
+| 14-15 | PASS | Contents; all 41 entries are legible and mechanically resolve to their printed pages. |
+| 16-21 | PASS | Appendices A-C, scenario/rule tables, episode excerpts, dataset checks, replay fidelity, settings, and probe-training setup. |
+| 22-26 | PASS | Probe metric, monitor setup/results, frozen fresh tests, robustness tables, and Figure 6. |
+| 27 | PASS | New E11 table and surrounding shortcut/input-text analysis are clean, aligned, and within margins. |
+| 28-32 | PASS | Figures 7-9, policy counterfactual, alarm trade-offs, and round-level results/robustness tables. |
+| 33-36 | PASS | Leak routes, screens, dual-use discussion, analysis history, and reproducibility index. |
+| 37-41 | PASS | Verbatim target, peer, and monitor prompts; monospace text, bullets, and nested lists remain within margins. Page 41 ends with intentional white space. |
 
 ## Overall gate
 
-**PASS for the requested final Round 2 viewer re-check.** No defect was found on the title/abstract page, Contents pages, Contents destinations, or sampled reference links. Native macOS Preview remains explicitly unverified because the computer-use service could not start.
+**PASS for every executable visual, structural, equivalence, and link-destination check on the final E11 artifacts. Native macOS Preview remains explicitly unverified because the computer-use service could not start.** No PDF defect was found in either final artifact.
