@@ -1,0 +1,42 @@
+{
+  "tfidf": {
+    "ngram_range": [
+      1,
+      2
+    ],
+    "min_df": 2,
+    "max_features": 50000,
+    "sublinear_tf": true,
+    "norm": "l2"
+  },
+  "text_logistic": {
+    "C": 0.1,
+    "solver": "lbfgs",
+    "max_iter": 2000,
+    "tol": 1e-05
+  },
+  "mlp": {
+    "hidden_units": 32,
+    "epochs": 80,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "weight_decay": 0.01
+  },
+  "incoming": {
+    "layer": 18,
+    "layer_choice": "fixed before fitting respecified run, not outcome-selected",
+    "training_tokens_per_reply_max": 64,
+    "subsampling": "evenly spaced including endpoints; SWiM16 runs on sampled sequence, so its original-token span may exceed16",
+    "scoring": "all stream tokens",
+    "seed": 42,
+    "split": "LOSO6rotations",
+    "variant": "immediate",
+    "loss": "both",
+    "streams": [
+      "incoming",
+      "action_time"
+    ],
+    "C": 0.1,
+    "ema_alpha": 0.11764705882352941
+  }
+}
