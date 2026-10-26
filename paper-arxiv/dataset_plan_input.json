@@ -1,0 +1,210 @@
+{
+  "status": "phase_1_input_for_writer_not_manuscript_prose",
+  "owner": "codex-2",
+  "datasets": {
+    "qwen_development": {
+      "name": "Qwen development episodes",
+      "source": "replay-2 prefix of combined cache",
+      "source_run": "runs/20261025-1026-e05-replay3-data-1d95",
+      "feature_indices": "0..6025 inclusive",
+      "counts": {
+        "recruiting": {
+          "episodes": 152,
+          "calls": 2976,
+          "immediate": 66,
+          "round_near": 240,
+          "eventual": 717
+        },
+        "control": {
+          "episodes": 53,
+          "calls": 1224,
+          "immediate": 0,
+          "round_near": 0,
+          "eventual": 0
+        },
+        "alone": {
+          "episodes": 25,
+          "calls": 50,
+          "immediate": 0,
+          "round_near": 0,
+          "eventual": 0
+        }
+      },
+      "evidence": "exploratory"
+    },
+    "qwen_fresh": {
+      "name": "Qwen fresh test episodes",
+      "source": "replay-3 suffix of combined cache",
+      "source_run": "runs/20261025-1026-e05-replay3-data-1d95",
+      "feature_indices": "6026..9137 inclusive",
+      "counts": {
+        "recruiting": {
+          "episodes": 89,
+          "calls": 1825,
+          "immediate": 38,
+          "round_near": 120,
+          "eventual": 418
+        },
+        "control": {
+          "episodes": 19,
+          "calls": 433,
+          "immediate": 0,
+          "round_near": 0,
+          "eventual": 0
+        },
+        "alone": {
+          "episodes": 0,
+          "calls": 0,
+          "immediate": 0,
+          "round_near": 0,
+          "eventual": 0
+        }
+      },
+      "evidence": {
+        "original_round_confirmation": "confirmed; unchanged",
+        "new_percall": "exploratory out-of-sample; test outcomes already inspected"
+      }
+    },
+    "gpt_oss_development": {
+      "name": "GPT-OSS development episodes",
+      "collection_episodes": 360,
+      "collection_recruiting": 300,
+      "collection_control": 60,
+      "scored_recruiting_episodes": 238,
+      "matched_calls": 1995,
+      "matched_immediate_positives": 121,
+      "matched_near_positives": 304,
+      "matched_eventual_positives": 330,
+      "all_calls": 2205,
+      "all_immediate_positives": 146,
+      "source_run": "runs/20261026-0522-e05-reasoning-stream-data",
+      "evidence": "exploratory"
+    },
+    "gpt_oss_fresh": {
+      "name": "GPT-OSS fresh test episodes",
+      "collection_episodes": 84,
+      "collection_recruiting": 72,
+      "collection_control": 12,
+      "scored_recruiting_episodes": 57,
+      "matched_calls": 594,
+      "matched_immediate_positives": 26,
+      "all_calls": 671,
+      "all_immediate_positives": 30,
+      "source_run": "runs/20261026-1302-e05-stream-confirm-score",
+      "evidence": {
+        "frozen_reasoning_max": "confirmed; unchanged",
+        "new_matched_lastprompt": "exploratory out-of-sample; no retroactive confirmation"
+      }
+    }
+  },
+  "evaluations": {
+    "horizon_ladder": {
+      "primary": "held-out scenario, same calls and any-public label across eventual/this-or-next-round/immediate within each target",
+      "qwen": "refit on development only; three seeds; saved partitions restricted to development families",
+      "gpt_oss": "reuse existing matched 1995-call LOSO results",
+      "secondary": "pooled CV and all-call/no-reasoning exclusion sensitivity in robustness appendix"
+    },
+    "frozen_confirmation": {
+      "gpt_oss": "frozen reasoning MAX on fresh test: 0.905128205128205 [0.7754905808477238,0.9913294314381271]",
+      "qwen": "original round-label test: 0.6814075141590339 [0.6039265680038133,0.7533320836302414]",
+      "never_change": true
+    },
+    "input_text_comparison": {
+      "qwen": "rescore saved Jev input scores on EXACT new development rows/labels; audit missing coverage before claiming match",
+      "gpt_oss": "use matching same-turn-reasoning-access Jev L4 comparator as headline if asking input-equivalent comparison; L3 omits reasoning and is secondary",
+      "no_new_API": true
+    },
+    "new_fresh_lastprompt": {
+      "qwen": "fit development only; inner layer chosen on development; apply unchanged to fresh; exploratory out-of-sample",
+      "gpt_oss": "fit development only; immediate label, apply to fresh saved residual_last; exploratory out-of-sample",
+      "not_frozen_confirmation": true
+    }
+  },
+  "recomputations": [
+    {
+      "id": "qwen_any_public_audit",
+      "state": "complete",
+      "run": "runs/20261026-2155-e05-qwen-any-public-audit",
+      "old_all_data": [
+        4844,
+        101
+      ],
+      "new_all_data": [
+        4801,
+        104
+      ],
+      "changed_episodes": 4,
+      "missing_features": 0
+    },
+    {
+      "id": "qwen_dev_ladder",
+      "state": "ready after outline gate",
+      "labels": [
+        "eventual",
+        "round_near",
+        "immediate"
+      ],
+      "fits_primary": 54,
+      "fits_pooled_secondary": 45,
+      "feature_replay_required": false
+    },
+    {
+      "id": "qwen_dev_round_original",
+      "state": "reuse/recompute replay2-only scores if retained in appendix; do not put mismatched window into ladder"
+    },
+    {
+      "id": "qwen_jev_dev",
+      "state": "saved score intersection and relabel; coverage must be explicit; no paid calls"
+    },
+    {
+      "id": "qwen_fresh_percall",
+      "state": "three development-only final models + held-out fresh scoring; no new GPU"
+    },
+    {
+      "id": "gpt_oss_fresh_percall",
+      "state": "saved confirmation shards contain residual_last [24,2880]; three development-only final models; no new GPU"
+    },
+    {
+      "id": "qwen_dev_round_monitors",
+      "state": "replay2 monitor caches already exist; rescore only if selected for appendix"
+    }
+  ],
+  "mismatches": [
+    {
+      "issue": "Qwen scenario-specific successful publication versus GPT-OSS raw argument emission",
+      "resolution": "use same exact answer/tool-argument detector; includes malformed/failed calls; protected-source rewrites explicitly flagged to coordinator"
+    },
+    {
+      "issue": "combined development includes original Qwen fresh test",
+      "resolution": "split at verified original 6026-row prefix; 152 development vs 89 fresh recruiting episodes; families disjoint"
+    },
+    {
+      "issue": "nonempty reasoning filter uses future output",
+      "resolution": "matched input-vs-reasoning comparison stays conditional on common nonempty cohort; retain all-call sensitivity and coverage counts"
+    },
+    {
+      "issue": "GPT last-prompt consumes earlier same-turn reasoning",
+      "resolution": "use corresponding L4 text comparator; last-prompt means before CURRENT reply tokens"
+    },
+    {
+      "issue": "original Qwen round confirmation is not 0.58",
+      "resolution": "preserve 0.681 primary; 0.58 is all-data CV, never relabel it confirmed"
+    },
+    {
+      "issue": "historical whole-episode validity/ever-correct gate and pre-emission-window admission",
+      "resolution": "preserve fixed source episodes for reanalysis; report definition once in dataset table and analysis history, no prospective deployment claim"
+    }
+  ],
+  "costs": {
+    "api_usd": 0,
+    "gpu_usd": 0,
+    "gpu_cap_usd": 10,
+    "reextract_needed": false
+  },
+  "implementation": {
+    "audit_script": "experiments/E05-probes/qwen_any_public.py",
+    "feature_source": "local read-only saved activation cache",
+    "generation": false,
+    "prose_owner": "claude-2"
+  }
+}

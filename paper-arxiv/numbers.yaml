@@ -1,0 +1,297 @@
+{
+  "schema_version": 1,
+  "serialization": "JSON subset of YAML 1.2",
+  "numbers": {
+    "gptoss_fresh_reasoning_probe_auroc": {
+      "value": 0.905128205128205,
+      "macro": "gptossFreshReasoning",
+      "dataset": "GPT-OSS fresh test episodes",
+      "evaluation": "frozen model on fresh episodes",
+      "status": "confirmed",
+      "run": "runs/20261026-1302-e05-stream-confirm-score",
+      "format": "decimal",
+      "source": {
+        "file": "runs/20261026-1302-e05-stream-confirm-score/metrics.json",
+        "value_path": [
+          "max_score",
+          "within_round_auc"
+        ],
+        "ci_path": [
+          "max_score",
+          "within_round_ci95"
+        ]
+      },
+      "ci": [
+        0.7754905808477238,
+        0.9913294314381271
+      ]
+    },
+    "qwen_fresh_nearterm_probe_auroc": {
+      "value": 0.6814075141590339,
+      "macro": "qwenFreshNearProbe",
+      "dataset": "Qwen fresh test episodes",
+      "evaluation": "original frozen round-level label and window",
+      "status": "confirmed",
+      "run": "runs/20261025-1030-e06-confirmation",
+      "format": "decimal",
+      "source": {
+        "file": "runs/20261025-1030-e06-confirmation/confirm.json",
+        "value_path": [
+          "A_hazard",
+          "auc",
+          "probe"
+        ],
+        "ci_path": [
+          "A_hazard",
+          "ci95",
+          "probe"
+        ]
+      },
+      "ci": [
+        0.6039265680038133,
+        0.7533320836302414
+      ]
+    },
+    "qwen_fresh_nearterm_jev_auroc": {
+      "value": 0.6435201969654858,
+      "macro": "qwenFreshNearJev",
+      "dataset": "Qwen fresh test episodes",
+      "evaluation": "original frozen round-level label and window",
+      "status": "confirmed",
+      "run": "runs/20261025-1030-e06-confirmation",
+      "format": "decimal",
+      "source": {
+        "file": "runs/20261025-1030-e06-confirmation/confirm.json",
+        "value_path": [
+          "A_hazard",
+          "auc",
+          "jev forecaster L3"
+        ],
+        "ci_path": [
+          "A_hazard",
+          "ci95",
+          "jev forecaster L3"
+        ]
+      },
+      "ci": [
+        0.5603673795358287,
+        0.7215490809200718
+      ]
+    },
+    "gptoss_ladder_ever_auroc": {
+      "value": 0.6103165428942173,
+      "macro": "gptossEverProbe",
+      "dataset": "GPT-OSS development episodes",
+      "evaluation": "held-out scenarios",
+      "status": "exploratory",
+      "run": "runs/20261026-1304-e05-lastprompt-label-ladder",
+      "format": "decimal",
+      "source": {
+        "file": "runs/20261026-1304-e05-lastprompt-label-ladder/metrics.json",
+        "value_path": [
+          "eventual_any/loso",
+          "within_round_auc"
+        ],
+        "ci_path": [
+          "eventual_any/loso",
+          "within_round_ci95"
+        ]
+      },
+      "ci": [
+        0.5645578542731162,
+        0.6638159625629834
+      ]
+    },
+    "gptoss_ladder_near_auroc": {
+      "value": 0.6371913911402034,
+      "macro": "gptossNearProbe",
+      "dataset": "GPT-OSS development episodes",
+      "evaluation": "held-out scenarios",
+      "status": "exploratory",
+      "run": "runs/20261026-1304-e05-lastprompt-label-ladder",
+      "format": "decimal",
+      "source": {
+        "file": "runs/20261026-1304-e05-lastprompt-label-ladder/metrics.json",
+        "value_path": [
+          "round_any/loso",
+          "within_round_auc"
+        ],
+        "ci_path": [
+          "round_any/loso",
+          "within_round_ci95"
+        ]
+      },
+      "ci": [
+        0.5861730558667251,
+        0.6917795929863436
+      ]
+    },
+    "gptoss_percall_lastprompt_auroc": {
+      "value": 0.9055172941208524,
+      "macro": "gptossCallProbe",
+      "dataset": "GPT-OSS development episodes",
+      "evaluation": "held-out scenarios",
+      "status": "exploratory",
+      "run": "runs/20261026-1221-e05-lastprompt-percall-6013",
+      "format": "decimal",
+      "source": {
+        "file": "runs/20261026-1221-e05-lastprompt-percall-6013/metrics.json",
+        "value_path": [
+          "matched/immediate/loso",
+          "within_round_auc"
+        ],
+        "ci_path": [
+          "matched/immediate/loso",
+          "within_round_ci95"
+        ]
+      },
+      "ci": [
+        0.8708647111524837,
+        0.9360241609966362
+      ]
+    },
+    "gptoss_strict_next_lastprompt_auroc": {
+      "value": 0.620081795126909,
+      "macro": "gptossStrictNextProbe",
+      "dataset": "GPT-OSS development episodes",
+      "evaluation": "held-out scenarios",
+      "status": "exploratory",
+      "run": "runs/20261026-1221-e05-lastprompt-percall-6013",
+      "format": "decimal",
+      "source": {
+        "file": "runs/20261026-1221-e05-lastprompt-percall-6013/metrics.json",
+        "value_path": [
+          "matched/strict1/loso",
+          "within_round_auc"
+        ],
+        "ci_path": [
+          "matched/strict1/loso",
+          "within_round_ci95"
+        ]
+      },
+      "ci": [
+        0.567737876329932,
+        0.6680756943398433
+      ]
+    },
+    "gptoss_percall_reasoning_auroc": {
+      "value": 0.9333420720909574,
+      "macro": "gptossCallReasoning",
+      "dataset": "GPT-OSS development episodes",
+      "evaluation": "held-out scenarios",
+      "status": "exploratory",
+      "run": "runs/20261026-0526-e05-reasoning-stream",
+      "format": "decimal",
+      "source": {
+        "file": "runs/20261026-0526-e05-reasoning-stream/metrics.json",
+        "value_path": [
+          "immediate/all/loso/extended/token_max",
+          "within_round_auc"
+        ],
+        "ci_path": [
+          "immediate/all/loso/extended/token_max",
+          "within_round_ci95"
+        ]
+      },
+      "ci": [
+        0.9117733742817319,
+        0.952082789118824
+      ]
+    },
+    "gptoss_readstep_flag_auroc": {
+      "value": null,
+      "macro": "gptossReadStep",
+      "status": "pending",
+      "reason": "restore compact audit source"
+    },
+    "gptoss_percall_jev_with_reasoning_auroc": {
+      "value": 0.3968481547397384,
+      "macro": "gptossCallJev",
+      "dataset": "GPT-OSS development episodes",
+      "evaluation": "held-out scenarios",
+      "status": "exploratory",
+      "run": "runs/20261026-1319-e06-percall-input-jev-l4",
+      "format": "decimal",
+      "source": {
+        "file": "runs/20261026-1319-e06-percall-input-jev-l4/metrics.json",
+        "value_path": [
+          "loso",
+          "within_round_auc"
+        ],
+        "ci_path": [
+          "loso",
+          "within_round_ci95"
+        ]
+      },
+      "ci": [
+        0.3323867137748024,
+        0.45296794697405734
+      ]
+    },
+    "gptoss_percall_jev_no_reasoning_auroc": {
+      "value": 0.2706085971823028,
+      "macro": "gptossCallJevNoReasoning",
+      "dataset": "GPT-OSS development episodes",
+      "evaluation": "held-out scenarios",
+      "status": "exploratory",
+      "run": "runs/20261026-1306-e06-percall-input-jev",
+      "format": "decimal",
+      "source": {
+        "file": "runs/20261026-1306-e06-percall-input-jev/metrics.json",
+        "value_path": [
+          "loso",
+          "within_round_auc"
+        ],
+        "ci_path": [
+          "loso",
+          "within_round_ci95"
+        ]
+      },
+      "ci": [
+        0.20977020277910294,
+        0.32290958327780744
+      ]
+    },
+    "qwen_percall_probe_auroc": {
+      "value": null,
+      "macro": "qwenCallProbe",
+      "status": "pending",
+      "reason": "new disjoint-development refit or matched rescore; do not substitute sprint value"
+    },
+    "qwen_ladder_ever_auroc": {
+      "value": null,
+      "macro": "qwenEverProbe",
+      "status": "pending",
+      "reason": "new disjoint-development refit or matched rescore; do not substitute sprint value"
+    },
+    "qwen_ladder_near_auroc": {
+      "value": null,
+      "macro": "qwenNearProbe",
+      "status": "pending",
+      "reason": "new disjoint-development refit or matched rescore; do not substitute sprint value"
+    },
+    "qwen_percall_jev_auroc": {
+      "value": null,
+      "macro": "qwenCallJev",
+      "status": "pending",
+      "reason": "new disjoint-development refit or matched rescore; do not substitute sprint value"
+    },
+    "qwen_fresh_percall_probe_auroc": {
+      "value": null,
+      "macro": "qwenFreshCallProbe",
+      "status": "pending",
+      "reason": "new disjoint-development refit or matched rescore; do not substitute sprint value"
+    },
+    "gptoss_fresh_lastprompt_auroc": {
+      "value": null,
+      "macro": "gptossFreshCallProbe",
+      "status": "pending",
+      "reason": "new disjoint-development refit or matched rescore; do not substitute sprint value"
+    }
+  },
+  "aliases": {
+    "gptossLadderCall": "gptossCallProbe",
+    "gptossLadderEver": "gptossEverProbe",
+    "gptossLadderNear": "gptossNearProbe"
+  }
+}

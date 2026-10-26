@@ -1,0 +1,51 @@
+{
+  "id": "20261026-2155-e05-qwen-any-public-audit",
+  "experiment": "E05",
+  "name": "e05-qwen-any-public-audit",
+  "tags": [],
+  "settings": {
+    "phase": "label_and_feature_coverage_audit",
+    "no_gpu": true,
+    "no_api": true,
+    "source_rows_sha256": "a7f267319869d61a8ab558abe293284ae1779780324ed3e45d4acfff709ced15",
+    "old_audit_sha256": "0c2f6435d527e115e6dcabc08706e8a04c340adc9709f1b5215579cfd55d2c92"
+  },
+  "parents": [
+    "20261025-1026-e05-replay3-data-1d95",
+    "20261026-1237-e05-qwen-percall"
+  ],
+  "model": null,
+  "command": "/Users/leo/collusion-research-followup/experiments/E05-probes/.venv/bin/python experiments/E05-probes/qwen_any_public.py --restore-root /tmp/collusion-public-check-20261026 --features /Users/leo/collusion-research/runs/20261025-1026-e05-replay3-data-1d95/features.npy",
+  "git_commit": "ad04abd957fabbdfad49ba422fe2c72e521ae6d3",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-26T21:55:25",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T21:55:59",
+  "results": {
+    "recruiting": {
+      "calls": 4801,
+      "episodes": 241,
+      "immediate": 104,
+      "round_near": 360,
+      "eventual": 1135
+    },
+    "control": {
+      "calls": 1657,
+      "episodes": 72,
+      "immediate": 0,
+      "round_near": 0,
+      "eventual": 0
+    },
+    "alone": {
+      "calls": 50,
+      "episodes": 25,
+      "immediate": 0,
+      "round_near": 0,
+      "eventual": 0
+    },
+    "gpu_spend_usd": 0
+  }
+}
