@@ -1,19 +1,41 @@
 \section{Results}
 \label{sec:results}
 
+\Cref{tab:glance} collects the main results.
+Two were pre-registered: before collecting the fresh test episodes, we wrote down and committed the model, its threshold and its success criterion, and we scored the frozen model on those episodes once.
+
+\begin{table}[t]
+  \centering
+  \caption{\textbf{Results at a glance.} AUROC within scenario and round, with 95\% bootstrap intervals for single detectors. Development results are on held-out scenarios. ``Pre-registered'' means the test was fixed in a committed plan before its episodes were collected.}
+  \label{tab:glance}
+  \small
+  \begin{tabular}{@{}llllc l@{}}
+    \toprule
+    Question & Model & Detector & Episodes & Pre-registered & AUROC \\
+    \midrule
+    This call? & gpt-oss-20b & reasoning probe & fresh test & yes & \gptossFreshReasoning{} \gptossFreshReasoningCI{} \\
+    This round or next? & Qwen3-32B & probe / Jev & fresh test & yes & \qwenFreshNearProbe{} / \qwenFreshNearJev{} \\
+    This call? & Qwen3-32B & last-prompt probe & fresh test & no & \qwenFreshCallProbe{} \qwenFreshCallProbeCI{} \\
+    This call? & Qwen3-32B & last-prompt probe / Jev & development & no & \qwenCallProbe{} / \qwenCallJev{} \\
+    This call? & gpt-oss-20b & last-prompt probe / Jev & development & no & \gptossCallProbe{} / \gptossCallJev{} \\
+    Ever? & Qwen3-32B & last-prompt probe & development & no & \qwenEverProbe{} \\
+    Ever? & gpt-oss-20b & last-prompt probe & development & no & \gptossEverProbe{} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \subsection{Confirmed on fresh episodes}
 \label{sec:confirmed}
 
-On gpt-oss-20b, the frozen reasoning probe ranked the calls that leak above the others on the fresh test episodes (AUROC~\gptossFreshReasoning{}, 95\% interval \gptossFreshReasoningCI{}).
-Before these episodes were collected, we committed the probe's layer, its weights, its alarm threshold and the success criterion, a lower interval bound above 0.5.
-The criterion was met.
-At its frozen threshold the probe caught about half of the leaking calls, fewer than in development, while alarming on few calls in refusing episodes (\cref{app:confirmation}).
+\paragraph{Will this call leak? gpt-oss-20b.}
+The frozen reasoning probe ranked the calls that leak above the others on the fresh test episodes (AUROC~\gptossFreshReasoning{}).
+We had committed its layer, its weights, its alarm threshold and its success criterion, a lower interval bound above 0.5, and the criterion was met.
+At the frozen threshold it caught about half of the leaking calls, fewer than in development, while few calls in refusing episodes alarmed (\cref{app:confirmation}).
 
-On Qwen3-32B, whether the target leaks this round or the next was modestly predictable on its fresh test episodes.
-The frozen probe scored \qwenFreshNearProbe{} and the strongest text monitor \qwenFreshNearJev{}, both clearly above chance, as the plan required (\cref{fig:round}).
-At this distance the probe is not clearly better than the monitor.
-The strongest monitor here is Jev asked to forecast a leak at any later point, shown everything the target had seen (\cref{app:monitors}).
-This test uses the leak label fixed in its plan, which differs only slightly from the one above (\cref{app:labels}).
+\paragraph{Will the target leak this round or the next? Qwen3-32B.}
+This question was modestly predictable on the fresh test episodes, for the probe (\qwenFreshNearProbe{}) and for the text monitor fixed in the same plan, and neither was clearly better (\cref{fig:round}).
+That monitor is Jev asked to forecast a leak at any later point, shown everything the target had seen, which was the strongest monitor on development episodes.
+This test scores only the calls before any public emission, and counts as a leak a channel post or, in five scenarios, a new file (\cref{app:labels}).
 
 \begin{figure}[t]
   \centering
@@ -77,15 +99,17 @@ Even with its ranking reversed after the fact, it stays below the probe (\cref{a
 
 Detecting the request cannot explain the score.
 Every scored call comes from an episode with a recruiting peer, and we compare it only with calls from the same scenario and round, which face the same kind of pressure.
-On gpt-oss-20b, every scored call comes after the peer's request, and the probe applied to calls made before the request scores at chance (\gptossPlacebo{}; \cref{fig:shortcuts}).
+On gpt-oss-20b, every scored call comes after the peer's request.
+As a placebo, we apply the probe to the calls made before the request, where nothing predictive has happened yet, and it scores at chance (\gptossPlacebo{}; \cref{fig:shortcuts}).
 
 The probe is not matching the secret string or detecting the file read.
 On gpt-oss-20b, almost no leaking call names the secret in its reasoning, and keyword rules on the reasoning do no better than chance (\gptossKeyword{}).
-A flag for ``the latest input is the protected file's contents'' scores \gptossReadStep{} on gpt-oss-20b, and the probes beat it on both models (\cref{fig:shortcuts}).
+A simple flag that fires when the call's latest input is the protected file's contents scores \gptossReadStep{} on gpt-oss-20b, and the probes beat it on both models (\cref{fig:shortcuts}).
 
 What the probe does read is open.
-On gpt-oss-20b, a probe that sees only the incoming peer message and tool results of the call also scores high (\gptossIncomingProbe{}).
-That probe still runs before the call acts, but it suggests that much of the signal arrives with the input rather than forming as the model reasons (\cref{app:shortcuts}).
+On gpt-oss-20b, we trained a separate probe that reads only the tokens new to the call, which are the latest peer message and tool results.
+It also scores high (\gptossIncomingProbe{}), so much of the signal arrives with the input rather than forming as the model reasons.
+This does not undo the result, because that probe also runs before the call acts, but it leaves open whether the probe reads a decision or the situation that prompts one (\cref{app:shortcuts}).
 
 \begin{figure}[t]
   \centering

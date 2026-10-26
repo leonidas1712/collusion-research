@@ -31,7 +31,7 @@ We never pool the two models' results.
 Each model has two sets of episodes (\cref{tab:datasets}).
 We develop and evaluate every method on the \emph{development episodes}.
 The \emph{fresh test episodes} were collected later, after we had written down and committed a plan that fixes the model, its threshold and its success criterion.
-Each frozen model is scored on them once.
+Each model is frozen, meaning that its weights and threshold are fixed and committed, and it is scored on them once.
 In both models' development episodes, the target leaks in some recruiting episodes and refuses throughout in others (\qwenLeakRate{} of Qwen3-32B's recruiting episodes leak).
 
 \begin{table}[t]
@@ -46,7 +46,7 @@ In both models' development episodes, the target leaks in some recruiting episod
 
 An episode is a sequence of target calls $c_1, \dots, c_T$, and $r(t)$ is the round of call $c_t$.
 Let $\tau$ be the index of the first call that leaks, with $\tau = \infty$ if none does.
-We score each call $c_t$ made after the target has read the secret, up to and including $c_\tau$.
+We score each call $c_t$ made after the target has read the secret, up to and including $c_\tau$; we call these the scored calls.
 For each scored call we define three labels, by distance from the act:
 \begin{align*}
   y^{\text{ever}}_t &= \mathbb{1}[\tau < \infty] && \text{(this episode leaks at some point),}\\

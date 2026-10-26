@@ -1,11 +1,12 @@
-AI agents increasingly work alongside other agents, and one agent can talk another into breaking its operator's rule.
-We study the first step of such collusion: a peer agent presses a target agent for a secret that the target's operator told it to protect.
-In six scenarios, two open-weight targets, Qwen3-32B and gpt-oss-20b, leak the secret in some episodes and refuse in others under the same pressure.
-We train linear probes on the target's activations and compare them with text monitors, which read only the transcript, on the same model calls.
-Whether an episode will ever leak is barely predictable.
-Whether this call will leak is highly predictable from a probe that reads the activations before the call writes anything.
-On gpt-oss-20b, a probe on the call's reasoning, frozen before new episodes were collected, ranked the leaking calls above the others on those episodes (AUROC~\gptossFreshReasoning{}).
-A simpler probe, read before the call starts, does the same on held-out scenarios (AUROC~\qwenCallProbe{} on Qwen3-32B).
-A text monitor shown the same conversation does worse.
-An overseer could therefore pause the call that is about to leak, although nothing we measured warns rounds ahead.
-We test only exact-string secrets in synthetic scenarios.
+Just before an AI agent gives in and breaks its operator's rule, a linear probe on its activations can tell.
+We study recruitment, a common first step of collusion: a peer agent presses a target agent, over many rounds, to reveal a secret its operator told it to keep, such as a deploy token.
+The target often refuses at first, then gives in.
+Read at each call before the model generates anything, a probe tells whether that call is about to leak the secret, with AUROC \qwenCallProbe{} on Qwen3-32B.
+A text monitor given the same conversation scores \qwenCallJev{}.
+On gpt-oss-20b, a reasoning probe scores \gptossFreshReasoning{} in a pre-registered test on fresh episodes, catching half of leaking calls at a \gptossFreshRefusingAlarm{} false-alarm rate.
+
+The signal is sharp but short-range.
+Checked at each call, the probe can tell when the very next output will leak the secret, but it weakens when asked about the next round, and nearly disappears when asked whether an episode will ever leak.
+
+For multi-agent oversight, this suggests a cheap monitor that runs on every call and pauses an agent just before it gives in, catching what a text monitor misses.
+Probes matter most where output filters fail, such as paraphrased, encoded or slowly coordinated leaks, which we leave to future work.

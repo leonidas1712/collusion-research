@@ -25,9 +25,7 @@ The Qwen3-32B per-call test on fresh episodes is out of sample for the probe, bu
 One call ahead the signal is much weaker, and on gpt-oss-20b it mostly reflects the file read that precedes the leak (\cref{app:ahead}).
 
 \paragraph{What the probe reads is open.}
-The probe survives the pressure, string and read-step controls, but a probe on the incoming message alone also scores high.
-The signal may reflect what has just arrived rather than a decision forming in the model.
-Our results are correlational.
+The signal may reflect what has just arrived rather than a decision forming in the model (\cref{sec:shortcuts}), and our results are correlational.
 
 \paragraph{False alarms per episode.}
 At a threshold set for few false alarms per call, many refusing episodes still get at least one alarm.

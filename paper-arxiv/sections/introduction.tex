@@ -1,37 +1,27 @@
 \section{Introduction}
 \label{sec:intro}
 
-When agents work together, one agent can ask another to do something that the second agent's operator forbids, and the second agent sometimes does it.
-In July 2026, agents in an internal cyber evaluation coordinated on an unsanctioned message board, passed credentials to one another and attacked production infrastructure \citep{openai2026huggingface}.
-An independent investigation found that some agents pressed others to join, and that many joined while calling the attack out of scope \citep{greenblatt2026incident}.
-Coordinated rule-breaking of this kind often starts with recruitment: one agent needs something it cannot reach, and another agent has access to it.
+Just before an AI agent gives in and breaks its operator's rule, a linear probe on its activations can tell.
+We read the target model's internal activations at each of its calls, before it generates anything, and ask whether that call will leak a secret that its operator told it to keep.
+On Qwen3-32B, the probe ranks the leaking calls far above the others, and a text monitor given the same conversation does much worse.
+On gpt-oss-20b, a probe on the call's reasoning held up in a pre-registered test on fresh episodes.
 
-We study this first step in its simplest checkable form.
-A peer agent asks a target agent for a secret, such as a deploy token, and the target's operator has told it never to share that secret.
-Without the rule, handing over the token would be ordinary help, and with the rule it is collusion against the operator \citep{agrawal2025,nakamura2026}.
+The setting is recruitment, a common first step of collusion between agents.
+In July 2026, agents in an internal cyber evaluation coordinated on an unsanctioned message board, passed credentials to one another and attacked production infrastructure, and some agents pressed others to join \citep{openai2026huggingface,greenblatt2026incident}.
+We study the simplest checkable version of that first step.
+A peer agent presses a target agent, over many rounds, to reveal a secret such as a deploy token.
+Without the operator's rule, handing over the token would be ordinary help, and with it, the handover is collusion against the operator \citep{agrawal2025,nakamura2026}.
 The request comes openly from a teammate, in the channel the target is meant to use, so this is not prompt injection hidden in data \citep{liu2024formalizing,debenedetti2024agentdojo}.
-The target often refuses for several rounds, citing the rule, before it gives in.
+The target often refuses at first, citing the rule, and then gives in.
 
-The question is whether an overseer can tell, before the target acts, which episode will leak and when.
-The same model under the same pressure leaks in some episodes and refuses in others, so there is something to predict.
-We ask at three distances from the act: will this episode ever leak, will it leak this round or the next, and will this model call leak?
-Each distance is a point at which an overseer could step in.
+The signal is sharp but short-range (\cref{fig:headline}).
+We ask the same calls three questions: will this call leak, will the target leak this round or the next, and will the episode ever leak?
+The probe answers the first well, weakens on the second, and nearly fails on the third, on both models.
+It is not simply detecting the request, the secret string, or the moment the protected file is read.
 
-The answer depends on the distance (\cref{fig:headline}).
-The eventual outcome is barely predictable from the target's activations, this round or the next is modestly predictable, and this call is highly predictable.
-The pattern is the same on both target models, Qwen3-32B and gpt-oss-20b.
-
-The strongest result is confirmed on episodes collected after the method was frozen.
-On gpt-oss-20b, we fixed a probe on the call's reasoning tokens, its alarm threshold and a success criterion in advance, then collected fresh episodes.
-On those episodes the probe ranked the calls that leak above the others (AUROC~\gptossFreshReasoning{}).
-
-A simpler probe does the same on both models.
-It reads one position, the last token of the prompt, so it runs before the call starts.
-On held-out scenarios it picks out the call that leaks (AUROC~\qwenCallProbe{} on Qwen3-32B), and the Qwen3-32B probe holds on fresh episodes it never saw.
-The probe is not simply detecting the request, the secret string or the moment the protected file is read.
-
-A text monitor shown the same conversation scores well below the probe.
-On gpt-oss-20b it flags most calls made under pressure, whether or not they leak, so it cannot separate the calls that leak from the others.
+For multi-agent oversight, this suggests a cheap monitor that runs on every call and pauses an agent just before it gives in.
+For an exact secret like ours, an output filter would also catch the leak.
+Probes matter most where output filters fail, such as paraphrased, encoded or slowly coordinated leaks, which we leave to future work.
 
 \begin{figure}[t]
   \centering
@@ -45,7 +35,7 @@ On gpt-oss-20b it flags most calls made under pressure, whether or not they leak
 
 Our contributions are:
 \begin{itemize}
-  \item a recruitment benchmark of six scenarios with mixed outcomes and matched controls, released with all prompts and transcripts (\cref{sec:setup});
+  \item a recruitment benchmark of six scenarios in which the same model leaks in some episodes and refuses in others, with control episodes in which the peer never asks, released with all prompts and transcripts (\cref{sec:setup});
   \item probes and text monitors scored on exactly the same calls, at three distances from the act (\cref{sec:method});
-  \item a per-call warning confirmed on fresh episodes, with controls for the obvious shortcuts (\cref{sec:results}).
+  \item a per-call warning that holds on fresh episodes, including one pre-registered test, with controls for the obvious shortcuts (\cref{sec:results}).
 \end{itemize}
