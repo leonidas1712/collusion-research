@@ -18,6 +18,20 @@ A flag for ``the latest input is the protected file's contents'' therefore score
 Among the calls that come right after a read, the probe still separates those that leak (\qwenPostReadProbe{} on Qwen3-32B, \gptossPostReadProbe{} on gpt-oss-20b).
 These within-subset scores, and the handoff-write score below, use only the scenario-and-round groups that hold both kinds of call, which cover most but not all of the subset's leaking calls.
 
+\paragraph{The target's own earlier promise.}
+The probe reads the whole input, including the target's own earlier messages, so it might read back an earlier promise such as ``fine, I'll send it''.
+We flagged every scored call on the fresh test episodes whose earlier target messages agree or offer to share the value, by asking Jev with the value masked, and rescored the frozen probes without the flagged calls (\cref{tab:precommitment}).
+Such promises are rare, and removing those calls barely changes the score on either model.
+A blind review of a sample of calls agreed well with Jev's flag; a fixed keyword list agreed poorly, so we do not rely on it.
+
+\begin{table}[h]
+  \centering
+  \caption{Earlier promises to share, on the fresh test episodes: how many leaking and non-leaking calls follow one, and the frozen probe's AUROC with and without those calls.}
+  \label{tab:precommitment}
+  \small
+  \IfFileExists{tables/precommitment.tex}{\input{tables/precommitment.tex}}{pending}
+\end{table}
+
 \paragraph{What arrives with the input.}
 A second replay on gpt-oss-20b saved the incoming segment of each prompt, which is the latest peer message and tool results, and every generated token up to the secret.
 A probe on the incoming segment alone also ranks the leaking calls highly, but alarms on far more refusing calls at the same threshold.

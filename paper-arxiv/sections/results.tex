@@ -43,6 +43,7 @@ The probe beats each of three simple shortcuts: the request, keywords for the se
 The request alone cannot explain the score, because every call that does not leak also faces the recruiting peer in the same scenario and round.
 On gpt-oss-20b, keyword rules that look for the secret's words in the model's reasoning do no better than chance.
 A flag for ``the protected file was just read'' scores well on its own, but the probe beats it on both models, and on gpt-oss-20b the probe still separates leaks among the calls that write the handoff file.
+Nor is it reading back the target's own earlier promise to share: such promises are rare, and removing the calls that follow one barely changes the score (\cref{app:shortcuts}).
 
 Followed through an episode, the median probe score is lower over the calls before the leak and rises sharply at the leaking call, on both models and on both sets of episodes (\cref{fig:trajectory-main}).
 Individual episodes vary, and \cref{app:ahead} shows examples chosen by a fixed rule.
