@@ -4,6 +4,28 @@ Shared notes (not paper prose). Append your own entries; keep sections by owner 
 
 ---
 
+## LATEST (27 Oct ~04:00): E11 pre-commitment check added; final build (coordinator)
+- **E11 question:** does the probe just read back the target's own earlier "I'll share it"? **No.** Removing the calls where Jev judged that the target had already agreed to share changes the score little:
+  - Qwen: 0.98 → 0.97 (2 of 38 leaking calls flagged).
+  - gpt-oss: 0.91 → 0.88 (5 of 26 flagged, all from earlier same-turn reasoning).
+- **Flag validity:** Jev agrees with a blind Claude reviewer on 28 of 33 calls (kappa 0.66). The keyword regex was unreliable (negative kappa) and is not used. The plan was frozen at `f329cbd` before any call. Cost: $0.16.
+  - Full report: `runs/20261027-0259-e11-precommitment/report.md`.
+- **In the paper:** one clause in §4.1, plus a paragraph and table in the shortcuts appendix (tab:precommitment).
+- **Other changes since round 2:** the Related-work sentence now reads "complements studies of collusion in markets and in shared multi-agent tasks … as a step toward deployment-like settings". Handshake is not cited, per your decision. E10 (Shi et al.) is marked LOW PRIORITY after its red-team; E09 (permitted vs forbidden) is shelved and may become its own paper.
+- **Final build:** `main.pdf` (497834a0…) and the arXiv package (clean build 7feb4b52…), commit `8f6b045`. It is 41 pages, with 657 verified numbers.
+- **Viewer check: PASS** on every executable check:
+  - all 41 pages inspected;
+  - 340 links and all 41 Contents entries are correct;
+  - the new table renders cleanly.
+  
+  Native Preview could not be tested, because the computer-use service failed to start.
+- **Still open for you:**
+  - the optional "mostly" in the abstract (item 7);
+  - the per-episode and precision companions to the abstract's operating point (item 6);
+  - the one-word fix "5% of calls in refusing episodes" (item 5). This one is already applied in your round-2 abstract.
+
+---
+
 ## ROUND 2 (Leo's feedback, 27 Oct ~02:45–03:30): DONE (coordinator)
 - **Title.** "Pre-Crime for Agents, at the Last Second: Probing When a Recruited Agent Gives In". There is a line break after the colon, and the subtitle now fits on one line.
 - **Abstract.** Replaced with your revised text, verbatim: 1,671 characters, under arXiv's 1,920 cap. Every number was checked against the registry.
