@@ -17,7 +17,10 @@ def main() -> None:
     rate = plan["benchmark"]["projection_rate_usd_per_hour"]
     safety = plan["benchmark"]["projection_safety_multiplier"]
     benchmark_cost = summary["wall_seconds"] * rate / 3600
-    token_scale = plan["estimated_tokens"]["all_three_conditions_using_original_counts"] / plan["estimated_tokens"]["benchmark_three_conditions_using_original_counts"]
+    estimates = plan["estimated_tokens"]
+    all_tokens = estimates.get("all_three_conditions_using_original_counts", estimates.get("all_three_conditions"))
+    benchmark_tokens = estimates.get("benchmark_three_conditions_using_original_counts", estimates.get("benchmark_three_conditions"))
+    token_scale = all_tokens / benchmark_tokens
     nonload = max(0.0, summary["wall_seconds"] - summary["model_load_seconds"])
     projected_full_wall = summary["model_load_seconds"] + nonload * token_scale
     conservative_full_wall = safety * projected_full_wall

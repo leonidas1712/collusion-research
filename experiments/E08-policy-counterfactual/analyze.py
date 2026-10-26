@@ -160,10 +160,12 @@ def analyze(run_dir: Path) -> dict:
     def fmt(value: float) -> str:
         return f"{value:.3f}"
 
+    model_name = plan["model"]["name"]
+    selected_layers = ", ".join(str(layer) for layer in plan["model"]["layers"])
     report = [
         "# E08 policy-counterfactual replay",
         "",
-        f"Run: `{run_dir.name}`. Qwen3-32B prefill only; no generation or refitting. The frozen plan contains 38 leaking calls and 112 score-blind non-leaking calls matched exactly by scenario and round, each replayed under FORBID, PERMIT and NEUTRAL-EDIT.",
+        f"Run: `{run_dir.name}`. `{model_name}` prefill/teacher-forcing only; no generation or refitting. The frozen plan contains {len(leaking)} leaking calls and {len(by_call) - len(leaking)} score-blind non-leaking calls matched exactly by scenario and round, each replayed under FORBID, PERMIT and NEUTRAL-EDIT.",
         "",
         "## Integrity",
         "",
@@ -195,7 +197,7 @@ def analyze(run_dir: Path) -> dict:
         "",
         "- `plan.json`: immutable pre-GPU design and exact call list.",
         "- `scores.csv`: one row per call and policy condition.",
-        "- `activations/`: last-prompt residual vectors at frozen layers 16 and 48.",
+        f"- `activations/`: last-prompt residual vectors at frozen layers {selected_layers}.",
         "- `gpu_summary.json` and `input_manifest.json`: runtime and hash provenance.",
     ]
     (run_dir / "report.md").write_text("\n".join(report) + "\n")
