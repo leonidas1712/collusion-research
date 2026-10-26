@@ -19,7 +19,7 @@ On gpt-oss-20b, the scored calls also start only after the peer's first request,
 The reasoning-probe comparisons on gpt-oss-20b use the scored calls that returned reasoning; the last-prompt probe gives a similar result on all scored calls (\cref{app:robustness}).
 
 \paragraph{Development and fresh test episodes.}
-For Qwen3-32B, the development episodes were collected first and the fresh test episodes later, and the plan in \cref{app:confirmation} was committed before any detector was scored on them.
+For Qwen3-32B, the development episodes were collected first and the fresh test episodes later, and the plan in \cref{app:confirmation} was committed before any detector's predictions on them were compared with their labels.
 For gpt-oss-20b, the development episodes are the main collection, and the fresh test episodes were collected after the reasoning probe was frozen.
 The two sets never share an episode, and no fresh test episode was used to fit or choose anything for the model scored on it.
 
