@@ -32,6 +32,7 @@ We make the following contributions.
 3. **Asked per call, a probe predicts which call will give in,** before the call acts: AUROC (0.5 = chance, 1 = perfect) 0.95 on Qwen3-32B and 0.91 on gpt-oss-20b, above a decision-model monitor (Jev) on the same calls (0.74 and 0.27). A probe on gpt-oss-20b's streaming reasoning reaches 0.93; with its cutoff set for 5% alarms on control calls, it catches 85% of leaking calls in development; on new episodes, under a plan fixed in advance, it scores 0.91 and catches 14 of 26 (Section 4.2).
 4. **The ranking survives the obvious shortcuts:** the calls that do not give in also come after the peer's ask, so the probe is not just detecting the request; it also beats keyword rules and a just-read-the-value flag (Section 4.3).
 5. **Combining what agents say with what they do (sprint Track 2, Q2.2):** adding the peer's messages to the target's actions lifts the strongest round-level text monitor by +0.12 AUROC over actions alone (first data batch), and it works best asked to forecast (Section 4.5).
+
 ---
 
 ## 2. Related Work
