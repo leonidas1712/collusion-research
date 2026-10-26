@@ -812,7 +812,8 @@
         "value_path": [
           "qwen_dev_leak_rate"
         ]
-      }
+      },
+      "decimals": 0
     },
     "qwen_readstep_flag_auroc": {
       "value": 0.8299894718423922,
@@ -3533,7 +3534,7 @@
       "status": "out_of_sample",
       "run": "runs/20261026-2224-e05-arxiv-fresh-comparisons",
       "format": "percent",
-      "decimals": 0,
+      "decimals": 1,
       "source": {
         "file": "runs/20261026-2224-e05-arxiv-fresh-comparisons/metrics.json",
         "value_path": [
@@ -3998,7 +3999,7 @@
       "evaluation": "held-out scenarios",
       "status": "exploratory",
       "run": "runs/20261026-2242-e05-arxiv-gpt-text-workflow",
-      "format": "signed",
+      "format": "decimal",
       "decimals": 3,
       "source": {
         "file": "runs/20261026-2242-e05-arxiv-gpt-text-workflow/metrics.json",
@@ -4052,7 +4053,7 @@
       "evaluation": "held-out scenarios",
       "status": "exploratory",
       "run": "runs/20261026-2242-e05-arxiv-gpt-text-workflow",
-      "format": "signed",
+      "format": "decimal",
       "decimals": 3,
       "source": {
         "file": "runs/20261026-2242-e05-arxiv-gpt-text-workflow/metrics.json",
@@ -4187,7 +4188,7 @@
       "evaluation": "held-out scenarios",
       "status": "exploratory",
       "run": "runs/20261026-2245-e05-arxiv-qwen-text-workflow",
-      "format": "signed",
+      "format": "decimal",
       "decimals": 3,
       "source": {
         "file": "runs/20261026-2245-e05-arxiv-qwen-text-workflow/metrics.json",
@@ -4241,7 +4242,7 @@
       "evaluation": "held-out scenarios",
       "status": "exploratory",
       "run": "runs/20261026-2245-e05-arxiv-qwen-text-workflow",
-      "format": "signed",
+      "format": "decimal",
       "decimals": 3,
       "source": {
         "file": "runs/20261026-2245-e05-arxiv-qwen-text-workflow/metrics.json",
@@ -8175,6 +8176,781 @@
           "threshold"
         ]
       }
+    },
+    "qwenCurrentEpisodes": {
+      "value": 152,
+      "macro": "qwenCurrentEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "episodes"
+        ]
+      }
+    },
+    "qwenCurrentEmittingEpisodes": {
+      "value": 66,
+      "macro": "qwenCurrentEmittingEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "leaking_episodes"
+        ]
+      }
+    },
+    "qwenCurrentRouteFinalReply": {
+      "value": 29,
+      "macro": "qwenCurrentRouteFinalReply",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "routes",
+          "final_reply"
+        ]
+      }
+    },
+    "qwenCurrentRouteSendMessage": {
+      "value": 32,
+      "macro": "qwenCurrentRouteSendMessage",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "routes",
+          "send_message"
+        ]
+      }
+    },
+    "qwenCurrentRouteWriteFile": {
+      "value": 5,
+      "macro": "qwenCurrentRouteWriteFile",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "routes",
+          "write_file"
+        ]
+      }
+    },
+    "qwenCurrentIntentDeliberate": {
+      "value": 44,
+      "macro": "qwenCurrentIntentDeliberate",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "kind_counts",
+          "deliberate"
+        ]
+      }
+    },
+    "qwenCurrentIntentAccidental": {
+      "value": 16,
+      "macro": "qwenCurrentIntentAccidental",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "kind_counts",
+          "accidental"
+        ]
+      }
+    },
+    "qwenCurrentIntentUncertain": {
+      "value": 1,
+      "macro": "qwenCurrentIntentUncertain",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "kind_counts",
+          "uncertain"
+        ]
+      }
+    },
+    "qwenCurrentIntentUnavailable": {
+      "value": 5,
+      "macro": "qwenCurrentIntentUnavailable",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "kind_counts",
+          "unavailable"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityOperatorWithEpisodes": {
+      "value": 62,
+      "macro": "qwenCurrentAuthorityOperatorWithEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q1_operator_authority",
+          "with_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityOperatorWithLeaks": {
+      "value": 28,
+      "macro": "qwenCurrentAuthorityOperatorWithLeaks",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q1_operator_authority",
+          "leaks_with_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityOperatorWithRate": {
+      "value": 0.45161290322580644,
+      "macro": "qwenCurrentAuthorityOperatorWithRate",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "percent",
+      "decimals": 1,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q1_operator_authority",
+          "rate_with_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityOperatorWithoutEpisodes": {
+      "value": 90,
+      "macro": "qwenCurrentAuthorityOperatorWithoutEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q1_operator_authority",
+          "without_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityOperatorWithoutLeaks": {
+      "value": 38,
+      "macro": "qwenCurrentAuthorityOperatorWithoutLeaks",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q1_operator_authority",
+          "leaks_without_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityOperatorWithoutRate": {
+      "value": 0.4222222222222222,
+      "macro": "qwenCurrentAuthorityOperatorWithoutRate",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "percent",
+      "decimals": 1,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q1_operator_authority",
+          "rate_without_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityRecipientWithEpisodes": {
+      "value": 57,
+      "macro": "qwenCurrentAuthorityRecipientWithEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q2_receiver_authority",
+          "with_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityRecipientWithLeaks": {
+      "value": 16,
+      "macro": "qwenCurrentAuthorityRecipientWithLeaks",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q2_receiver_authority",
+          "leaks_with_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityRecipientWithRate": {
+      "value": 0.2807017543859649,
+      "macro": "qwenCurrentAuthorityRecipientWithRate",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "percent",
+      "decimals": 1,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q2_receiver_authority",
+          "rate_with_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityRecipientWithoutEpisodes": {
+      "value": 95,
+      "macro": "qwenCurrentAuthorityRecipientWithoutEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q2_receiver_authority",
+          "without_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityRecipientWithoutLeaks": {
+      "value": 50,
+      "macro": "qwenCurrentAuthorityRecipientWithoutLeaks",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q2_receiver_authority",
+          "leaks_without_claim"
+        ]
+      }
+    },
+    "qwenCurrentAuthorityRecipientWithoutRate": {
+      "value": 0.5263157894736842,
+      "macro": "qwenCurrentAuthorityRecipientWithoutRate",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "percent",
+      "decimals": 1,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "Qwen",
+          "authority",
+          "q2_receiver_authority",
+          "rate_without_claim"
+        ]
+      }
+    },
+    "gptossCurrentEpisodes": {
+      "value": 238,
+      "macro": "gptossCurrentEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "episodes"
+        ]
+      }
+    },
+    "gptossCurrentEmittingEpisodes": {
+      "value": 146,
+      "macro": "gptossCurrentEmittingEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "leaking_episodes"
+        ]
+      }
+    },
+    "gptossCurrentRouteFinalReply": {
+      "value": 3,
+      "macro": "gptossCurrentRouteFinalReply",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "routes",
+          "final_reply"
+        ]
+      }
+    },
+    "gptossCurrentRouteWriteFile": {
+      "value": 143,
+      "macro": "gptossCurrentRouteWriteFile",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "routes",
+          "write_file"
+        ]
+      }
+    },
+    "gptossCurrentIntentDeliberate": {
+      "value": 144,
+      "macro": "gptossCurrentIntentDeliberate",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "kind_counts",
+          "deliberate"
+        ]
+      }
+    },
+    "gptossCurrentIntentUncertain": {
+      "value": 2,
+      "macro": "gptossCurrentIntentUncertain",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "kind_counts",
+          "uncertain"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityOperatorWithEpisodes": {
+      "value": 3,
+      "macro": "gptossCurrentAuthorityOperatorWithEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q1_operator_authority",
+          "with_claim"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityOperatorWithLeaks": {
+      "value": 0,
+      "macro": "gptossCurrentAuthorityOperatorWithLeaks",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q1_operator_authority",
+          "leaks_with_claim"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityOperatorWithRate": {
+      "value": 0.0,
+      "macro": "gptossCurrentAuthorityOperatorWithRate",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "percent",
+      "decimals": 1,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q1_operator_authority",
+          "rate_with_claim"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityOperatorWithoutEpisodes": {
+      "value": 235,
+      "macro": "gptossCurrentAuthorityOperatorWithoutEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q1_operator_authority",
+          "without_claim"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityOperatorWithoutLeaks": {
+      "value": 146,
+      "macro": "gptossCurrentAuthorityOperatorWithoutLeaks",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q1_operator_authority",
+          "leaks_without_claim"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityOperatorWithoutRate": {
+      "value": 0.6212765957446809,
+      "macro": "gptossCurrentAuthorityOperatorWithoutRate",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "percent",
+      "decimals": 1,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q1_operator_authority",
+          "rate_without_claim"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityRecipientWithEpisodes": {
+      "value": 0,
+      "macro": "gptossCurrentAuthorityRecipientWithEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q2_receiver_authority",
+          "with_claim"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityRecipientWithLeaks": {
+      "value": 0,
+      "macro": "gptossCurrentAuthorityRecipientWithLeaks",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q2_receiver_authority",
+          "leaks_with_claim"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityRecipientWithoutEpisodes": {
+      "value": 238,
+      "macro": "gptossCurrentAuthorityRecipientWithoutEpisodes",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q2_receiver_authority",
+          "without_claim"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityRecipientWithoutLeaks": {
+      "value": 146,
+      "macro": "gptossCurrentAuthorityRecipientWithoutLeaks",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q2_receiver_authority",
+          "leaks_without_claim"
+        ]
+      }
+    },
+    "gptossCurrentAuthorityRecipientWithoutRate": {
+      "value": 0.6134453781512605,
+      "macro": "gptossCurrentAuthorityRecipientWithoutRate",
+      "dataset": "Current development episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "percent",
+      "decimals": 1,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "development",
+          "GPT",
+          "authority",
+          "q2_receiver_authority",
+          "rate_without_claim"
+        ]
+      }
+    },
+    "qwenFreshMedianRefusingCalls": {
+      "value": 23.0,
+      "macro": "qwenFreshMedianRefusingCalls",
+      "dataset": "Qwen fresh refusing episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "integer",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "qwen_fresh_refusing",
+          "median_calls"
+        ]
+      }
+    },
+    "qwenEpisodeAlarmIndependent": {
+      "value": 0.6926431322749764,
+      "macro": "qwenEpisodeAlarmIndependent",
+      "dataset": "Qwen fresh refusing episodes",
+      "evaluation": "Saved-log and saved-judge recount; no model calls or refits",
+      "status": "verified",
+      "run": "runs/20261027-0034-e05-arxiv-development-episode-checks",
+      "format": "percent",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261027-0034-e05-arxiv-development-episode-checks/summary.json",
+        "value_path": [
+          "qwen_fresh_refusing",
+          "independent_illustration_nominal_5pct"
+        ]
+      }
     }
   },
   "aliases": {
@@ -10324,6 +11100,273 @@
           },
           {
             "key": "coverageKRetainedGroups"
+          }
+        ]
+      ]
+    },
+    "episode_routes": {
+      "columns": "llr",
+      "header": [
+        "Target",
+        "First public-emission route",
+        "Episodes"
+      ],
+      "rows": [
+        [
+          "Qwen",
+          "All episodes",
+          {
+            "key": "qwenCurrentEpisodes"
+          }
+        ],
+        [
+          "Qwen",
+          "Any public emission",
+          {
+            "key": "qwenCurrentEmittingEpisodes"
+          }
+        ],
+        [
+          "Qwen",
+          "Final reply",
+          {
+            "key": "qwenCurrentRouteFinalReply"
+          }
+        ],
+        [
+          "Qwen",
+          "send\\_message arguments",
+          {
+            "key": "qwenCurrentRouteSendMessage"
+          }
+        ],
+        [
+          "Qwen",
+          "write\\_file-type arguments",
+          {
+            "key": "qwenCurrentRouteWriteFile"
+          }
+        ],
+        [
+          "gpt-oss",
+          "All episodes",
+          {
+            "key": "gptossCurrentEpisodes"
+          }
+        ],
+        [
+          "gpt-oss",
+          "Any public emission",
+          {
+            "key": "gptossCurrentEmittingEpisodes"
+          }
+        ],
+        [
+          "gpt-oss",
+          "Final reply",
+          {
+            "key": "gptossCurrentRouteFinalReply"
+          }
+        ],
+        [
+          "gpt-oss",
+          "write\\_file-type arguments",
+          {
+            "key": "gptossCurrentRouteWriteFile"
+          }
+        ]
+      ]
+    },
+    "episode_intent": {
+      "columns": "llrr",
+      "header": [
+        "Target",
+        "Saved intent label",
+        "Episodes",
+        "Emitting episodes"
+      ],
+      "rows": [
+        [
+          "Qwen",
+          "Deliberate",
+          {
+            "key": "qwenCurrentIntentDeliberate"
+          },
+          {
+            "key": "qwenCurrentEmittingEpisodes"
+          }
+        ],
+        [
+          "Qwen",
+          "Accidental",
+          {
+            "key": "qwenCurrentIntentAccidental"
+          },
+          {
+            "key": "qwenCurrentEmittingEpisodes"
+          }
+        ],
+        [
+          "Qwen",
+          "Uncertain",
+          {
+            "key": "qwenCurrentIntentUncertain"
+          },
+          {
+            "key": "qwenCurrentEmittingEpisodes"
+          }
+        ],
+        [
+          "Qwen",
+          "Unavailable",
+          {
+            "key": "qwenCurrentIntentUnavailable"
+          },
+          {
+            "key": "qwenCurrentEmittingEpisodes"
+          }
+        ],
+        [
+          "gpt-oss",
+          "Deliberate",
+          {
+            "key": "gptossCurrentIntentDeliberate"
+          },
+          {
+            "key": "gptossCurrentEmittingEpisodes"
+          }
+        ],
+        [
+          "gpt-oss",
+          "Uncertain",
+          {
+            "key": "gptossCurrentIntentUncertain"
+          },
+          {
+            "key": "gptossCurrentEmittingEpisodes"
+          }
+        ]
+      ]
+    },
+    "episode_authority": {
+      "columns": "lllrrr",
+      "header": [
+        "Target",
+        "Claim",
+        "Claim present?",
+        "Emitting",
+        "Episodes",
+        "Rate"
+      ],
+      "rows": [
+        [
+          "Qwen",
+          "Operator",
+          "Present",
+          {
+            "key": "qwenCurrentAuthorityOperatorWithLeaks"
+          },
+          {
+            "key": "qwenCurrentAuthorityOperatorWithEpisodes"
+          },
+          {
+            "key": "qwenCurrentAuthorityOperatorWithRate"
+          }
+        ],
+        [
+          "Qwen",
+          "Operator",
+          "Absent",
+          {
+            "key": "qwenCurrentAuthorityOperatorWithoutLeaks"
+          },
+          {
+            "key": "qwenCurrentAuthorityOperatorWithoutEpisodes"
+          },
+          {
+            "key": "qwenCurrentAuthorityOperatorWithoutRate"
+          }
+        ],
+        [
+          "Qwen",
+          "Recipient",
+          "Present",
+          {
+            "key": "qwenCurrentAuthorityRecipientWithLeaks"
+          },
+          {
+            "key": "qwenCurrentAuthorityRecipientWithEpisodes"
+          },
+          {
+            "key": "qwenCurrentAuthorityRecipientWithRate"
+          }
+        ],
+        [
+          "Qwen",
+          "Recipient",
+          "Absent",
+          {
+            "key": "qwenCurrentAuthorityRecipientWithoutLeaks"
+          },
+          {
+            "key": "qwenCurrentAuthorityRecipientWithoutEpisodes"
+          },
+          {
+            "key": "qwenCurrentAuthorityRecipientWithoutRate"
+          }
+        ],
+        [
+          "gpt-oss",
+          "Operator",
+          "Present",
+          {
+            "key": "gptossCurrentAuthorityOperatorWithLeaks"
+          },
+          {
+            "key": "gptossCurrentAuthorityOperatorWithEpisodes"
+          },
+          {
+            "key": "gptossCurrentAuthorityOperatorWithRate"
+          }
+        ],
+        [
+          "gpt-oss",
+          "Operator",
+          "Absent",
+          {
+            "key": "gptossCurrentAuthorityOperatorWithoutLeaks"
+          },
+          {
+            "key": "gptossCurrentAuthorityOperatorWithoutEpisodes"
+          },
+          {
+            "key": "gptossCurrentAuthorityOperatorWithoutRate"
+          }
+        ],
+        [
+          "gpt-oss",
+          "Recipient",
+          "Present",
+          {
+            "key": "gptossCurrentAuthorityRecipientWithLeaks"
+          },
+          {
+            "key": "gptossCurrentAuthorityRecipientWithEpisodes"
+          },
+          "---"
+        ],
+        [
+          "gpt-oss",
+          "Recipient",
+          "Absent",
+          {
+            "key": "gptossCurrentAuthorityRecipientWithoutLeaks"
+          },
+          {
+            "key": "gptossCurrentAuthorityRecipientWithoutEpisodes"
+          },
+          {
+            "key": "gptossCurrentAuthorityRecipientWithoutRate"
           }
         ]
       ]

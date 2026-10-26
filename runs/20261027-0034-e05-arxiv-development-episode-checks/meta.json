@@ -1,0 +1,33 @@
+{
+  "id": "20261027-0034-e05-arxiv-development-episode-checks",
+  "experiment": "E05",
+  "name": "e05-arxiv-development-episode-checks",
+  "tags": [
+    "cpu-only",
+    "saved-judges"
+  ],
+  "settings": {
+    "no_api": true,
+    "no_fits": true,
+    "cohorts": "current primary development episode IDs; GPT includes emitting calls without reasoning when describing episode outcome",
+    "intent_join": "exact first-emission text match only",
+    "authority_cut": "peer messages through first public-emission round; all messages if held; existing probability>=0.5",
+    "source_manifest": "sources.json.gz"
+  },
+  "parents": [],
+  "model": null,
+  "command": "/Users/leo/collusion-research-followup/experiments/E05-probes/.venv/bin/python experiments/E05-probes/arxiv_episode_recount.py --restore-root /tmp/collusion-public-check-20261026",
+  "git_commit": "c66d14f2e03cd5c8910cf9653c1705ffcdf19aa9",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-27T00:34:54",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-27T00:34:54",
+  "results": {
+    "no_api": true,
+    "no_fits": true,
+    "episodes": 390
+  }
+}

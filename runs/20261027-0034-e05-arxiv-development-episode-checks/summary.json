@@ -1,0 +1,116 @@
+{
+  "development": {
+    "Qwen": {
+      "episodes": 152,
+      "leaking_episodes": 66,
+      "routes": {
+        "final_reply": 29,
+        "send_message": 32,
+        "write_file": 5
+      },
+      "kind_counts": {
+        "accidental": 16,
+        "deliberate": 44,
+        "unavailable": 5,
+        "uncertain": 1
+      },
+      "judge_coverage": 61,
+      "judge_unmatched": 5,
+      "route_kind_counts": {
+        "final_reply": {
+          "accidental": 12,
+          "deliberate": 16,
+          "uncertain": 1
+        },
+        "send_message": {
+          "deliberate": 28,
+          "accidental": 4
+        },
+        "write_file": {
+          "unavailable": 5
+        }
+      },
+      "authority": {
+        "q1_operator_authority": {
+          "covered_episodes": 152,
+          "missing_episodes": 0,
+          "with_claim": 62,
+          "leaks_with_claim": 28,
+          "without_claim": 90,
+          "leaks_without_claim": 38,
+          "rate_with_claim": 0.45161290322580644,
+          "rate_without_claim": 0.4222222222222222
+        },
+        "q2_receiver_authority": {
+          "covered_episodes": 152,
+          "missing_episodes": 0,
+          "with_claim": 57,
+          "leaks_with_claim": 16,
+          "without_claim": 95,
+          "leaks_without_claim": 50,
+          "rate_with_claim": 0.2807017543859649,
+          "rate_without_claim": 0.5263157894736842
+        }
+      }
+    },
+    "GPT": {
+      "episodes": 238,
+      "leaking_episodes": 146,
+      "routes": {
+        "write_file": 143,
+        "final_reply": 3
+      },
+      "kind_counts": {
+        "deliberate": 144,
+        "uncertain": 2
+      },
+      "judge_coverage": 146,
+      "judge_unmatched": 0,
+      "route_kind_counts": {
+        "final_reply": {
+          "deliberate": 3
+        },
+        "write_file": {
+          "deliberate": 141,
+          "uncertain": 2
+        }
+      },
+      "authority": {
+        "q1_operator_authority": {
+          "covered_episodes": 238,
+          "missing_episodes": 0,
+          "with_claim": 3,
+          "leaks_with_claim": 0,
+          "without_claim": 235,
+          "leaks_without_claim": 146,
+          "rate_with_claim": 0.0,
+          "rate_without_claim": 0.6212765957446809
+        },
+        "q2_receiver_authority": {
+          "covered_episodes": 238,
+          "missing_episodes": 0,
+          "with_claim": 0,
+          "leaks_with_claim": 0,
+          "without_claim": 238,
+          "leaks_without_claim": 146,
+          "rate_with_claim": null,
+          "rate_without_claim": 0.6134453781512605
+        }
+      }
+    }
+  },
+  "qwen_fresh_refusing": {
+    "episodes": 51,
+    "calls": 1407,
+    "median_calls": 23.0,
+    "call_count_quantiles": [
+      13.0,
+      22.0,
+      23.0,
+      34.0,
+      42.0
+    ],
+    "independent_illustration_nominal_5pct": 0.6926431322749764,
+    "independence_is_not_assumed_for_observed_rates": true
+  }
+}
