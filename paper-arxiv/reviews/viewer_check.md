@@ -1,47 +1,46 @@
 # Final PDF viewer check
 
-Date: 2026-10-26 (Asia/Singapore)
+Date: 2026-10-27 (Asia/Singapore)
 
 ## Inputs
 
 | Build | Path | SHA-256 | Pages |
 |---|---|---|---:|
-| Canonical | `paper-arxiv/main.pdf` | `48e6929dcd0fcc177e70816c4a51ac4f6d9103574896dace57e54f58a2e1fdea` | 33 |
-| Clean arXiv package | `paper-arxiv/dist/arxiv-final/clean-build/main.pdf` | `c56fae86fbdc53533bd2e682e5e456b66d60b4844137c0dab0a5a3d357400f41` | 33 |
+| Canonical | `paper-arxiv/main.pdf` | `38d66cdb57b14faa28b54455144d48f947d48406698b7cb0b5eb7ed988dd71e1` | 39 |
+| Clean arXiv package | `paper-arxiv/dist/arxiv-final/clean-build/main.pdf` | `c982b92e9b9a24085796a7714a9d2728632e2bd86c4a43ba60c83d69c9b97e93` | 39 |
+| arXiv source archive | `paper-arxiv/dist/arxiv-final/arxiv-source.tar.gz` | `697a8d40574f3a297407e45ccea815c0a4b13bfaf461b3a9ffd0be73ad48d30f` | - |
 
-The two files have identical extracted text. Rendering every page at 120 dpi also produced identical page images for all 33 page pairs.
+The file hashes were checked before and after inspection and remained stable. The two PDFs have identical extracted text. Rendering every page at 144 dpi produced byte-identical PNGs for all 39 canonical/package page pairs.
 
 ## Checklist
 
 | Check | Result | Evidence / defect |
 |---|---|---|
-| Opens without errors or warnings | **BLOCKED in Preview; PASS in independent PDF renderers** | Four attempts to start macOS Preview through the computer-use service failed with `Sky Computer Use service startup request failed`, before either file could be opened. Both PDFs parse with `pdfinfo`, `pypdf`, `pdftotext`, and Poppler rendering without errors. |
-| Fonts and glyphs | **PASS in rendered-page inspection** | All 26 font resources are embedded and subset. Pages 1-33 show no missing-glyph boxes or odd substitutions. Native Preview confirmation remains blocked as above. |
-| Figures sharp at normal zoom | **PASS in rendered-page inspection** | Figures 1-7 on pp. 2, 4, 6, 20, 22-24 are sharp and legible; line work, markers, legends, error bars, and labels render cleanly. |
-| Math and tables | **PASS in rendered-page inspection** | Display math on pp. 3 and 5 and Tables 1-25 render without clipping, overlap, broken rules, or illegible symbols. |
-| Hyperlinks display correctly | **PASS in rendered-page inspection** | The initial build's colored borders were fixed and both PDFs rebuilt. Internal references, citations, and URLs now use one dark-blue text color with no visible borders. |
-| Cross-references and citations are clickable | **PASS structurally; BLOCKED for Preview click test** | Both PDFs contain the same 250 valid link annotations: 201 internal and 49 external, with 0 missing/unsupported actions. The native Preview click test could not run because the viewer service did not start. |
-| No overflow or overlap | **PASS in rendered-page inspection** | Pages 1-33 were inspected page by page. No text, figure, table, header, footer, or annotation runs off the page or overlaps other content. |
-| Canonical/package equivalence | **PASS** | All 33 raster page pairs are pixel-identical; extracted text is identical; page and link counts match. |
+| Opens without errors or warnings | **PASS in independent PDF renderers; UNVERIFIED in Preview** | Both PDFs parse with `pypdf` and `pdftotext` and render with Poppler without errors. The final macOS Preview retry failed before the app opened with `Sky Computer Use service startup request failed`; no native-Preview claim is made. |
+| Fonts and glyphs | **PASS** | Every listed font resource is embedded and subset in both PDFs. Pages 1-39 show no missing-glyph boxes or substitutions. |
+| Figures sharp at normal inspection scale | **PASS** | All figures are sharp and legible; line work, markers, legends, error bars, labels, and raster elements render cleanly. |
+| Math and tables | **PASS** | Display math and all tables, including the policy-counterfactual table on p. 28, render without clipping, overlap, broken rules, or illegible symbols. |
+| Link appearance | **PASS** | Internal references, citations, and URLs use dark-blue text with no visible link borders. |
+| Contents links | **PASS structurally** | All 41 Contents links on pp. 13-14 resolve, in order, to their printed destination pages: 1-9 and 15-39 as listed. No destination is missing or out of range. |
+| Cross-references and citations | **PASS structurally** | Each PDF has 326 valid link annotations: 277 internal and 49 external, with 0 missing or unsupported actions. Representative first-page citations resolve to the bibliography, cross-references resolve internally, and external reference URLs are non-empty. Native click interaction remains unverified because Preview did not start. |
+| No overflow or overlap | **PASS** | Every page was inspected. No text, figure, table, header, footer, or annotation runs off the page or overlaps other content. |
+| Canonical/package equivalence | **PASS** | All 39 raster page pairs are byte-identical; extracted text is identical; page, font, and link counts match. |
+| Placeholder scan | **PASS** | Extracted text contains no `??`, `Undefined`, `TODO`, `PENDING`, or `[?]` markers. |
 
 ## Page-by-page inspection log
 
 | Pages | Result | Notes |
 |---|---|---|
-| 1-2 | PASS | Title, abstract, introduction, Figure 1. |
-| 3-4 | PASS | Table 1, formal definitions, Figure 2. |
-| 5-6 | PASS | Table 2, equation, Figure 3. |
-| 7-8 | PASS | Related work, limitations, usage statement, start of references. |
-| 9-11 | PASS | References; URLs remain inside margins. Page 11 ends the bibliography with intentional white space. |
-| 12-14 | PASS | Appendix A-C; Tables 3-7. |
-| 15-16 | PASS | Tables 8-10 and probe method text. |
-| 17-19 | PASS | Tables 11-14 and monitor details. |
-| 20-22 | PASS | Figures 4-5; Tables 15-17. |
-| 23-25 | PASS | Figures 6-7; Tables 18-20. |
-| 26-28 | PASS | Tables 21-24; risk and analysis-history sections. |
-| 29-31 | PASS | Table 25 and verbatim prompt material. |
-| 32-33 | PASS | Monitor prompt continuation and decision-model prompts. |
+| 1-4 | PASS | Title/footnote, abstract, introduction, setup, definitions, early figures and tables. |
+| 5-9 | PASS | Results, deployment-cost discussion, related work, discussion, limitations, and usage statement. |
+| 10-12 | PASS | References; linked text and URLs remain within margins. |
+| 13-14 | PASS | Contents; all 41 entries are legible and mechanically resolve to the printed pages. |
+| 15-20 | PASS | Appendices A-D; scenario, intervention, behaviour, intent, and pressure material. |
+| 21-27 | PASS | Probe, monitor, transfer, calibration, and exploratory analyses; figures and tables remain legible. |
+| 28 | PASS | Policy counterfactual table is readable, aligned, and inside the margins. |
+| 29-34 | PASS | Remaining analyses, histories, settings, provenance, and generated tables. |
+| 35-39 | PASS | Verbatim scenario and monitor prompts; monospace text, bullets, and nested lists remain inside margins. |
 
 ## Overall gate
 
-**CONDITIONAL PASS: all executable visual and structural checks pass; native Preview is blocked by infrastructure.** The canonical and clean-package builds are visually clean, structurally valid, and mutually equivalent. The colored-border defect found in the first build is fixed in these final hashes. The only incomplete checklist item is a genuine macOS Preview open-and-click pass, because the computer-use service could not start after four attempts.
+**PASS for every executable visual, structural, equivalence, and link-destination check. Native macOS Preview remains explicitly unverified because the computer-use service could not start.** No PDF defect was found in either final artifact.
