@@ -20,7 +20,7 @@ Settings with several peers, recruited agents that recruit others, or paraphrase
 
 \paragraph{One peer strategy on gpt-oss-20b.}
 gpt-oss-20b refuses direct requests, so its leaks come from one peer strategy, a delayed request to copy the whole configuration block, and nearly every first leak is a write to the handoff file.
-The probe may partly detect an imminent write of that block (\cref{app:shortcuts}).
+The probe may partly detect an imminent write of that block; we did not test a baseline that knows only that the next action is a file write.
 
 \paragraph{Few confirmed leaking calls.}
 The pre-registered per-call result covers one probe on one model, and the fresh test episodes hold few leaking calls, so its interval is wide (\cref{app:confirmation}).
@@ -37,8 +37,8 @@ At a threshold set for few false alarms per call, many refusing episodes still g
 A deployed alarm would need a threshold set per episode, which catches fewer leaks (\cref{app:alarms}).
 
 \paragraph{One text monitor, untuned.}
-We compare the probe with one decision model, asked one question, with no prompt tuning or fine-tuning, while the probe is trained.
-A tuned monitor might close part of the gap.
+We compare a trained probe with one decision model used zero-shot, asked one question, with no prompt tuning or fine-tuning.
+A tuned or trained text classifier might close part of the gap, which we did not test.
 
 \paragraph{Automated labels.}
 The leak label is an exact match on the tool log.
