@@ -105,7 +105,8 @@ A refusing episode has about \qwenFreshMedianRefusingCalls{} scored calls.
 If each call were flagged independently at the nominal 5\% rate, about \qwenEpisodeAlarmIndependent{} of episodes would see at least one flag; in practice \qwenFreshRefusingEpisodeAlarm{} do, because flags cluster in the same episodes.
 
 A stricter threshold, set after the fact on the fresh episodes so that about one refusing episode in twenty sees a flag, would still catch \qwenEpisodeCalCaught{} of leaking episodes by their first leak.
-This describes the trade-off rather than testing a threshold fixed in advance, and it implies a much lower per-call flag rate, so it catches fewer leaking calls (\cref{tab:episode-calibration}).
+This describes the trade-off rather than testing a threshold fixed in advance.
+The strict threshold catches far fewer leaks than the per-call one, which is why it suits halting an agent rather than escalating a call (\cref{tab:episode-calibration}).
 Thresholds set on control episodes do not transfer exactly to refusing episodes, and the gap differs by model and by level, so a deployed threshold should be set on realistic honest traffic (\cref{app:alarms}).
 
 \begin{figure}[t]
