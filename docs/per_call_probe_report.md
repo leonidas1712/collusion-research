@@ -1,4 +1,34 @@
-# Streaming reasoning-token probe on gpt-oss-20b: consolidated report
+# Per-call and streaming probes: consolidated report
+
+This report was first written as the consolidated report on the streaming reasoning-token probe on gpt-oss-20b (file name `docs/streaming_probe_report.md` until 26 October 2026). It is kept as the detailed working record behind the paper's per-call results. The paper ([`report/paper.md`](../report/paper.md), §4.2–4.4 and Appendix L) is the checked version.
+
+## What changed in the paper's story
+
+**Earlier framing: round-level forecasting was the headline.**
+
+- The question was whether a probe at the last prompt token, or a text monitor, can tell that the target will give in *this round or the next* (the near-term label) or *at some point* (the eventual label).
+- The answers were modest or null. On Qwen3-32B, near-term prediction was modest (probe 0.58, Jev forecaster 0.65 on held-out scenarios), and both held on 89 new episodes under a plan fixed in advance. Eventual give-in was barely predictable. On gpt-oss-20b, round-level prediction was near chance (0.53).
+- The streaming reasoning probe on gpt-oss-20b was an exploratory appendix follow-up, framed as detection within the reply, not as prediction.
+
+**Current framing: per-call prediction leads.**
+
+- **Headline.** Asked whether *this call* will give in, a last-prompt probe ranks the call that gives in far above the others on held-out scenarios, before the call generates anything: 0.95 on Qwen3-32B and 0.91 on gpt-oss-20b. Jev given the same conversation and tool results scores 0.74 and 0.27. On gpt-oss-20b, the reasoning-token probe reaches 0.93. Frozen before 84 new episodes were collected, it scored 0.91 on them and met its pre-stated criterion.
+- **What drove the change.** The label-versus-position decomposition (Section 6.1 below) showed that the gpt-oss-20b null came mostly from the question asked, not from where the probe looked. The paper's round-level probe scores 0.49 on these calls. The same position refit on the per-call label scores 0.91. Reading the reasoning adds a modest further gain, to 0.93.
+- **The ladder is now a contribution.** Predictability falls as the question moves away from the act: this call, then this round or the next, then eventually. On the same 1,995 gpt-oss-20b calls, one last-prompt recipe refit on each label scores 0.61 (eventual), 0.64 (this round or the next) and 0.91 (this call) (`runs/20261026-1304-e05-lastprompt-label-ladder`). Figure 3b shows the ladder. Section 10.1 below is the earlier, descriptive version, which mixes models, labels and cohorts.
+- **Round-level results are the lower rungs.** They are reported unchanged (paper §4.4–4.5, Figure 2). They are the most rigorous rungs, being pre-registered and confirmed on new episodes, and the least predictable.
+
+**What did not change.**
+
+- The round-level numbers.
+- The limits. The per-call last-prompt results are post hoc. The warning is about the current call, not calls or rounds ahead: one call earlier, the last-prompt probe scores 0.71 on Qwen3-32B and 0.62 on gpt-oss-20b. The leak is an exact string.
+
+**Reading this report against the paper.**
+
+- *Terms.* This report says "reply" for what the paper calls a **call**. The "immediate" label is the paper's **this call** label. "Any public emission" is the gpt-oss-20b per-call outcome.
+- *Status.* Sections 8 and 8.1 were written while three items were still running: the frozen confirmation, the Qwen3-32B per-call replication and Jev reading the per-call input. All three have finished. Their results are in paper §4.2 and Appendix L.3–L.5, and in `runs/20261026-1302-e05-stream-confirm-score`, `runs/20261026-1237-e05-qwen-percall`, `runs/20261026-1306-e06-percall-input-jev`, `runs/20261026-1309-e06-percall-input-jev-qwen` and `runs/20261026-1319-e06-percall-input-jev-l4`. The body below was not re-edited. Where it says "pending", the paper is the current source.
+- *Numbers.* No number in the sections below was changed when this section was added.
+
+---
 
 Written 26 October 2026. Updated the same day with the horizon fits (k = 1 to 3), the strictly-future evaluation and its read-step check, the onset audit, the combined-stream addendum, the label-versus-position ablation, the emission-route audit, and the status of pending work (Section 8). This is exploratory, post hoc work. A fresh confirmation run is being collected and its results are pending (Section 8).
 

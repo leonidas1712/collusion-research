@@ -792,7 +792,7 @@ Two agents independently (a Claude subagent, commit 1cc8900d on a worktree branc
 - One call ahead: overall 0.88, but mostly the read step (read baseline 0.85). Within reads of the protected file, the probe scores 0.85 [0.78, 0.91] (strict_future_readstep.md). Per-call positives: 132 write_file + 11 malformed + 3 final replies (emission_execution_audit.md).
 - Expanded capture (incoming / action time, runs/20261026-1128-e05-stream-layer18-loso), in Appendix J.9: 0.93 / 1.00, with high per-episode alarm rates.
 - Frozen confirmation (runs/20261026-1139-e05-stream-confirm, plan 22a89d84): 84 new episodes, $1.51 API; GPU capture running. Qwen per-call replication: frozen plan eb62523c, CPU fits running.
-- Write-up: docs/streaming_probe_report.md; Figure 3 report/figures/figure3_streaming.*.
+- Write-up: docs/per_call_probe_report.md; Figure 3 report/figures/figure3_streaming.*.
 
 - 2026-10-26 13:03 SGT [result] Frozen fresh-family GPT-OSS reasoning-stream confirmation (freeze 22a89d84; runs/20261026-1302-e05-stream-confirm-score): fixed layer15 MAX within scenario×round AUROC 0.905 [0.775,0.991], predeclared criterion passed; 594 reasoning replies/26 immediate-emission positives, 57 recruiting episodes from fixed84 complete episodes. Unchanged threshold: 14/30 all emitting replies warned, held-recruiting episode alarms7/27; no refit or recalibration. All1671 captured requests verified; independent direct-pair bootstrap and alarm audit passed. Same-distribution immediate-emission ranking, not advance-warning or intervention efficacy. APIUSD1.512518 + GPU conservativeUSD2.299622 = USD3.812141; app stopped.
 
