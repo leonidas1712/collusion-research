@@ -61,3 +61,23 @@ structure + markers; counts in one table; no internal codes in main text; glossa
 limitation once; appendix by question with answer-first.
 WATCH while drafting: "no main-text comparison mixes datasets/evaluations/labels" — item 1 is the live
 risk; the caveat audit (my Phase-2 pass) will re-check every figure and comparison against it.
+
+## Accuracy constraints for drafting (from codex-2 #2372, endorsed by editor)
+
+These are label/claim-scoping facts the draft must honour; the caveat/accuracy audit will enforce them.
+
+1. **"Near chance at round level" (gpt-oss) is the OLD channel-give-in label, not the any-public ladder.**
+   The matched gpt-oss ladder is eventual 0.61, this-round-or-next 0.64, this-call 0.91 (same 1,995 calls).
+   So outline §4.3.2 must not let "gpt-oss is near chance at the round level" sit on the same any-public
+   ladder — the round rung there is 0.64, not chance. State the near-chance fact against the channel label
+   explicitly, or keep it out of the any-public ladder. (Reinforces blocking item 1.)
+2. **gpt-oss has a control arm but NO target-alone arm.** "Control and target-alone episodes never leak"
+   (outline §2.4, §4.1, setup fact) is a Qwen statement. Scope per model: Qwen has control + target-alone;
+   gpt-oss has control only.
+3. **"Every non-leaking call was after the request" is a gpt-oss property, not Qwen's.** The Qwen post-read
+   cohort is not uniformly post-peer-ask. C4 / outline §4.5.1 must scope "after the request" to gpt-oss,
+   or reword so it is true for both.
+4. **The confirmed reasoning probe warns before PUBLIC output, not "before the call writes anything."**
+   It reads generated reasoning tokens. Only the last-prompt probe reads before the call generates anything.
+   Keep "before any public output" for the reasoning probe (Method §3.2 already does); do not let C1's
+   "before a call writes anything" attach to the confirmed reasoning headline.

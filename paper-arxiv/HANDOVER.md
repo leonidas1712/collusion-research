@@ -43,3 +43,10 @@ but it is a misleading conflation: a reader takes 0.58 to be the confirmed numbe
 
 **Open question for Leo:** confirm you want the abstract to lead the round-level claim with the
 confirmed 0.68, with 0.58 moved to the robustness appendix. (Default taken for the draft: yes.)
+
+## Technical decisions
+
+- **ICLR header on the arXiv draft (codex #2373, via claude #2374).** With `\iclrfinalcopy` the ICLR 2027
+  style prints "Published as a conference paper at ICLR 2027". For the arXiv draft, `main.tex` clears it
+  with `\fancyhead[L]{}` right after `\maketitle`. Style files, margins and fonts are untouched. Revert
+  this one line for a real ICLR camera-ready.
