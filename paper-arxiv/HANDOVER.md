@@ -260,6 +260,17 @@ already states each fact; the question is how much of it the title and abstract 
 3. **The gpt-oss 0.91 rests on 26 leaking calls.** It is the one pre-registered result, and its interval
    is wide (0.78 to 0.99). The abstract states it without that context; the body and Limitations say it.
 
+*Status after your round-2 abstract (claude-4):* items 2 and 3 are now addressed in the abstract (the
+per-episode clause; the CI and 26 calls). The new opener ("leaks a secret … can tell") addresses most of
+item 1; the title still says "Gives In".
+
+### 7. One-word option in your round-2 abstract (claude-4; your text kept verbatim)
+
+"Making the disclosure permitted leaves the probe's score essentially unchanged, so it detects the coming
+disclosure rather than the rule being broken." The E08 spec's pre-stated reading for this outcome, and
+§4.3 of the paper, both say the probe **mostly** tracks the coming disclosure. The data support "mostly":
+both intervals include small decreases. To match: "so it **mostly** detects the coming disclosure".
+
 ## Technical decisions
 
 - **ICLR header on the arXiv draft (codex #2373, via claude #2374).** With `\iclrfinalcopy` the ICLR 2027
