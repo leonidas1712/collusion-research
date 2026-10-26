@@ -4,7 +4,7 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 
 | Section | Words | Starts on page | Page-equivalent span |
 |---|---:|---:|---:|
-| Abstract | 247 | 1 | 0.64 |
+| Abstract | 248 | 1 | 0.64 |
 | 1. Introduction | 689 | 2 | 1.10 |
 | 2. Related Work | 254 | 3 | 0.43 |
 | 3. Methods | 0 | 3 | 0.05 |
@@ -16,9 +16,9 @@ Measured from the saved paper.source.md and paper.pdf snapshot. Page-equivalents
 | 3.6 Second target | 72 | 5 | 0.14 |
 | 4. Results | 0 | 5 | 0.05 |
 | 4.1 Behaviour: the setup produces mixed outcomes | 63 | 5 | 0.11 |
-| 4.2 Asked per call, a probe predicts which call will give in | 444 | 6 | 0.83 |
-| 4.3 The ranking survives the obvious shortcuts | 186 | 6 | 0.27 |
-| 4.4 The further from the act, the less predictable | 303 | 7 | 0.83 |
+| 4.2 Asked per call, a probe predicts which call will give in | 426 | 6 | 0.81 |
+| 4.3 The ranking survives the obvious shortcuts | 186 | 6 | 0.26 |
+| 4.4 The further from the act, the less predictable | 324 | 7 | 0.85 |
 | 4.5 What a round-level monitor should ask and see | 92 | 7 | 0.17 |
 | 5. Discussion and Limitations | 222 | 8 | 0.35 |
 | Limitations | 58 | 8 | 0.12 |
