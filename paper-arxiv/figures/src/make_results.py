@@ -53,7 +53,7 @@ def save(fig, stem, rows, sha):
         'pending_macros':[e.get('macro') for _,_,e in rows if e.get('value') is None],
         'uncertainty':'source-registry confidence interval, when available; no invented intervals',
         'transformation':'none; values and intervals read directly from numbers.yaml',
-        'marker_fill':('filled fresh test; hollow development' if stem=='fig1_headline' else 'filled confirmed; hollow exploratory'),
+        'marker_fill':('not applicable: bars' if stem=='fig3_percall' else ('filled fresh test; hollow development' if stem=='fig1_headline' else 'filled confirmed; hollow exploratory')),
     },indent=2)+'\n')
     plt.close(fig)
 
@@ -162,13 +162,46 @@ def shortcuts(data,sha):
     save(fig,'fig4_shortcuts',rows,sha)
 
 
+def percall(data, sha):
+    panels = [
+        ('qwen', 'Qwen3-32B', [
+            ('Last-prompt probe', 'qwenCallProbe'),
+            ('Trained text: latest input', 'qwenTextLatest'),
+            ('Zero-shot Jev', 'qwenCallJev')]),
+        ('gpt_oss', 'gpt-oss-20b', [
+            ('Last-prompt probe', 'gptossCallProbe'),
+            ('Reasoning probe', 'gptossCallReasoning'),
+            ('Trained text: full input', 'gptossTextFull'),
+            ('Zero-shot Jev (with reasoning)', 'gptossCallJev')])]
+    fig, axes = plt.subplots(1, 2, figsize=(6.5, 4.35), sharex=True)
+    fig.subplots_adjust(left=.07, right=.97, bottom=.18, top=.73, wspace=.22)
+    rows = []
+    for ax, (model, title, items) in zip(axes, panels):
+        ax.set_title(title, fontsize=10)
+        for y, (label, key) in enumerate(items):
+            e = get(data, key)
+            assert e.get('value') is not None, key
+            rows.append((title, label, e))
+            value, ci = e['value'], e.get('ci')
+            ax.barh(y, value, height=.30, color=MODEL_COLORS[model], alpha=.55)
+            if ci:
+                ax.errorbar(value, y, xerr=[[value-ci[0]], [ci[1]-value]],
+                            fmt='none', ecolor='#222222', capsize=3, linewidth=1)
+            ax.text(0, y-.31, label, fontsize=9, va='center',
+                    bbox=dict(facecolor='white', edgecolor='none', pad=1))
+        ax.axvline(.5, color='#777777', ls='--', lw=.8, zorder=0)
+        ax.set(xlim=(0,1.03), ylim=(3.5,-.75), yticks=[], xticks=[0,.5,1], xlabel='AUROC')
+        ax.spines['left'].set_visible(False)
+    fig.suptitle('A probe picks out the call that leaks; a zero-shot monitor\ndoes not, and a trained text classifier comes close.', fontsize=11, y=.98)
+    fig.text(.5,.025,'Development episodes; whiskers: 95% CI; dashed line: chance',ha='center',fontsize=9)
+    save(fig, 'fig3_percall', rows, sha)
+
+
 def main():
     configure();data,sha=registry();OUT.mkdir(exist_ok=True)
     headline(data,sha)
-    forest(data,sha,'fig_round_confirmation','Pre-registered Qwen test', [('qwen','Will it leak this round or next?', [('Probe','qwenFreshNearProbe','activation'),('Jev','qwenFreshNearJev','text')])])
-    forest(data,sha,'fig3_percall','Which call will leak?',[
-        ('qwen','Qwen3-32B',[('Last-prompt probe','qwenCallProbe','activation'),('Jev: conversation + tool results','qwenCallJev','text')]),
-        ('gpt_oss','gpt-oss-20b',[('Last-prompt probe','gptossCallProbe','activation'),('Reasoning probe','gptossCallReasoning','activation'),('Jev: including same-turn reasoning','gptossCallJev','text')])])
+    forest(data,sha,'fig_round_confirmation','Qwen test on fresh episodes', [('qwen','Will it leak this round or next?', [('Probe','qwenFreshNearProbe','activation'),('Jev','qwenFreshNearJev','text')])])
+    percall(data,sha)
     shortcuts(data,sha)
 
 

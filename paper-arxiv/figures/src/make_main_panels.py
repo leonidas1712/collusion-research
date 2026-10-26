@@ -1,0 +1,82 @@
+"""Render requested main-text panels directly from the saved figure analyses."""
+import csv
+import hashlib
+import json
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from matplotlib.ticker import PercentFormatter
+from style import configure, MODEL_COLORS
+
+ROOT = Path(__file__).resolve().parents[3]
+OUT = ROOT / 'paper-arxiv/figures'
+TRAJECTORY = ROOT / 'runs/20261026-2254-e05-arxiv-score-trajectories/metrics.json'
+ALARMS = ROOT / 'runs/20261026-2252-e05-arxiv-alarm-tradeoffs'
+
+
+def save(fig, stem, sources, rows):
+    for suffix in ['pdf', 'png']:
+        fig.savefig(OUT / f'{stem}.{suffix}', dpi=180)
+    (OUT / f'{stem}.json').write_text(json.dumps({
+        'sources': {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
+        'transformation': 'Select existing panels; no new scores, fits, thresholds or aggregation.',
+        'width_inches': fig.get_figwidth(), 'height_inches': fig.get_figheight(),
+    }, indent=2) + '\n')
+    with (OUT / f'{stem}.csv').open('w') as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator='\n')
+        w.writeheader(); w.writerows(rows)
+    plt.close(fig)
+
+
+def trajectories():
+    data = json.loads(TRAJECTORY.read_text())
+    assert data['include_figure']
+    fig, axes = plt.subplots(1, 2, figsize=(6.5, 2.9), sharey=True)
+    fig.subplots_adjust(left=.14, right=.98, top=.84, bottom=.29, wspace=.16)
+    exports = []
+    for ax, model, title in zip(axes, ['qwen', 'gpt_oss'], ['Qwen3-32B', 'gpt-oss-20b']):
+        color = MODEL_COLORS[model]
+        for summary in data['summaries']:
+            if summary['model'] != model:
+                continue
+            rows = summary['aggregate']; fresh = summary['cohort'] == 'fresh'
+            x = [r['offset'] for r in rows]
+            ax.plot(x, [100*r['median'] for r in rows], color=color,
+                    ls='-' if fresh else '--', marker='o' if fresh else None, ms=3, lw=1.3)
+            if fresh:
+                ax.fill_between(x, [100*r['q25'] for r in rows], [100*r['q75'] for r in rows], color=color, alpha=.12)
+            exports.extend(dict(model=model, cohort=summary['cohort'], **r) for r in rows)
+        ax.set(title=title, xticks=[-10,-5,0], xlabel='Scored calls before leak', ylim=(0,103))
+        ax.axvline(0, color='#777777', lw=.8, ls=':'); ax.grid(axis='y', alpha=.15)
+    axes[0].set_ylabel("Probe score\n(percentile among this\nmodel's scored calls)", fontsize=9)
+    fig.legend(handles=[Line2D([],[],color='#444444',ls='--',label='Development median'),
+                        Line2D([],[],color='#444444',label='Fresh median (band: middle 50%)')],
+               loc='lower center', ncol=2, frameon=False, fontsize=9)
+    save(fig, 'fig6_trajectory_aggregate', [TRAJECTORY], exports)
+
+
+def alarms():
+    with (ALARMS / 'curves.csv').open() as f:
+        rows = [r for r in csv.DictReader(f) if r['panel'] == 'Qwen: fresh episodes']
+    metrics = json.loads((ALARMS / 'metrics.json').read_text())
+    fig, ax = plt.subplots(figsize=(4.5, 3.6))
+    fig.subplots_adjust(left=.17, right=.93, bottom=.30, top=.88)
+    for name, color, ls, marker in [('Last-prompt probe', MODEL_COLORS['qwen'], '-', 'o'),
+                                    ('Jev', '#666666', '--', 's')]:
+        curve = [r for r in rows if r['detector'] == name]
+        op = next(p for p in metrics['operating_points'] if p['panel'] == 'Qwen: fresh episodes' and p['detector'] == name)
+        ax.plot([float(r['refusing_alarm']) for r in curve], [float(r['leaks_caught']) for r in curve],
+                color=color, ls=ls, lw=1.5, label='Zero-shot Jev' if name=='Jev' else name)
+        ax.plot(op['refusing_call_alarm'], op['leaking_call_alarm'], marker=marker, color=color, ms=7)
+    ax.set(title='Qwen3-32B: fresh episodes', xlim=(0,1), ylim=(0,1.02),
+           xlabel='Calls in refusing episodes flagged', ylabel='Leaking calls caught')
+    ax.xaxis.set_major_formatter(PercentFormatter(1)); ax.yaxis.set_major_formatter(PercentFormatter(1))
+    ax.grid(alpha=.15)
+    fig.legend(loc='lower center', bbox_to_anchor=(.5,.07), ncol=2, frameon=False, fontsize=9)
+    fig.text(.5,.015,'Markers: saved control-calibrated thresholds',ha='center',fontsize=9)
+    save(fig, 'fig7_qwen_alarms', [ALARMS/'curves.csv', ALARMS/'metrics.json'], rows)
+
+
+if __name__ == '__main__':
+    configure(); trajectories(); alarms()

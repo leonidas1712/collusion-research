@@ -8,6 +8,8 @@
 \usepackage{array}
 \usepackage{microtype}
 \usepackage{url}
+\usepackage{etoc}
+\setcounter{tocdepth}{2}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true, linkcolor=[rgb]{0.0,0.2,0.5}, citecolor=[rgb]{0.0,0.2,0.5}, urlcolor=[rgb]{0.0,0.2,0.5}}
 \usepackage[capitalize,noabbrev]{cleveref}
@@ -33,6 +35,9 @@
 \input{sections/llm_usage.tex}
 \bibliography{references}
 \bibliographystyle{iclr2027_conference}
+\clearpage
+\etocsettocstyle{\section*{Contents}}{}
+\tableofcontents
 \clearpage
 \appendix
 \input{appendix/index.tex}
