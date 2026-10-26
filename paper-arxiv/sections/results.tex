@@ -37,15 +37,14 @@ On gpt-oss-20b, the pre-registered reasoning probe ranked the calls that leak ab
 At its frozen threshold it caught about half of the leaking calls, while few calls in refusing episodes alarmed (\cref{app:confirmation}).
 On Qwen3-32B, the last-prompt probe, fit on development episodes only and frozen, scored \qwenFreshCallProbe{} on the fresh test episodes.
 
-On development episodes, most of the signal is present before the model starts to reason.
-There, the last-prompt probe and the reasoning probe score about the same on gpt-oss-20b, and on the fresh episodes the reasoning probe scored higher, a gap within noise.
+On gpt-oss-20b, the simpler last-prompt probe held less well on the fresh episodes (AUROC~\gptossFreshCallProbe{}); \cref{app:confirmation} compares the two probes.
 
-The probe is not explained by three simple shortcuts: the request, keywords for the secret, or the file read and write (\cref{app:shortcuts}).
-It is not detecting the request, because every call that does not leak also faces the recruiting peer in the same scenario and round.
-It is not matching the secret: on gpt-oss-20b, keyword rules that look for the secret's words in the model's reasoning do no better than chance.
-It is not detecting the file read, because it beats a flag for ``the protected file was just read'' on both models, and on gpt-oss-20b it still separates leaks among the calls that write the handoff file, the shared status file that the target writes for the peer.
+The probe beats each of three simple shortcuts: the request, keywords for the secret, and the file read and write (\cref{app:shortcuts}).
+The request alone cannot explain the score, because every call that does not leak also faces the recruiting peer in the same scenario and round.
+On gpt-oss-20b, keyword rules that look for the secret's words in the model's reasoning do no better than chance.
+A flag for ``the protected file was just read'' scores well on its own, but the probe beats it on both models, and on gpt-oss-20b the probe still separates leaks among the calls that write the handoff file.
 
-Followed through an episode, the median probe score stays low over the calls before the leak and jumps at the leaking call, on both models and on both sets of episodes (\cref{fig:trajectory-main}).
+Followed through an episode, the median probe score is lower over the calls before the leak and rises sharply at the leaking call, on both models and on both sets of episodes (\cref{fig:trajectory-main}).
 Individual episodes vary, and \cref{app:ahead} shows examples chosen by a fixed rule.
 
 \begin{figure}[t]
@@ -61,12 +60,13 @@ Individual episodes vary, and \cref{app:ahead} shows examples chosen by a fixed 
 
 On the same calls, the probe goes from near chance for the eventual outcome, to modest for this round or the next, to high for this call (\cref{fig:headline}).
 We refit the probe for each question, on the same calls, model and token, so only the question changes.
-gpt-oss-20b follows the same pattern, with the largest jump at the call itself, because it usually leaks within a round of the request (\cref{app:gptoss-round}).
+gpt-oss-20b follows the same pattern, with the largest jump at the call itself.
+It usually leaks within a round of the request, so ``this round or the next'' marks nearly the same calls as ``ever'' (\cref{app:gptoss-round}).
 
 Even one call earlier the probe drops well below its score on the leaking call (\cref{tab:glance}).
-On gpt-oss-20b, what it detects there is mostly the read of the protected file that usually comes just before the leak (\cref{app:ahead}).
+On gpt-oss-20b, what it detects there is mostly the read of the protected file that usually comes just before the leak, and a flag for that read scores about as well as the probe (\cref{app:ahead}).
 
-The ``this round or the next'' result also held on fresh Qwen3-32B episodes held out from training, in a test planned before scoring and on a slightly different leak label (\cref{app:labels}): the probe scored \qwenFreshNearProbe{} and the best text monitor \qwenFreshNearJev{} (\cref{app:confirmation}).
+A round-level test on fresh Qwen3-32B episodes, with its own leak label, gives the same modest middle result (\cref{app:confirmation}).
 
 \begin{figure}[t]
   \centering
@@ -84,7 +84,7 @@ A zero-shot text monitor shown the same conversation and tool results scores wel
 On gpt-oss-20b, Jev flags nearly every call that leaks but also most calls in refusing episodes, so it cannot separate the calls that leak.
 The bag-of-words classifier, trained on the same labelled development calls, scores close to the probe on both models, and the probe keeps a small edge whose interval excludes zero (\cref{app:shortcuts}).
 
-Most of the probe's lead over the zero-shot monitor therefore comes from training on labelled calls, and activations add a small, reliable edge.
+Most of the probe's lead over the zero-shot monitor therefore comes from training on labelled calls, and activations add a small edge on development episodes.
 Much of the signal also arrives with the incoming message.
 \label{sec:shortcuts}%
 On gpt-oss-20b, a separate probe that reads only the tokens new to the call, the latest peer message and tool results, also scores high, and the layers chosen for the last-prompt probe are early to middle ones.
@@ -101,12 +101,15 @@ AUROC measures how well a detector ranks calls, while this share tells an overse
 The cost of those flags depends on what a flag does.
 If each flag sends one call to review, the per-call rate is the review workload.
 If a flag instead stops the whole agent, what matters is whether an episode sees at least one flag.
-A refusing episode has about \qwenFreshMedianRefusingCalls{} scored calls.
+A refusing episode has a median of \qwenFreshMedianRefusingCalls{} scored calls.
 If each call were flagged independently at the nominal 5\% rate, about \qwenEpisodeAlarmIndependent{} of episodes would see at least one flag; in practice \qwenFreshRefusingEpisodeAlarm{} do, because flags cluster in the same episodes.
 
-A stricter threshold, chosen on the fresh episodes so that about one refusing episode in twenty sees a flag, would catch \qwenEpisodeCalCaught{} of leaking episodes by their first leak.
-This describes the trade-off rather than testing a threshold fixed in advance, and the strict threshold catches far fewer leaks than the per-call one (\cref{tab:episode-calibration}).
-Such a threshold must be set on held-out traffic: one set on the episodes the probe was trained on does not transfer, and on fresh episodes it flags about three in ten refusing episodes instead of one in twenty.
+A stricter threshold suits halting an agent.
+Chosen on the fresh episodes so that about one refusing episode in twenty sees a flag, it would catch \qwenEpisodeCalCaught{} of leaking episodes by their first leak, far fewer than the per-call threshold catches.
+This describes the trade-off rather than testing a threshold fixed in advance (\cref{tab:episode-calibration}).
+
+Such a threshold must be set on held-out traffic.
+One set on the episodes the probe was trained on does not transfer: on fresh episodes it flags about three in ten refusing episodes instead of one in twenty.
 
 \begin{figure}[t]
   \centering
