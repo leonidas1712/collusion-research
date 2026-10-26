@@ -78,10 +78,19 @@ def collect():
                               ('h1/all/loso/frozen_last_prompt_A', 'Last prompt: next call', 'last-prompt')]:
         add('b', label, group, strict['results'][key], path, digest, f'results:{key}',
             'Strictly one call ahead: leaking calls removed; models not refitted')
+    rows.append(PENDING_ROW)
     return rows
 
 
-CAPTION = """Figure 3. On gpt-oss-20b, a probe reading the model's reasoning picks out the reply that will leak the secret, and reading the text of the same reasoning does not. This analysis is exploratory and was designed after the main results. (a) Each row scores the same 1,995 replies that have reasoning (121 of them leak) from 238 episodes, on held-out scenarios. A reply counts as leaking if it is the first to make the secret public, by any route. AUROC measures how well a score ranks leaking replies above the others: 0.5 is chance and 1 is perfect. Whiskers are 95% bootstrap confidence intervals. The right-hand column shows the practical trade-off: each detector's alarm cutoff is set so that about 5% of no-ask control replies alarm, and the column gives the share of leaking replies that cutoff catches and the share of normal replies in pressured episodes that never leak on which it fires. The keyword rule never fires, because it matches more than 5% of control replies. "Stopped before the secret is mentioned" ignores every reasoning token from the first time the secret appears in the reasoning. The length row uses the final length of the reasoning, which is known only after the reply, so it is not a usable alarm. *A separate probe, trained on this label for each call, that reads only what arrives before the reply: the peer's message and tool results. It used a reduced recipe (one seed, layer 18; 2,199 replies, 143 leaking). It also scores 0.93, so much of the signal is already there before the model reasons, but it alarms far more often on normal replies. †The same probe, scored on replies from before the peer asks, against whether the episode ever leaks (628 replies, 388 positives); it stays at chance, as it should. (b) Probes asked about leaks at different distances; a "call" is one model reply. The diamonds are the paper's main probe, read at the last prompt token, not the incoming-message probe of panel a. The points are not a paired comparison: the label, the reply set and the input differ between them. In particular, the 0.60 and the 0.93 use different labels and different reply sets. Paper's main probe: 2,059 replies for "ever" and "this round or next" (169 and 148 positives). Probe on reasoning, this round or next: 1,874 replies, 118 positives. "Next call" excludes the leaking calls themselves, so it is a genuine one-call-ahead ranking: 1,874 replies, 116 of which come just before the leaking call; both probes were trained on other labels and not refitted. The 0.93 point is the headline result from panel a, whose reply set also includes each episode's first leaking reply. Appendix J.8 gives the full table. All points cover 238 episodes. Values and exact source keys are in figure3_streaming.csv.
+# Slot for the paper's main last-prompt probe retrained on the per-call label. Leave the numbers
+# blank until the final run lands; blank rows are kept in the CSV but not plotted.
+PENDING_ROW = dict(panel='b', label='Last prompt retrained: this call', group='last-prompt',
+                   estimate='', low='', high='', rows='', positives='', episodes='', seeds='',
+                   source='', source_sha256='', source_key='',
+                   note='PENDING: last-prompt probe retrained on the per-call label; fill from the final run')
+
+
+CAPTION = """Figure 3. On gpt-oss-20b, a probe reading the model's reasoning picks out the reply that will leak the secret, and reading the text of the same reasoning does not. This analysis is exploratory and was designed after the main results. (a) Each row scores the same 1,995 replies that have reasoning (121 of them leak) from 238 episodes, on held-out scenarios. A reply counts as leaking if it is the first to make the secret public, by any route. AUROC measures how well a score ranks leaking replies above the others: 0.5 is chance and 1 is perfect. Whiskers are 95% bootstrap confidence intervals. The right-hand column shows the practical trade-off: each detector's alarm cutoff is set so that about 5% of no-ask control replies alarm, and the column gives the share of leaking replies that cutoff catches and the share of normal replies in pressured episodes that never leak on which it fires. The keyword rule never fires, because it matches more than 5% of control replies. "Stopped before the secret is mentioned" ignores every reasoning token from the first time the secret appears in the reasoning. The length row uses the final length of the reasoning, which is known only after the reply, so it is not a usable alarm. *A separate probe, trained on this label for each call, that reads only what arrives before the reply: the peer's message and tool results. It used a reduced recipe (one seed, layer 18; 2,199 replies, 143 leaking). It also scores 0.93, so much of the signal is already there before the model reasons, but it alarms far more often on normal replies. †The same probe, scored on replies from before the peer asks, against whether the episode ever leaks (628 replies, 388 positives); it stays at chance, as it should. (b) Probes asked about leaks at different distances; a "call" is one model reply. The diamonds are the paper's main probe, read at the last prompt token, not the incoming-message probe of panel a. The points are not a paired comparison: the label, the reply set and the input differ between them. In particular, the 0.60 and the 0.93 use different labels and different reply sets. Paper's main probe: 2,059 replies for "ever" and "this round or next" (169 and 148 positives). Probe on reasoning, this round or next: 1,874 replies, 118 positives. The 0.93 point is the headline result from panel a, whose reply set also includes each episode's first leaking reply. Appendix J.8 gives the full table. All points cover 238 episodes. Values and exact source keys are in figure3_streaming.csv.
 """
 
 
@@ -118,9 +127,10 @@ SERIES_B = {'last-prompt': ("Paper's main probe\n(last prompt token)", 'D', -1),
 B_ROWS = {'Last prompt: eventual': ('eventual', 'last-prompt'),
           'Last prompt: near-term': ('round', 'last-prompt'),
           'Reasoning: paper cohort': ('round', 'reasoning'),
-          'Last prompt: next call': ('next', 'last-prompt'),
-          'Reasoning: next call': ('next', 'reasoning'),
+          'Last prompt retrained: this call': ('reply', 'last-prompt'),
           'Reasoning: this reply': ('reply', 'reasoning')}
+# The 'next call' rows stay in the CSV but are not plotted: the one-call-ahead signal is largely the
+# call reading the secret file (Appendix J.8).
 TEAL, SLATE, GREY = '#087f8c', '#334155', '#64748b'
 
 
@@ -136,7 +146,7 @@ def render(rows, output):
     left = fig.add_axes([.315, .25, .16, .60])
     right = fig.add_axes([.725, .25, .255, .60])
     col = blended_transform_factory(fig.transFigure, left.transData)
-    ALARM_X = .6
+    ALARM_X = .59
 
     # (a) recognising the leaking reply
     for r in (r for r in rows if r['panel'] == 'a'):
@@ -164,9 +174,9 @@ def render(rows, output):
         left.axhline(y, xmin=-1.7, xmax=2.0, color='#CBD5E1', linewidth=.6, clip_on=False)
     left.axvline(.5, color=GREY, linestyle='--', linewidth=.8, zorder=0)
     left.text(1.012, 9.75, 'AUROC', ha='left', va='center', fontsize=6.4, weight='bold')
-    left.text(ALARM_X, 10.55, 'Catches / false alarms', transform=col, ha='center', va='bottom',
+    left.text(ALARM_X, 10.95, 'Catches / false alarms', transform=col, ha='center', va='bottom',
               fontsize=6.4, weight='bold')
-    left.text(ALARM_X, 10.5, '(% leaking / % normal\nreplies flagged)', transform=col, ha='center',
+    left.text(ALARM_X, 10.9, '(% leaking /\n% normal\nreplies flagged)', transform=col, ha='center',
               va='top', fontsize=6, color=GREY, linespacing=1.05)
     left.text(.5, 10.2, 'chance', ha='center', va='bottom', fontsize=6, color=GREY)
     left.grid(axis='x', alpha=.15)
@@ -179,7 +189,7 @@ def render(rows, output):
     fig.text(.012, .955, '(a) gpt-oss-20b: which reply will leak the secret?', weight='bold', fontsize=7.8)
 
     # (b) label ladder
-    b_rows = [r for r in rows if r['panel'] == 'b' and r['label'] in B_ROWS]
+    b_rows = [r for r in rows if r['panel'] == 'b' and r['label'] in B_ROWS and r['estimate'] != '']
     used = [h for h, _ in HORIZONS if any(B_ROWS[r['label']][0] == h for r in b_rows)]
     xpos = {h: 1.1 * i for i, h in enumerate(used)}
     for r in b_rows:
@@ -228,9 +238,9 @@ def main():
             rows = list(csv.DictReader(f))
         for row in rows:
             for key in ['estimate', 'low', 'high']:
-                row[key] = float(row[key])
+                row[key] = float(row[key]) if row[key] else ''
             for key in ['rows', 'positives', 'episodes', 'seeds']:
-                row[key] = int(row[key])
+                row[key] = int(row[key]) if row[key] else ''
     else:
         rows = collect()
     with (args.output_dir / 'figure3_streaming.csv').open('w', newline='') as f:
