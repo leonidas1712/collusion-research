@@ -26,6 +26,8 @@ def main() -> None:
     conservative_full_wall = safety * projected_full_wall
     full_cost = conservative_full_wall * rate / 3600
     combined = benchmark_cost + full_cost
+    cap = plan["budget"].get("gpu_usd_max", plan["budget"].get("shared_e08_gpu_usd_max"))
+    already_spent = plan["budget"].get("spent_before_this_arm_estimated_usd", 0.0)
     projection = {
         "benchmark_run": args.benchmark_run.name,
         "rate_usd_per_hour": rate,
@@ -37,8 +39,10 @@ def main() -> None:
         "projected_full_wall_seconds_with_safety": conservative_full_wall,
         "projected_full_cost_usd": full_cost,
         "projected_combined_cost_usd": combined,
-        "cap_usd": plan["budget"]["gpu_usd_max"],
-        "may_launch_full": combined <= plan["budget"]["stop_if_projected_over_usd"],
+        "spent_before_this_arm_estimated_usd": already_spent,
+        "projected_all_e08_cost_usd": already_spent + combined,
+        "cap_usd": cap,
+        "may_launch_full": already_spent + combined <= cap,
     }
     (args.benchmark_run / "cost_projection.json").write_text(json.dumps(projection, indent=2, sort_keys=True) + "\n")
     print(json.dumps(projection, indent=2, sort_keys=True))

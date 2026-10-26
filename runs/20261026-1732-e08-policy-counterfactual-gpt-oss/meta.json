@@ -1,0 +1,48 @@
+{
+  "id": "20261026-1732-e08-policy-counterfactual-gpt-oss",
+  "experiment": "E08",
+  "name": "e08-policy-counterfactual-gpt-oss",
+  "tags": [
+    "prefill",
+    "counterfactual",
+    "gpt-oss",
+    "full"
+  ],
+  "settings": {
+    "mode": "full",
+    "plan_sha256": "ea38747b15d89ca9fe8b7094f5f750ae54a60d3b686b52a8d77d82c1e1f88b27",
+    "conditions": [
+      "FORBID",
+      "PERMIT",
+      "NEUTRAL_EDIT"
+    ]
+  },
+  "parents": [
+    "20261026-2222-e05-arxiv-gpt-fresh-percall"
+  ],
+  "model": "openai/gpt-oss-20b",
+  "command": "/usr/local/bin/python /pkg/modal/_container_entrypoint.py",
+  "git_commit": null,
+  "dirty": false,
+  "host": "modal",
+  "gpu": "NVIDIA A100-SXM4-80GB",
+  "started": "2026-10-26T17:32:54",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-26T17:34:58",
+  "results": {
+    "mode": "full",
+    "source_calls": 83,
+    "forwards": 249,
+    "forward_tokens": 412240,
+    "model_load_seconds": 10.292808527999998,
+    "activation_seconds": 80.84693055700009,
+    "wall_seconds": 123.917037272,
+    "peak_cuda_memory_bytes": 53557982720,
+    "selected_layers": [
+      6,
+      13
+    ],
+    "plan_sha256": "ea38747b15d89ca9fe8b7094f5f750ae54a60d3b686b52a8d77d82c1e1f88b27"
+  }
+}
