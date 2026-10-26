@@ -16,6 +16,7 @@ Fixed keyword rules on the reasoning, written before scoring, do no better than 
 The call that leaks often comes right after the target reads the protected file.
 A flag for ``the latest input is the protected file's contents'' therefore scores well on both models, and the probe beats it by \qwenProbeMinusReadStep{} on Qwen3-32B and \gptossProbeMinusReadFlag{} on gpt-oss-20b (paired).
 Among the calls that come right after a read, the probe still separates those that leak (\qwenPostReadProbe{} on Qwen3-32B, \gptossPostReadProbe{} on gpt-oss-20b).
+These within-subset scores, and the handoff-write score below, use only the scenario-and-round groups that hold both kinds of call, which cover most but not all of the subset's leaking calls.
 
 \paragraph{What arrives with the input.}
 A second replay on gpt-oss-20b saved the incoming segment of each prompt, which is the latest peer message and tool results, and every generated token up to the secret.
