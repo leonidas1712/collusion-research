@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 import time
+import shlex
+import sys
 
 import numpy as np
 from threadpoolctl import threadpool_limits
@@ -115,6 +117,12 @@ def main():
     frozen = json.loads((out / 'analysis_plan.json').read_text())
     for name, expected in frozen['hashes'].items():
         assert hashlib.sha256((SOURCE/name).read_bytes()).hexdigest() == expected
+    command = shlex.join([sys.executable, *sys.argv])
+    commands = run.meta.setdefault('execution_commands', [run.meta['command']])
+    if command not in commands:
+        commands.append(command)
+    run.meta['command'] = command
+    write_json_atomic(out/'meta.json', run.meta)
     print('OUTPUT', out, flush=True)
     jobs = [(out, label, plan, 2) for label in LABELS for plan in sorted(plans, key=lambda p:(p['mode']!='loso',p['seed'],p['fold']))]
     begin = time.monotonic()

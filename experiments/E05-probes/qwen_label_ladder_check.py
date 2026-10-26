@@ -1,5 +1,7 @@
 """Independent score, split, threshold and metric checks for the post-hoc matched Qwen label ladder."""
 import argparse
+import csv
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -46,7 +48,14 @@ def check(out):
         assert abs(np.mean(points)-m['within_round_auc'])<1e-12
         assert abs(np.mean(basepoints)-m['frozen_paper_A']['within_round_auc'])<1e-12
     assert fits==66 and point_checks==24
-    result=dict(post_hoc=True,fits_checked=fits,independent_sklearn_checks=point_checks,max_point_error=max_error,max_model_reconstruction_error=model_error,thresholds='132 thresholds independently recomputed at strict >5% control-reply target',matched_cohort='4844 calls in every seed and label',source_hashes_match=True)
+    with gzip.open(SOURCE/'probe_scores.csv.gz','rt',newline='') as f:
+        reference={(r['analysis'],r['seed'],r['fold'],r['row_id'],r['request_sha256']) for r in csv.DictReader(f) if r['label_variant']=='immediate'}
+    handle=(out/'probe_scores.csv').open(newline='') if (out/'probe_scores.csv').exists() else gzip.open(out/'probe_scores.csv.gz','rt',newline='')
+    with handle:
+        exported=list(csv.DictReader(handle))
+    for label in ['eventual','round_near']:
+        assert {(r['analysis'],r['seed'],r['fold'],r['row_id'],r['request_sha256']) for r in exported if r['label_variant']==label}==reference
+    result=dict(matches_immediate_row_hash_seed_fold_keys=True,post_hoc=True,fits_checked=fits,independent_sklearn_checks=point_checks,max_point_error=max_error,max_model_reconstruction_error=model_error,thresholds='132 thresholds independently recomputed at strict >5% control-reply target',matched_cohort='4844 calls in every seed and label',source_hashes_match=True)
     (out/'verification.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))
 
 

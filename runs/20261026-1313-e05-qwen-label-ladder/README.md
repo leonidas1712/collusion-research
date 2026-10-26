@@ -10,6 +10,6 @@ PYTHONPATH=src python experiments/E05-probes/qwen_label_ladder.py --out runs/202
 PYTHONPATH=src python experiments/E05-probes/qwen_label_ladder_check.py --out runs/20261026-1313-e05-qwen-label-ladder
 ```
 
-The first command creates a new run; substitute its path to reproduce from scratch. The benchmark fits one fold at six threads; the full pass reuses it and uses three workers with two threads each. Both obey a six-thread cap. The source activation cache and local model caches are required for fitting and reconstruction checks. Source hashes are recorded in analysis_plan.json. Compact results will include metrics.json, report.md, verification.json and lossless probe_scores.csv.gz.
+The first command creates a new run; substitute its path to reproduce from scratch. The benchmark fits one fold at six threads; the full pass reuses it and uses three workers with two threads each. Both obey a six-thread cap. The source activation cache and local model caches are required for fitting and reconstruction checks. Source hashes are recorded in analysis_plan.json. Compact results include metrics.json, report.md, verification.json and lossless probe_scores.csv.gz.
 
 Threshold calibration is per control call, even though the shared helper names its count calibration_episodes. Held-call alarm rates are not episode intervention rates. The original 4,697-call paper cohort and the 4,743-call strict-next cohort must not be presented as identical to this matched ladder.
