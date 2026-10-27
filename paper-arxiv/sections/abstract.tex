@@ -1,11 +1,13 @@
-Just before an AI agent leaks a secret its operator told it to keep, a linear probe on its activations can tell.
-We study recruitment, a common first step of collusion: a peer agent presses a target agent, over many rounds, to reveal such a secret, for example a deploy token.
-The target often refuses at first, then gives in.
-Read at each call, before the model generates anything, a probe tells whether that call is about to leak the secret.
-On Qwen3-32B test episodes, at a fixed threshold, it catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarmRounded{} of calls in refusing episodes, catching more leaks with far fewer false alarms than a zero-shot text monitor; counted per episode, most refusing episodes still see at least one flag.
-A bag-of-words classifier trained on the same text comes close to the probe, so most of the gain comes from training on labelled calls, with activations adding a small edge.
-Making the disclosure permitted leaves the probe's score essentially unchanged, so it detects the coming disclosure rather than the rule being broken.
-On gpt-oss-20b, a reasoning probe scores AUROC \gptossFreshReasoning{} (95\% CI \gptossFreshReasoningLow{}--\gptossFreshReasoningHigh{}, \gptossFreshPositiveCallCount{} leaking calls) in a pre-registered test.
-The signal is sharp but short-range: it weakens when asked about the next round, and is weak when asked whether an episode will ever leak.
-For multi-agent oversight, this suggests a cheap per-call monitor that flags an agent just before it leaks and escalates that call for review, and much of its signal can be read from the text alone.
-Such monitors would matter most where output filters fail, such as paraphrased, encoded or slowly coordinated leaks, which we leave to future work.
+When AI agents share channels and credentials, one agent can press another to break its operator's rule, a first step towards collusion.
+Output filters catch a leak once it is written, but by then other agents may have read it.
+Can an overseer tell beforehand that an agent is about to give in?
+We show that a linear probe on the agent's activations can, in a controlled multi-agent setting.
+Across six scenarios, a peer presses a target for up to 20 rounds to reveal a secret, such as a deploy token; the target often refuses, then gives in.
+Read at each model call before generation, the probe picks out the one that leaks.
+On held-out Qwen3-32B episodes, at a threshold set to flag 5\% of benign calls, it catches \qwenFreshProbeCaught{} of leaking calls.
+At the same flag rate, a zero-shot decision-model monitor catches \qwenMatchedJevCaught{}.
+On gpt-oss-20b, a probe on its reasoning reaches AUROC \gptossFreshReasoning{}.
+A bag-of-words classifier trained on the same calls comes close, so most of the gain comes from training on labels, not activations.
+In a counterfactual replay, allowing sharing leaves the probe's score unchanged: it reads the coming disclosure, not the violation.
+The warning is short-range, and halting on any alarm would stop most benign episodes, which a second text check does not fix.
+For multi-agent oversight, this suggests monitors that act before an agent gives in, where checking its output comes too late: messages others read immediately, paraphrased or encoded leaks, and recruitment spreading through a swarm.

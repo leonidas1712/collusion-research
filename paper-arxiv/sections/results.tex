@@ -94,7 +94,7 @@ Whether it reads a decision to emit or the situation that prompts one is open (\
 \subsection{What would deployment cost?}
 \label{sec:cost}
 
-At a threshold set on control calls, the probe catches most leaking calls while flagging few other calls (\cref{fig:qwen-alarms}).
+At a threshold set on benign control calls, so that 5\% of them are flagged, the probe catches most leaking calls while flagging few other calls (\cref{fig:qwen-alarms}).
 On Qwen3-32B test episodes, it catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarm{} of the calls in refusing episodes.
 At the same share of calls flagged, Jev catches \qwenMatchedJevCaught{} (\qwenMatchedJevCaughtCount{} of \qwenMatchedLeakTotal{}; 95\% CI \qwenMatchedJevCaughtLow{}--\qwenMatchedJevCaughtHigh{}).
 Of the calls the probe flags, \qwenFreshProbePrecision{} are real leaks.
