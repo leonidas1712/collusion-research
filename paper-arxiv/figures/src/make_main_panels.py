@@ -87,7 +87,9 @@ def alarms():
     ax.plot(point['refusing_calls']['rate'], point['leaking_calls']['rate'],
             marker='D', mfc='white', mec=MODEL_COLORS['qwen'], mew=1.7, ms=8,
             clip_on=False, zorder=5)
-    ax.text(.035, .075, paper_number('qwenCalibrationEpisodeLeakCallsRate', point['leaking_calls']['rate']) + ' caught\n'
+    # Whole percent to match the other 'caught' labels; still checked against the registered 21.1%.
+    paper_number('qwenCalibrationEpisodeLeakCallsRate', point['leaking_calls']['rate'])
+    ax.text(.035, .075, f"{100*point['leaking_calls']['rate']:.0f}%" + ' caught\n'
             + paper_number('qwenCalibrationEpisodeRefusingCallsRate', point['refusing_calls']['rate']) + ' flagged',
             ha='left', va='center', fontsize=LABEL_SIZE, color=MODEL_COLORS['qwen'], linespacing=1.1)
     ax.set(title='Qwen3-32B: test episodes', xlim=(0,1), ylim=(0,1.02),
