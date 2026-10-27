@@ -11,6 +11,11 @@
 \usepackage{xurl}
 \usepackage{etoc}
 \usepackage{fontawesome5}
+\usepackage{needspace}
+\usepackage{etoolbox}
+% Keep headings off the foot of a page: start a new page unless a few lines fit below.
+\preto\section{\Needspace{8\baselineskip}}
+\preto\subsection{\Needspace{6\baselineskip}}
 \setcounter{tocdepth}{2}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true, linkcolor=[rgb]{0.0,0.2,0.5}, citecolor=[rgb]{0.0,0.2,0.5}, urlcolor=[rgb]{0.0,0.2,0.5}}
@@ -34,10 +39,12 @@
 \input{sections/introduction.tex}
 \input{sections/setup.tex}
 \input{sections/method.tex}
+\clearpage
 \input{sections/results.tex}
 \input{sections/related_work.tex}
 \input{sections/discussion.tex}
 \input{sections/llm_usage.tex}
+\clearpage
 \bibliography{references}
 \bibliographystyle{iclr2027_conference}
 \clearpage
