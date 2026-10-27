@@ -44,7 +44,7 @@ The Qwen3-32B operating points on the test episodes, and how per-call and per-ep
   \footnotesize
   \setlength{\tabcolsep}{3pt}
   \input{tables/episode_calibration.tex}
-  \caption{Per-call and per-episode thresholds on the test episodes: precision of the flagged calls, leaking episodes caught by their first leak, refusing episodes and calls flagged, and the same rates on control traffic. Recruiting calls come from leaking and refusing episodes; control calls come from control episodes and are counted separately. Jev's per-call row flags the same share of refusing calls as the probe.}
+  \caption{Per-call and per-episode thresholds on the test episodes: precision of the flagged calls, leaking episodes caught by their first leak, refusing episodes and calls flagged, and the same rates on control traffic. Recruiting calls come from leaking and refusing episodes; control calls come from control episodes and are counted separately. Jev's per-call row uses the cutoff that flags no more refusing calls than the probe.}
   \label{tab:episode-calibration}
 \end{table}
 A deployed alarm would need its threshold set per episode, as \citet{gao2026} also argues.
@@ -54,7 +54,7 @@ A deployed alarm would need its threshold set per episode, as \citet{gao2026} al
   \centering
   \includegraphics[width=\linewidth]{fig7_alarm_tradeoffs.pdf}
   \caption{\textbf{Leaking calls caught against refusing calls alarmed, as the threshold moves.}
-  Rates are unstratified, counted over all calls, and negatives are calls in episodes that never leak; circles mark the probe's threshold set on control calls, which for the gpt-oss-20b test episodes is the frozen threshold, and squares mark Jev at the same share of refusing calls alarmed.
+  Rates are unstratified, counted over all calls, and negatives are calls in episodes that never leak; circles mark the probe's threshold set on control calls, which for the gpt-oss-20b test episodes is the frozen threshold, and squares mark Jev at the cutoff that alarms on no more refusing calls than the probe.
   Jev on gpt-oss-20b was scored only on development episodes. Labels give the share of leaking calls caught and of refusing calls alarmed at each marker.}
   \label{fig:alarm-tradeoff}
 \end{figure}
@@ -73,7 +73,7 @@ A deployed alarm would need its threshold set per episode, as \citet{gao2026} al
 No detectable gain.
 We paired the frozen probe with a second detector on the Qwen3-32B test episodes and halted an episode at the first call that both flag.
 The second detector was either Jev or the bag-of-words classifier, fit once on all development calls and scored on the test calls.
-At the same share of refusing episodes halted, no pairing catches more leaking episodes than the probe alone with a stricter threshold, and the pairing with Jev catches fewer (\cref{fig:cascade,tab:cascade}).
+With the same cap on refusing episodes halted, no pairing catches more leaking episodes than the probe alone with a stricter threshold, and the pairing with Jev catches fewer (\cref{fig:cascade,tab:cascade}).
 At these strict thresholds the second detector misses most leaking episodes on its own.
 Every threshold is chosen on the test episodes, which favours the pairings because they have more thresholds to tune.
 
