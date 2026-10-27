@@ -19,7 +19,7 @@ Its example episodes are chosen by one fixed rule: for each model, the leaking t
   \includegraphics[width=\linewidth]{fig6_trajectories.pdf}
   \caption{\textbf{On average, the score jumps at the call that leaks.}
   Last-prompt probe score, as a percentile among that model's scored calls, aligned on each episode's leaking call (top: median over all leaking episodes, with the middle 50\% shaded for test episodes).
-  Bottom: one example test episode per model, chosen by the rule above; individual episodes vary.}
+  Bottom: one example test episode per model, chosen by the rule above; individual episodes vary. Numbers at the leaking call give the median percentile there.}
   \label{fig:trajectories}
 \end{figure}
 
@@ -55,7 +55,7 @@ A deployed alarm would need its threshold set per episode, as \citet{gao2026} al
   \includegraphics[width=\linewidth]{fig7_alarm_tradeoffs.pdf}
   \caption{\textbf{Leaking calls caught against refusing calls alarmed, as the threshold moves.}
   Rates are unstratified, counted over all calls, and negatives are calls in episodes that never leak; circles mark the probe's threshold set on control calls, which for the gpt-oss-20b test episodes is the frozen threshold, and squares mark Jev at the same share of refusing calls alarmed.
-  Jev on gpt-oss-20b was scored only on development episodes.}
+  Jev on gpt-oss-20b was scored only on development episodes. Labels give the share of leaking calls caught and of refusing calls alarmed at each marker.}
   \label{fig:alarm-tradeoff}
 \end{figure}
 
@@ -80,7 +80,7 @@ Every threshold is chosen on the test episodes, which favours the pairings becau
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.7\linewidth]{fig9_cascade.pdf}
-  \caption{\textbf{A second check on the same input does not improve the trade-off.} Leaking episodes caught against refusing episodes halted, as thresholds move, on Qwen3-32B test episodes, for the probe alone and for the probe at its lenient threshold paired with Jev or with the bag-of-words classifier.}
+  \caption{\textbf{A second check on the same input does not improve the trade-off.} Leaking episodes caught against refusing episodes halted, as thresholds move, on Qwen3-32B test episodes, for the probe alone and for the probe at its lenient threshold paired with Jev or with the bag-of-words classifier. Dots mark the thresholds chosen for at most 5\% and at most 10\% of refusing episodes halted; the numbers above those lines are the share of leaking episodes caught there (\cref{tab:cascade}).}
   \label{fig:cascade}
 \end{figure}
 

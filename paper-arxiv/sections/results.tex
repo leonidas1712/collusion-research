@@ -51,7 +51,7 @@ Individual episodes vary, and \cref{app:ahead} shows examples chosen by a fixed 
   \centering
   \includegraphics[width=\linewidth]{fig6_trajectory_aggregate.pdf}
   \caption{\textbf{The probe score jumps at the call that leaks.}
-  Median last-prompt probe score over all leaking episodes, as a percentile among that model's scored calls, aligned on each episode's leaking call; the shaded band is the middle 50\% of test episodes.}
+  Median last-prompt probe score over all leaking episodes, as a percentile among that model's scored calls, aligned on each episode's leaking call; the shaded band is the middle 50\% of test episodes. Numbers at the leaking call give the median percentile there.}
   \label{fig:trajectory-main}
 \end{figure}
 
@@ -97,7 +97,7 @@ Whether it reads a decision to emit or the situation that prompts one is open (\
   \centering
   \includegraphics[width=0.7\linewidth]{fig7_qwen_alarms.pdf}
   \caption{\textbf{At the same share of calls flagged, the probe catches far more leaks than the zero-shot monitor.}
-  Share of leaking calls caught against the share of calls in refusing episodes flagged, as the threshold moves, on Qwen3-32B test episodes; the filled circle is the probe at its threshold set on control calls, the filled square is Jev at the same share of calls flagged, and the hollow diamond is the stricter per-episode threshold, plotted at its per-call rates.}
+  Share of leaking calls caught against the share of calls in refusing episodes flagged, as the threshold moves, on Qwen3-32B test episodes; the filled circle is the probe at its threshold set on control calls, the filled square is Jev at the same share of calls flagged, and the hollow diamond is the stricter per-episode threshold, plotted at its per-call rates. Labels give the share of leaking calls caught and of refusing-episode calls flagged at each marker.}
   \label{fig:qwen-alarms}
 \end{figure}
 
