@@ -30,8 +30,6 @@ In the per-call setup, we replace every copy of the secret with a placeholder, s
 
 \begin{table}[h]
   \centering
-  \caption{\textbf{The text-monitor setups.} Every round-level setup combines one monitor, the detector or forecaster question, and one level of access. The per-call setup uses Jev with the per-call question and everything the target saw.}
-  \label{tab:monitor-setups}
   \small
   \begin{tabular}{@{}lp{0.68\linewidth}@{}}
     \toprule
@@ -53,6 +51,8 @@ In the per-call setup, we replace every copy of the secret with a placeholder, s
     Everything seen & Adds the target's unposted text and every tool result. \\
     \bottomrule
   \end{tabular}
+  \caption{\textbf{The text-monitor setups.} Every round-level setup combines one monitor, the detector or forecaster question, and one level of access. The per-call setup uses Jev with the per-call question and everything the target saw.}
+  \label{tab:monitor-setups}
 \end{table}
 
 \subsection{How well does each round-level setup rank the calls?}
@@ -73,10 +73,10 @@ We left out Luna Decisions because it scored at chance as a forecaster on the de
 
 \begin{table}[h]
   \centering
-  \caption{\textbf{Most round-level setups are close to chance.} AUROC within scenario and round, with 95\% bootstrap intervals, on the Qwen3-32B development episodes. ``Ever'' asks whether the episode leaks at any point. ``This round or next'' asks whether it leaks in the current round or the next.}
-  \label{tab:monitor-grid}
   \small
   \input{tables/monitor_grid.tex}
+  \caption{\textbf{Most round-level setups are close to chance.} AUROC within scenario and round, with 95\% bootstrap intervals, on the Qwen3-32B development episodes. ``Ever'' asks whether the episode leaks at any point. ``This round or next'' asks whether it leaks in the current round or the next.}
+  \label{tab:monitor-grid}
 \end{table}
 
 \subsection{How does Jev score a single call, and why does it fail on gpt-oss-20b?}
@@ -108,8 +108,6 @@ The reasoning raises Jev's score but leaves its ranking inverted.
 
 \begin{table}[h]
   \centering
-  \caption{\textbf{Jev scored on the same calls as the per-call probe.} AUROC within scenario and round, with 95\% bootstrap intervals, on the development episodes. ``Unstratified'' is the AUROC over all calls without grouping by scenario and round. The flag rates use the alarm cutoff set on control episodes, and ``non-leaking'' means calls in episodes that never leak. The main text reports the gpt-oss-20b row with reasoning.}
-  \label{tab:monitor-percall}
   \small
   \begin{tabular}{@{}lccccc@{}}
     \toprule
@@ -122,4 +120,6 @@ The reasoning raises Jev's score but leaves its ranking inverted.
     \quad without reasoning & \gptossCallJevNoReasoning{} \gptossCallJevNoReasoningCI{} & \gptossCallJevNoReasoningUnstratified{} & \gptossCallJevNoReasoningLeakFlagged{} & \gptossCallJevNoReasoningRefusingFlagged{} & \gptossCallProbeMinusJevNoReasoning{} \gptossCallProbeMinusJevNoReasoningCI{} \\
     \bottomrule
   \end{tabular}
+  \caption{\textbf{Jev scored on the same calls as the per-call probe.} AUROC within scenario and round, with 95\% bootstrap intervals, on the development episodes. ``Unstratified'' is the AUROC over all calls without grouping by scenario and round. The flag rates use the alarm cutoff set on control episodes, and ``non-leaking'' means calls in episodes that never leak. The main text reports the gpt-oss-20b row with reasoning.}
+  \label{tab:monitor-percall}
 \end{table}

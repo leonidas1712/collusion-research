@@ -30,13 +30,13 @@ The Qwen3-32B test episodes contain none from the main scenario, and in the gpt-
 
 \begin{table}[h]
   \centering
-  \caption{Episodes collected or replayed, scored and excluded (top), and the test episodes by scenario (bottom).}
-  \label{tab:attrition}
   \small
   \input{tables/datasets_attrition.tex}
 
   \vspace{0.5em}
   \input{tables/datasets_fresh.tex}
+  \caption{Episodes collected or replayed, scored and excluded (top), and the test episodes by scenario (bottom).}
+  \label{tab:attrition}
 \end{table}
 
 \paragraph{Leaking episodes and leaking calls.}
@@ -47,19 +47,19 @@ Those episodes stay in the scored set through their earlier calls, which are lab
 
 \begin{table}[h]
   \centering
-  \caption{Leaking episodes and leaking calls with reasoning, gpt-oss-20b.}
-  \label{tab:reasoning-coverage}
   \footnotesize
   \setlength{\tabcolsep}{3pt}
   \input{tables/reasoning_coverage.tex}
+  \caption{Leaking episodes and leaking calls with reasoning, gpt-oss-20b.}
+  \label{tab:reasoning-coverage}
 \end{table}
 
 \begin{table}[h]
   \centering
-  \caption{Qwen3-32B test calls: leaking calls, earlier calls in leaking episodes, calls in refusing episodes, and control calls, which are counted separately.}
-  \label{tab:qwen-accounting}
   \small
   \input{tables/qwen_call_accounting.tex}
+  \caption{Qwen3-32B test calls: leaking calls, earlier calls in leaking episodes, calls in refusing episodes, and control calls, which are counted separately.}
+  \label{tab:qwen-accounting}
 \end{table}
 
 \paragraph{Reading the activations.}
@@ -76,10 +76,10 @@ A second provider served a small share of requests with a less exact rendering, 
 
 \begin{table}[h]
   \centering
-  \caption{Replay fidelity: loss of the actual reply tokens under the replayed model, and top-5 token agreement.}
-  \label{tab:replay}
   \small
   \input{tables/replay.tex}
+  \caption{Replay fidelity: loss of the actual reply tokens under the replayed model, and top-5 token agreement.}
+  \label{tab:replay}
 \end{table}
 
 \paragraph{Generation and inference settings.}
@@ -88,27 +88,27 @@ The chosen layers are those of the frozen per-call probes, one per seed.
 
 \begin{table}[h]
   \centering
-  \caption{Generation and inference settings.}
-  \label{tab:settings}
   \small
   \input{tables/settings.tex}
+  \caption{Generation and inference settings.}
+  \label{tab:settings}
 \end{table}
 
 The detector settings and the rules for splits and families are in \cref{tab:detector-settings,tab:split-settings}.
 
 \begin{table}[h]
   \centering
-  \caption{Settings of the trained text classifier, the neural-network probe and the incoming-only probe.}
-  \label{tab:detector-settings}
   \small
   \input{tables/detector_settings.tex}
+  \caption{Settings of the trained text classifier, the neural-network probe and the incoming-only probe.}
+  \label{tab:detector-settings}
 \end{table}
 
 \begin{table}[h]
   \centering
-  \caption{How families of related episodes and the inner validation splits are defined.}
-  \label{tab:split-settings}
   \small
   \input{tables/split_settings.tex}
+  \caption{How families of related episodes and the inner validation splits are defined.}
+  \label{tab:split-settings}
 \end{table}
 

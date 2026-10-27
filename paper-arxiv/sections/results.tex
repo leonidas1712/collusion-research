@@ -5,8 +5,6 @@
 
 \begin{table}[t]
   \centering
-  \caption{\textbf{Results at a glance: will this call leak?} AUROC within scenario and round, with the leak label of \cref{sec:setup}; intervals are shown in the figures. ``One call earlier?'' asks whether the next call will leak, with the leaking call itself removed. Development results are on held-out scenarios.}
-  \label{tab:glance}
   \small
   \begin{tabular}{@{}llcc@{}}
     \toprule
@@ -26,6 +24,8 @@
     Ever? & last-prompt probe & \qwenEverProbe{} & \gptossEverProbe{} \\
     \bottomrule
   \end{tabular}
+  \caption{\textbf{Results at a glance: will this call leak?} AUROC within scenario and round, with the leak label of \cref{sec:setup}; intervals are shown in the figures. ``One call earlier?'' asks whether the next call will leak, with the leaking call itself removed. Development results are on held-out scenarios.}
+  \label{tab:glance}
 \end{table}
 
 \subsection{The call that leaks is readable before it acts}

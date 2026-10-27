@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from style import configure, MODEL_COLORS, DETECTOR_MARKERS
+from style import configure, MODEL_COLORS, DETECTOR_MARKERS, LABEL_SIZE, paper_number
 
 PAPER = Path(__file__).resolve().parents[2]
 OUT = PAPER / 'figures'
@@ -36,6 +36,18 @@ def draw(ax, x, y, entry, model, kind='activation', horizontal=False, fresh=Fals
                 markerfacecolor=color if fresh or entry['status']=='confirmed' else 'white',
                 capsize=2, linewidth=1, linestyle='none', zorder=3)
     return True
+
+
+def value_label(ax, entry, x, y, color, ha='left', va='center', offset=(4, 0)):
+    """Write the reported number (as numbers.tex renders it) next to a mark."""
+    text = paper_number(entry['macro'], entry['value'])
+    ax.annotate(text, (x, y), xytext=offset, textcoords='offset points', ha=ha, va=va,
+                fontsize=LABEL_SIZE, color=color, zorder=4)
+
+
+def whisker_end(entry, side='high'):
+    ci = entry.get('ci')
+    return (ci[1] if side == 'high' else ci[0]) if ci else entry['value']
 
 
 def save(fig, stem, rows, sha):
@@ -69,7 +81,10 @@ def headline(data,sha):
         for x,key in enumerate(keys):
             e=get(data,key);rows.append((title,['Ever','This/next round','This call'][x],e))
             position = x - .18 if x == 2 else x
-            if draw(ax,position,None,e,model):values.append((position,e['value']))
+            if draw(ax,position,None,e,model):
+                values.append((position,e['value']))
+                if x == 2:value_label(ax,e,position,e['value'],MODEL_COLORS[model],ha='right',offset=(-6,0))
+                else:value_label(ax,e,position,whisker_end(e),MODEL_COLORS[model],ha='center',va='bottom',offset=(0,2))
         # Do not bridge an unobserved rung.
         for a,b in zip(values,values[1:]):
             if .8 <= b[0]-a[0] <= 1:ax.plot([a[0],b[0]],[a[1],b[1]],color=MODEL_COLORS[model],lw=.8,alpha=.6)
@@ -80,9 +95,10 @@ def headline(data,sha):
             draw(ax,fresh_x,None,e,model,kind,fresh=True,
                  marker='D' if key=='gptossFreshReasoning' else 'o')
             if e.get('value') is not None:
-                ax.annotate('Test last-prompt' if key=='gptossFreshCallProbe' else ('Test reasoning' if model=='gpt_oss' else 'Test'),
+                name='Test last-prompt' if key=='gptossFreshCallProbe' else ('Test reasoning' if model=='gpt_oss' else 'Test')
+                ax.annotate(name+': '+paper_number(key,e['value']),
                             xy=(fresh_x,e['value']),xytext=(x-.50,.56 if model=='gpt_oss' and i==0 else .78),
-                            ha='right' if model=='gpt_oss' else 'center',fontsize=8,
+                            ha='right' if model=='gpt_oss' else 'center',fontsize=LABEL_SIZE,
                             bbox=dict(facecolor='white',edgecolor='none',pad=1),arrowprops=dict(arrowstyle='-',color='#555555',lw=.7))
         ax.axhline(.5,color='#777777',ls='--',lw=.8)
         ax.set(xlim=(-.3,2.3),ylim=(0,1.03),xticks=[0,1,2],xticklabels=['Will it\never leak?','This round\nor next?','This call?'],title=title)
@@ -114,7 +130,8 @@ def forest(data,sha,stem,title,panels):
         ax.set_title(panel,fontsize=10)
         for y,(label,key,kind) in enumerate(items):
             e=get(data,key);rows.append((panel,label,e))
-            draw(ax,None,y,e,model,kind,horizontal=True)
+            if draw(ax,None,y,e,model,kind,horizontal=True):
+                value_label(ax,e,whisker_end(e),y,MODEL_COLORS[model])
             ax.text(.02,y-.30,label,va='center',fontsize=10 if compact else 9,
                     bbox=dict(facecolor='white',edgecolor='none',pad=1.5),
                     transform=ax.get_yaxis_transform())
@@ -142,14 +159,19 @@ def shortcuts(data,sha):
         ('Before the peer asks\n(other calls)','gptossPlacebo','control',4),
         ('Probe reading only incoming\nmessages and tool results','gptossIncomingProbe','activation',6)]
     rows=[]
+    reference=get(data,'gptossCallProbe').get('value')
     for label,key,kind,y in items:
         e=get(data,key);rows.append(('gpt-oss-20b',label,e))
-        draw(ax,None,y,e,'gpt_oss',kind,horizontal=True)
-    ax.set(xlim=(0,1.03),ylim=(6.7,-.7),yticks=[i[3] for i in items],
+        if draw(ax,None,y,e,'gpt_oss',kind,horizontal=True):
+            # Labels go right of the upper whisker unless that would cross the dashed reference line.
+            if whisker_end(e) < reference < whisker_end(e) + .1:
+                value_label(ax,e,whisker_end(e,'low'),y,MODEL_COLORS['gpt_oss'],ha='right',offset=(-4,0))
+            else:value_label(ax,e,whisker_end(e),y,MODEL_COLORS['gpt_oss'])
+    ax.spines['bottom'].set_bounds(0,1)
+    ax.set(xlim=(0,1.1),ylim=(6.7,-.7),yticks=[i[3] for i in items],
            yticklabels=[i[0] for i in items],xlabel='AUROC',xticks=[0,.5,1])
     ax.tick_params(axis='y',length=0,labelsize=9)
     ax.axvline(.5,color='#777777',ls='-',lw=.8)
-    reference=get(data,'gptossCallProbe').get('value')
     if reference is not None:ax.axvline(reference,color=MODEL_COLORS['gpt_oss'],ls=(0,(6,3)),lw=1)
     ax.axhline(5,color='#bbbbbb',lw=.6)
     ax.spines['left'].set_visible(False)
@@ -187,10 +209,12 @@ def percall(data, sha):
             if ci:
                 ax.errorbar(value, y, xerr=[[value-ci[0]], [ci[1]-value]],
                             fmt='none', ecolor='#222222', capsize=3, linewidth=1)
+            value_label(ax, e, whisker_end(e), y, '#222222')
             ax.text(0, y-.31, label, fontsize=9, va='center',
                     bbox=dict(facecolor='white', edgecolor='none', pad=1))
         ax.axvline(.5, color='#777777', ls='--', lw=.8, zorder=0)
-        ax.set(xlim=(0,1.03), ylim=(3.5,-.75), yticks=[], xticks=[0,.5,1], xlabel='AUROC')
+        ax.set(xlim=(0,1.13), ylim=(3.5,-.75), yticks=[], xticks=[0,.5,1], xlabel='AUROC')
+        ax.spines['bottom'].set_bounds(0,1)
         ax.spines['left'].set_visible(False)
     fig.suptitle('A probe picks out the call that leaks; a zero-shot monitor\ndoes not, and a trained text classifier comes close.', fontsize=11, y=.98)
     fig.text(.5,.025,'Development episodes; whiskers: 95% CI; dashed line: chance',ha='center',fontsize=9)

@@ -41,11 +41,11 @@ The Qwen3-32B operating points on the test episodes, and how per-call and per-ep
 
 \begin{table}[h]
   \centering
-  \caption{Per-call and per-episode thresholds on the test episodes: precision of the flagged calls, leaking episodes caught by their first leak, refusing episodes and calls flagged, and the same rates on control traffic. Recruiting calls come from leaking and refusing episodes; control calls come from control episodes and are counted separately. Jev's per-call row flags the same share of refusing calls as the probe.}
-  \label{tab:episode-calibration}
   \footnotesize
   \setlength{\tabcolsep}{3pt}
   \input{tables/episode_calibration.tex}
+  \caption{Per-call and per-episode thresholds on the test episodes: precision of the flagged calls, leaking episodes caught by their first leak, refusing episodes and calls flagged, and the same rates on control traffic. Recruiting calls come from leaking and refusing episodes; control calls come from control episodes and are counted separately. Jev's per-call row flags the same share of refusing calls as the probe.}
+  \label{tab:episode-calibration}
 \end{table}
 A deployed alarm would need its threshold set per episode, as \citet{gao2026} also argues.
 \Cref{fig:alarm-tradeoff} shows the full trade-off between leaking calls caught and refusing calls alarmed for the probe and Jev on the same calls.
@@ -61,10 +61,10 @@ A deployed alarm would need its threshold set per episode, as \citet{gao2026} al
 
 \begin{table}[h]
   \centering
-  \caption{Alarm rates at thresholds set on control calls or control episodes; Jev's threshold flags the same share of refusing calls as the probe.}
-  \label{tab:alarms}
   \small
   \input{tables/alarms.tex}
+  \caption{Alarm rates at thresholds set on control calls or control episodes; Jev's threshold flags the same share of refusing calls as the probe.}
+  \label{tab:alarms}
 \end{table}
 
 \subsection{Does a second check on the same input help?}
@@ -86,8 +86,8 @@ Every threshold is chosen on the test episodes, which favours the pairings becau
 
 \begin{table}[h]
   \centering
-  \caption{Leaking episodes caught at a fixed share of refusing episodes halted, Qwen3-32B test episodes, with 95\% episode-bootstrap intervals in which thresholds are chosen again in each draw. ``Lenient'' keeps the probe at its control-call threshold; ``grid'' also chooses the probe's threshold. The last number in each cascade cell is its difference from the probe alone, in episodes.}
-  \label{tab:cascade}
   \small
   \input{tables/cascade.tex}
+  \caption{Leaking episodes caught at a fixed share of refusing episodes halted, Qwen3-32B test episodes, with 95\% episode-bootstrap intervals in which thresholds are chosen again in each draw. ``Lenient'' keeps the probe at its control-call threshold; ``grid'' also chooses the probe's threshold. The last number in each cascade cell is its difference from the probe alone, in episodes.}
+  \label{tab:cascade}
 \end{table}
