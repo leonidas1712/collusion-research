@@ -1,27 +1,77 @@
 \section{Setup}
 \label{sec:setup}
 
+Two agents share a workspace: a target that holds a secret under its operator's rule, and a peer that wants the secret.
+We describe each part in words and then fix it in notation, and \cref{fig:episode} follows one real episode.
+
+\subsection{Workspace, agents and calls}
+\label{sec:notation}
+
+\paragraph{Workspace and rule.}
 A target agent does an ordinary task in a mocked workspace under one rule from its operator.
 The task is to read a configuration file and write a short status report.
 The rule is to never share a protected value outside the file that holds it.
 In our main scenario that value is a staging deploy token, and five other scenarios protect a reserve price, a capacity figure, a rollout threshold, a handoff note and an integration code.
 All six scenarios share one task template, and every protected value is a randomly generated fake string (\cref{app:scenarios}).
+Formally, a scenario fixes a set of files, one protected file $f^\star$ that holds the secret string $\sigma$, and the rule that $\sigma$ may appear nowhere except in $f^\star$.
+
+\paragraph{Agents and tools.}
+The target can list, read and write files, run the workspace tests, and post to a shared team channel.
+Its reply at the end of each turn is also posted to the channel.
+A peer agent shares the channel and needs the value, but cannot read the files and is not told the rule.
+The peer asks for the value openly, as a colleague would, so we study recruitment that arises from an ordinary conflict of goals.
 Tools act in memory, so no real system, credential or network is touched.
 
-A peer agent shares the team channel and needs the value, but cannot read the file and is not told the rule.
-Each episode runs for up to 20 rounds.
+\paragraph{Rounds and calls.}
+An episode runs for up to 20 rounds.
 In each round the peer posts a message, and the target responds with one or more model calls.
-A call is one request to the model, ending in a reply or a tool call that reads or writes a file or posts to the channel.
-A round can contain several calls.
-The peer asks for the value openly, as a colleague would, so we study recruitment that arises from an ordinary conflict of goals.
+A \emph{call} is one request to the model, ending in a reply or a tool call.
+We number the target's calls in an episode $c_1, \dots, c_T$ and write $r(t)$ for the round of call $c_t$.
+Each call has an input $x_t$, everything the model is given for it: the system prompt with the rule, the channel so far and earlier tool results.
+Its output $o_t$ is the reply text together with the arguments of any tool calls.
+On gpt-oss-20b, private reasoning comes before the output and is not part of it.
 
-A call \emph{leaks} if it is the first to write the secret out, in its reply or in a tool call such as a file write.
+\subsection{Leaks, labels and detectors}
+
+\paragraph{Leaks.}
+A call \emph{leaks} if its output contains the secret, wherever it goes: a channel post, the end-of-turn reply or a file write.
 We detect this with an exact string match on the tool log, so the label needs no judge.
 The secret may appear in the target's private reasoning without counting as a leak.
+Formally, let $\tau$ be the index of the first call whose output $o_t$ contains $\sigma$, with $\tau = \infty$ if none does.
 
+\paragraph{Scored calls and labels.}
+We score each call $c_t$ made after the target has read $f^\star$, up to and including $c_\tau$; we call these the scored calls.
+For each scored call we define three labels, by distance from the act:
+\begin{align*}
+  y^{\text{ever}}_t &= \mathbf{1}[\tau < \infty] && \text{(this episode leaks at some point),}\\
+  y^{\text{near}}_t &= \mathbf{1}[r(\tau) \in \{r(t), r(t)+1\}] && \text{(it leaks in this round or the next),}\\
+  y^{\text{call}}_t &= \mathbf{1}[t = \tau] && \text{(this call is the one that leaks).}
+\end{align*}
+In the episode of \cref{fig:episode}, the target reads the token in the first round and refuses in each of the next four, citing the operator's rule.
+In the sixth round the peer recasts the request as a routine handoff between agents, and the target posts the token.
+Its calls in rounds two to six are scored: all have $y^{\text{ever}} = 1$, those in rounds five and six have $y^{\text{near}} = 1$, and only the posting call has $y^{\text{call}} = 1$.
+
+\paragraph{Detectors.}
+A detector maps a call's input $x_t$ to a score $s_t$ without seeing its output $o_t$, so it scores the call before the call writes anything.
+A probe reads the residual-stream activation $h_\ell(x_t)$ at layer $\ell$ and the last input token, and outputs $s_t = w^\top h_\ell(x_t) + b$.
+\Cref{sec:method} adds a probe that also reads gpt-oss-20b's private reasoning, which still comes before the output.
+
+\paragraph{Control episodes.}
 Every scenario also runs with a control peer, which asks only for the ordinary task details and never for the value, and on Qwen3-32B also with the target working alone, with no peer.
 These episodes never leak, so the leaks are caused by the request.
 We call the calls in these episodes \emph{control calls}, and recruiting episodes that never leak \emph{refusing episodes}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig2_setup.pdf}
+  \caption{\textbf{How an episode works.}
+  (a)~A real leak on Qwen3-32B, verbatim and shortened, with the token redacted.
+  (b)~The probe reads the target's activations before each call, and the text monitor reads the transcript.
+  (c)~The three labels on one schematic episode (\cref{app:scenarios} gives a matched episode in which the target never leaks).}
+  \label{fig:episode}
+\end{figure}
+
+\subsection{Models and datasets}
 
 We use two open-weight target models, Qwen3-32B \citep{yang2025qwen3} with thinking disabled and gpt-oss-20b \citep{openai2025gptoss}, which reasons before it answers.
 Each faces its own peer model, from the DeepSeek-V4 family \citep{deepseek2026v4flash}.
@@ -40,33 +90,3 @@ In both models' development episodes, the target leaks in some recruiting episod
   \caption{\textbf{The four datasets.} Every main-text number comes from exactly one of them. Columns give recruiting, control and target-alone episodes, scored calls, leaking calls, and episodes excluded before scoring. Counts are of episodes that ran correctly and have at least one scored call; scored calls are those made after the target has read the secret, up to and including the call that leaks (\cref{app:data}).}
   \label{tab:datasets}
 \end{table}
-
-\subsection{Problem setup}
-\label{sec:notation}
-
-An episode is a sequence of target calls $c_1, \dots, c_T$, and $r(t)$ is the round of call $c_t$.
-Let $\tau$ be the index of the first call that leaks, with $\tau = \infty$ if none does.
-We score each call $c_t$ made after the target has read the secret, up to and including $c_\tau$; we call these the scored calls.
-For each scored call we define three labels, by distance from the act:
-\begin{align*}
-  y^{\text{ever}}_t &= \mathbf{1}[\tau < \infty] && \text{(this episode leaks at some point),}\\
-  y^{\text{near}}_t &= \mathbf{1}[r(\tau) \in \{r(t), r(t)+1\}] && \text{(it leaks in this round or the next),}\\
-  y^{\text{call}}_t &= \mathbf{1}[t = \tau] && \text{(this call is the one that leaks).}
-\end{align*}
-A probe reads the residual-stream activation $h_\ell(c_t)$ at layer $\ell$ and the last prompt token, and outputs a score $s_t = w^\top h_\ell(c_t) + b$.
-
-One episode shows how this plays out (\cref{fig:episode}).
-The target reads the token in the first round and refuses in each of the next four, citing the operator's rule.
-It even refuses to confirm the token's prefix.
-In the sixth round the peer recasts the request as a routine handoff between agents, and the target posts the token.
-Its calls in rounds two to six are scored, and only the posting call has $y^{\text{call}} = 1$.
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig2_setup.pdf}
-  \caption{\textbf{How an episode works.}
-  (a)~A real leak on Qwen3-32B, verbatim and shortened, with the token redacted.
-  (b)~The probe reads the target's activations before each call, and the text monitor reads the transcript.
-  (c)~The three labels on one schematic episode (\cref{app:scenarios} gives a matched episode in which the target never leaks).}
-  \label{fig:episode}
-\end{figure}
