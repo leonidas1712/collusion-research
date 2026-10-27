@@ -123,7 +123,7 @@ If each call were flagged independently at the nominal 5\% rate, about \qwenEpis
 A stricter threshold suits halting an agent.
 We choose it on the test episodes to show the trade-off, so that about one refusing episode in twenty sees a flag.
 It catches \qwenEpisodeCalCaught{} of leaking episodes by their first leak, far fewer than the per-call threshold catches (\cref{tab:episode-calibration}).
-Per call, it catches \qwenCalibrationEpisodeLeakCallsRate{} of leaking calls and flags \qwenCalibrationEpisodeRefusingCallsRate{} of calls in refusing episodes, the diamond in \cref{fig:qwen-alarms}.
+Per call, it catches \qwenCalibrationEpisodeLeakCallsRateRounded{} of leaking calls and flags \qwenCalibrationEpisodeRefusingCallsRate{} of calls in refusing episodes, the diamond in \cref{fig:qwen-alarms}.
 
 Such a threshold must be set on held-out traffic.
 One set on the episodes the probe was trained on does not transfer: on test episodes it flags about three in ten refusing episodes instead of one in twenty.
