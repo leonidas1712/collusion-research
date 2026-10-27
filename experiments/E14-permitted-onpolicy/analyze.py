@@ -18,6 +18,11 @@ E08_SCORES = ROOT / 'runs/20261026-1717-e08-policy-counterfactual/scores.csv'
 REPS, SEED = 1000, 20261028
 
 
+def _keep(value, digits=None):
+    """Store full precision; rounding happens once, at registration."""
+    return value
+
+
 def wilson(k, n, z=1.96):
     if not n:
         return None
@@ -25,7 +30,7 @@ def wilson(k, n, z=1.96):
     d = 1 + z * z / n
     c = (p + z * z / (2 * n)) / d
     h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
-    return [round(c - h, 3), round(c + h, 3)]
+    return [_keep(c - h, 3), _keep(c + h, 3)]
 
 
 def auroc(pos, neg):
@@ -63,7 +68,7 @@ def boot(rows, stat):
         if v is not None:
             out.append(v)
     out.sort()
-    return [round(out[int(0.025 * len(out))], 3), round(out[int(0.975 * len(out)) - 1], 3)] if out else None
+    return [_keep(out[int(0.025 * len(out))], 3), _keep(out[int(0.975 * len(out)) - 1], 3)] if out else None
 
 
 def boot_diff(a, b, stat):
@@ -81,7 +86,7 @@ def boot_diff(a, b, stat):
         sb = [r for e in (rng.choice(gb) for _ in gb) for r in e]
         out.append(stat(sa) - stat(sb))
     out.sort()
-    return [round(out[int(0.025 * REPS)], 3), round(out[int(0.975 * REPS) - 1], 3)]
+    return [_keep(out[int(0.025 * REPS)], 3), _keep(out[int(0.975 * REPS) - 1], 3)]
 
 
 def describe(scores, thr):
@@ -89,8 +94,8 @@ def describe(scores, thr):
         return {'n': 0}
     q = st.quantiles(scores, n=4) if len(scores) > 1 else [scores[0]] * 3
     k = sum(s > thr for s in scores)
-    return {'n': len(scores), 'median': round(st.median(scores), 3), 'iqr': [round(q[0], 3), round(q[2], 3)],
-            'over_threshold': k, 'share_over_threshold': round(k / len(scores), 3), 'wilson95': wilson(k, len(scores))}
+    return {'n': len(scores), 'median': _keep(st.median(scores), 3), 'iqr': [_keep(q[0], 3), _keep(q[2], 3)],
+            'over_threshold': k, 'share_over_threshold': _keep(k / len(scores), 3), 'wilson95': wilson(k, len(scores))}
 
 
 def med(rows):
@@ -123,7 +128,7 @@ def main(a):
                'leak_rounds': sorted(r['round'] for r in f_leak),
                'leaking_calls': describe([r['score'] for r in f_leak], thr),
                'non_leaking_calls': describe([r['score'] for r in f_non], thr),
-               'within_round_auroc': round(within_round_auroc(disp), 3),
+               'within_round_auroc': _keep(within_round_auroc(disp), 3),
                'within_round_auroc_ci': boot(disp, within_round_auroc)},
            'all_test_leaking_calls': describe([r['score'] for r in all_leak], thr),
            'control_reference': 'Test control calls were not scored in saved outputs. By construction 5% of development control calls exceed the threshold; on test episodes 5.5% of calls in refusing episodes do (runs/20261026-2224-e05-arxiv-fresh-comparisons).',
@@ -144,11 +149,11 @@ def main(a):
             'sharing_rounds': sorted(r['round'] for r in share),
             'sharing_calls': describe([r['score'] for r in share], thr),
             'pre_sharing_calls': describe([r['score'] for r in pre], thr),
-            'median_diff_vs_forbidden_leaks': round(med(share) - med(f_leak), 3) if share else None,
+            'median_diff_vs_forbidden_leaks': _keep(med(share) - med(f_leak), 3) if share else None,
             'median_diff_ci': boot_diff(share, f_leak, med) if share else None,
-            'pooled_auroc_sharing_vs_pre': round(auroc([r['score'] for r in share], [r['score'] for r in pre]), 3) if share and pre else None,
+            'pooled_auroc_sharing_vs_pre': _keep(auroc([r['score'] for r in share], [r['score'] for r in pre]), 3) if share and pre else None,
             'pooled_auroc_ci': boot(ar, lambda s: auroc([r['score'] for r in s if r['label']], [r['score'] for r in s if not r['label']])) if share and pre else None,
-            'within_round_auroc': round(within_round_auroc(ar), 3) if within_round_auroc(ar) is not None else None,
+            'within_round_auroc': _keep(within_round_auroc(ar), 3) if within_round_auroc(ar) is not None else None,
             'within_round_auroc_ci': boot(ar, within_round_auroc) if within_round_auroc(ar) is not None else None,
             'rounds_with_sharing_and_pre_sharing_calls': len(rounds_with_both)}
         # round-matched: forbidden leaks in rounds where this arm also shares
@@ -175,14 +180,14 @@ def main(a):
         def boot_med(cond):
             vals = dict(zip(leak, paired(cond)))
             out = sorted(st.median(vals[c] for k in (rng.choice(keys) for _ in keys) for c in fam[k]) for _ in range(REPS))
-            return [round(out[25], 3), round(out[974], 3)]
+            return [_keep(out[25], 3), _keep(out[974], 3)]
         res['addon_e08_permit_no_consequence'] = {
             'reproduction_max_abs_deviation': dev, 'leaking_calls': len(leak),
-            **{f'median_{c}_minus_FORBID': round(st.median(paired(c)), 3) for c in ('PERMIT', 'NEUTRAL_EDIT', 'PERMIT_NO_CONSEQUENCE')},
+            **{f'median_{c}_minus_FORBID': _keep(st.median(paired(c)), 3) for c in ('PERMIT', 'NEUTRAL_EDIT', 'PERMIT_NO_CONSEQUENCE')},
             **{f'median_{c}_minus_FORBID_ci': boot_med(c) for c in ('PERMIT', 'NEUTRAL_EDIT', 'PERMIT_NO_CONSEQUENCE')},
-            'share_over_threshold': {c: round(sum((nc[x]['score'] if c == 'PERMIT_NO_CONSEQUENCE' else e08[x][c]) > thr for x in leak) / len(leak), 3)
+            'share_over_threshold': {c: _keep(sum((nc[x]['score'] if c == 'PERMIT_NO_CONSEQUENCE' else e08[x][c]) > thr for x in leak) / len(leak), 3)
                                      for c in ('FORBID', 'PERMIT', 'PERMIT_NO_CONSEQUENCE')},
-            'within_round_auroc_PERMIT_NO_CONSEQUENCE': round(within_round_auroc([{**r, 'round': int(r['round'])} for r in nc.values()]), 3)}
+            'within_round_auroc_PERMIT_NO_CONSEQUENCE': _keep(within_round_auroc([{**r, 'round': int(r['round'])} for r in nc.values()]), 3)}
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / 'results.json').write_text(json.dumps(res, indent=2) + '\n')
