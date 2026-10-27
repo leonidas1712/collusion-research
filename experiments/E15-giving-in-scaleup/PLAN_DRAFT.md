@@ -88,3 +88,15 @@ Reading: the probe reads the agent *giving in* (a disclosure it resisted), not "
    - **"Rises":** LATE's CI overlaps the forbidden rate.
 9. **Uncontested check:** per scenario, report the share round and whether any refusal or hedge came before the share. Classify calls by a rule fixed before running (e.g. a regex for refusal and hedge phrases).
 10. **Tone check:** save each peer's first-ask text per arm. Note that in E14 arm b, 18/29 episodes shared in round 2 after a re-ask, so EARLY also contains mild re-asking.
+
+## Revision 3 (28 Oct, after Leo's review): grow the forbidden comparison, and add a recency analysis
+
+- **The bottleneck is the forbidden comparison set.** Only 17 forbidden test leaks do not directly follow a read, and development episodes cannot be used because the probe was trained on them. **Add a FORBID arm:** new episodes with the normal rule and the normal peer on the 5 test scenarios, 20 per scenario, so 100 episodes. At the usual ~40% leak rate this gives about 40 new leaks, roughly half of them not directly after a read.
+- **Recency analysis, as a primary descriptive result.** For every sharing call in every arm, record how many calls have passed since the last read of the protected file (0, 1, 2, 3+). Report the crossing rate by that count and by arm, so that "how recently the value was read" and "giving in" can be seen separately.
+- **Total:** FORBID 100 + EARLY 80 (plus E14 arm b for dispatch) + LATE 100 = 280 episodes, about $6–7. Benchmark first.
+- **Write-up shape:**
+  1. Calls right after a read almost always fire, in every arm, and the arms differ in how many of their calls are like that.
+  2. So the comparison is split.
+  3. Within each split, and by the number of calls since the read, compare forbidden, early and late.
+  4. Report whatever comes out, positive or negative.
+  5. Future work: train probes that separate recency from giving in.
