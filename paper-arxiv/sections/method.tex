@@ -22,7 +22,7 @@ It is used zero-shot, with no training on our labels.
 
 \paragraph{Trained text classifier.}
 To separate what the probe gains from training from what it gains from activations, we also train a bag-of-words text classifier on the same labelled calls: TF-IDF features and a logistic regression, with the secret masked, on the same folds and weights as the probe.
-It reads either the call's full input or only the last message of that input; the figures show the latest message on Qwen3-32B and the full input on gpt-oss-20b, and \cref{app:shortcuts} reports both views for both models.
+It reads either the call's full input or only the latest message of that input; the figures show the latest message on Qwen3-32B and the full input on gpt-oss-20b, and \cref{app:shortcuts} reports both views for both models.
 
 \paragraph{A fair comparison.}
 Probes, the monitor and the classifier are scored on exactly the same calls, with the same labels.

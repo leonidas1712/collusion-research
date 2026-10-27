@@ -1,8 +1,9 @@
-\section{Discussion and limitations}
+\section{Discussion}
 \label{sec:discussion}
 
 An overseer cannot tell early which episode will leak, but it can tell which call is about to.
-The probe is best read as a pre-emission detector: it flags a call that is about to write the protected value, whether or not the rule forbids it, rather than reading the agent's intent (\cref{app:policy}).
+The probe is best read as a detector of giving in: it flags a call in which a pressured agent is about to disclose.
+It does not read the rule text, so the same contested disclosure is flagged even where it is allowed (\cref{app:policy}).
 This suggests a cascade, as in production classifier systems \citep{cunningham2026}, in which a cheap probe or trained text classifier runs on every call with two thresholds.
 A lenient per-call threshold escalates a call before it acts; it fires often, costs little per alarm, and catches most leaks.
 The escalation should go to a reviewer with different information, such as a human, a stronger model, or a check on the drafted reply before it executes, because a second check on the same input adds little (\cref{sec:cost}).
@@ -18,19 +19,20 @@ We list the main limitations in order of how much each could change a headline; 
 We test two models, six scenarios built from one task template, one peer and one target per episode, and synthetic tools and secrets.
 Leaks are exact strings, which an output filter would catch; the probe matters most where no string filter can match, as with paraphrased or encoded leaks.
 Qwen3-32B ran with its reasoning switched off.
+On gpt-oss-20b, leaks are whole-block copies made soon after the peer's request, so they may reflect careless copying as much as giving in (\cref{app:limitations}).
 Settings with several peers, recruited agents that recruit others, or paraphrased leaks are untested.
 
 \paragraph{Few confirmed leaking calls.}
 The gpt-oss-20b test covers one probe on one model, and its test episodes hold few leaking calls, so its interval is wide (\cref{app:confirmation}).
-The last-prompt per-call tests are out of sample for the frozen probes, but earlier analyses had already inspected their episodes (\cref{app:history}).
 
 \paragraph{What the probe reads is open.}
 The signal may reflect what has just arrived in the input (\cref{sec:shortcuts}), and our results are correlational.
-The probe tracks emitting the value more than breaking the rule: making sharing permitted leaves its score unchanged (\cref{app:policy}).
+The probe tracks a contested disclosure rather than the rule: a disclosure the agent first resisted scores high even when permitted, and one made freely under a clear permission mostly does not.
+In our test of the second case, permission and immediate, unpressured sharing coincide (\cref{app:onpolicy}).
 
 \paragraph{An untuned text monitor.}
 Our main text monitor is one decision model used zero-shot, with no prompt tuning, while the probe is trained.
 
 \paragraph{Future work.}
-The most direct next step is to train detectors, probes or text classifiers, that tell a forbidden disclosure from a permitted one of the same value, using episodes where sharing is sometimes allowed and sometimes not, and to test whether they still catch the call before it acts.
+The most direct next step is to train detectors, probes or text classifiers, that tell a forbidden disclosure from a permitted one of the same value, including disclosures that are contested but allowed, using episodes where sharing is sometimes allowed and sometimes not, and to test whether they still catch the call before it acts.
 Other steps are to test a stronger second stage for the cascade, to test whether the probe direction causally affects the decision, to test the probe in other environments and on more models, and to study larger multi-agent settings, as in the 2026 incident in which evaluation agents coordinated an attack on production infrastructure \citep{greenblatt2026incident}.

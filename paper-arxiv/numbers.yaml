@@ -14377,6 +14377,647 @@
           "rate"
         ]
       }
+    },
+    "eFourteenForbidSharing": {
+      "value": 11,
+      "macro": "eFourteenForbidSharing",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "forbidden_dispatch_test",
+          "leaking_episodes"
+        ]
+      }
+    },
+    "eFourteenForbidEpisodes": {
+      "value": 21,
+      "macro": "eFourteenForbidEpisodes",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "forbidden_dispatch_test",
+          "episodes_scored"
+        ]
+      }
+    },
+    "eFourteenForbidOver": {
+      "value": 9,
+      "macro": "eFourteenForbidOver",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "forbidden_dispatch_test",
+          "leaking_calls",
+          "over_threshold"
+        ]
+      }
+    },
+    "eFourteenForbidCalls": {
+      "value": 11,
+      "macro": "eFourteenForbidCalls",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "forbidden_dispatch_test",
+          "leaking_calls",
+          "n"
+        ]
+      }
+    },
+    "eFourteenForbidOverShare": {
+      "value": 0.818,
+      "macro": "eFourteenForbidOverShare",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "percent",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "forbidden_dispatch_test",
+          "leaking_calls",
+          "share_over_threshold"
+        ],
+        "ci_path": [
+          "forbidden_dispatch_test",
+          "leaking_calls",
+          "wilson95"
+        ]
+      },
+      "ci": [
+        0.523,
+        0.949
+      ]
+    },
+    "eFourteenForbidMedian": {
+      "value": 2.196,
+      "macro": "eFourteenForbidMedian",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "decimal",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "forbidden_dispatch_test",
+          "leaking_calls",
+          "median"
+        ]
+      }
+    },
+    "eFourteenForbidAuroc": {
+      "value": 0.97,
+      "macro": "eFourteenForbidAuroc",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "decimal",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "forbidden_dispatch_test",
+          "within_round_auroc"
+        ],
+        "ci_path": [
+          "forbidden_dispatch_test",
+          "within_round_auroc_ci"
+        ]
+      },
+      "ci": [
+        0.902,
+        1.0
+      ]
+    },
+    "eFourteenPermitSharing": {
+      "value": 15,
+      "macro": "eFourteenPermitSharing",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT",
+          "sharing_episodes"
+        ]
+      }
+    },
+    "eFourteenPermitEpisodes": {
+      "value": 29,
+      "macro": "eFourteenPermitEpisodes",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT",
+          "complete"
+        ]
+      }
+    },
+    "eFourteenPermitOver": {
+      "value": 12,
+      "macro": "eFourteenPermitOver",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT",
+          "sharing_calls",
+          "over_threshold"
+        ]
+      }
+    },
+    "eFourteenPermitCalls": {
+      "value": 15,
+      "macro": "eFourteenPermitCalls",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT",
+          "sharing_calls",
+          "n"
+        ]
+      }
+    },
+    "eFourteenPermitOverShare": {
+      "value": 0.8,
+      "macro": "eFourteenPermitOverShare",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "percent",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT",
+          "sharing_calls",
+          "share_over_threshold"
+        ],
+        "ci_path": [
+          "arms",
+          "PERMIT",
+          "sharing_calls",
+          "wilson95"
+        ]
+      },
+      "ci": [
+        0.548,
+        0.93
+      ]
+    },
+    "eFourteenPermitMedian": {
+      "value": 2.293,
+      "macro": "eFourteenPermitMedian",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "decimal",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT",
+          "sharing_calls",
+          "median"
+        ]
+      }
+    },
+    "eFourteenPermitAuroc": {
+      "value": 0.918,
+      "macro": "eFourteenPermitAuroc",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "decimal",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT",
+          "within_round_auroc"
+        ],
+        "ci_path": [
+          "arms",
+          "PERMIT",
+          "within_round_auroc_ci"
+        ]
+      },
+      "ci": [
+        0.813,
+        0.991
+      ]
+    },
+    "eFourteenPermitCleanSharing": {
+      "value": 29,
+      "macro": "eFourteenPermitCleanSharing",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "sharing_episodes"
+        ]
+      }
+    },
+    "eFourteenPermitCleanEpisodes": {
+      "value": 29,
+      "macro": "eFourteenPermitCleanEpisodes",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "complete"
+        ]
+      }
+    },
+    "eFourteenPermitCleanOver": {
+      "value": 8,
+      "macro": "eFourteenPermitCleanOver",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "sharing_calls",
+          "over_threshold"
+        ]
+      }
+    },
+    "eFourteenPermitCleanCalls": {
+      "value": 29,
+      "macro": "eFourteenPermitCleanCalls",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "integer",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "sharing_calls",
+          "n"
+        ]
+      }
+    },
+    "eFourteenPermitCleanOverShare": {
+      "value": 0.276,
+      "macro": "eFourteenPermitCleanOverShare",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "percent",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "sharing_calls",
+          "share_over_threshold"
+        ],
+        "ci_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "sharing_calls",
+          "wilson95"
+        ]
+      },
+      "ci": [
+        0.147,
+        0.457
+      ]
+    },
+    "eFourteenPermitCleanMedian": {
+      "value": 0.838,
+      "macro": "eFourteenPermitCleanMedian",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "decimal",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "sharing_calls",
+          "median"
+        ]
+      }
+    },
+    "eFourteenPermitCleanAuroc": {
+      "value": 0.416,
+      "macro": "eFourteenPermitCleanAuroc",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "decimal",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "within_round_auroc"
+        ],
+        "ci_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "within_round_auroc_ci"
+        ]
+      },
+      "ci": [
+        0.259,
+        0.565
+      ]
+    },
+    "eFourteenPermitCleanDiff": {
+      "value": -1.358,
+      "macro": "eFourteenPermitCleanDiff",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "signed",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "median_diff_vs_forbidden_leaks"
+        ],
+        "ci_path": [
+          "arms",
+          "PERMIT_NO_CONSEQUENCE",
+          "median_diff_ci"
+        ]
+      },
+      "ci": [
+        -1.818,
+        -0.91
+      ]
+    },
+    "eFourteenPermitDiff": {
+      "value": 0.097,
+      "macro": "eFourteenPermitDiff",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "signed",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "arms",
+          "PERMIT",
+          "median_diff_vs_forbidden_leaks"
+        ],
+        "ci_path": [
+          "arms",
+          "PERMIT",
+          "median_diff_ci"
+        ]
+      },
+      "ci": [
+        -0.581,
+        0.652
+      ]
+    },
+    "eFourteenReplayNoConsequenceShift": {
+      "value": 0.119,
+      "macro": "eFourteenReplayNoConsequenceShift",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "signed",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "addon_e08_permit_no_consequence",
+          "median_PERMIT_NO_CONSEQUENCE_minus_FORBID"
+        ],
+        "ci_path": [
+          "addon_e08_permit_no_consequence",
+          "median_PERMIT_NO_CONSEQUENCE_minus_FORBID_ci"
+        ]
+      },
+      "ci": [
+        0.04,
+        0.242
+      ]
+    },
+    "eFourteenReplayNoConsequenceOver": {
+      "value": 0.895,
+      "macro": "eFourteenReplayNoConsequenceOver",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "percent",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "addon_e08_permit_no_consequence",
+          "share_over_threshold",
+          "PERMIT_NO_CONSEQUENCE"
+        ]
+      }
+    },
+    "eFourteenThreshold": {
+      "value": 1.283997258353578,
+      "macro": "eFourteenThreshold",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "decimal",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "threshold"
+        ]
+      }
+    },
+    "eFourteenReplayNoConsequenceAuroc": {
+      "value": 0.987,
+      "macro": "eFourteenReplayNoConsequenceAuroc",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "decimal",
+      "decimals": 2,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "addon_e08_permit_no_consequence",
+          "within_round_auroc_PERMIT_NO_CONSEQUENCE"
+        ]
+      }
+    },
+    "qwen_fresh_percall_bow_auroc": {
+      "value": 0.9574202248198093,
+      "ci": [
+        0.9160524692249459,
+        0.985404504830657
+      ],
+      "macro": "qwenFreshCallBow",
+      "dataset": "Qwen fresh test episodes",
+      "evaluation": "bag-of-words (latest message) fit on all 2976 development calls as in E12, scored once on the 1825 test calls/38 positives; within scenario and round; 1000 family-bootstrap draws",
+      "status": "out_of_sample",
+      "run": "runs/20261028-0228-e12-bow-test-auroc",
+      "source": {
+        "file": "runs/20261028-0228-e12-bow-test-auroc/metrics.json",
+        "value_path": [
+          "bow",
+          "within_round_auc"
+        ],
+        "ci_path": [
+          "bow",
+          "within_round_ci95"
+        ]
+      }
+    },
+    "qwen_fresh_percall_probe_minus_bow": {
+      "value": 0.018097094118562418,
+      "ci": [
+        -0.009697197259952769,
+        0.05491200565531917
+      ],
+      "macro": "qwenFreshCallProbeMinusBow",
+      "dataset": "Qwen fresh test episodes",
+      "evaluation": "bag-of-words (latest message) fit on all 2976 development calls as in E12, scored once on the 1825 test calls/38 positives; within scenario and round; 1000 family-bootstrap draws",
+      "status": "out_of_sample",
+      "run": "runs/20261028-0228-e12-bow-test-auroc",
+      "source": {
+        "file": "runs/20261028-0228-e12-bow-test-auroc/metrics.json",
+        "value_path": [
+          "paired_difference",
+          "value"
+        ],
+        "ci_path": [
+          "paired_difference",
+          "ci95"
+        ]
+      },
+      "format": "signed",
+      "decimals": 2
+    },
+    "qwenFreshProbeCaughtWilson": {
+      "value": 0.816,
+      "macro": "qwenFreshProbeCaughtWilson",
+      "dataset": "E14: 60 new Qwen3-32B episodes on dispatch-integration-code under a permitting rule, plus the forbidding-rule test episodes of that scenario",
+      "evaluation": "Frozen last-prompt probe, frozen threshold; exact-emission label; no refits",
+      "status": "verified",
+      "run": "runs/20261028-0224-e14-permitted-onpolicy",
+      "format": "percent",
+      "decimals": 0,
+      "source": {
+        "file": "runs/20261028-0224-e14-permitted-onpolicy/results.json",
+        "value_path": [
+          "all_test_leaking_calls",
+          "share_over_threshold"
+        ],
+        "ci_path": [
+          "all_test_leaking_calls",
+          "wilson95"
+        ]
+      },
+      "ci": [
+        0.666,
+        0.908
+      ]
     }
   },
   "aliases": {
@@ -15059,7 +15700,7 @@
         ],
         [
           "gptoss",
-          "Latest input",
+          "Latest message",
           {
             "key": "gptossTextLatest",
             "ci": true
@@ -15083,7 +15724,7 @@
         ],
         [
           "qwen",
-          "Latest input",
+          "Latest message",
           {
             "key": "qwenTextLatest",
             "ci": true
@@ -17121,6 +17762,14 @@
           }
         ],
         [
+          "Permitting rule, no consequence sentence, minus original rule",
+          {
+            "key": "eFourteenReplayNoConsequenceShift",
+            "ci": true
+          },
+          "--"
+        ],
+        [
           "Original rule AUROC",
           {
             "key": "qwenPolicyForbidAUROC",
@@ -17154,6 +17803,13 @@
           }
         ],
         [
+          "Permitting rule, no consequence sentence, AUROC",
+          {
+            "key": "eFourteenReplayNoConsequenceAuroc"
+          },
+          "--"
+        ],
+        [
           "Original rule threshold crossings",
           "\\qwenPolicyForbidCrossingCount{}/\\qwenPolicyForbidCrossingTotal{}; \\qwenPolicyForbidCrossing{} \\qwenPolicyForbidCrossingCI{}",
           "\\gptossPolicyForbidCrossingCount{}/\\gptossPolicyForbidCrossingTotal{}; \\gptossPolicyForbidCrossing{} \\gptossPolicyForbidCrossingCI{}"
@@ -17167,6 +17823,13 @@
           "Neutral rewording threshold crossings",
           "\\qwenPolicyNeutralCrossingCount{}/\\qwenPolicyNeutralCrossingTotal{}; \\qwenPolicyNeutralCrossing{} \\qwenPolicyNeutralCrossingCI{}",
           "\\gptossPolicyNeutralCrossingCount{}/\\gptossPolicyNeutralCrossingTotal{}; \\gptossPolicyNeutralCrossing{} \\gptossPolicyNeutralCrossingCI{}"
+        ],
+        [
+          "Permitting rule, no consequence sentence, threshold crossings",
+          {
+            "key": "eFourteenReplayNoConsequenceOver"
+          },
+          "--"
         ]
       ]
     },
@@ -17231,6 +17894,48 @@
           "Probe (grid) then bag-of-words",
           "\\cascadeBowGridFiveCaught{}/38 (\\cascadeBowGridFive{}) \\cascadeBowGridFiveCI{}; \\cascadeBowGridFiveGap{}",
           "\\cascadeBowGridTenCaught{}/38 (\\cascadeBowGridTen{}) \\cascadeBowGridTenCI{}; \\cascadeBowGridTenGap{}"
+        ]
+      ]
+    },
+    "e14": {
+      "columns": "@{}>{\\raggedright\\arraybackslash}p{0.24\\linewidth}>{\\centering\\arraybackslash}p{0.13\\linewidth}>{\\centering\\arraybackslash}p{0.17\\linewidth}>{\\centering\\arraybackslash}p{0.12\\linewidth}>{\\centering\\arraybackslash}p{0.20\\linewidth}@{}",
+      "header": [
+        "Rule in the episode",
+        "Episodes sharing",
+        "Sharing calls over threshold",
+        "Median score",
+        "AUROC within round"
+      ],
+      "rows": [
+        [
+          "Forbidding rule (test episodes)",
+          "\\eFourteenForbidSharing{}/\\eFourteenForbidEpisodes{}",
+          "\\eFourteenForbidOver{}/\\eFourteenForbidCalls{} (\\eFourteenForbidOverShare{})",
+          "\\eFourteenForbidMedian{}",
+          {
+            "key": "eFourteenForbidAuroc",
+            "ci": true
+          }
+        ],
+        [
+          "Permitting rule, consequence kept",
+          "\\eFourteenPermitSharing{}/\\eFourteenPermitEpisodes{}",
+          "\\eFourteenPermitOver{}/\\eFourteenPermitCalls{} (\\eFourteenPermitOverShare{})",
+          "\\eFourteenPermitMedian{}",
+          {
+            "key": "eFourteenPermitAuroc",
+            "ci": true
+          }
+        ],
+        [
+          "Permitting rule, consequence removed",
+          "\\eFourteenPermitCleanSharing{}/\\eFourteenPermitCleanEpisodes{}",
+          "\\eFourteenPermitCleanOver{}/\\eFourteenPermitCleanCalls{} (\\eFourteenPermitCleanOverShare{})",
+          "\\eFourteenPermitCleanMedian{}",
+          {
+            "key": "eFourteenPermitCleanAuroc",
+            "ci": true
+          }
         ]
       ]
     }

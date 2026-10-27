@@ -9,7 +9,7 @@ A third test, the Qwen3-32B per-call probe, was frozen and committed before it w
 \paragraph{gpt-oss-20b reasoning probe.}
 Before the test episodes were collected, we committed the probe's layer, chosen on development data, its weights, refit once on all development calls, the maximum over tokens as the call score, and an alarm threshold calibrated on development control calls.
 The success criterion was a lower 95\% bound above 0.5 on the per-call AUROC.
-The bound was above 0.5.
+The lower bound was \gptossFreshReasoningLow{}, well above the 0.5 criterion.
 With few leaking calls, the interval is wide.
 At the frozen threshold the probe caught \gptossFreshCaught{} of the leaking calls (binomial 95\% interval \gptossFreshCaughtCI{}), fewer than in development, while alarming on \gptossFreshRefusingAlarm{} of calls in refusing episodes and in \gptossFreshRefusingEpisodeAlarm{} of refusing episodes (\cref{tab:fresh}).
 

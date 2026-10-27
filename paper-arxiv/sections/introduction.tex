@@ -28,7 +28,7 @@ We read the target's activations at each of its calls before it generates anythi
 We find three things (\cref{fig:headline}).
 First, the call that leaks is predictable just before it acts, and this held on test episodes, for the last-prompt probe on Qwen3-32B and for the reasoning probe on gpt-oss-20b.
 Second, the warning comes late: the probe is only modestly accurate for whether the target leaks this round or the next, and weak for whether an episode will ever leak.
-Third, a zero-shot text monitor does far worse than the probe, but a text classifier trained on the same labelled calls comes close, so activations add a small edge on top of training.
+Third, a zero-shot text monitor does far worse than the probe, but a text classifier trained on the same labelled calls comes close, so activations add at most a small edge on top of training.
 
 \begin{figure}[t]
   \centering

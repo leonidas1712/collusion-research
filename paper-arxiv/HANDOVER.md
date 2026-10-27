@@ -388,3 +388,21 @@ both intervals include small decreases. To match: "so it **mostly** detects the 
 
 - "halting on any alarm would stop most benign episodes": in the body these are *refusing episodes* (recruiting episodes that never leak), while "benign calls" in the abstract means *control calls*. One option is "would stop most refusing episodes", or "most episodes in which the agent never leaks".
 - "26%" in the abstract is Jev's share of leaking *calls* at the probe's flag rate. The body also reports 26% of leaking *episodes* for the per-episode threshold; §4.4 now says which is which.
+
+## MUST-FIX abstract suggestions for Leo (28 Oct, overnight; abstract not edited)
+
+1. **Counterfactual sentence is now partly wrong (E14).** "In a counterfactual replay, allowing sharing leaves the probe's score unchanged: it reads the coming disclosure, not the violation." New episodes under a clean permission show that a freely permitted disclosure is mostly not flagged (28% of sharing calls cross the threshold, against 82% of forbidden leaks). Suggested: "Allowing sharing does not lower the probe's score once the agent has resisted, but freely permitted disclosures are mostly not flagged: the probe reads the agent giving in, not the rule."
+2. **"At the same flag rate".** Jev flags 4.8% of refusing calls against the probe's 5.5%. Suggested: "Flagging no more calls, a zero-shot decision-model monitor catches 26%."
+
+## Other abstract suggestions (Leo decides)
+
+- "decision-model" → a plainer gloss.
+- "counterfactual replay" → "when we replay the same prompts under a rule that permits sharing" (or replace per item 1).
+- "most of the gain" → "most of the probe's lead over the zero-shot monitor". The claim now also holds on test episodes: the bag-of-words classifier scores 0.96 against the probe's 0.98, a difference of +0.02 whose interval includes zero.
+- Possibly give Qwen's per-call AUROC (0.98).
+- The last sentence could add "which we do not test here", or "we test only exact-string leaks".
+- "which a second text check does not fix" → "which a second text check did not detectably fix".
+- "threshold set to flag 5% of benign calls" → "set on development control calls".
+
+Declined by claude (recorded): labelling each Table 2 row by evidence status (status clutter; §2.3 states it once); moving the note on the discarded first replay into the main text; renaming the §4.3 heading and the Fig 4 title (Leo-approved).
+

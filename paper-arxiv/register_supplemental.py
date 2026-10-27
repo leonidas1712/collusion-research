@@ -34,7 +34,7 @@ def main():
         for name,suffix in [('full_input','TextFull'),('latest_input','TextLatest')]:
             cell=add(model+suffix,file,['metrics',name,'within_round_auc'],['metrics',name,'within_round_ci95'])
             gain=add(model+'ProbeMinus'+suffix,file,['paired','last_prompt_minus_'+name,'estimate'],['paired','last_prompt_minus_'+name,'ci95'])
-            textrows.append([model,'Full input' if name=='full_input' else 'Latest input',cell,gain])
+            textrows.append([model,'Full input' if name=='full_input' else 'Latest message',cell,gain])
         if model=='gptoss':
             add('gptossWriteFlag',file,['metrics','write_file','within_round_auc'],['metrics','write_file','within_round_ci95'])
             add('gptossWithinWriteProbe',file,['metrics','last_prompt_within_handoff_write','within_round_auc'],['metrics','last_prompt_within_handoff_write','within_round_ci95'])
