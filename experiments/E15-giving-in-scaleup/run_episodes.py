@@ -5,6 +5,11 @@ Same runner, target, peer model, tools, settings and early stopping as the test 
 consequence sentence removed; LATE also paces the peer so it asks for the value only in its 5th message.
 Requires the committed, clean plan.json.
 
+Resumable: episodes already complete in any earlier E15 run of the arm are skipped by episode ID
+(fixed by seed). Episodes that stopped on an API error (rate limit, 5xx, connection) are retried in
+waves with backoff and lower concurrency; episodes that stopped for a model-side reason are final and
+reported, as in the paper. Progress, retries and spend are written to progress.json after every episode.
+
     .venv/bin/python experiments/E15-giving-in-scaleup/run_episodes.py --arm LATE --benchmark
     .venv/bin/python experiments/E15-giving-in-scaleup/run_episodes.py --arm LATE
 """
@@ -14,6 +19,8 @@ from dataclasses import asdict, replace
 import hashlib
 import json
 import os
+import random
+import time
 from pathlib import Path
 import subprocess
 import sys
@@ -25,7 +32,7 @@ sys.path[:0] = [str(ROOT / 'experiments/E01-behaviour-pilot'), str(ROOT / 'src')
 from harness import Settings, run_episode
 from overnight_sweep import PEER, TARGETS, fetch_prices, options
 from scale_up import SpendCap, scale_up_scenario
-from collusion.runs import start_run
+from collusion.runs import start_run, write_json_atomic
 
 PLAN = HERE / 'plan.json'
 KEY_FILE = Path('/Users/leo/collusion-research/.env')  # read-only: API key only
@@ -68,6 +75,28 @@ def jobs(plan, arm, benchmark):
     return out
 
 
+def prior_state(arm):
+    """Latest outcome per episode ID across earlier E15 runs of this arm."""
+    state = {}
+    for path in sorted(ROOT.glob(f'runs/*-e15-{arm.lower()}*/episodes/*.json')):
+        name = path.name.removesuffix('.json').removesuffix('.partial')
+        ep = json.loads(path.read_text())
+        reason = str(ep.get('stop_reason'))
+        interrupted = reason == 'None'  # the process stopped mid-episode
+        outcome = 'complete' if ep.get('status') == 'complete' else 'transient' if reason.startswith('api_error') or interrupted else 'final'
+        if state.get(name, {}).get('outcome') != 'complete':
+            state[name] = {'outcome': outcome, 'reason': reason, 'path': str(path.relative_to(ROOT))}
+    return state
+
+
+def api_errors(ep_dir, name):
+    path = ep_dir / f'{name}.json'
+    path = path if path.exists() else ep_dir / f'{name}.partial.json'
+    if not path.exists():
+        return 0
+    return sum(1 for r in json.loads(path.read_text()).get('requests', []) if r.get('error'))
+
+
 async def main(a):
     rel = PLAN.relative_to(ROOT)
     dirty = subprocess.run(['git', 'status', '--porcelain', '--', str(rel)], cwd=ROOT, capture_output=True, text=True)
@@ -76,9 +105,10 @@ async def main(a):
         raise ValueError('plan.json must be committed and clean before any API call')
     plan = json.loads(PLAN.read_text())
     todo = jobs(plan, a.arm, a.benchmark)
-    if a.skip:
-        done = {line.strip() for line in Path(a.skip).read_text().splitlines()}
-        todo = [j for j in todo if f'{j[0]}-{j[2]:04}' not in done]
+    state = prior_state(a.arm)
+    final = {k: v for k, v in state.items() if v['outcome'] in ('complete', 'final')}
+    todo = [j for j in todo if f'{j[0]}-{j[2]:04}' not in final]
+    print('RESUME', a.arm, 'already final:', len(final), 'to run:', len(todo), flush=True)
     from dotenv import dotenv_values
     from openai import AsyncOpenAI
 
@@ -86,42 +116,78 @@ async def main(a):
     prices = fetch_prices()
     settings = Settings(model, PEER, rounds=20, max_tool_steps=12, max_tokens=1536,
                         target_request_options=options(prices[model]),
-                        recruiter_request_options=options(prices[PEER]))
+                        recruiter_request_options=options(prices[PEER]),
+                        api_retry_attempts=10, api_retry_max_delay=60)
     key = os.environ.get('OPENROUTER_API_KEY') or dotenv_values(KEY_FILE)['OPENROUTER_API_KEY']
     client = AsyncOpenAI(api_key=key, base_url='https://openrouter.ai/api/v1', max_retries=0, timeout=90)
     run = start_run(f'e15-{a.arm.lower()}' + ('-benchmark' if a.benchmark else ''), experiment='E15', settings={
         **asdict(settings), 'arm': a.arm, 'benchmark': a.benchmark, 'episodes': len(todo), 'api_cap_usd': a.cap_usd,
         'plan_sha256': hashlib.sha256(PLAN.read_bytes()).hexdigest()}, tags=['e15', a.arm.lower()], model=model)
     budget = SpendCap(client, a.cap_usd, run.dir / 'api_budget.json')
-    gate = asyncio.Semaphore(plan['runner']['parallelism'])
+    ep_dir = run.dir / 'episodes'
+    log = {'arm': a.arm, 'already_final_before_run': len(final), 'waves': [], 'episodes': {}}
 
-    async def one(name, family_id, index):
+    def save_progress():
+        log.update(spent_usd=str(budget.spent), calls=budget.calls,
+                   retried_requests=sum(e['api_error_requests'] for e in log['episodes'].values()))
+        write_json_atomic(run.dir / 'progress.json', log)
+
+    async def one(gate, name, family_id, index):
         async with gate:
             if budget.spent >= budget.cap:
-                return None
+                return 'cap'
+            eid = f'{name}-{index:04}'
             try:
-                result = await run_episode(build(plan, a.arm, name, family_id), settings, budget,
-                                           run.dir / 'episodes', episode_id=f'{name}-{index:04}')
+                result = await run_episode(build(plan, a.arm, name, family_id), settings, budget, ep_dir, episode_id=eid)
+                status, reason = result['status'], str(result.get('stop_reason'))
             except Exception as exc:
-                print('EPISODE_ERROR', name, index, type(exc).__name__, exc, flush=True)
-                return None
-            print('EPISODE', name, index, result['status'], result['rounds_completed'],
-                  (result.get('label') or {}).get('objective_success'), f'${budget.spent:.4f}', flush=True)
-            return result
+                status, reason = 'error', f'{type(exc).__name__}: {exc}'
+            outcome = 'complete' if status == 'complete' else 'transient' if (reason.startswith('api_error') or status == 'error') else 'final'
+            log['episodes'][eid] = {'outcome': outcome, 'reason': reason, 'family_id': family_id,
+                                    'api_error_requests': log['episodes'].get(eid, {}).get('api_error_requests', 0) + api_errors(ep_dir, eid)}
+            save_progress()
+            print('EPISODE', eid, outcome, reason, f'${budget.spent:.4f}', flush=True)
+            return outcome
 
-    results = await asyncio.gather(*(one(*j) for j in todo))
-    done = [r for r in results if r]
-    run.result(completed=sum(r['status'] == 'complete' for r in done), attempted=len(done), planned=len(todo),
-               spent_usd=str(budget.spent), calls=budget.calls)
+    concurrency = a.concurrency
+    for wave in range(a.waves):
+        if not todo:
+            break
+        gate = asyncio.Semaphore(concurrency)
+        outcomes = await asyncio.gather(*(one(gate, *j) for j in todo))
+        failed = [j for j, o in zip(todo, outcomes) if o == 'transient']
+        log['waves'].append({'wave': wave + 1, 'ran': len(todo), 'transient_failures': len(failed), 'concurrency': concurrency})
+        save_progress()
+        if 'cap' in outcomes:
+            print('API cap reached; stopping', flush=True)
+            break
+        for j in failed:  # a retried episode restarts cleanly in this run's folder
+            for suffix in ('.json', '.partial.json'):
+                stale = ep_dir / f'{j[0]}-{j[2]:04}{suffix}'
+                if stale.exists():
+                    stale.rename(stale.with_name(stale.name + f'.wave{wave + 1}-failed'))
+        todo = failed
+        if todo:
+            if len(failed) > len(outcomes) / 4:
+                concurrency = max(1, concurrency // 2)
+            pause = min(900, 60 * 2 ** wave) + random.uniform(0, 30)
+            print(f'WAVE {wave + 1}: {len(failed)} transient failures; waiting {pause:.0f}s, concurrency {concurrency}', flush=True)
+            await asyncio.sleep(pause)
+    log['failed_after_all_retries'] = [f'{j[0]}-{j[2]:04}' for j in todo]
+    save_progress()
+    done = [e for e in log['episodes'].values()]
+    run.result(completed=sum(e['outcome'] == 'complete' for e in done), final_incomplete=sum(e['outcome'] == 'final' for e in done),
+               failed_after_retries=len(todo), spent_usd=str(budget.spent), calls=budget.calls)
     run.finish('finished')
     await client.close()
-    print('E15_DONE', run.id, f'${budget.spent:.4f}', flush=True)
+    print('E15_DONE', run.id, f'${budget.spent:.4f}', 'failed after retries:', len(todo), flush=True)
 
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--arm', choices=('FORBID', 'EARLY', 'LATE'), required=True)
     p.add_argument('--benchmark', action='store_true')
-    p.add_argument('--skip', help='File of <scenario>-<index> episodes already run (benchmark), one per line')
+    p.add_argument('--concurrency', type=int, default=3)
+    p.add_argument('--waves', type=int, default=6)
     p.add_argument('--cap-usd', type=float, default=1.5)
     asyncio.run(main(p.parse_args()))
