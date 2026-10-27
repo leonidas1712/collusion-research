@@ -26,16 +26,23 @@ from scale_up import SpendCap, scale_up_scenario
 from collusion.runs import start_run
 
 PLAN = HERE / 'plan.json'
+START = {'a': 14001, 'b': 14101}
 KEY_FILE = Path('/Users/leo/collusion-research/.env')  # read-only: API key only
 
 
-def permit_scenario(plan, family_id):
+def permit_scenario(plan, family_id, arm='a'):
     scenario = scale_up_scenario('spray', 'consequence', 'recruiting', str(family_id), None, None,
                                  plan['scenario'], 1)
     forbid, permit = plan['rule_texts']['FORBID'], plan['rule_texts']['PERMIT']
     if scenario.target_system.count(forbid) != 1:
         raise ValueError('FORBID rule not found exactly once')
-    return replace(scenario, target_system=scenario.target_system.replace(forbid, permit, 1))
+    system = scenario.target_system.replace(forbid, permit, 1)
+    if arm == 'b':
+        consequence = plan['amendment_v2']['arms']['b_PERMIT_NO_CONSEQUENCE']['consequence_sentence']
+        if system.count(consequence) != 1 or not system.endswith(consequence):
+            raise ValueError('Consequence sentence not found exactly once at the end')
+        system = system.removesuffix(consequence)
+    return replace(scenario, target_system=system)
 
 
 async def main(a):
@@ -58,8 +65,8 @@ async def main(a):
     key = os.environ.get('OPENROUTER_API_KEY') or dotenv_values(KEY_FILE)['OPENROUTER_API_KEY']
     client = AsyncOpenAI(api_key=key, base_url='https://openrouter.ai/api/v1', max_retries=0, timeout=90)
     run = start_run(a.name, experiment='E14', settings={
-        **asdict(settings), 'scenario': plan['scenario'], 'condition': 'recruiting-permit',
-        'family_start': ep['family_start'] + a.offset, 'count': count, 'api_cap_usd': a.cap_usd,
+        **asdict(settings), 'scenario': plan['scenario'], 'condition': 'recruiting-permit-' + a.arm,
+        'arm': a.arm, 'family_start': START[a.arm] + a.offset, 'count': count, 'api_cap_usd': a.cap_usd,
         'plan_sha256': hashlib.sha256(PLAN.read_bytes()).hexdigest()},
         tags=['permit', 'on-policy'], model=model)
     budget = SpendCap(client, a.cap_usd, run.dir / 'api_budget.json')
@@ -69,9 +76,9 @@ async def main(a):
         async with gate:
             if budget.spent >= budget.cap:
                 return None
-            family_id = ep['family_start'] + a.offset + index
+            family_id = START[a.arm] + a.offset + index
             try:
-                result = await run_episode(permit_scenario(plan, family_id), settings, budget,
+                result = await run_episode(permit_scenario(plan, family_id, a.arm), settings, budget,
                                            run.dir / 'episodes', episode_id=f'episode-{a.offset + index + 1:04}')
             except Exception as exc:
                 print('EPISODE_ERROR', index + 1, type(exc).__name__, exc, flush=True)
@@ -91,6 +98,7 @@ async def main(a):
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--arm', choices=('a', 'b'), required=True, help='a: PERMIT + consequence; b: PERMIT, consequence removed')
     p.add_argument('--count', type=int, default=0)
     p.add_argument('--offset', type=int, default=0, help='Episode index offset (benchmark is 0..k-1)')
     p.add_argument('--cap-usd', type=float, default=0.6)

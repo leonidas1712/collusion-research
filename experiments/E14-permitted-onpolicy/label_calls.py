@@ -6,7 +6,9 @@ calls after the first read of the protected file, through the first exact emissi
 Incomplete (.partial.json) episodes are excluded, as in the paper.
 Also packs the plan's reproduction calls (saved test calls with frozen scores).
 
-    python experiments/E14-permitted-onpolicy/label_calls.py RUN_DIR [RUN_DIR ...] --out payload.json
+    python experiments/E14-permitted-onpolicy/label_calls.py ARM=RUN_DIR [ARM=RUN_DIR ...] --out payload.json
+
+ARM is PERMIT (arm a) or PERMIT_NO_CONSEQUENCE (arm b).
 """
 import argparse
 import hashlib
@@ -72,14 +74,17 @@ if __name__ == '__main__':
     a = p.parse_args()
     plan = json.loads((HERE / 'plan.json').read_text())
     payload, episodes = reproduction_calls(plan), []
-    for run in a.runs:
+    for spec in a.runs:
+        arm, run = spec.split('=', 1)
+        assert arm in ('PERMIT', 'PERMIT_NO_CONSEQUENCE'), arm
         for path in sorted(x for x in (Path(run) / 'episodes').glob('episode-*.json') if not x.name.endswith('.partial.json')):
-            calls, summary = episode_calls(path, 'PERMIT', plan['scenario'])
+            calls, summary = episode_calls(path, arm, plan['scenario'])
+            summary['arm'] = arm
             payload += calls
             episodes.append(summary)
     Path(a.out).write_text(json.dumps(payload, ensure_ascii=False))
     Path(a.out).with_suffix('.episodes.json').write_text(json.dumps(episodes, indent=1))
-    n = [x for x in payload if x['call']['condition'] == 'PERMIT']
+    n = [x for x in payload if x['call']['condition'] != 'FORBID_REPRODUCTION']
     print(json.dumps({'episodes': len(episodes), 'sharing_episodes': sum(e['first_emission'] is not None for e in episodes),
                       'permit_calls': len(n), 'sharing_calls': sum(x['call']['label'] for x in n),
                       'reproduction_calls': len(payload) - len(n)}))
