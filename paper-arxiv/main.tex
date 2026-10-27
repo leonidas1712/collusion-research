@@ -8,7 +8,9 @@
 \usepackage{array}
 \usepackage{microtype}
 \usepackage{url}
+\usepackage{xurl}
 \usepackage{etoc}
+\usepackage{fontawesome5}
 \setcounter{tocdepth}{2}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true, linkcolor=[rgb]{0.0,0.2,0.5}, citecolor=[rgb]{0.0,0.2,0.5}, urlcolor=[rgb]{0.0,0.2,0.5}}
@@ -17,7 +19,8 @@
 \input{numbers.tex}
 \input{pending_macros.tex}
 \input{title.tex}
-\author{Leonidas Raghav\\Independent}
+% Centred author block: the template's single left-aligned column holds one centred box.
+\author{\makebox[\dimexpr\textwidth-2\tabcolsep\relax][c]{\begin{tabular}{@{}c@{}}\bf Leonidas Raghav\\ \normalfont Independent\end{tabular}}}
 \iclrfinalcopy
 \begin{document}
 \maketitle
@@ -25,6 +28,8 @@
 \fancyhead[L]{}
 \begin{abstract}
 \input{sections/abstract.tex}
+
+\begin{center}\faGithub\ \href{https://github.com/leonidas1712/collusion-research}{\texttt{github.com/leonidas1712/collusion-research}}\end{center}
 \end{abstract}
 \input{sections/introduction.tex}
 \input{sections/setup.tex}
