@@ -170,9 +170,9 @@ def execute(plan: dict, payload: list[dict], probe_models: list[dict], provenanc
                 print(json.dumps({"completed": index + 1, "total": len(rendered_inputs), "prompt_tokens": prompt_tokens}), flush=True)
                 outputs_volume.commit()
 
-        fieldnames = list(rows[0])
+        fieldnames = list(dict.fromkeys(key for row in rows for key in row))
         with (run.dir / "scores.csv").open("w", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=fieldnames)
+            writer = csv.DictWriter(handle, fieldnames=fieldnames, restval="")
             writer.writeheader()
             writer.writerows(rows)
         summary = {
