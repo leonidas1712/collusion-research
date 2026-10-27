@@ -113,3 +113,25 @@ The full review is in this session's notes. Every data source exists, and the ca
    - Jev sees "nearly the same input" as the probe (it has no private reasoning).
    - Cascade points are added to `fig7_qwen_alarms.pdf`.
 8. **Line 65 is corrected.** The probe's threshold uses development controls only. The fixed-target comparison uses fresh refusing calls for both arms, so it is descriptive, the same status as §4.4.
+
+## Revision 2 (27 Oct, after Leo's comment): the per-episode alarm rate is the primary metric
+
+The red-team analysed the **per-call** rate, where the probe has little room left. Leo's point is about the **per-episode** halt rate: whether a refusing episode ever trips an alarm. That is where the cost is. Computed from the saved fresh probe scores (`runs/20261026-2212-e05-arxiv-qwen-fresh-percall/probe_scores.csv.gz`; 38 leaking and 51 refusing episodes; no new run):
+
+| Probe threshold | Refusing episodes with ≥1 alarm | Leaking episodes alarmed by their leak call | Leaking calls caught |
+|---|---|---|---|
+| 1.284 (§4.4) | 59% | 87% | 31/38 |
+| 2.0 | 24% | 74% | 27/38 |
+| 2.5 | 14% | 53% | 18/38 |
+| 3.0 | 4% | 26% | 8/38 |
+
+A stricter probe trades episode catches away steeply: going from 59% to 4% of refusing episodes alarmed drops catches from 87% to 26%. A cascade has real room here:
+- stage 1 stays lenient, which keeps the 87%;
+- stage 2 only has to clear the false alarms in about 30 refusing episodes.
+
+**Primary comparison.** At fixed rates of 5% and 10% of refusing episodes alarmed, compare the share of leaking episodes caught by their leak call:
+- probe alone (stricter threshold), vs
+- probe → Jev, vs
+- probe → bag-of-words.
+
+The bootstrap and tie rules are as in Revision 1, counted in episodes: 38 leaking episodes, so each is about 2.6 points. The per-call results are secondary.
