@@ -95,11 +95,8 @@ def headline(data,sha):
             draw(ax,fresh_x,None,e,model,kind,fresh=True,
                  marker='D' if key=='gptossFreshReasoning' else 'o')
             if e.get('value') is not None:
-                name='Test last-prompt' if key=='gptossFreshCallProbe' else ('Test reasoning' if model=='gpt_oss' else 'Test')
-                ax.annotate(name+': '+paper_number(key,e['value']),
-                            xy=(fresh_x,e['value']),xytext=(x-.50,.56 if model=='gpt_oss' and i==0 else .78),
-                            ha='right' if model=='gpt_oss' else 'center',fontsize=LABEL_SIZE,
-                            bbox=dict(facecolor='white',edgecolor='none',pad=1),arrowprops=dict(arrowstyle='-',color='#555555',lw=.7))
+                # The caption and legend name these markers; the label sits under the lower whisker.
+                value_label(ax,e,fresh_x,whisker_end(e,'low'),MODEL_COLORS[model],ha='center',va='top',offset=(0,-2))
         ax.axhline(.5,color='#777777',ls='--',lw=.8)
         ax.set(xlim=(-.3,2.3),ylim=(0,1.03),xticks=[0,1,2],xticklabels=['Will it\never leak?','This round\nor next?','This call?'],title=title)
         ax.grid(axis='y',alpha=.15)
@@ -173,7 +170,7 @@ def shortcuts(data,sha):
     ax.tick_params(axis='y',length=0,labelsize=9)
     ax.axvline(.5,color='#777777',ls='-',lw=.8)
     if reference is not None:ax.axvline(reference,color=MODEL_COLORS['gpt_oss'],ls=(0,(6,3)),lw=1)
-    ax.axhline(5,color='#bbbbbb',lw=.6)
+    ax.axhline(5,color='#bbbbbb',lw=.6,xmax=1/1.1)
     ax.spines['left'].set_visible(False)
     fig.suptitle('gpt-oss-20b: what can explain the signal?',fontsize=11,y=.98)
     lines=[Line2D([],[],color='#777777',lw=.8,label='Chance'),

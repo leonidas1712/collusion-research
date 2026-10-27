@@ -7,7 +7,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
-from style import configure, MODEL_COLORS
+from style import configure, MODEL_COLORS, CONTROL_COLOR, LABEL_SIZE, end_labels, paper_number
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / 'paper-arxiv/figures'
@@ -38,6 +38,7 @@ def trajectories():
     exports = []
     for ax, model, title in zip(axes, ['qwen', 'gpt_oss'], ['Qwen3-32B', 'gpt-oss-20b']):
         color = MODEL_COLORS[model]
+        ends = []
         for summary in data['summaries']:
             if summary['model'] != model:
                 continue
@@ -48,7 +49,10 @@ def trajectories():
             if fresh:
                 ax.fill_between(x, [100*r['q25'] for r in rows], [100*r['q75'] for r in rows], color=color, alpha=.12)
             exports.extend(dict(model=model, cohort=summary['cohort'], **r) for r in rows)
+            assert x[-1] == 0
+            ends.append(('test' if fresh else 'dev.', 100*rows[-1]['median']))
         ax.set(title=title, xticks=[-10,-5,0], xlabel='Scored calls before leak', ylim=(0,103))
+        end_labels(ax, ends, color, right=3.4); ax.spines['bottom'].set_bounds(-10, 0)
         ax.axvline(0, color='#777777', lw=.8, ls=':'); ax.grid(axis='y', alpha=.15)
     axes[0].set_ylabel("Probe score\n(percentile among this\nmodel's scored calls)", fontsize=9)
     fig.legend(handles=[Line2D([],[],color='#444444',ls='--',label='Development median'),
@@ -70,12 +74,22 @@ def alarms():
         ax.plot([float(r['refusing_alarm']) for r in curve], [float(r['leaks_caught']) for r in curve],
                 color=color, ls=ls, lw=1.5, label='Zero-shot Jev' if name=='Jev' else name)
         ax.plot(op['refusing_call_alarm'], op['leaking_call_alarm'], marker=marker, color=color, ms=7)
+        prefix = 'qwenMatchedProbe' if name == 'Last-prompt probe' else 'qwenMatchedJev'
+        text = (paper_number(prefix+'Caught', op['leaking_call_alarm']) + ' caught\n'
+                + paper_number(prefix+'Refusing', op['refusing_call_alarm']) + ' flagged')
+        # Probe label sits between its curve and Jev's; Jev's sits just right of its square.
+        xy = (.135, .935) if name == 'Last-prompt probe' else (.075, .245)
+        ax.text(*xy, text, ha='left', va='top' if name == 'Last-prompt probe' else 'center',
+                fontsize=LABEL_SIZE, color=color, linespacing=1.1)
     episode = json.loads(EPISODE.read_text())['qwen_probe']
     assert episode['calibration_status'] == 'descriptive_fresh_refusing_calibration'
     point = episode['episode_calibrated']
     ax.plot(point['refusing_calls']['rate'], point['leaking_calls']['rate'],
             marker='D', mfc='white', mec=MODEL_COLORS['qwen'], mew=1.7, ms=8,
             clip_on=False, zorder=5)
+    ax.text(.035, .075, paper_number('qwenCalibrationEpisodeLeakCallsRate', point['leaking_calls']['rate']) + ' caught\n'
+            + paper_number('qwenCalibrationEpisodeRefusingCallsRate', point['refusing_calls']['rate']) + ' flagged',
+            ha='left', va='center', fontsize=LABEL_SIZE, color=MODEL_COLORS['qwen'], linespacing=1.1)
     ax.set(title='Qwen3-32B: test episodes', xlim=(0,1), ylim=(0,1.02),
            xlabel='Calls in refusing episodes flagged', ylabel='Leaking calls caught')
     ax.xaxis.set_major_formatter(PercentFormatter(1)); ax.yaxis.set_major_formatter(PercentFormatter(1))

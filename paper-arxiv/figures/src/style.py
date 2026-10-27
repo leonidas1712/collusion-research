@@ -43,3 +43,22 @@ def paper_number(macro, value=None, scale=1.0):
         tolerance = .5 * 10 ** -decimals / (100 if shown.endswith('%') else 1) + 1e-9
         assert abs(number - value * scale) <= tolerance, (macro, shown, value)
     return shown
+
+
+def end_labels(ax, ends, color, gap=9, right=None):
+    """Label where trajectories end (offset 0), stacking labels that would collide.
+
+    ends: list of (name, y) in percentile units; names are dropped when all ends round alike.
+    """
+    values = [(name, round(y)) for name, y in ends]
+    if len({v for _, v in values}) == 1:
+        values = [('', values[0][1])]
+    values.sort(key=lambda item: -item[1])
+    placed = []
+    for name, value in values:
+        y = value if not placed else min(value, placed[-1] - gap)
+        placed.append(y)
+        ax.annotate(f'{name} {value}'.strip(), (0, value), xytext=(.45, y), textcoords='data',
+                    ha='left', va='center', fontsize=LABEL_SIZE, color=color)
+    left = ax.get_xlim()[0]
+    ax.set_xlim(left, right or (3.4 if any(name for name, _ in values) else 2.0))
