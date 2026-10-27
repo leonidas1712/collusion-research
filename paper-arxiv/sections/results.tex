@@ -113,6 +113,10 @@ This describes the trade-off rather than testing a threshold fixed in advance (\
 Such a threshold must be set on held-out traffic.
 One set on the episodes the probe was trained on does not transfer: on fresh episodes it flags about three in ten refusing episodes instead of one in twenty.
 
+Pairing the probe with a cheap text check on the same input does not help.
+Halting only when the probe and a second detector, either the zero-shot monitor or the trained text classifier, both flag a call catches no more leaking episodes than raising the probe's threshold, at the same share of refusing episodes halted: at one in twenty, the probe alone catches \cascadeProbeAloneFive{} and the best pairing \cascadeBestFive{} (\cref{app:cascade}).
+At such strict thresholds the text check misses most leaks on its own, so requiring both to agree discards leaks the probe would have caught.
+
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.7\linewidth]{fig7_qwen_alarms.pdf}

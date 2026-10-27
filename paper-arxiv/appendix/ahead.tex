@@ -66,3 +66,28 @@ A deployed alarm would need its threshold set per episode, as \citet{gao2026} al
   \small
   \input{tables/alarms.tex}
 \end{table}
+
+\subsection{Does a second check on the same input help?}
+\label{app:cascade}
+
+No detectable gain.
+We paired the frozen probe with a second detector on the fresh Qwen3-32B episodes and halted an episode at the first call that both flag.
+The second detector was either Jev or the bag-of-words classifier, fit once on all development calls and scored on the fresh calls.
+At the same share of refusing episodes halted, no pairing catches more leaking episodes than the probe alone with a stricter threshold, and the pairing with Jev catches fewer (\cref{fig:cascade,tab:cascade}).
+At these strict thresholds the second detector misses most leaking episodes on its own.
+Every threshold is chosen on the same fresh episodes, which favours the pairings because they have more thresholds to tune.
+
+\begin{figure}[h]
+  \centering
+  \IfFileExists{figures/fig9_cascade.pdf}{\includegraphics[width=0.7\linewidth]{fig9_cascade.pdf}}{pending}
+  \caption{\textbf{A second check on the same input does not improve the trade-off.} Leaking episodes caught against refusing episodes halted, as thresholds move, on fresh Qwen3-32B episodes, for the probe alone and for the probe paired with Jev or with the bag-of-words classifier.}
+  \label{fig:cascade}
+\end{figure}
+
+\begin{table}[h]
+  \centering
+  \caption{Leaking episodes caught at a fixed share of refusing episodes halted, fresh Qwen3-32B episodes, with 95\% episode-bootstrap intervals in which thresholds are chosen again in each draw.}
+  \label{tab:cascade}
+  \small
+  \IfFileExists{tables/cascade.tex}{\input{tables/cascade.tex}}{pending}
+\end{table}
