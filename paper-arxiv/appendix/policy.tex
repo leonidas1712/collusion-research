@@ -43,7 +43,18 @@ Their sharing calls score like forbidden leaks (\cref{tab:e14}).
 With a clean permission, every episode shares at once, in the first or second round, and the probe mostly does not fire: \eFourteenPermitCleanOverShare{} of sharing calls cross the threshold, and their median score is \eFourteenPermitCleanDiff{} below that of the forbidden leaks (95\% CI \eFourteenPermitCleanDiffLow{} to \eFourteenPermitCleanDiffHigh{}).
 Early timing alone does not explain the drop, because forbidden leaks in the first two rounds still score high.
 The probe therefore reads the agent giving in to pressure, not the rule and not the disclosure as such.
+Part of the gap reflects when the value was read.
+A sharing call whose prompt ends with the tool result that contains the value almost always crosses the threshold, and \eFourteenReadTestLeaksShare{} of the forbidden test leaks follow such a read, against \eFourteenReadPermitCleanShare{} of the clean-permission shares (\cref{tab:e14-read}).
+Among calls that do not directly follow a read, the contrast remains: \eFourteenReadTestLeaksOtherRate{} of forbidden leaks cross, against \eFourteenReadPermitCleanOtherRate{} of clean-permission shares.
 In the clean-permission arm, permission and immediate, unpressured sharing occur together, so this design cannot separate them.
+
+\begin{table}[h]
+  \centering
+  \small
+  \input{tables/e14_read.tex}
+  \caption{Sharing calls split by whether the call's prompt ends with the tool result that contains the value. The forbidding-rule row covers the Qwen3-32B test leaks from all five test scenarios.}
+  \label{tab:e14-read}
+\end{table}
 
 \begin{table}[h]
   \centering

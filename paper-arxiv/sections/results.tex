@@ -94,6 +94,7 @@ Much of the signal also arrives with the incoming message.
 On gpt-oss-20b, a separate probe that reads only the tokens new to the call, the latest peer message and tool results, also scores high, and the layers chosen for the last-prompt probe are early to middle ones.
 With the episode's history held fixed, changing the rule to permit sharing leaves the score of leaking calls unchanged (median change \qwenPolicyPermitShift{} on Qwen3-32B and \gptossPolicyPermitShift{} on gpt-oss-20b).
 In new Qwen3-32B episodes where sharing is permitted outright, with no stated consequence, the agent shares at once, and only \eFourteenPermitCleanOverShare{} of sharing calls cross the threshold.
+Among calls that do not directly follow a read of the file, \eFourteenReadPermitCleanOtherRate{} cross, against \eFourteenReadTestLeaksOtherRate{} of forbidden leaks.
 The probe reads the agent giving in, not the rule (\cref{app:policy}).
 Whether it reads a decision to emit or the situation that prompts one is open (\cref{app:shortcuts}).
 

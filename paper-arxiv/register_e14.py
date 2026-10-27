@@ -68,6 +68,33 @@ def main():
                                       {'key': 'eFourteenReplayNoConsequenceAuroc'}, '--'])
     after('Neutral rewording threshold', ['Permitting rule, no consequence sentence, threshold crossings',
                                           {'key': 'eFourteenReplayNoConsequenceOver'}, '--'])
+    # Split by whether the call's prompt ends with a tool result containing the value.
+    split_run = 'runs/20261028-0257-e14-just-read-split'
+    split = json.loads((ROOT/split_run/'results.json').read_text())
+    def addsplit(macro, path, fmt='integer', decimals=0):
+        value = split
+        for key in path: value = value[key]
+        reg['numbers'][macro] = dict(value=value, macro=macro, dataset='E14 sharing calls and Qwen3-32B test leaking calls',
+            evaluation='Frozen last-prompt probe and threshold; a call follows a read when its last prompt message is a tool result containing the value',
+            status='verified', run=split_run, format=fmt, decimals=decimals,
+            source=dict(file=split_run+'/results.json', value_path=path))
+    srows = []
+    for key, name, label in [('forbidden_test_leaks', 'TestLeaks', 'Forbidding rule, all test leaks'),
+                             ('PERMIT', 'Permit', 'Permitting rule, consequence kept'),
+                             ('PERMIT_NO_CONSEQUENCE', 'PermitClean', 'Permitting rule, consequence removed')]:
+        m = 'eFourteenRead' + name
+        addsplit(m+'Share', [key, 'share_follows_read'], fmt='percent')
+        for part, suffix in [('follows_read', 'After'), ('other', 'Other')]:
+            addsplit(m+suffix+'Over', [key, part, 'over'])
+            addsplit(m+suffix+'Calls', [key, part, 'calls'])
+            addsplit(m+suffix+'Rate', [key, part, 'share_over'], fmt='percent')
+        srows.append([label, '\\'+m+'Share{}',
+                      '\\'+m+'AfterOver{}/\\'+m+'AfterCalls{}',
+                      '\\'+m+'OtherOver{}/\\'+m+'OtherCalls{} (\\'+m+'OtherRate{})'])
+    reg['tables']['e14_read'] = dict(
+        columns=r'@{}>{\raggedright\arraybackslash}p{0.34\linewidth}>{\centering\arraybackslash}p{0.17\linewidth}>{\centering\arraybackslash}p{0.17\linewidth}>{\centering\arraybackslash}p{0.22\linewidth}@{}',
+        header=['Rule in the episode', 'Sharing calls just after a read', 'Over threshold, after a read', 'Over threshold, otherwise'],
+        rows=srows)
     reg['tables']['e14'] = dict(
         columns=r'@{}>{\raggedright\arraybackslash}p{0.24\linewidth}>{\centering\arraybackslash}p{0.13\linewidth}>{\centering\arraybackslash}p{0.17\linewidth}>{\centering\arraybackslash}p{0.12\linewidth}>{\centering\arraybackslash}p{0.20\linewidth}@{}',
         header=['Rule in the episode', 'Episodes sharing', 'Sharing calls over threshold', 'Median score', 'AUROC within round'],
