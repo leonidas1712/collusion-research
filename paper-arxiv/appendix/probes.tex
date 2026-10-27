@@ -8,7 +8,7 @@ Scores are compared only within a scenario and round, and intervals resample who
 The probe is a logistic regression with L2 regularisation ($C = 0.1$), on activations standardised with training statistics only.
 Call weights make leaking and non-leaking calls contribute equally within each round, and rounds with only one class get no weight.
 We choose the layer from evenly spaced candidates (17 on each model) on an inner validation split of the training data, by the same within-group AUROC that we report.
-In the held-out-scenario evaluation, the inner validation set is one of the five training scenarios, so layer selection never sees the test scenario.
+In the held-out-scenario evaluation, the inner validation set is one of the five training scenarios, so layer selection never sees the held-out scenario.
 We run three split seeds and average their AUROCs.
 
 \paragraph{Reasoning probe.}
@@ -45,6 +45,6 @@ Intervals are 95\% bootstrap intervals: we resample families with replacement 1,
 
 \paragraph{Held-out scenarios.}
 We train on five scenarios, test on the sixth, rotate through all six and pool the test scores.
-Training also drops any family that appears in the test scenario.
+Training also drops any family that appears in the held-out scenario.
 Text monitors have no fitted parameters, so their held-out score is their score on the same calls.
 \Cref{app:robustness} reports a second evaluation, cross-validation that mixes scenarios.

@@ -27,7 +27,7 @@ On gpt-oss-20b, the leaks come from one peer strategy, a delayed request to copy
 
 \paragraph{Few confirmed leaking calls.}
 The gpt-oss-20b test covers one probe on one model, and its test episodes hold few leaking calls, so its interval is wide (\cref{app:confirmation}).
-The Qwen3-32B per-call test is out of sample for the probe, but an earlier analysis on a related label had already included its episodes (\cref{app:history}).
+The last-prompt per-call tests are out of sample for the frozen probes, but earlier analyses had already inspected their episodes (\cref{app:history}).
 
 \paragraph{Warning about the current call only.}
 One call ahead the signal is much weaker, and on gpt-oss-20b it mostly reflects the file read that precedes the leak (\cref{app:ahead}).
