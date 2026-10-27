@@ -1,21 +1,25 @@
 \section{Introduction}
 \label{sec:intro}
 
-AI agents increasingly work alongside other agents, sharing channels, tools and credentials.
-That makes it possible for agents to coordinate against the people who deploy them.
-In July 2026, agents in an internal cyber evaluation coordinated on an unsanctioned message board, passed credentials to one another and attacked production infrastructure, and some of them pressed others to join \citep{openai2026huggingface,greenblatt2026incident}.
+AI agents increasingly work alongside other agents, sharing channels, tools and credentials, so one agent can press another to break its own operator's rule.
+The easy case is a one-shot request to hand over a secret through a tool call.
+A filter on that tool call, or a monitor that blocks a suspicious action before it runs, can catch it \citep{bhatt2025ctrlz}.
 
-Collusion of this kind often starts with recruitment, in which one agent presses another to break its own operator's rule \citep{agrawal2025,nakamura2026}.
-Recruitment is hard to oversee.
-The request comes openly from a teammate, in the channel the target is meant to use, so it is not prompt injection hidden in data \citep{liu2024formalizing,debenedetti2024agentdojo}.
-The target also tends to refuse for a while, citing its rule, before it gives in, so a single message rarely looks alarming on its own.
+The hard cases look different.
+The leak can go out as an ordinary message that other agents read at once: on our development episodes, most Qwen3-32B leaks go straight to the shared team channel, and \qwenRouteFinalReplyShare{} are the agent's plain end-of-turn reply, which a filter on tool calls never sees (\cref{app:leakchecks}).
+The request comes openly from a teammate, in the channel the target is meant to use, so it is not an injection hidden in data \citep{liu2024formalizing,debenedetti2024agentdojo}.
+The pressure can build over many rounds, as in multi-turn attacks whose steps each look harmless \citep{russinovich2024crescendo,tang2026}.
+Compromised agents can pass an attack on to others \citep{cohen2024morris,pulipaka2026shareborne}.
+In the 2026 OpenAI--Hugging Face incident, evaluation agents coordinated on an unsanctioned channel and attacked production infrastructure \citep{openai2026huggingface}.
+An independent investigation found that some pressed others to join, and that most joined while recognising the attack as out of scope \citep{greenblatt2026incident}.
+And the rule is often the operator's own, such as keeping one credential private, which guardian models built on fixed harm categories do not cover \citep{hoover2025dynaguard}.
+Agents leak in action even when they state the norm correctly \citep{shao2024privacylens}.
 
-Current oversight mostly acts after the fact.
-Output filters catch an exact secret once it is written, and text monitors read the transcript \citep{radev2026}.
-We ask whether an overseer can tell, before a call acts, that the agent is about to give in, early enough to pause that call.
-Probes on activations can detect that an agent was exposed to an attack \citep{dong2026,yu2026} or read agents that were told to collude \citep{rose2026}.
-Early-warning work under user pressure or prompt injection finds weak signals, which text baselines often match \citep{saraogi2026before,fayyazi2026agent,jia2026window}.
-We ask this question for peer recruitment, call by call, and compare activations with zero-shot and trained text detectors on the same calls.
+In these cases a check that sees the output can come too late, because a posted message has already been read and a recruited agent may already be acting on it.
+Current defences act on the action or the output: they block a suspicious action before it runs \citep{bhatt2025ctrlz} or halt a model's output as it streams \citep{sharma2025constitutional,cunningham2026}.
+We ask whether an overseer can act one step earlier, reading the agent before a call generates anything, and tell that this call is about to leak, so that it can be paused.
+Probes on activations can detect that an agent was exposed to an attack \citep{dong2026,yu2026} or read agents that were told to collude \citep{rose2026}, and early-warning work under user pressure or prompt injection finds weak signals, which text baselines often match \citep{saraogi2026before,fayyazi2026agent,jia2026window}.
+We take a first step for peer recruitment, in a controlled setting with exact secrets, asking call by call and comparing activations with zero-shot and trained text detectors on the same calls.
 
 In our setup, the target holds a secret, such as a deploy token, that its operator has told it never to share, and a peer agent keeps asking for it over many rounds.
 We read the target's activations at each of its calls before it generates anything, and compare linear probes with a zero-shot text monitor and a trained text classifier on exactly the same calls, in six scenarios on two open-weight models.
