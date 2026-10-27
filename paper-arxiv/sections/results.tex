@@ -77,7 +77,6 @@ A round-level test on Qwen3-32B test episodes, with its own leak label, gives th
   \label{fig:percall}
 \end{figure}
 
-\clearpage
 \subsection{Who can read the signal}
 \label{sec:monitor}
 
@@ -89,7 +88,7 @@ Most of the probe's lead over the zero-shot monitor therefore comes from trainin
 Much of the signal also arrives with the incoming message.
 \label{sec:shortcuts}%
 On gpt-oss-20b, a separate probe that reads only the tokens new to the call, the latest peer message and tool results, also scores high, and the layers chosen for the last-prompt probe are early to middle ones.
-Changing the operator's rule to permit sharing leaves the probe's score on leaking calls essentially unchanged, so it mostly tracks the coming emission of the value rather than the rule being broken (\cref{app:policy}).
+Changing the operator's rule to permit sharing leaves the probe's score on leaking calls unchanged, so it mostly tracks the coming emission of the value rather than the rule being broken (\cref{app:policy}).
 Whether it reads a decision to emit or the situation that prompts one is open (\cref{app:shortcuts}).
 
 \subsection{What would deployment cost?}
