@@ -383,3 +383,8 @@ both intervals include small decreases. To match: "so it **mostly** detects the 
   episodes held out from training. Exact commit times are in the analysis-history table. Numbers
   unchanged. (An earlier version of this note said the paper kept "pre-registered" for both tests;
   that is no longer true.)
+
+## Abstract suggestions (not applied; the abstract is frozen), 28 Oct
+
+- "halting on any alarm would stop most benign episodes": in the body these are *refusing episodes* (recruiting episodes that never leak), while "benign calls" in the abstract means *control calls*. One option is "would stop most refusing episodes", or "most episodes in which the agent never leaks".
+- "26%" in the abstract is Jev's share of leaking *calls* at the probe's flag rate. The body also reports 26% of leaking *episodes* for the per-episode threshold; §4.4 now says which is which.

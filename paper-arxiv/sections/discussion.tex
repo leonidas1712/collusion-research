@@ -11,15 +11,12 @@ Further from the act the signal fades, so our results do not support warnings ro
 The same per-call signal is also readable without activations: a cheap text classifier trained on labelled calls recovers most of it, far above a zero-shot monitor, which matters for agents whose weights an overseer cannot inspect.
 Whether that holds outside templated scenarios like ours is open.
 
-For an exact secret, an output filter that matches the string would also stop the leak.
-The per-call probe matters most where no string filter can match, as with paraphrased or encoded leaks, and where an overseer wants to pause a call before it acts.
-
 \subsection*{Limitations}
 We list the main limitations in order of how much each could change a headline; \cref{app:limitations} gives the rest.
 
 \paragraph{Narrow setting.}
 We test two models, six scenarios built from one task template, one peer and one target per episode, and synthetic tools and secrets.
-Leaks are exact strings, which an output filter would catch.
+Leaks are exact strings, which an output filter would catch; the probe matters most where no string filter can match, as with paraphrased or encoded leaks.
 Qwen3-32B ran with its reasoning switched off.
 Settings with several peers, recruited agents that recruit others, or paraphrased leaks are untested.
 

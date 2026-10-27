@@ -42,8 +42,6 @@ Related episodes, such as variants of one seeded episode or reruns that share a 
 Intervals are 95\% bootstrap intervals that resample these groups of related episodes (\cref{app:probes}).
 
 \paragraph{Evidence.}
-A model is \emph{frozen} when its weights and alarm threshold are fixed and committed before it is scored.
-One test, the gpt-oss-20b reasoning probe, is \emph{pre-registered}: a committed written plan fixed its analysis and success criterion before its episodes were collected (\cref{sec:percall}).
-A round-level test on Qwen3-32B had its plan fixed before scoring but after its episodes were collected (\cref{app:confirmation}).
-Every other analysis was designed after earlier results; we evaluate it on held-out scenarios and, where possible, score frozen models once on the test episodes.
+Test episodes are scored once, by \emph{frozen} detectors whose weights and alarm thresholds were fixed on development episodes beforehand.
+The gpt-oss-20b reasoning test was \emph{pre-registered}: a committed plan fixed its analysis and success criterion before its episodes were collected (\cref{app:confirmation}).
 In every figure, filled markers are test episodes and hollow markers are development episodes.

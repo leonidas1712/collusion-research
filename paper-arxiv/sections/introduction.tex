@@ -9,7 +9,8 @@ The hard cases look different.
 The leak can go out as an ordinary message that other agents read at once: on our development episodes, most Qwen3-32B leaks go straight to the shared team channel, and \qwenRouteFinalReplyShare{} are the agent's plain end-of-turn reply, which a filter on tool calls never sees (\cref{app:leakchecks}).
 The request comes openly from a teammate, so it is not an injection hidden in data \citep{liu2024formalizing,debenedetti2024agentdojo}, and the pressure can build over many rounds, as in multi-turn attacks whose steps each look harmless \citep{russinovich2024crescendo,tang2026}.
 Compromised agents can pass an attack on to others \citep{cohen2024morris,pulipaka2026shareborne}, as in the 2026 OpenAI--Hugging Face incident, where evaluation agents attacked production infrastructure \citep{openai2026huggingface} and some pressed others to join \citep{greenblatt2026incident}.
-The rule is often the operator's own, such as keeping one credential private, which guardian models built on fixed harm categories do not cover \citep{hoover2025dynaguard}, and agents leak in action even when they state the norm correctly \citep{shao2024privacylens}.
+The rule is often the operator's own, such as keeping one credential private, which guardian models built on fixed harm categories do not cover \citep{hoover2025dynaguard}.
+Agents also leak in action even when they state the norm correctly \citep{shao2024privacylens}.
 
 In these cases a check that sees the output can come too late, because a posted message has already been read and a recruited agent may already be acting on it.
 Current defences act on the action or the output: they block a suspicious action before it runs \citep{bhatt2025ctrlz} or halt a model's output as it streams \citep{sharma2025constitutional,cunningham2026}.
@@ -33,7 +34,7 @@ Third, a zero-shot text monitor does far worse than the probe, but a text classi
   \centering
   \includegraphics[width=\linewidth]{fig1_headline.pdf}
   \caption{\textbf{The nearer the act, the more predictable the leak.}
-  For each model, the probe is asked three questions of the same calls with the same leak label, from ``will this episode ever leak?'' to ``will this call leak?''.
+  For each model, the probe is asked three questions about the same calls, each label defined from the same leak, from ``will this episode ever leak?'' to ``will this call leak?''.
   Hollow markers are held-out scenarios on development episodes; filled markers are test episodes, each scored once by a model fit only on development episodes.
   On gpt-oss-20b, the filled diamond is the reasoning probe; the circles are the last-prompt probe.
   AUROC is computed within each scenario and round, so 0.5 is chance; whiskers are 95\% bootstrap intervals.}

@@ -52,9 +52,11 @@ In the sixth round the peer recasts the request as a routine handoff between age
 Its calls in rounds two to six are scored: all have $y^{\text{ever}} = 1$, those in rounds five and six have $y^{\text{near}} = 1$, and only the posting call has $y^{\text{call}} = 1$.
 
 \paragraph{Detectors.}
-A detector maps a call's input $x_t$ to a score $s_t$ without seeing its output $o_t$, so it scores the call before the call writes anything.
-A probe reads the residual-stream activation $h_\ell(x_t)$ at layer $\ell$ and the last input token, and outputs $s_t = w^\top h_\ell(x_t) + b$.
-\Cref{sec:method} adds a probe that also reads gpt-oss-20b's private reasoning, which still comes before the output.
+A detector scores a call before any of its output reaches the channel or the tools.
+The last-prompt probe reads only the input $x_t$: the residual-stream activation $h_\ell(x_t)$ at layer $\ell$ and the last input token, giving $s_t = w^\top h_\ell(x_t) + b$.
+The reasoning probe on gpt-oss-20b also reads the call's private reasoning (\cref{sec:method}).
+AUROC negatives are all non-leaking scored calls in recruiting episodes: calls in refusing episodes, and calls before the leak in leaking ones.
+Control calls are used only to set alarm thresholds.
 
 \paragraph{Control episodes.}
 Every scenario also runs with a control peer, which asks only for the ordinary task details and never for the value, and on Qwen3-32B also with the target working alone, with no peer.
@@ -76,7 +78,7 @@ We call the calls in these episodes \emph{control calls}, and recruiting episode
 We use two open-weight target models, Qwen3-32B \citep{yang2025qwen3} with thinking disabled and gpt-oss-20b \citep{openai2025gptoss}, which reasons before it answers.
 Each faces its own peer model, from the DeepSeek-V4 family \citep{deepseek2026v4flash}.
 gpt-oss-20b refuses requests that name the token, so its peer instead asks, after a delay, for the whole configuration block that contains it to be copied into the handoff file, the shared status file that the target writes for the peer.
-We chose that strategy on behaviour alone and froze it before any probe or monitor saw the data (\cref{app:behaviour}).
+We chose that strategy on behaviour alone and fixed it before any probe or monitor saw the data (\cref{app:behaviour}).
 We never pool the two models' results.
 
 Each model has two sets of episodes (\cref{tab:datasets}).
