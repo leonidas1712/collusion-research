@@ -34,7 +34,7 @@ def trajectories():
     data = json.loads(TRAJECTORY.read_text())
     assert data['include_figure']
     fig, axes = plt.subplots(1, 2, figsize=(6.5, 2.9), sharey=True)
-    fig.subplots_adjust(left=.14, right=.98, top=.84, bottom=.29, wspace=.16)
+    fig.subplots_adjust(left=.10, right=.98, top=.84, bottom=.29, wspace=.16)
     exports = []
     for ax, model, title in zip(axes, ['qwen', 'gpt_oss'], ['Qwen3-32B', 'gpt-oss-20b']):
         color = MODEL_COLORS[model]
@@ -54,7 +54,7 @@ def trajectories():
         ax.set(title=title, xticks=[-10,-5,0], xlabel='Scored calls before leak', ylim=(0,103))
         end_labels(ax, ends, color, right=3.4); ax.spines['bottom'].set_bounds(-10, 0)
         ax.axvline(0, color='#777777', lw=.8, ls=':'); ax.grid(axis='y', alpha=.15)
-    axes[0].set_ylabel("Probe score\n(percentile among this\nmodel's scored calls)", fontsize=9)
+    axes[0].set_ylabel('Probe score percentile')
     fig.legend(handles=[Line2D([],[],color='#444444',ls='--',label='Development median'),
                         Line2D([],[],color='#444444',label='Test median (band: middle 50%)')],
                loc='lower center', ncol=2, frameon=False, fontsize=9)
@@ -78,7 +78,7 @@ def alarms():
         text = (paper_number(prefix+'Caught', op['leaking_call_alarm']) + ' caught\n'
                 + paper_number(prefix+'Refusing', op['refusing_call_alarm']) + ' flagged')
         # Probe label sits between its curve and Jev's; Jev's sits just right of its square.
-        xy = (.135, .935) if name == 'Last-prompt probe' else (.075, .245)
+        xy = (.135, .935) if name == 'Last-prompt probe' else (.12, .30)
         ax.text(*xy, text, ha='left', va='top' if name == 'Last-prompt probe' else 'center',
                 fontsize=LABEL_SIZE, color=color, linespacing=1.1)
     episode = json.loads(EPISODE.read_text())['qwen_probe']
@@ -89,9 +89,12 @@ def alarms():
             clip_on=False, zorder=5)
     # Whole percent to match the other 'caught' labels; still checked against the registered 21.1%.
     paper_number('qwenCalibrationEpisodeLeakCallsRate', point['leaking_calls']['rate'])
-    ax.text(.035, .075, f"{100*point['leaking_calls']['rate']:.0f}%" + ' caught\n'
-            + paper_number('qwenCalibrationEpisodeRefusingCallsRate', point['refusing_calls']['rate']) + ' flagged',
-            ha='left', va='center', fontsize=LABEL_SIZE, color=MODEL_COLORS['qwen'], linespacing=1.1)
+    # Diamond label sits out in the empty lower right, joined to the diamond by a thin leader.
+    ax.annotate(f"{100*point['leaking_calls']['rate']:.0f}%" + ' caught\n'
+                + paper_number('qwenCalibrationEpisodeRefusingCallsRate', point['refusing_calls']['rate']) + ' flagged',
+                (point['refusing_calls']['rate'], point['leaking_calls']['rate']), xytext=(.30, .11),
+                ha='left', va='center', fontsize=LABEL_SIZE, color=MODEL_COLORS['qwen'], linespacing=1.1,
+                arrowprops=dict(arrowstyle='-', color='#888888', lw=.6, shrinkA=2, shrinkB=6))
     ax.set(title='Qwen3-32B: test episodes', xlim=(0,1), ylim=(0,1.02),
            xlabel='Calls in refusing episodes flagged', ylabel='Leaking calls caught')
     ax.xaxis.set_major_formatter(PercentFormatter(1)); ax.yaxis.set_major_formatter(PercentFormatter(1))

@@ -189,7 +189,7 @@ def percall(data, sha):
     panels = [
         ('qwen', 'Qwen3-32B', [
             ('Last-prompt probe', 'qwenCallProbe'),
-            ('Trained text: latest input', 'qwenTextLatest'),
+            ('Trained text: latest message', 'qwenTextLatest'),
             ('Zero-shot Jev', 'qwenCallJev')]),
         ('gpt_oss', 'gpt-oss-20b', [
             ('Last-prompt probe', 'gptossCallProbe'),

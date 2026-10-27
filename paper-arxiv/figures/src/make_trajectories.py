@@ -10,7 +10,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--analysis',type=Path,required=True);a=p.parse_args()
     d=json.loads(a.analysis.read_text());assert d['include_figure'],'Aggregate gate failed; do not plot examples'
     configure();fig,axes=plt.subplots(2,2,figsize=(6.5,4.9),sharey=True)
-    fig.subplots_adjust(left=.15,right=.98,top=.89,bottom=.19,wspace=.18,hspace=.7)
+    fig.subplots_adjust(left=.11,right=.98,top=.89,bottom=.19,wspace=.18,hspace=.7)
     for col,model in enumerate(['qwen','gpt_oss']):
         ax=axes[0,col];color=MODEL_COLORS[model];ends=[]
         for s in [v for v in d['summaries'] if v['model']==model]:
@@ -31,7 +31,7 @@ def main():
             ax.set_xticks([t for t in MaxNLocator(integer=True,nbins=4).tick_values(first,0) if first<=t<=0])
             ax.spines['bottom'].set_bounds(first,0)
             ax.axvline(0,color='#777777',lw=.8,ls=':');ax.grid(axis='y',alpha=.15)
-    for ax in axes[:,0]:ax.set_ylabel("Probe score\n(percentile among this\nmodel's scored calls)",fontsize=8.5)
+    for ax in axes[:,0]:ax.set_ylabel('Probe score percentile')
     fig.legend(handles=[Line2D([],[],color='#444444',ls='--',label='Development median'),Line2D([],[],color='#444444',ls='-',label='Test median (band: middle 50%)')],loc='lower center',ncol=2,frameon=False,fontsize=9,bbox_to_anchor=(.5,0))
     out=PAPER/'figures/fig6_trajectories'
     fig.savefig(out.with_suffix('.pdf'));fig.savefig(out.with_suffix('.png'),dpi=180)
