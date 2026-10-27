@@ -18,19 +18,19 @@ We therefore score calls from the read up to and including the call that leaks.
 On gpt-oss-20b, the scored calls also start only after the peer's first request, and the calls between the read and the request serve as a placebo (\cref{app:shortcuts}).
 The reasoning-probe comparisons on gpt-oss-20b use the scored calls that returned reasoning; the last-prompt probe gives a similar result on all scored calls (\cref{app:robustness}).
 
-\paragraph{Development and fresh test episodes.}
-For Qwen3-32B, the development episodes were collected first and the fresh test episodes later, and the plan in \cref{app:confirmation} was committed before any detector's predictions on them were compared with their labels.
-For gpt-oss-20b, the development episodes are the main collection, and the fresh test episodes were collected after the reasoning probe was frozen.
-The two sets never share an episode, and no fresh test episode was used to fit or choose anything for the model scored on it.
+\paragraph{Development and test episodes.}
+For Qwen3-32B, the development episodes were collected first and the test episodes later, and the plan in \cref{app:confirmation} was committed before any detector's predictions on them were compared with their labels.
+For gpt-oss-20b, the development episodes are the main collection, and the test episodes were collected after the reasoning probe was frozen.
+The two sets never share an episode, and no test episode was used to fit or choose anything for the model scored on it.
 
 \paragraph{Episodes excluded before scoring.}
 Some collected episodes are not scored, because they fail the validity checks above or have no call in the scored window (\cref{tab:attrition}).
 On gpt-oss-20b, most exclusions are episodes with no scored call after the peer's request.
-The Qwen3-32B fresh test episodes contain none from the main scenario, and in the gpt-oss-20b fresh test episodes the main scenario has few leaking calls (\cref{tab:attrition}).
+The Qwen3-32B test episodes contain none from the main scenario, and in the gpt-oss-20b test episodes the main scenario has few leaking calls (\cref{tab:attrition}).
 
 \begin{table}[h]
   \centering
-  \caption{Episodes collected or replayed, scored and excluded (top), and the fresh test episodes by scenario (bottom).}
+  \caption{Episodes collected or replayed, scored and excluded (top), and the test episodes by scenario (bottom).}
   \label{tab:attrition}
   \small
   \input{tables/datasets_attrition.tex}
@@ -43,7 +43,7 @@ The Qwen3-32B fresh test episodes contain none from the main scenario, and in th
 On gpt-oss-20b, the reasoning-probe comparisons have fewer leaking calls than leaking episodes, because some leaking calls return no reasoning and are left out.
 Those episodes stay in the scored set through their earlier calls, which are labelled as not leaking for the per-call question and as leaking for the eventual one.
 
-\Cref{tab:reasoning-coverage} gives these counts, and \cref{tab:qwen-accounting} breaks down the Qwen3-32B fresh calls.
+\Cref{tab:reasoning-coverage} gives these counts, and \cref{tab:qwen-accounting} breaks down the Qwen3-32B test calls.
 
 \begin{table}[h]
   \centering
@@ -56,7 +56,7 @@ Those episodes stay in the scored set through their earlier calls, which are lab
 
 \begin{table}[h]
   \centering
-  \caption{Qwen3-32B fresh calls: leaking calls, earlier calls in leaking episodes, calls in refusing episodes, and control calls, which are counted separately.}
+  \caption{Qwen3-32B test calls: leaking calls, earlier calls in leaking episodes, calls in refusing episodes, and control calls, which are counted separately.}
   \label{tab:qwen-accounting}
   \small
   \input{tables/qwen_call_accounting.tex}

@@ -12,14 +12,14 @@ Among those reads, the probe still separates the ones followed by a leak.
 \paragraph{Score across an episode.}
 \Cref{fig:trajectories} aligns each leaking episode on its leaking call and shows the probe's score as a percentile among that model's scored calls.
 On average, the score is lower over the calls before the leak and rises sharply at the leaking call, on both models and both sets of episodes, although individual episodes vary.
-Its example episodes are chosen by one fixed rule: for each model, the fresh leaking episode of median length among those with at least five scored calls.
+Its example episodes are chosen by one fixed rule: for each model, the leaking test episode of median length among those with at least five scored calls.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{fig6_trajectories.pdf}
   \caption{\textbf{On average, the score jumps at the call that leaks.}
-  Last-prompt probe score, as a percentile among that model's scored calls, aligned on each episode's leaking call (top: median over all leaking episodes, with the middle 50\% shaded for fresh episodes).
-  Bottom: one example fresh episode per model, chosen by the rule above; individual episodes vary.}
+  Last-prompt probe score, as a percentile among that model's scored calls, aligned on each episode's leaking call (top: median over all leaking episodes, with the middle 50\% shaded for test episodes).
+  Bottom: one example test episode per model, chosen by the rule above; individual episodes vary.}
   \label{fig:trajectories}
 \end{figure}
 
@@ -35,13 +35,13 @@ We set each threshold on control calls, so that about 5\% of them alarm.
 At that threshold the reasoning probe catches most leaking calls in development while few calls in refusing episodes alarm.
 Counted per episode, however, a sizeable share of refusing episodes get at least one alarm, because each episode has many calls.
 A threshold set so that about 5\% of control episodes alarm catches about a third of leaking episodes before the first leak.
-On the fresh test episodes, the frozen threshold caught about half of the leaking calls (\cref{app:confirmation}).
-The fresh Qwen3-32B operating points, and how per-call and per-episode rates relate, are in \cref{sec:cost}.
+On the test episodes, the frozen threshold caught about half of the leaking calls (\cref{app:confirmation}).
+The Qwen3-32B operating points on the test episodes, and how per-call and per-episode rates relate, are in \cref{sec:cost}.
 \Cref{tab:episode-calibration} compares the per-call and per-episode thresholds on both models, with the share of flagged calls that are real leaks and the gap between control and refusing traffic.
 
 \begin{table}[h]
   \centering
-  \caption{Per-call and per-episode thresholds on the fresh test episodes: precision of the flagged calls, leaking episodes caught by their first leak, refusing episodes and calls flagged, and the same rates on control traffic. Recruiting calls come from leaking and refusing episodes; control calls come from control episodes and are counted separately.}
+  \caption{Per-call and per-episode thresholds on the test episodes: precision of the flagged calls, leaking episodes caught by their first leak, refusing episodes and calls flagged, and the same rates on control traffic. Recruiting calls come from leaking and refusing episodes; control calls come from control episodes and are counted separately.}
   \label{tab:episode-calibration}
   \footnotesize
   \setlength{\tabcolsep}{3pt}
@@ -54,7 +54,7 @@ A deployed alarm would need its threshold set per episode, as \citet{gao2026} al
   \centering
   \includegraphics[width=\linewidth]{fig7_alarm_tradeoffs.pdf}
   \caption{\textbf{Leaking calls caught against refusing calls alarmed, as the threshold moves.}
-  Rates are unstratified, counted over all calls, and negatives are calls in episodes that never leak; marked points are the thresholds set on control calls, which for the gpt-oss-20b fresh episodes is the frozen threshold.
+  Rates are unstratified, counted over all calls, and negatives are calls in episodes that never leak; marked points are the thresholds set on control calls, which for the gpt-oss-20b test episodes is the frozen threshold.
   Jev on gpt-oss-20b was scored only on development episodes.}
   \label{fig:alarm-tradeoff}
 \end{figure}
@@ -71,22 +71,22 @@ A deployed alarm would need its threshold set per episode, as \citet{gao2026} al
 \label{app:cascade}
 
 No detectable gain.
-We paired the frozen probe with a second detector on the fresh Qwen3-32B episodes and halted an episode at the first call that both flag.
-The second detector was either Jev or the bag-of-words classifier, fit once on all development calls and scored on the fresh calls.
+We paired the frozen probe with a second detector on the Qwen3-32B test episodes and halted an episode at the first call that both flag.
+The second detector was either Jev or the bag-of-words classifier, fit once on all development calls and scored on the test calls.
 At the same share of refusing episodes halted, no pairing catches more leaking episodes than the probe alone with a stricter threshold, and the pairing with Jev catches fewer (\cref{fig:cascade,tab:cascade}).
 At these strict thresholds the second detector misses most leaking episodes on its own.
-Every threshold is chosen on the same fresh episodes, which favours the pairings because they have more thresholds to tune.
+Every threshold is chosen on the test episodes, which favours the pairings because they have more thresholds to tune.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.7\linewidth]{fig9_cascade.pdf}
-  \caption{\textbf{A second check on the same input does not improve the trade-off.} Leaking episodes caught against refusing episodes halted, as thresholds move, on fresh Qwen3-32B episodes, for the probe alone and for the probe at its lenient threshold paired with Jev or with the bag-of-words classifier.}
+  \caption{\textbf{A second check on the same input does not improve the trade-off.} Leaking episodes caught against refusing episodes halted, as thresholds move, on Qwen3-32B test episodes, for the probe alone and for the probe at its lenient threshold paired with Jev or with the bag-of-words classifier.}
   \label{fig:cascade}
 \end{figure}
 
 \begin{table}[h]
   \centering
-  \caption{Leaking episodes caught at a fixed share of refusing episodes halted, fresh Qwen3-32B episodes, with 95\% episode-bootstrap intervals in which thresholds are chosen again in each draw. ``Lenient'' keeps the probe at its control-call threshold; ``grid'' also chooses the probe's threshold. The last number in each cascade cell is its difference from the probe alone, in episodes.}
+  \caption{Leaking episodes caught at a fixed share of refusing episodes halted, Qwen3-32B test episodes, with 95\% episode-bootstrap intervals in which thresholds are chosen again in each draw. ``Lenient'' keeps the probe at its control-call threshold; ``grid'' also chooses the probe's threshold. The last number in each cascade cell is its difference from the probe alone, in episodes.}
   \label{tab:cascade}
   \small
   \input{tables/cascade.tex}

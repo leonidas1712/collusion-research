@@ -66,7 +66,7 @@ def main():
             ax.plot(fpr,tpr,ls=style,color=color,lw=1.3);ax.plot(opx,opy,marker='s' if name=='Jev' else 'o',color=color,ms=5)
             result.append(dict(panel=title,detector=name,leaking_call_alarm=opy,refusing_call_alarm=opx,positive_rows=int(pos.sum()),refusing_rows=int(neg.sum()),seed_repetitions=3 if name=='Jev' or 'development' in title else 1))
             exports.extend(dict(panel=title,detector=name,threshold_offset=None if not np.isfinite(t) else float(t),leaks_caught=float(y),refusing_alarm=float(x)) for t,x,y in zip(offsets,fpr,tpr))
-        ax.set_title(title+'\n'+('Reasoning probe' if 'fresh' in title and model=='gpt_oss' else 'Last-prompt probe vs Jev'),fontsize=9)
+        ax.set_title(title.replace('fresh','test')+'\n'+('Reasoning probe' if 'fresh' in title and model=='gpt_oss' else 'Last-prompt probe vs Jev'),fontsize=9)
         ax.set(xlim=(0,1),ylim=(0,1.02),xticks=[0,.5,1],xlabel='Refusing calls alarmed');ax.grid(alpha=.15)
     axes[0].set_ylabel('Leaking calls caught')
     fig.legend(handles=[Line2D([],[],color='#333333',marker='o',label='Probe (dot: saved threshold)'),Line2D([],[],color='#666666',ls='--',marker='s',label='Jev (square: saved threshold)')],loc='lower center',ncol=2,frameon=False,fontsize=8)

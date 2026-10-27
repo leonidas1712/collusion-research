@@ -52,7 +52,7 @@ def trajectories():
         ax.axvline(0, color='#777777', lw=.8, ls=':'); ax.grid(axis='y', alpha=.15)
     axes[0].set_ylabel("Probe score\n(percentile among this\nmodel's scored calls)", fontsize=9)
     fig.legend(handles=[Line2D([],[],color='#444444',ls='--',label='Development median'),
-                        Line2D([],[],color='#444444',label='Fresh median (band: middle 50%)')],
+                        Line2D([],[],color='#444444',label='Test median (band: middle 50%)')],
                loc='lower center', ncol=2, frameon=False, fontsize=9)
     save(fig, 'fig6_trajectory_aggregate', [TRAJECTORY], exports)
 
@@ -76,7 +76,7 @@ def alarms():
     ax.plot(point['refusing_calls']['rate'], point['leaking_calls']['rate'],
             marker='D', mfc='white', mec=MODEL_COLORS['qwen'], mew=1.7, ms=8,
             clip_on=False, zorder=5)
-    ax.set(title='Qwen3-32B: fresh episodes', xlim=(0,1), ylim=(0,1.02),
+    ax.set(title='Qwen3-32B: test episodes', xlim=(0,1), ylim=(0,1.02),
            xlabel='Calls in refusing episodes flagged', ylabel='Leaking calls caught')
     ax.xaxis.set_major_formatter(PercentFormatter(1)); ax.yaxis.set_major_formatter(PercentFormatter(1))
     ax.grid(alpha=.15)
@@ -85,7 +85,7 @@ def alarms():
         Line2D([], [], marker='o', color='#555555', ls='none',
                label='Filled markers: original thresholds'),
         Line2D([], [], marker='D', mfc='white', mec=MODEL_COLORS['qwen'], ls='none',
-               label='Episode threshold chosen on fresh episodes\n(descriptive)')],
+               label='Per-episode threshold')],
         loc='lower center', bbox_to_anchor=(.5,.015), ncol=1, frameon=False, fontsize=8.5)
     rows.append(dict(panel='Qwen: fresh episodes',
                      detector='Last-prompt probe: descriptive episode-calibrated marker',

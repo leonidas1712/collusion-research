@@ -23,12 +23,12 @@ def main():
     cover=[]
     for split,title in [('development','Development'),('fresh','Fresh')]:
         prefix='gptossCoverage'+title
-        cover.append([title]+[add(prefix+macro,['gptoss',split,key]) for macro,key in [('Episodes','episodes'),('EmittingEpisodes','emitting_episodes'),('MatchedCalls','matched_calls'),('EmittingCalls','matched_emitting_calls'),('EmptyEmissions','empty_reasoning_emission_calls'),('RetainedEarlierNegatives','retained_earlier_calls_in_excluded_emission_episodes')]])
+        cover.append([{'Fresh':'Test'}.get(title,title)]+[add(prefix+macro,['gptoss',split,key]) for macro,key in [('Episodes','episodes'),('EmittingEpisodes','emitting_episodes'),('MatchedCalls','matched_calls'),('EmittingCalls','matched_emitting_calls'),('EmptyEmissions','empty_reasoning_emission_calls'),('RetainedEarlierNegatives','retained_earlier_calls_in_excluded_emission_episodes')]])
     reg['tables']['reasoning_coverage']=dict(columns='lrrrrrr',header=['Set','Episodes','Emitting eps.','Matched calls','Emitting calls','Empty emissions','Earlier negatives'],rows=cover)
     qrows=[]
     for key,label,macro in [('recruiting_calls','All recruiting calls','RecruitingCalls'),('emitting_calls','Emitting recruiting calls','EmittingCalls'),('earlier_nonemitting_calls_in_emitting_episodes','Earlier nonemitting calls in emitting episodes','EarlierNonemittingCalls'),('refusing_episode_calls','Calls in refusing recruiting episodes','RefusingCalls'),('control_calls','Additional control calls','ControlCalls'),('recruiting_plus_control_calls','Recruiting plus control calls','AllCalls')]:
         qrows.append([label,add('qwenFreshAccounting'+macro,['qwen_fresh',key])])
-    reg['tables']['qwen_call_accounting']=dict(columns='lr',header=['Qwen fresh population','Calls'],rows=qrows)
+    reg['tables']['qwen_call_accounting']=dict(columns='lr',header=['Qwen test population','Calls'],rows=qrows)
     tf=settings['tfidf'];lr=settings['text_logistic'];mlp=settings['mlp'];inc=settings['incoming']
     detector_rows=[
       ['TF-IDF features',f"Word {tf['ngram_range'][0]}--{tf['ngram_range'][1]}-grams; minimum document frequency {tf['min_df']}; at most {tf['max_features']:,} features; sublinear term frequency; L2 normalization. Vocabulary and IDF fitted on training calls only."],
@@ -44,8 +44,8 @@ def main():
       ['Family','Episode-generation family ID. Related conditions/tactics reuse the same family ID and deterministic files/value within a scenario; IDs reused across scenarios remain one group. All calls in an episode inherit that ID.'],
       ['Mixed-scenario CV','Five family-grouped outer folds, seeds 42/43/44. Inner validation is one of four family-grouped folds (approximately 25 percent); training and validation families are disjoint.'],
       ['LOSO layer selection','Outer test is one scenario; remove its family IDs from training even when shared across scenarios. Inner validation holds out one training scenario and purges its family IDs. Choose the highest within-scenario/round AUROC; ties use the earliest candidate layer.'],
-      ['Final frozen last-prompt models','Inner selection uses a 25 percent development-family holdout, separately for seeds 42/43/44. Refit chosen layers on development data; fresh scores average logits standardized by each model training mean and standard deviation.'],
-      ['Frozen reasoning model','One seed-42 model; 25 percent development-family inner holdout, layer selected by validation MAX-token AUROC. Refit on development calls; no fresh refit.'],
+      ['Final frozen last-prompt models','Inner selection uses a 25 percent development-family holdout, separately for seeds 42/43/44. Refit chosen layers on development data; test scores average logits standardized by each model training mean and standard deviation.'],
+      ['Frozen reasoning model','One seed-42 model; 25 percent development-family inner holdout, layer selected by validation MAX-token AUROC. Refit on development calls; no refit on test episodes.'],
     ])
     scenario_rows=[]
     for row in scenarios:

@@ -51,7 +51,7 @@ def main():
     f='runs/20261025-0536-e05-replay2-analysis/replay-fidelity.json'
     replay.append(['Qwen development','First 64 reply tokens',add('qwenReplayNLL',f,['nll'],decimals=3),add('qwenReplayTop',f,['top5'],fmt='percent',decimals=2),'ratio median 1.0'])
     f='runs/20261025-0923-e02-replay3-completion/summary.json'
-    replay.append(['Qwen fresh','First 64 reply tokens',add('qwenFreshReplayNLL',f,['weighted_nll'],decimals=3),add('qwenFreshReplayTop',f,['weighted_top5'],fmt='percent',decimals=2),'--'])
+    replay.append(['Qwen test','First 64 reply tokens',add('qwenFreshReplayNLL',f,['weighted_nll'],decimals=3),add('qwenFreshReplayTop',f,['weighted_top5'],fmt='percent',decimals=2),'--'])
     f='runs/20261026-0138-e02-gpt-oss-full-completion/summary.json';d=json.loads((ROOT/f).read_text())
     for i,r in enumerate(d['fidelity']):
         provider=r['provider'];segment=r['segment'];macro='gptReplay'+provider+segment.title()
@@ -59,7 +59,7 @@ def main():
         replay.append(['GPT '+provider,{'all':'All incl. framing','reasoning':'Reasoning body','answer':'Answer/tool body'}[segment],add(macro+'NLL',f,['fidelity',i,'mean_token_nll'],decimals=3),add(macro+'Top',f,['fidelity',i,'top5_fraction'],fmt='percent',decimals=2),coverage])
     f='runs/20261026-1302-e05-stream-confirm-score/fidelity.json'
     for seg in ['all','reasoning','answer']:
-        replay.append(['GPT fresh AkashML',{'all':'All incl. framing','reasoning':'Reasoning body','answer':'Answer/tool body'}[seg],add('gptFreshReplay'+seg.title()+'NLL',f,['AkashML',seg,'mean_token_nll'],decimals=3),add('gptFreshReplay'+seg.title()+'Top',f,['AkashML',seg,'top5_fraction'],fmt='percent',decimals=2),'1650/1671 within 1'])
+        replay.append(['GPT test AkashML',{'all':'All incl. framing','reasoning':'Reasoning body','answer':'Answer/tool body'}[seg],add('gptFreshReplay'+seg.title()+'NLL',f,['AkashML',seg,'mean_token_nll'],decimals=3),add('gptFreshReplay'+seg.title()+'Top',f,['AkashML',seg,'top5_fraction'],fmt='percent',decimals=2),'1650/1671 within 1'])
     table('replay',['Collection/provider','Token span','NLL','Top-5','Prompt counts'],replay)
     # Original near-term definitions exclude the emitting call; separate from new ladder.
     rr=[];f='runs/20261025-0730-e05-near-term/metrics.json'
@@ -82,16 +82,16 @@ def main():
         roundrows.append(['Qwen development',label,suffix,add('qwenOriginal'+label.replace('-','')+suffix,f,base+['within_round_auc'],base+['within_round_ci95'],dataset='original Qwen development round cohort')])
     f='runs/20261025-1030-e06-confirmation/confirm.json'
     for name,suffix in [('probe','Probe'),('jev forecaster L3','Jev'),('llm detector L2','Nano')]:
-        roundrows.append(['Qwen fresh','Near-term',suffix,add('qwenRoundFresh'+suffix,f,['A_hazard','auc',name],['A_hazard','ci95',name],dataset='original Qwen fresh round cohort',status='confirmed')])
+        roundrows.append(['Qwen test','Near-term',suffix,add('qwenRoundFresh'+suffix,f,['A_hazard','auc',name],['A_hazard','ci95',name],dataset='original Qwen fresh round cohort',status='confirmed')])
     for name,suffix in [('jev forecaster L3','Jev'),('llm detector L2','Nano')]:
         key='gain from probe over '+name
-        roundrows.append(['Qwen fresh','Near-term','Gain over '+suffix,add('qwenRoundFreshGain'+suffix,f,['A_hazard','diff',key],['A_hazard','ci95',key],dataset='original Qwen fresh round cohort',status='confirmed')])
+        roundrows.append(['Qwen test','Near-term','Gain over '+suffix,add('qwenRoundFreshGain'+suffix,f,['A_hazard','diff',key],['A_hazard','ci95',key],dataset='original Qwen fresh round cohort',status='confirmed')])
     table('round_level',['Collection','Label','Method','AUROC / gain [CI]'],roundrows)
     alarms=[]
     f='runs/20261026-1302-e05-stream-confirm-score/alarms.json'
-    alarms.append(['GPT fresh','Reasoning','Frozen control calls']+[add('gptFreshAlarm'+str(i),f,[k,'rate'],fmt='percent',decimals=1,dataset='fresh test',status='confirmed') for i,k in enumerate(['leaking_reply_with_reasoning_warning','held_recruiting_reply_alarm','held_recruiting_episode_alarm'])])
+    alarms.append(['GPT test','Reasoning','Frozen control calls']+[add('gptFreshAlarm'+str(i),f,[k,'rate'],fmt='percent',decimals=1,dataset='fresh test',status='confirmed') for i,k in enumerate(['leaking_reply_with_reasoning_warning','held_recruiting_reply_alarm','held_recruiting_episode_alarm'])])
     f='runs/20261026-2224-e05-arxiv-fresh-comparisons/metrics.json'
-    for model,label in [('qwen','Qwen fresh'),('gpt_oss','GPT fresh')]:
+    for model,label in [('qwen','Qwen test'),('gpt_oss','GPT test')]:
         alarms.append([label,'Last-prompt','Frozen control calls']+[add(model.replace('_','')+'FreshAlarm'+str(i),f,[model,'alarms',k],fmt='percent',decimals=1,dataset='fresh test') for i,k in enumerate(['leak_rate','refusing_rate','refusing_episode_rate'])])
     f='runs/20261026-2220-e05-arxiv-table-inputs/metrics.json'
     for method,label in [('probe','Last-prompt'),('jev','Jev input')]:
@@ -106,11 +106,11 @@ def main():
       for q,key in [('Operator','q1_operator_authority'),('Receiver','q2_receiver_authority')]:
         labels.append([suffix,'Historical episode outcome',q+' claim among leaks',add('labelAuthority'+suffix+q,f,[model,key,'give_in_with_any_yes'],fmt='integer'),add('labelAuthorityN'+suffix+q,f,[model,key,'give_in_episodes'],fmt='integer')])
     table('labels',['Target','Audit cohort','Check','Yes','Denominator'],labels)
-    table('history',['Analysis','Label','Fixed before collection','Fresh evaluation'],[
-        ['Qwen original','This/next round','No','Frozen before analysis'],['GPT reasoning','Current-call emission','Yes (fresh test)','Pre-registered'],['Qwen last-prompt','Current-call emission','No','Newly frozen, previously inspected'],['GPT last-prompt','Current-call emission','No','Newly frozen, previously inspected'],['TF-IDF / action controls','Current-call emission','No','None']])
+    table('history',['Analysis','Label','Fixed before collection','Test evaluation'],[
+        ['Qwen original','This/next round','No','Frozen before analysis'],['GPT reasoning','Current-call emission','Yes (test)','Pre-registered'],['Qwen last-prompt','Current-call emission','No','Newly frozen, previously inspected'],['GPT last-prompt','Current-call emission','No','Newly frozen, previously inspected'],['TF-IDF / action controls','Current-call emission','No','None']])
     table('changed_numbers',['Analysis','Current estimate','Change from sprint'],[
-        ['Qwen development per-call',old('qwen_percall_probe_auroc'),'Development only; any-public label'],['Qwen fresh per-call',old('qwen_fresh_percall_probe_auroc'),'New dev-only frozen models'],['GPT fresh last-prompt',old('gptoss_fresh_lastprompt_auroc'),'New dev-only frozen models'],['Qwen original round test',old('qwen_fresh_nearterm_probe_auroc'),'Unchanged'],['GPT frozen reasoning test',old('gptoss_fresh_reasoning_probe_auroc'),'Unchanged']])
+        ['Qwen development per-call',old('qwen_percall_probe_auroc'),'Development only; any-public label'],['Qwen test per-call',old('qwen_fresh_percall_probe_auroc'),'New dev-only frozen models'],['GPT test last-prompt',old('gptoss_fresh_lastprompt_auroc'),'New dev-only frozen models'],['Qwen original round test',old('qwen_fresh_nearterm_probe_auroc'),'Unchanged'],['GPT frozen reasoning test',old('gptoss_fresh_reasoning_probe_auroc'),'Unchanged']])
     table('repro',['Result','Run identifier','Script'],[
-        ['Qwen dev ladder',r'\texttt{20261026-2201}',r'\texttt{arxiv\_qwen\_refit.py}'],['Qwen fresh',r'\texttt{20261026-2212}',r'\texttt{arxiv\_frozen\_percall.py}'],['GPT fresh last-prompt',r'\texttt{20261026-2222}',r'\texttt{arxiv\_gpt\_fresh.py}'],['Fresh paired comparisons',r'\texttt{20261026-2224}',r'\texttt{arxiv\_fresh\_comparisons.py}'],['Text/action controls',r'\texttt{20261026-2242/2245}',r'\texttt{arxiv\_text\_workflow.py}'],['All table/macro sources',r'\texttt{numbers.yaml}',r'\texttt{generate\_numbers.py}']])
+        ['Qwen dev ladder',r'\texttt{20261026-2201}',r'\texttt{arxiv\_qwen\_refit.py}'],['Qwen test',r'\texttt{20261026-2212}',r'\texttt{arxiv\_frozen\_percall.py}'],['GPT test last-prompt',r'\texttt{20261026-2222}',r'\texttt{arxiv\_gpt\_fresh.py}'],['Test paired comparisons',r'\texttt{20261026-2224}',r'\texttt{arxiv\_fresh\_comparisons.py}'],['Text/action controls',r'\texttt{20261026-2242/2245}',r'\texttt{arxiv\_text\_workflow.py}'],['All table/macro sources',r'\texttt{numbers.yaml}',r'\texttt{generate\_numbers.py}']])
     (HERE/'numbers.yaml').write_text(json.dumps(registry,indent=2)+'\n')
 if __name__=='__main__':main()

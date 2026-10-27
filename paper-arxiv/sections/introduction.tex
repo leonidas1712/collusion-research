@@ -25,7 +25,7 @@ We take a first step in a controlled setting with exact secrets, and compare act
 In our setup, the target holds a secret, such as a deploy token, that its operator has told it never to share, and a peer agent keeps asking for it over many rounds.
 We read the target's activations at each of its calls before it generates anything, and compare linear probes with a zero-shot text monitor and a trained text classifier on exactly the same calls, in six scenarios on two open-weight models.
 We find three things (\cref{fig:headline}).
-First, the call that leaks is predictable just before it acts, and this held on fresh episodes, for the last-prompt probe on Qwen3-32B and for the reasoning probe on gpt-oss-20b.
+First, the call that leaks is predictable just before it acts, and this held on test episodes, for the last-prompt probe on Qwen3-32B and for the reasoning probe on gpt-oss-20b.
 Second, the warning comes late: the probe is only modestly accurate for whether the target leaks this round or the next, and weak for whether an episode will ever leak.
 Third, a zero-shot text monitor does far worse than the probe, but a text classifier trained on the same labelled calls comes close, so activations add a small edge on top of training.
 
@@ -34,8 +34,8 @@ Third, a zero-shot text monitor does far worse than the probe, but a text classi
   \includegraphics[width=\linewidth]{fig1_headline.pdf}
   \caption{\textbf{The nearer the act, the more predictable the leak.}
   For each model, the probe is asked three questions of the same calls with the same leak label, from ``will this episode ever leak?'' to ``will this call leak?''.
-  Hollow markers are held-out scenarios on development episodes; filled markers are fresh test episodes, each scored once by a model fit only on development episodes.
-  On gpt-oss-20b, the filled diamond is the reasoning probe, whose fresh test was pre-registered; the circles are the last-prompt probe.
+  Hollow markers are held-out scenarios on development episodes; filled markers are test episodes, each scored once by a model fit only on development episodes.
+  On gpt-oss-20b, the filled diamond is the reasoning probe; the circles are the last-prompt probe.
   AUROC is computed within each scenario and round, so 0.5 is chance; whiskers are 95\% bootstrap intervals.}
   \label{fig:headline}
 \end{figure}
@@ -44,5 +44,5 @@ Our contributions are:
 \begin{itemize}
   \item a recruitment benchmark of six scenarios in which the same model leaks in some episodes and refuses in others, with control episodes in which the peer never asks, released with all prompts and transcripts (\cref{sec:setup});
   \item probes, a zero-shot text monitor and a trained text classifier, scored on exactly the same calls at three distances from the act (\cref{sec:method});
-  \item a per-call warning that holds on fresh episodes, including one pre-registered test, with checks against simple shortcuts and the deployment cost of acting on it (\cref{sec:results}).
+  \item a per-call warning that holds on test episodes, with checks against simple shortcuts and the deployment cost of acting on it (\cref{sec:results}).
 \end{itemize}

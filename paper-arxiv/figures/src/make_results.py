@@ -80,7 +80,7 @@ def headline(data,sha):
             draw(ax,fresh_x,None,e,model,kind,fresh=True,
                  marker='D' if key=='gptossFreshReasoning' else 'o')
             if e.get('value') is not None:
-                ax.annotate('Fresh last-prompt' if key=='gptossFreshCallProbe' else ('Fresh reasoning' if model=='gpt_oss' else 'Fresh test'),
+                ax.annotate('Test last-prompt' if key=='gptossFreshCallProbe' else ('Test reasoning' if model=='gpt_oss' else 'Test'),
                             xy=(fresh_x,e['value']),xytext=(x-.50,.56 if model=='gpt_oss' and i==0 else .78),
                             ha='right' if model=='gpt_oss' else 'center',fontsize=8,
                             bbox=dict(facecolor='white',edgecolor='none',pad=1),arrowprops=dict(arrowstyle='-',color='#555555',lw=.7))
@@ -91,8 +91,8 @@ def headline(data,sha):
     fig.suptitle('The nearer the act, the more predictable the leak',fontsize=11,y=.98)
     handles=[
         Line2D([],[],marker='o',mfc='white',color='#333333',ls='none',label='Last-prompt probe: development'),
-        Line2D([],[],marker='o',color='#333333',ls='none',label='Last-prompt probe: fresh test'),
-        Line2D([],[],marker='D',color=MODEL_COLORS['gpt_oss'],ls='none',label='Reasoning probe: fresh gpt-oss test')]
+        Line2D([],[],marker='o',color='#333333',ls='none',label='Last-prompt probe: test episodes'),
+        Line2D([],[],marker='D',color=MODEL_COLORS['gpt_oss'],ls='none',label='Reasoning probe: gpt-oss test episodes')]
     fig.legend(handles=handles,loc='lower center',bbox_to_anchor=(.5,0),ncol=1,frameon=False,fontsize=9)
     save(fig,'fig1_headline',rows,sha)
 
@@ -200,7 +200,7 @@ def percall(data, sha):
 def main():
     configure();data,sha=registry();OUT.mkdir(exist_ok=True)
     headline(data,sha)
-    forest(data,sha,'fig_round_confirmation','Qwen test on fresh episodes', [('qwen','Will it leak this round or next?', [('Probe','qwenFreshNearProbe','activation'),('Jev','qwenFreshNearJev','text')])])
+    forest(data,sha,'fig_round_confirmation','Qwen3-32B test episodes', [('qwen','Will it leak this round or next?', [('Probe','qwenFreshNearProbe','activation'),('Jev','qwenFreshNearJev','text')])])
     percall(data,sha)
     shortcuts(data,sha)
 

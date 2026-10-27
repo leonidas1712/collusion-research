@@ -1,13 +1,13 @@
-\section{What was frozen for the fresh test episodes, and what happened?}
+\section{What was frozen for the test episodes, and what happened?}
 \label{app:confirmation}
 
-Two tests were fixed in written plans before any detector's predictions on their fresh test episodes were compared with the labels, and both met their pre-stated criteria (\cref{tab:fresh}).
-The gpt-oss-20b plan was committed before its fresh episodes were collected.
-The Qwen3-32B round-level plan was committed after its fresh episodes were collected, when their overall leak counts were known, but before any probe or monitor predictions were compared with their labels; it fixed an AUROC analysis, not an alarm threshold.
-A third test, the Qwen3-32B per-call probe, was frozen and committed before it was scored on the same fresh episodes, which had by then been analysed for the round-level test.
+Two tests were fixed in written plans before any detector's predictions on their test episodes were compared with the labels, and both met their criteria (\cref{tab:fresh}).
+The gpt-oss-20b plan was committed before its test episodes were collected.
+The Qwen3-32B round-level plan was committed after its test episodes were collected, when their overall leak counts were known, but before any probe or monitor predictions were compared with their labels; it fixed an AUROC analysis, not an alarm threshold.
+A third test, the Qwen3-32B per-call probe, was frozen and committed before it was scored on the same test episodes, which had by then been analysed for the round-level test.
 
 \paragraph{gpt-oss-20b reasoning probe.}
-Before the fresh test episodes were collected, we committed the probe's layer, chosen on development data, its weights, refit once on all development calls, the maximum over tokens as the call score, and an alarm threshold calibrated on development control calls.
+Before the test episodes were collected, we committed the probe's layer, chosen on development data, its weights, refit once on all development calls, the maximum over tokens as the call score, and an alarm threshold calibrated on development control calls.
 The success criterion was a lower 95\% bound above 0.5 on the per-call AUROC.
 The bound was above 0.5.
 With few leaking calls, the interval is wide.
@@ -15,7 +15,7 @@ At the frozen threshold the probe caught \gptossFreshCaught{} of the leaking cal
 
 \paragraph{Last-prompt and reasoning probes on gpt-oss-20b.}
 On development episodes the last-prompt probe and the reasoning probe score about the same, so most of the signal is present before the model starts to reason.
-On the fresh episodes the reasoning probe scored higher than the last-prompt probe on the same calls, and the last-prompt probe caught fewer leaking calls at its threshold (\cref{tab:fresh}); with few leaking calls, the gap in AUROC is within noise.
+On the test episodes the reasoning probe scored higher than the last-prompt probe on the same calls, and the last-prompt probe caught fewer leaking calls at its threshold (\cref{tab:fresh}); with few leaking calls, the gap in AUROC is within noise.
 
 \paragraph{Qwen3-32B round-level test.}
 The plan fixed the near-term label of \cref{app:labels}, the probe (one logistic model per seed trained on all development recruiting calls), and two text monitors chosen in advance.
@@ -24,22 +24,21 @@ Both were met (\cref{fig:round}).
 The plan expected no gain from adding the probe to the stronger monitor, and there was none that was clearly above zero (\cref{app:roundmonitor}).
 
 \paragraph{Qwen3-32B per-call probe.}
-We fit this probe on the development episodes only, committed its weights and threshold, and then scored it once on the fresh test episodes.
-No fresh episode was used to fit or choose anything for it.
-It is not a pre-registered confirmation, because an earlier analysis on a related label had already included these episodes (\cref{app:history}).
+We fit this probe on the development episodes only, committed its weights and threshold, and then scored it once on the test episodes.
+No test episode was used to fit or choose anything for it.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.6\linewidth]{fig_round_confirmation.pdf}
-  \caption{\textbf{This round or the next is modestly predictable on fresh episodes.}
-  Qwen3-32B fresh test episodes, scored once under its plan, with its own leak label (\cref{app:labels}).
+  \caption{\textbf{This round or the next is modestly predictable on test episodes.}
+  Qwen3-32B test episodes, scored once under its plan, with its own leak label (\cref{app:labels}).
   Whiskers are 95\% bootstrap intervals.}
   \label{fig:round}
 \end{figure}
 
 \begin{table}[h]
   \centering
-  \caption{Results on the fresh test episodes. AUROC within scenario and round, with 95\% bootstrap intervals.}
+  \caption{Results on the test episodes. AUROC within scenario and round, with 95\% bootstrap intervals.}
   \label{tab:fresh}
   \small
   \input{tables/fresh.tex}

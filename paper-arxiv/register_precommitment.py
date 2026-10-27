@@ -37,7 +37,7 @@ def main():
         add('precommitJevReview'+suffix, review+[field], fmt=fmt, decimals=0 if fmt=='percent' else 2)
     def macro(prefix, suffix): return '\\'+prefix+'Precommit'+suffix+'{}'
     rows = []
-    for prefix, label in [('qwen', 'Qwen fresh (last-prompt)'), ('gptoss', 'gpt-oss fresh (reasoning)')]:
+    for prefix, label in [('qwen', 'Qwen test (last-prompt)'), ('gptoss', 'gpt-oss test (reasoning)')]:
         rows.append([label,
                      macro(prefix, 'JevLeakingFlagged')+' / '+macro(prefix, 'JevLeakingTotal'),
                      macro(prefix, 'JevNonleakingFlagged')+' / '+macro(prefix, 'JevNonleakingTotal'),
@@ -46,7 +46,7 @@ def main():
     rows.append([r'\multicolumn{5}{l}{Blind review, counting earlier reasoning: \precommitJevReviewAgreements{}/\precommitJevReviewSample{} agreement; $\kappa$ = \precommitJevReviewKappa{}.}'])
     reg['tables']['precommitment'] = dict(
         columns=r'@{}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.14\linewidth}>{\raggedright\arraybackslash}p{0.15\linewidth}>{\raggedright\arraybackslash}p{0.20\linewidth}>{\raggedright\arraybackslash}p{0.20\linewidth}@{}',
-        header=['Fresh cohort', 'Leaking calls flagged / total', 'Non-leaking calls flagged / total', 'AUROC: all calls', 'AUROC: unflagged calls'], rows=rows)
+        header=['Test set', 'Leaking calls flagged / total', 'Non-leaking calls flagged / total', 'AUROC: all calls', 'AUROC: unflagged calls'], rows=rows)
     (HERE/'numbers.yaml').write_text(json.dumps(reg, indent=2)+'\n')
 
 

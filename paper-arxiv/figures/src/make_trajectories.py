@@ -22,13 +22,13 @@ def main():
         ax.set(xticks=[-10,-5,0],xlabel='Scored calls before leak',ylim=(0,103))
         example=next(e for e in d['examples'] if e['model']==model);rows=example['calls'];ax=axes[1,col]
         ax.plot([r['offset'] for r in rows],[100*r['score'] for r in rows],color=color,marker='o',ms=3,lw=1.2)
-        ax.set_title('Median-length fresh episode',fontsize=9)
+        ax.set_title('Median-length test episode',fontsize=9)
         ax.set(xlabel='Scored calls before leak',ylim=(0,103))
         for ax in axes[:,col]:
             ax.xaxis.set_major_locator(MaxNLocator(integer=True, nbins=4))
             ax.axvline(0,color='#777777',lw=.8,ls=':');ax.grid(axis='y',alpha=.15)
     for ax in axes[:,0]:ax.set_ylabel("Probe score\n(percentile among this\nmodel's scored calls)",fontsize=8.5)
-    fig.legend(handles=[Line2D([],[],color='#444444',ls='--',label='Development median'),Line2D([],[],color='#444444',ls='-',label='Fresh median (band: middle 50%)')],loc='lower center',ncol=2,frameon=False,fontsize=9,bbox_to_anchor=(.5,0))
+    fig.legend(handles=[Line2D([],[],color='#444444',ls='--',label='Development median'),Line2D([],[],color='#444444',ls='-',label='Test median (band: middle 50%)')],loc='lower center',ncol=2,frameon=False,fontsize=9,bbox_to_anchor=(.5,0))
     out=PAPER/'figures/fig6_trajectories'
     fig.savefig(out.with_suffix('.pdf'));fig.savefig(out.with_suffix('.png'),dpi=180)
     out.with_suffix('.json').write_text(json.dumps(dict(analysis=str(a.analysis),analysis_sha256=hashlib.sha256(a.analysis.read_bytes()).hexdigest(),examples=d['examples'],plan=d['plan']),indent=2)+'\n')

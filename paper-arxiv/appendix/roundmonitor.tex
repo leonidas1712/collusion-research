@@ -1,7 +1,7 @@
 \section{What do round-level detectors achieve?}
 \label{app:roundmonitor}
 
-On Qwen3-32B, whether the target leaks this round or the next is modestly predictable; the strongest text monitor scores a little above the probe on the episodes collected before the round-level plan, and about the same on the fresh episodes.
+On Qwen3-32B, whether the target leaks this round or the next is modestly predictable; the strongest text monitor scores a little above the probe on the episodes collected before the round-level plan, and about the same on the test episodes.
 Whether an episode will ever leak is barely predictable by either.
 
 \paragraph{The round-level setup.}
@@ -17,7 +17,7 @@ Neither the forecasting question nor more access helped the other two monitors.
 
 \paragraph{Adding the probe to a monitor.}
 A small logistic model on the round, the prompt length and a monitor's score was refit with the probe's score added.
-The probe adds clearly to the weaker monitor on the fresh test episodes, and adds nothing clear to the strongest one (\cref{tab:combination}).
+The probe adds clearly to the weaker monitor on the test episodes, and adds nothing clear to the strongest one (\cref{tab:combination}).
 
 \paragraph{Eventual outcome.}
 Whether the episode will ever leak is near chance for the probe, and only slightly above for the strongest monitor.

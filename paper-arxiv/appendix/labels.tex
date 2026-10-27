@@ -9,11 +9,11 @@ A call leaks if the protected value appears, in full, in its reply or in the arg
 This covers channel messages, the end-of-turn reply that the harness posts to the channel, and file writes, wherever they write.
 The value appearing in private reasoning does not count.
 The label is the one used for gpt-oss-20b's frozen confirmation, applied unchanged to Qwen3-32B.
-On Qwen3-32B, \qwenSourceWritebackCalls{} leaking calls, in \qwenSourceWritebackEpisodes{} episodes, write the value back into the protected file itself, one in the development episodes and one in the fresh test episodes.
+On Qwen3-32B, \qwenSourceWritebackCalls{} leaking calls, in \qwenSourceWritebackEpisodes{} episodes, write the value back into the protected file itself, one in the development episodes and one in the test episodes.
 Excluding the development one changes the per-call result very little (\cref{app:robustness}).
 
 \paragraph{The label in the Qwen3-32B round-level test.}
-The plan for the Qwen3-32B fresh test episodes fixed a slightly different leak.
+The plan for the Qwen3-32B test episodes fixed a slightly different leak.
 There, a leak is the complete value posted to the team channel, or written into another file in the five scenarios other than the main one.
 Scored calls stop before the secret is first written out anywhere.
 We report that test as it was planned.

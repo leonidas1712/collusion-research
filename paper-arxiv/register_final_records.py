@@ -18,9 +18,9 @@ def main():
             row.append(add(prefix+''.join(s.title() for s in field.split('_')),['group_coverage',key,field]))
         rows.append(row)
     r['tables']['group_coverage']=dict(columns='llrrrrrr',header=['Dataset','Label','Calls','Kept','Positive','Kept positive','Groups','Kept groups'],rows=rows)
-    alarm=['Qwen fresh','Jev input','Saved CV controls']
+    alarm=['Qwen test','Jev input','Saved CV controls']
     for suffix,key in [('Caught','caught_rate'),('Refusing','refusing_rate'),('Episodes','refusing_episode_rate')]:alarm.append(add('qwenFreshJevAudit'+suffix,['qwen_fresh_jev_alarm_rates',key],fmt='percent',decimals=1))
-    r['tables']['alarms']['rows']=[row for row in r['tables']['alarms']['rows'] if not(row[0]=='Qwen fresh' and row[1]=='Jev input')]+[alarm]
+    r['tables']['alarms']['rows']=[row for row in r['tables']['alarms']['rows'] if not(row[0]=='Qwen test' and row[1]=='Jev input')]+[alarm]
     qf='paper-arxiv/frozen/qwen_percall_plan.json';gf='paper-arxiv/frozen/gpt_percall_plan.json';rf='runs/20261026-1139-e05-stream-confirm/frozen_plan.json'
     q=json.loads((ROOT/qf).read_text());g=json.loads((ROOT/gf).read_text());assert q['recipe']['candidates']==list(range(0,64,4))+[63]
     qpeer=d['peer_sampling']['qwen'];gpeer=d['peer_sampling']['gpt'];assert len(qpeer)==len(gpeer)==1
@@ -31,8 +31,8 @@ def main():
       ['Peer token limit',add('qwenPeerTokenLimit',['peer_sampling','qwen',0,'settings','max_tokens']),add('gptPeerTokenLimit',['peer_sampling','gpt',0,'settings','max_tokens'])],
       ['Peer reasoning','Disabled','Medium'],['Probe seeds','42, 43, 44','42, 43, 44'],
       ['Candidate layers (zero-based)',', '.join(map(str,q['recipe']['candidates'])),', '.join(map(str,g['recipe']['candidates']))],
-      ['Fresh chosen layers (seed order)',', '.join(str(x['layer']) for x in q['models']),', '.join(str(x['layer']) for x in g['models'])],
-      ['Fresh last-prompt threshold',add('qwenFrozenThreshold',['threshold'],qf,fmt='decimal',decimals=8),add('gptFrozenThreshold',['threshold'],gf,fmt='decimal',decimals=8)],
+      ['Frozen layers (seed order)',', '.join(str(x['layer']) for x in q['models']),', '.join(str(x['layer']) for x in g['models'])],
+      ['Frozen last-prompt threshold',add('qwenFrozenThreshold',['threshold'],qf,fmt='decimal',decimals=8),add('gptFrozenThreshold',['threshold'],gf,fmt='decimal',decimals=8)],
       ['Frozen reasoning threshold','--',add('gptReasoningFrozenThreshold',['alarm','threshold'],rf,fmt='decimal',decimals=8)],
       ['Alarm rule','Strict $>$; nominal 5\\% control calls','Strict $>$; nominal 5\\% control calls'],
       ['Family rule','All calls grouped by family ID','All calls grouped by family ID'],
