@@ -12,7 +12,7 @@ from style import configure, MODEL_COLORS
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / 'paper-arxiv/figures'
 TRAJECTORY = ROOT / 'runs/20261026-2254-e05-arxiv-score-trajectories/metrics.json'
-ALARMS = ROOT / 'runs/20261026-2252-e05-arxiv-alarm-tradeoffs'
+ALARMS = ROOT / 'runs/20261028-0120-e13-alarm-tradeoffs-matched'
 EPISODE = ROOT / 'runs/20261027-0049-e05-arxiv-episode-calibration-descriptive/metrics.json'
 
 
@@ -83,7 +83,7 @@ def alarms():
     fig.legend(loc='lower center', bbox_to_anchor=(.5,.15), ncol=2, frameon=False, fontsize=9)
     fig.legend(handles=[
         Line2D([], [], marker='o', color='#555555', ls='none',
-               label='Filled markers: original thresholds'),
+               label='Filled: probe at control-call threshold; Jev at same share flagged'),
         Line2D([], [], marker='D', mfc='white', mec=MODEL_COLORS['qwen'], ls='none',
                label='Per-episode threshold')],
         loc='lower center', bbox_to_anchor=(.5,.015), ncol=1, frameon=False, fontsize=8.5)

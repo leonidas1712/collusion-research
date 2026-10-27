@@ -73,7 +73,7 @@ A round-level test on Qwen3-32B test episodes, with its own leak label, gives th
   \includegraphics[width=\linewidth]{fig3_percall.pdf}
   \caption{\textbf{A probe picks out the call that leaks; a zero-shot monitor does not, and a trained text classifier comes close.}
   Per-call AUROC on held-out scenarios, development episodes, with 95\% bootstrap intervals.
-  The zero-shot monitor (Jev) sees the conversation and tool results that the last-prompt probe sees, with the secret masked; on gpt-oss-20b it scores below chance because it flags almost every call made under pressure. The trained text classifier shows the stronger of two text views for each model, the last message on Qwen3-32B and the full input on gpt-oss-20b; both are in \cref{tab:text-baselines}.}
+  The zero-shot monitor (Jev) sees the conversation and tool results that the last-prompt probe sees, with the secret masked; on gpt-oss-20b it scores below chance because it scores almost every call made under pressure as risky. The trained text classifier shows the stronger of two text views for each model, the last message on Qwen3-32B and the full input on gpt-oss-20b; both are in \cref{tab:text-baselines}.}
   \label{fig:percall}
 \end{figure}
 
@@ -81,7 +81,7 @@ A round-level test on Qwen3-32B test episodes, with its own leak label, gives th
 \label{sec:monitor}
 
 A zero-shot text monitor shown the same conversation and tool results scores well below the probe on both models, and a trained text classifier comes close (\cref{fig:percall}).
-On gpt-oss-20b, Jev flags nearly every call that leaks but also most calls in refusing episodes, so it cannot separate the calls that leak.
+On gpt-oss-20b, Jev scores almost every call made under pressure as risky: at the same share of calls flagged as the probe (\gptossMatchedProbeRefusing{} of calls in refusing development episodes), it catches \gptossMatchedJevCaught{} of leaking calls, against the probe's \gptossMatchedProbeCaught{}.
 The bag-of-words classifier, trained on the same labelled development calls, scores close to the probe on both models, and the probe keeps a small edge whose interval excludes zero (\cref{app:shortcuts}).
 
 Most of the probe's lead over the zero-shot monitor therefore comes from training on labelled calls, and activations add a small edge on development episodes.
@@ -94,8 +94,9 @@ Whether it reads a decision to emit or the situation that prompts one is open (\
 \subsection{What would deployment cost?}
 \label{sec:cost}
 
-At a threshold set on control calls, the probe catches most leaking calls while flagging few other calls, and far fewer than the zero-shot monitor (\cref{fig:qwen-alarms}).
-On Qwen3-32B test episodes, it catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarm{} of the calls in refusing episodes, where Jev catches \qwenFreshJevCaught{} while flagging \qwenFreshJevAlarm{}.
+At a threshold set on control calls, the probe catches most leaking calls while flagging few other calls (\cref{fig:qwen-alarms}).
+On Qwen3-32B test episodes, it catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarm{} of the calls in refusing episodes.
+At the same share of calls flagged, Jev catches \qwenMatchedJevCaught{} (\qwenMatchedJevCaughtCount{} of \qwenMatchedLeakTotal{}; 95\% CI \qwenMatchedJevCaughtLow{}--\qwenMatchedJevCaughtHigh{}).
 Of the calls the probe flags, \qwenFreshProbePrecision{} are real leaks.
 AUROC measures how well a detector ranks calls, while this share tells an overseer how many of its alarms are real.
 
@@ -119,7 +120,7 @@ At such strict thresholds the text check misses most leaks on its own, so requir
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.7\linewidth]{fig7_qwen_alarms.pdf}
-  \caption{\textbf{The probe catches more leaks with far fewer false alarms than the zero-shot monitor.}
-  Share of leaking calls caught against the share of calls in refusing episodes flagged, as the threshold moves, on Qwen3-32B test episodes; filled points are the thresholds set on control calls, and the hollow diamond is the stricter per-episode threshold, plotted at its per-call rates.}
+  \caption{\textbf{At the same share of calls flagged, the probe catches far more leaks than the zero-shot monitor.}
+  Share of leaking calls caught against the share of calls in refusing episodes flagged, as the threshold moves, on Qwen3-32B test episodes; the filled circle is the probe at its threshold set on control calls, the filled square is Jev at the same share of calls flagged, and the hollow diamond is the stricter per-episode threshold, plotted at its per-call rates.}
   \label{fig:qwen-alarms}
 \end{figure}

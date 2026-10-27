@@ -83,12 +83,12 @@ We left out Luna Decisions because it scored at chance as a forecaster on the de
 \label{app:monitors-percall}
 
 On gpt-oss-20b, Jev reads the pressure on a call rather than the coming leak (\cref{tab:monitor-percall}).
-It flags almost every call made under pressure, so within a scenario and round it ranks the leaking calls below the others.
+It scores almost every call made under pressure as risky, so within a scenario and round it ranks the leaking calls below the others.
 On Qwen3-32B it reads the input more usefully, but it still scores below the probe.
 
 For each call, Jev sees the messages and tool results that the target received for that call, with the secret masked.
 These are the same calls and labels as the per-call probe results (\cref{sec:percall}).
-The alarm cutoff for each detector is set on calls from control episodes (\cref{app:alarms}).
+The probe's alarm cutoff is set on calls from control episodes, and Jev's flags the same share of calls in refusing episodes (\cref{app:alarms}).
 
 On gpt-oss-20b, Jev scores high when calls are not grouped by scenario and round, because pressure itself predicts a leak.
 Within a scenario and round, every call faces the same pressure, so that signal no longer helps.

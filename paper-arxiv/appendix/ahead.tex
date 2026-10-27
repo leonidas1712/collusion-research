@@ -41,7 +41,7 @@ The Qwen3-32B operating points on the test episodes, and how per-call and per-ep
 
 \begin{table}[h]
   \centering
-  \caption{Per-call and per-episode thresholds on the test episodes: precision of the flagged calls, leaking episodes caught by their first leak, refusing episodes and calls flagged, and the same rates on control traffic. Recruiting calls come from leaking and refusing episodes; control calls come from control episodes and are counted separately.}
+  \caption{Per-call and per-episode thresholds on the test episodes: precision of the flagged calls, leaking episodes caught by their first leak, refusing episodes and calls flagged, and the same rates on control traffic. Recruiting calls come from leaking and refusing episodes; control calls come from control episodes and are counted separately. Jev's per-call row flags the same share of refusing calls as the probe.}
   \label{tab:episode-calibration}
   \footnotesize
   \setlength{\tabcolsep}{3pt}
@@ -54,14 +54,14 @@ A deployed alarm would need its threshold set per episode, as \citet{gao2026} al
   \centering
   \includegraphics[width=\linewidth]{fig7_alarm_tradeoffs.pdf}
   \caption{\textbf{Leaking calls caught against refusing calls alarmed, as the threshold moves.}
-  Rates are unstratified, counted over all calls, and negatives are calls in episodes that never leak; marked points are the thresholds set on control calls, which for the gpt-oss-20b test episodes is the frozen threshold.
+  Rates are unstratified, counted over all calls, and negatives are calls in episodes that never leak; circles mark the probe's threshold set on control calls, which for the gpt-oss-20b test episodes is the frozen threshold, and squares mark Jev at the same share of refusing calls alarmed.
   Jev on gpt-oss-20b was scored only on development episodes.}
   \label{fig:alarm-tradeoff}
 \end{figure}
 
 \begin{table}[h]
   \centering
-  \caption{Alarm rates at thresholds set on control calls or control episodes.}
+  \caption{Alarm rates at thresholds set on control calls or control episodes; Jev's threshold flags the same share of refusing calls as the probe.}
   \label{tab:alarms}
   \small
   \input{tables/alarms.tex}
