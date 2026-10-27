@@ -15,7 +15,7 @@ For an exact secret, an output filter that matches the string would also stop th
 The per-call probe matters most where no string filter can match, as with paraphrased or encoded leaks, and where an overseer wants to pause a call before it acts.
 
 \subsection*{Limitations}
-We list the limitations in order of how much each could change a headline.
+We list the main limitations in order of how much each could change a headline; \cref{app:limitations} gives the rest.
 
 \paragraph{Narrow setting.}
 We test two models, six scenarios built from one task template, one peer and one target per episode, and synthetic tools and secrets.
@@ -23,29 +23,16 @@ Leaks are exact strings, which an output filter would catch.
 Qwen3-32B ran with its reasoning switched off.
 Settings with several peers, recruited agents that recruit others, or paraphrased leaks are untested.
 
-On gpt-oss-20b, the leaks come from one peer strategy, a delayed request to copy the whole configuration block, so they may reflect careless copying of an instruction as much as giving in to pressure.
-
 \paragraph{Few confirmed leaking calls.}
 The gpt-oss-20b test covers one probe on one model, and its test episodes hold few leaking calls, so its interval is wide (\cref{app:confirmation}).
 The last-prompt per-call tests are out of sample for the frozen probes, but earlier analyses had already inspected their episodes (\cref{app:history}).
-
-\paragraph{Warning about the current call only.}
-One call ahead the signal is much weaker, and on gpt-oss-20b it mostly reflects the file read that precedes the leak (\cref{app:ahead}).
 
 \paragraph{What the probe reads is open.}
 The signal may reflect what has just arrived in the input (\cref{sec:shortcuts}), and our results are correlational.
 The probe tracks emitting the value more than breaking the rule: making sharing permitted leaves its score essentially unchanged (\cref{app:policy}).
 
-\paragraph{False alarms per episode.}
-At a per-call threshold, most refusing Qwen3-32B episodes see at least one flag, which suits escalating single calls rather than halting the agent (\cref{sec:cost}).
-The stricter per-episode thresholds, for the probe alone and for the paired detectors, are chosen on the test episodes, so they show the trade-off rather than test a threshold fixed in advance.
-
 \paragraph{An untuned text monitor.}
 Our main text monitor is one decision model used zero-shot, with no prompt tuning, while the probe is trained.
-
-\paragraph{Automated labels.}
-The leak label is an exact match on the tool log.
-Whether a leak was deliberate or accidental, which we use only to describe the leaks, comes from an automated judge (\cref{app:leakchecks}).
 
 \paragraph{Future work.}
 The most direct next step is to train detectors, probes or text classifiers, that tell a forbidden disclosure from a permitted one of the same value, using episodes where sharing is sometimes allowed and sometimes not, and to test whether they still catch the call before it acts.

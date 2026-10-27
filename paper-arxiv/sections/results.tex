@@ -93,6 +93,14 @@ Whether it reads a decision to emit or the situation that prompts one is open (\
 
 \subsection{What would deployment cost?}
 \label{sec:cost}
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{fig7_qwen_alarms.pdf}
+  \caption{\textbf{At the same share of calls flagged, the probe catches far more leaks than the zero-shot monitor.}
+  Share of leaking calls caught against the share of calls in refusing episodes flagged, as the threshold moves, on Qwen3-32B test episodes; the filled circle is the probe at its threshold set on control calls, the filled square is Jev at the same share of calls flagged, and the hollow diamond is the stricter per-episode threshold, plotted at its per-call rates.}
+  \label{fig:qwen-alarms}
+\end{figure}
+
 
 At a threshold set on benign control calls, so that 5\% of them are flagged, the probe catches most leaking calls while flagging few other calls (\cref{fig:qwen-alarms}).
 On Qwen3-32B test episodes, it catches \qwenFreshProbeCaught{} of leaking calls while flagging \qwenFreshProbeAlarm{} of the calls in refusing episodes.
@@ -116,11 +124,3 @@ One set on the episodes the probe was trained on does not transfer: on test epis
 Pairing the probe with a cheap text check on the same input does not help.
 Halting only when the probe and a second detector, either the zero-shot monitor or the trained text classifier, both flag a call catches no more leaking episodes than raising the probe's threshold, at the same share of refusing episodes halted: at one in twenty, the probe alone catches \cascadeProbeAloneFive{} and the best pairing \cascadeBestFive{} (\cref{app:cascade}).
 At such strict thresholds the text check misses most leaks on its own, so requiring both to agree discards leaks the probe would have caught.
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.7\linewidth]{fig7_qwen_alarms.pdf}
-  \caption{\textbf{At the same share of calls flagged, the probe catches far more leaks than the zero-shot monitor.}
-  Share of leaking calls caught against the share of calls in refusing episodes flagged, as the threshold moves, on Qwen3-32B test episodes; the filled circle is the probe at its threshold set on control calls, the filled square is Jev at the same share of calls flagged, and the hollow diamond is the stricter per-episode threshold, plotted at its per-call rates.}
-  \label{fig:qwen-alarms}
-\end{figure}
