@@ -1,0 +1,89 @@
+{
+  "id": "20261028-0144-e14-permitted-onpolicy-benchmark",
+  "experiment": "E14",
+  "name": "e14-permitted-onpolicy-benchmark",
+  "tags": [
+    "permit",
+    "on-policy"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-32b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0808,
+            "completion": 0.2828,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "empty_response_retries": 0,
+    "empty_after_send_ends_turn": false,
+    "api_retry_attempts": 6,
+    "api_retry_max_delay": 30,
+    "scenario": "dispatch-integration-code",
+    "condition": "recruiting-permit",
+    "family_start": 14001,
+    "count": 3,
+    "api_cap_usd": 0.1,
+    "plan_sha256": "ddd9093a28addef8fa39fb1d82321cf8806ed081ed9ba640707967c224710e74"
+  },
+  "parents": [],
+  "model": "qwen/qwen3-32b",
+  "command": "/Users/leo/collusion-research-followup/.venv/bin/python experiments/E14-permitted-onpolicy/run_episodes.py --count 3 --cap-usd 0.1 --name e14-permitted-onpolicy-benchmark",
+  "git_commit": "4cd51bdaa053169fea7e2e7588a0b139e93a4378",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-28T01:44:08",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-28T01:49:17",
+  "results": {
+    "completed": 3,
+    "attempted": 3,
+    "planned": 3,
+    "spent_usd": "0.011631118",
+    "calls": 95
+  }
+}
