@@ -41,7 +41,7 @@ def render(exports,result):
         ax.set_title(title.replace('fresh','test')+'\n'+('Reasoning probe' if 'fresh' in title and model=='gpt_oss' else 'Last-prompt probe vs Jev'),fontsize=9)
         ax.set(xlim=(0,1),ylim=(0,1.02),xticks=[0,.5,1],xlabel='Refusing calls alarmed');ax.grid(alpha=.15)
     axes[0].set_ylabel('Leaking calls caught')
-    fig.legend(handles=[Line2D([],[],color='#333333',marker='o',label='Probe (dot: saved threshold)'),Line2D([],[],color='#666666',ls='--',marker='s',label='Jev (square: same share flagged)')],loc='lower center',ncol=2,frameon=False,fontsize=8)
+    fig.legend(handles=[Line2D([],[],color='#333333',marker='o',label='Probe (dot: saved threshold)'),Line2D([],[],color='#666666',ls='--',marker='s',label='Jev (square: flagging no more calls)')],loc='lower center',ncol=2,frameon=False,fontsize=8)
     out=ROOT/'paper-arxiv/figures/fig7_alarm_tradeoffs';fig.savefig(out.with_suffix('.pdf'));fig.savefig(out.with_suffix('.png'),dpi=180)
     plt.close(fig)
     return out
@@ -61,7 +61,7 @@ def main():
         source[rel]=hashlib.sha256(path.read_bytes()).hexdigest();return path
     def j(rel):return json.loads(src(rel).read_text())
     panels=[]
-    # Jev's marker flags the same share of refusing calls as the probe (E13); curves sweep one global cut.
+    # Jev's marker: the lowest cut flagging no more refusing calls than the probe (E13); curves sweep one global cut.
     jcut={k:v['jev_cut'] for k,v in j('runs/20261028-0107-e13-matched-jev-d814/results.json').items() if k in ('qwen_test','gptoss_dev')}
     q=read(src('runs/20261026-2212-e05-arxiv-qwen-fresh-percall/probe_scores.csv.gz'))
     ever={f"{r['episode']}::request_idx={r['request_idx']}":bool(r['y_eventual']) for r in j('runs/20261026-2155-e05-qwen-any-public-audit/rows.json')}

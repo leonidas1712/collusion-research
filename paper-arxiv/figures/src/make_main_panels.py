@@ -102,7 +102,7 @@ def alarms():
     fig.legend(loc='lower center', bbox_to_anchor=(.5,.15), ncol=2, frameon=False, fontsize=9)
     fig.legend(handles=[
         Line2D([], [], marker='o', color='#555555', ls='none',
-               label='Filled: probe at control-call threshold; Jev at same share flagged'),
+               label='Filled: probe at control-call threshold; Jev flagging no more calls'),
         Line2D([], [], marker='D', mfc='white', mec=MODEL_COLORS['qwen'], ls='none',
                label='Per-episode threshold')],
         loc='lower center', bbox_to_anchor=(.5,.015), ncol=1, frameon=False, fontsize=8.5)
