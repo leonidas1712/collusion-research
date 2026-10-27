@@ -79,15 +79,15 @@ Every threshold is chosen on the same fresh episodes, which favours the pairings
 
 \begin{figure}[h]
   \centering
-  \IfFileExists{figures/fig9_cascade.pdf}{\includegraphics[width=0.7\linewidth]{fig9_cascade.pdf}}{pending}
-  \caption{\textbf{A second check on the same input does not improve the trade-off.} Leaking episodes caught against refusing episodes halted, as thresholds move, on fresh Qwen3-32B episodes, for the probe alone and for the probe paired with Jev or with the bag-of-words classifier.}
+  \includegraphics[width=0.7\linewidth]{fig9_cascade.pdf}
+  \caption{\textbf{A second check on the same input does not improve the trade-off.} Leaking episodes caught against refusing episodes halted, as thresholds move, on fresh Qwen3-32B episodes, for the probe alone and for the probe at its lenient threshold paired with Jev or with the bag-of-words classifier.}
   \label{fig:cascade}
 \end{figure}
 
 \begin{table}[h]
   \centering
-  \caption{Leaking episodes caught at a fixed share of refusing episodes halted, fresh Qwen3-32B episodes, with 95\% episode-bootstrap intervals in which thresholds are chosen again in each draw.}
+  \caption{Leaking episodes caught at a fixed share of refusing episodes halted, fresh Qwen3-32B episodes, with 95\% episode-bootstrap intervals in which thresholds are chosen again in each draw. ``Lenient'' keeps the probe at its control-call threshold; ``grid'' also chooses the probe's threshold. The last number in each cascade cell is its difference from the probe alone, in episodes.}
   \label{tab:cascade}
   \small
-  \IfFileExists{tables/cascade.tex}{\input{tables/cascade.tex}}{pending}
+  \input{tables/cascade.tex}
 \end{table}
