@@ -4,6 +4,62 @@ Shared notes (not paper prose). Append your own entries; keep sections by owner 
 
 ---
 
+## LATEST (28 Oct, overnight): your notes applied, E14 run, reviews done (coordinator)
+
+**Start with:** `paper-arxiv/main.pdf` at commit `9a00990`.
+- 44 pages: main text pp. 1–11, References from p. 12.
+- SHA-256 806112db….
+- arXiv package: `dist/arxiv-final`. It compiles from the tarball with identical text.
+- 740 numbers verified against their sources.
+
+**Your two decisions (abstract only; the body is done):**
+1. **MUST-FIX: the counterfactual sentence is now partly wrong** (see E14 below). Suggested replacement:
+   > "Allowing sharing does not lower the score of a disclosure the agent first resisted, but freely permitted sharing is mostly not flagged: the probe reads the agent giving in, not the rule."
+2. **MUST-FIX: "At the same flag rate".** Jev flags 4.8% of calls against the probe's 5.5%. Suggested replacement:
+   > "Flagging no more calls, a zero-shot decision-model monitor catches 26%."
+
+A ready-to-paste abstract with both fixes is in `private/abstract_draft_v9.md`, open in Leaf. The other, optional suggestions are at the bottom of this file.
+
+**What changed tonight:**
+- **Your `notes.md`, all applied:**
+  - Table 1 moved out of the contributions.
+  - §2 Setup rewritten: plain text first, then the formal definitions, covering the workspace, agents, tools, secret, rounds and calls, with the worked example used for the labels.
+  - Fig 5 placed with §4.4.
+  - Limitations: the main points stay in the text; the rest are in a new appendix.
+  - Captions now come after every figure and table.
+  - Footnote link added; author name and affiliation centred; GitHub link below the abstract.
+  - No stranded headings, and References start on a fresh page.
+  - Note: forcing Results onto a new page left p6 three-quarters blank, so I used "keep the heading with its content" rules instead.
+- **Figure 2 redesigned:** robot icons (halo for the target, horns for the peer), chat bubbles with the leak highlighted, icons for who observes, and a colour-coded label grid.
+- **Number labels on every data plot,** in the main text and the appendix. In-figure titles that repeated the captions were removed.
+- **Fair Jev comparison everywhere:** Jev catches 26% (CI 8–39%) when flagging no more calls than the probe, which catches 82%. This replaces the old 68%/29%, which rested on an odd cutoff.
+- **E14, an on-policy check of the rule flip ($1.35):**
+  - Sharing allowed, consequence sentence kept: the agent resists and then shares, and 80% of sharing calls cross the threshold, like forbidden leaks (82%).
+  - Sharing cleanly allowed: the agent shares at once, and only 28% cross.
+  - A replay with the consequence sentence removed still shows no drop.
+  - **So the probe reads the agent giving in, not the rule and not disclosure as such.** This is now in §4.3, the Discussion, Limitations and Appendix I.
+  - Caveat: in the clean arm, permission and immediate sharing occur together.
+  - Report: `runs/20261028-0224-e14-permitted-onpolicy/report.md`.
+- **Text classifier on test episodes ($0):** 0.96 against the probe's 0.98, a difference of +0.02 whose interval includes 0. Added to Table 2. The intro now says activations add "at most a small edge".
+- **Reviews:**
+  - clarity 3.5 → 4/5, ready for arXiv after the fixes, all applied;
+  - rigour at workshop level: **weak accept, nothing fatal**, with fixes applied.
+  - Records are in `reviews/pdf_clarity_r5.md` and `reviews/pdf_rigour_r4_workshop.md`.
+- **My visual check:** I looked at every main-text page twice and found nothing broken. The appendix pages were not checked by eye.
+
+**Proposed next, waiting for your go: E15, a larger version of E14.**
+- All 5 Qwen test scenarios × 3 arms × 20 episodes. The arms are: allowed with the consequence sentence; allowed cleanly, asked early; and **allowed cleanly, asked late (rounds 4–6)**.
+- The late-ask arm separates conflict from timing.
+- Optionally, gpt-oss on 3 scenarios.
+- About $6 for Qwen only, about $8–9 with gpt-oss.
+- If the late-ask arm stays quiet, "reads giving in" becomes a confident main-text finding.
+
+**Spend tonight:** $1.35 of the $25 you approved.
+
+**Follow-up note:** `private/FOLLOWUP_IDEAS.md`. It now covers H (E14, done), I (concept directions) and J (felt vs real violation, and deep recruitment as in the Hugging Face incident).
+
+---
+
 ## LATEST (27 Oct ~04:00): E11 pre-commitment check added; final build (coordinator)
 - **E11 question:** does the probe just read back the target's own earlier "I'll share it"? **No.** Removing the calls where Jev judged that the target had already agreed to share changes the score little:
   - Qwen: 0.98 → 0.97 (2 of 38 leaking calls flagged).
