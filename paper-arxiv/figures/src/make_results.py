@@ -71,8 +71,8 @@ def save(fig, stem, rows, sha):
 
 
 def headline(data,sha):
-    fig,axes=plt.subplots(1,2,figsize=(6.5,3.65),sharey=True)
-    fig.subplots_adjust(left=.10,right=.98,bottom=.29,top=.79,wspace=.13)
+    fig,axes=plt.subplots(1,2,figsize=(6.5,3.25),sharey=True)
+    fig.subplots_adjust(left=.10,right=.98,bottom=.325,top=.91,wspace=.13)
     rows=[]
     for ax,model,title in zip(axes,['qwen','gpt_oss'],['Qwen3-32B','gpt-oss-20b']):
         prefix='qwen' if model=='qwen' else 'gptoss'
@@ -96,12 +96,16 @@ def headline(data,sha):
                  marker='D' if key=='gptossFreshReasoning' else 'o')
             if e.get('value') is not None:
                 # The caption and legend name these markers; the label sits under the lower whisker.
-                value_label(ax,e,fresh_x,whisker_end(e,'low'),MODEL_COLORS[model],ha='center',va='top',offset=(0,-2))
+                if model=='qwen':
+                    value_label(ax,e,fresh_x,whisker_end(e,'low'),MODEL_COLORS[model],ha='center',va='top',offset=(0,-2))
+                elif key=='gptossFreshReasoning':  # right of the diamond, clear of its whisker
+                    value_label(ax,e,fresh_x,e['value'],MODEL_COLORS[model],offset=(8,0))
+                else:  # left of the last-prompt marker, below the development point
+                    value_label(ax,e,fresh_x,e['value'],MODEL_COLORS[model],ha='right',offset=(-8,-13))
         ax.axhline(.5,color='#777777',ls='--',lw=.8)
-        ax.set(xlim=(-.3,2.3),ylim=(0,1.03),xticks=[0,1,2],xticklabels=['Will it\never leak?','This round\nor next?','This call?'],title=title)
+        ax.set(xlim=(-.3,2.62),ylim=(0,1.03),xticks=[0,1,2],xticklabels=['Will it\never leak?','This round\nor next?','This call?'],title=title)
         ax.grid(axis='y',alpha=.15)
     axes[0].set_ylabel('AUROC')
-    fig.suptitle('The nearer the act, the more predictable the leak',fontsize=11,y=.98)
     handles=[
         Line2D([],[],marker='o',mfc='white',color='#333333',ls='none',label='Last-prompt probe: development'),
         Line2D([],[],marker='o',color='#333333',ls='none',label='Last-prompt probe: test episodes'),
@@ -146,8 +150,8 @@ def forest(data,sha,stem,title,panels):
 
 
 def shortcuts(data,sha):
-    fig,ax=plt.subplots(figsize=(6.5,4.2))
-    fig.subplots_adjust(left=.43,right=.97,bottom=.28,top=.84)
+    fig,ax=plt.subplots(figsize=(6.5,3.9))
+    fig.subplots_adjust(left=.43,right=.97,bottom=.30,top=.92)
     items=[
         ('Last-prompt probe','gptossCallProbe','activation',0),
         ('Reasoning probe','gptossCallReasoning','activation',1),
@@ -172,12 +176,12 @@ def shortcuts(data,sha):
     if reference is not None:ax.axvline(reference,color=MODEL_COLORS['gpt_oss'],ls=(0,(6,3)),lw=1)
     ax.axhline(5,color='#bbbbbb',lw=.6,xmax=1/1.1)
     ax.spines['left'].set_visible(False)
-    fig.suptitle('gpt-oss-20b: what can explain the signal?',fontsize=11,y=.98)
+    ax.set_title('gpt-oss-20b',fontsize=10)
     lines=[Line2D([],[],color='#777777',lw=.8,label='Chance'),
            Line2D([],[],color=MODEL_COLORS['gpt_oss'],ls=(0,(6,3)),label='Last-prompt probe')]
     fig.legend(handles=lines,loc='lower center',bbox_to_anchor=(.5,.12),ncol=2,frameon=False,fontsize=9)
     marker_legend(fig,['activation','rule','control'],y=.045)
-    fig.text(.5,.005,'Whiskers: 95% CI',ha='center',fontsize=9)
+    fig.text(.5,.015,'Whiskers: 95% CI',ha='center',fontsize=9)
     save(fig,'fig4_shortcuts',rows,sha)
 
 
@@ -192,8 +196,8 @@ def percall(data, sha):
             ('Reasoning probe', 'gptossCallReasoning'),
             ('Trained text: full input', 'gptossTextFull'),
             ('Zero-shot Jev (with reasoning)', 'gptossCallJev')])]
-    fig, axes = plt.subplots(1, 2, figsize=(6.5, 4.35), sharex=True)
-    fig.subplots_adjust(left=.07, right=.97, bottom=.18, top=.73, wspace=.22)
+    fig, axes = plt.subplots(1, 2, figsize=(6.5, 3.7), sharex=True)
+    fig.subplots_adjust(left=.07, right=.97, bottom=.21, top=.92, wspace=.22)
     rows = []
     for ax, (model, title, items) in zip(axes, panels):
         ax.set_title(title, fontsize=10)
@@ -213,7 +217,6 @@ def percall(data, sha):
         ax.set(xlim=(0,1.13), ylim=(3.5,-.75), yticks=[], xticks=[0,.5,1], xlabel='AUROC')
         ax.spines['bottom'].set_bounds(0,1)
         ax.spines['left'].set_visible(False)
-    fig.suptitle('A probe picks out the call that leaks; a zero-shot monitor\ndoes not, and a trained text classifier comes close.', fontsize=11, y=.98)
     fig.text(.5,.025,'Development episodes; whiskers: 95% CI; dashed line: chance',ha='center',fontsize=9)
     save(fig, 'fig3_percall', rows, sha)
 
