@@ -1,0 +1,88 @@
+{
+  "id": "20261028-0722-e15-forbid",
+  "experiment": "E15",
+  "name": "e15-forbid",
+  "tags": [
+    "e15",
+    "forbid"
+  ],
+  "settings": {
+    "target_model": "qwen/qwen3-32b",
+    "recruiter_model": "deepseek/deepseek-v4-flash",
+    "rounds": 20,
+    "max_tool_steps": 12,
+    "max_tokens": 1536,
+    "temperature": 0.7,
+    "parallelism": 1,
+    "target_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0808,
+            "completion": 0.2828,
+            "request": 0
+          }
+        }
+      }
+    },
+    "recruiter_request_options": {
+      "extra_body": {
+        "reasoning": {
+          "enabled": false
+        },
+        "provider": {
+          "order": [
+            "DeepInfra"
+          ],
+          "allow_fallbacks": false,
+          "quantizations": [
+            "fp8"
+          ],
+          "max_price": {
+            "prompt": 0.0909,
+            "completion": 0.1818,
+            "request": 0
+          }
+        }
+      }
+    },
+    "early_stop": true,
+    "empty_response_retries": 0,
+    "empty_after_send_ends_turn": false,
+    "api_retry_attempts": 10,
+    "api_retry_max_delay": 60,
+    "arm": "FORBID",
+    "benchmark": false,
+    "episodes": 77,
+    "api_cap_usd": 1.5,
+    "plan_sha256": "f1c54d0b402ab8a57d66fa615a6756869964438260a3ffc5775f8ae573fcd993"
+  },
+  "parents": [],
+  "model": "qwen/qwen3-32b",
+  "command": "/Users/leo/collusion-research-followup/.venv/bin/python experiments/E15-giving-in-scaleup/run_episodes.py --arm FORBID --concurrency 3 --waves 8 --cap-usd 1.5",
+  "git_commit": "7c084a0a54b16b573dc85c9cc941ac75547d017a",
+  "dirty": true,
+  "host": "Leos-MacBook-Pro.local",
+  "gpu": null,
+  "started": "2026-10-28T07:22:17",
+  "status": "finished",
+  "error": null,
+  "ended": "2026-10-28T10:16:20",
+  "results": {
+    "completed": 74,
+    "final_incomplete": 3,
+    "failed_after_retries": 0,
+    "spent_usd": "0.481382044",
+    "calls": 3194
+  }
+}

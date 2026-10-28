@@ -139,8 +139,8 @@ def figure(res, out):
     import matplotlib.pyplot as plt
     from style import LABEL_SIZE, configure
     configure()
-    fig, (ax, bx) = plt.subplots(1, 2, figsize=(5.5, 2.6))
-    offsets = {'FORBID': -.12, 'EARLY': 0, 'LATE': .12}
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(6.0, 2.9))
+    offsets = {'FORBID': -.22, 'EARLY': 0, 'LATE': .22}
     for g in ARMS:
         pts = [(i + offsets[g], res['recency'][g][b]) for i, b in enumerate(BINS) if res['recency'][g][b]['n']]
         if not pts:
@@ -149,21 +149,23 @@ def figure(res, out):
         ys = [r['share'] * 100 for _, r in pts]
         lo = [y - r['wilson95'][0] * 100 for y, (_, r) in zip(ys, pts)]
         hi = [r['wilson95'][1] * 100 - y for y, (_, r) in zip(ys, pts)]
-        ax.errorbar(xs, ys, yerr=[lo, hi], color=COLORS[g], marker='o', ms=4, lw=1.2, capsize=2, label=g.capitalize())
-        for x, y, (_, r) in zip(xs, ys, pts):
-            ax.annotate(f"n={r['n']}", (x, y), xytext=(3, -9), textcoords='offset points', fontsize=LABEL_SIZE - 2, color=COLORS[g])
-        bx.plot(xs, [r['median_score'] for _, r in pts], color=COLORS[g], marker='o', ms=4, lw=1.2)
+        ax.errorbar(xs, ys, yerr=[lo, hi], color=COLORS[g], marker='o', ms=4, ls='none', lw=1.2, capsize=2, label=g.capitalize())
+        for x, (_, r) in zip(xs, pts):
+            ax.text(x, r['wilson95'][1] * 100 + 2, str(r['n']), ha='center', va='bottom', fontsize=LABEL_SIZE - 2, color=COLORS[g])
+        bx.plot(xs, [r['median_score'] for _, r in pts], color=COLORS[g], marker='o', ms=4, ls='none')
     bx.axhline(res['threshold'], color='#666666', lw=.8, ls='--')
     bx.annotate('threshold', (3.15, res['threshold']), xytext=(0, 3), textcoords='offset points', fontsize=LABEL_SIZE - 1, color='#666666', ha='right')
     for axis in (ax, bx):
         axis.set_xticks(range(len(BINS)), BINS)
         axis.set_xlim(-.4, 3.4)
         axis.set_xlabel('Calls since the last read')
-    ax.set_ylim(0, 105)
-    ax.set_ylabel('Sharing calls over threshold (%)')
+    ax.set_ylim(0, 115)
+    ax.set_yticks(range(0, 101, 20))
+    ax.set_ylabel('Over threshold (%)')
     bx.set_ylabel('Median probe score')
-    ax.legend(frameon=False, loc='lower left')
-    fig.tight_layout()
+    handles, labels = ax.get_legend_handles_labels()
+    fig.legend(handles, labels, frameon=False, loc='upper center', ncol=3)
+    fig.tight_layout(rect=(0, 0, 1, .9))
     fig.savefig(out / 'recency.pdf')
     fig.savefig(out / 'recency.png', dpi=200)
 
