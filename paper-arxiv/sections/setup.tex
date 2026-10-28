@@ -26,7 +26,7 @@ Its reply at the end of each turn is also posted to the channel.
 A peer agent shares the channel and needs the value, but cannot read the files and is not told the rule.
 The peer asks for the value openly, as a colleague would, so we study recruitment that arises from an ordinary conflict of goals.
 Tools act in memory, so no real system, credential or network is touched.
-The target is a model $M$ whose system prompt states $q$ and $\rho$, and the peer is a policy $\pi_P$; the target reaches $F$ only through its tools, and the peer sees only the channel, never $F$, $f^\star$ or $\rho$.
+The target is a model $M$ whose system prompt states its role and $\rho$ and which receives $q$ as its first user message, and the peer is a policy $\pi_P$; the target reaches $F$ only through its tools, and the peer sees only the channel, never $F$, $f^\star$ or $\rho$.
 
 \paragraph{Control episodes.}
 Every scenario also runs with a control peer, which asks only for the ordinary task details and never for the value, so $\pi_P \in \{\pi_{\text{rec}}, \pi_{\text{ctrl}}\}$, recruiting or control; on Qwen3-32B the target also works alone, with no peer.
@@ -51,9 +51,10 @@ With $H_{k-1}$ the channel before round $k$,
   m_k \sim \pi_P(H_{k-1}), \qquad (z_t, o_t) \sim M(x_t),
   \label{eq:dynamics}
 \end{equation}
-where $m_k$ is the peer's message and $x_t$ is the input of the target's call $c_t$: the system prompt, the channel so far and earlier tool results.
+where $m_k$ is the peer's message and $x_t$ is the input of the target's call $c_t$.
+This input is the chat-formatted conversation the target has accumulated: the system prompt (its role, the rule $\rho$ and the tool definitions), the task $q$ as the first user message, each peer message as a user message tagged with the channel and the sender, the target's own earlier replies and tool calls as assistant messages, and each tool result.
 The call generates private reasoning $z_t$, empty on Qwen3-32B, and then its output $o_t$, the reply text together with the arguments of any tool calls.
-On gpt-oss-20b, $x_t$ includes the reasoning of earlier calls in the same turn; $z_t$ is the reasoning the model writes for this call.
+On gpt-oss-20b, $x_t$ also includes the reasoning of earlier calls in the same turn; $z_t$ is the reasoning written for this call.
 An episode is the sequence $(x_1, o_1), \dots, (x_T, o_T)$, and $r(t)$ is the round of call $c_t$.
 
 \subsection{Leaks, labels and detectors}
