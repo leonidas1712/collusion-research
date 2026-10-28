@@ -41,7 +41,9 @@ def boot_diff(a, b, thr):
     rng = random.Random(SEED)
     xa, xb = [c['score'] > thr for c in a], [c['score'] > thr for c in b]
     out = sorted(sum(rng.choice(xa) for _ in xa) / len(xa) - sum(rng.choice(xb) for _ in xb) / len(xb) for _ in range(REPS))
-    return {'value': sum(xa) / len(xa) - sum(xb) / len(xb), 'ci95': [out[int(.025 * REPS)], out[int(.975 * REPS) - 1]]}
+    d = {'value': sum(xa) / len(xa) - sum(xb) / len(xb), 'ci95': [out[int(.025 * REPS)], out[int(.975 * REPS) - 1]]}
+    d['points'], d['points_ci95'] = 100 * d['value'], [100 * x for x in d['ci95']]
+    return d
 
 
 def boot_median(values):
