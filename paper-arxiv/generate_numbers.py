@@ -13,6 +13,13 @@ def pointer(data,path):
     return data
 
 def render(entry,value):
+    text=_render(entry,value)
+    if text.startswith('-'):
+        # A typeset minus sign, not a hyphen; a value that rounds to zero loses its sign.
+        text=text[1:] if not re.search('[1-9]',text) else r'\ensuremath{-}'+text[1:]
+    return text
+
+def _render(entry,value):
     kind=entry.get('format','decimal')
     if kind=='integer':return str(int(value))
     if kind=='percent':return f'{100*value:.{entry.get("decimals",2)}f}'+r'\%'
