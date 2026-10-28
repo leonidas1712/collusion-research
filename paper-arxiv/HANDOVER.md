@@ -4,6 +4,62 @@ Shared notes (not paper prose). Append your own entries; keep sections by owner 
 
 ---
 
+## LATEST (28 Oct, morning): E15 folded in, Setup formalised; READ THIS FIRST (coordinator)
+
+**Start with:** `paper-arxiv/main.pdf` at commit `10c869d`.
+- 45 pages: main text pp. 1–11, References from p. 12.
+- SHA-256 94adbe6de2b4….
+- 858 numbers verified.
+- arXiv package: `dist/arxiv-final`. The tarball compiles clean and gives identical text.
+
+**What the result now says about the probe** (supersedes "reads giving in" in the overnight section below):
+- Right after the value is read, nearly every disclosure crosses the threshold, permitted or forbidden: 98% / 97% / 100%.
+- Away from a read, forbidden leaks cross about twice as often as permitted shares: 61% (19/31) against 33% (24/73), a difference of −28 pts, CI −49 to −8.
+- So the probe mostly reads a coming disclosure. It is sharpest just after the value is read, and stronger when the agent was pressed into it. It does not read the rule text.
+- E14's larger gap (82% vs 28%) came mostly from its single scenario, not from recency: on dispatch alone, the gap away from a read was still 59% vs 16%.
+
+**Your decision: the abstract only.** The body is done.
+1. **"At the same flag rate"** (still MUST-FIX). Jev flags 4.8% against the probe's 5.5%. Suggested: "Flagging no more calls, a zero-shot decision-model monitor catches 26%."
+2. **Counterfactual sentence.** Drop the v9 "giving in" variant: E15 does not support it.
+   - v8's "it reads the coming disclosure, not the violation" now fits better, but "not the violation" is slightly too strong (61% vs 33% away from a read), and the replay kept the refusal history.
+   - Suggested: "Permitted disclosures are flagged too, especially right after the secret is read: the probe mostly reads the coming disclosure, not the violation."
+   - Or keep v8 as is and add "mostly".
+
+**Changed since the overnight section:**
+- **§2 Setup formalised,** in the style of the Share-Borne and Hidden in Memory papers:
+  - Eq. 1: the scenario S = (F, f*, σ, ρ, q).
+  - Eq. 2: the dynamics, m_k ~ P(H_{k−1}) and (z_t, o_t) ~ M(x_t).
+  - Eq. 3: the leak, τ.
+  - Eq. 4: the probe.
+  - Eq. 5: the goal.
+  - The contents of x_t are listed in order: system prompt (role, ρ, tool definitions), task q as the first user message, tagged peer messages, the target's own earlier replies and tool calls, and tool results. On gpt-oss, x_t also includes earlier same-turn reasoning; z_t is the reasoning for the call itself.
+  - "Policy"/π removed: the target and the peer are both "a language model".
+  - The target's access is stated once. No text monitor reads z_t.
+  - Fixed a factual error: the task was described as being in the system prompt.
+- **Run-on sentences split** throughout §2. WRITING.md rule 15 now covers run-on definitions, with a before/after example in §9.
+- **E15 in Appendix I.3:**
+  - Fig. 8 (recency; points from ≤2 calls are drawn hollow) and Table 26.
+  - E14's just-read table is merged into it.
+  - §4.3, the Discussion opening and Limitations are aligned with the result.
+  - claude-4 did an accuracy read of every changed sentence against results.json; all mismatches are fixed.
+- **Limitations, new sentence:** we score only calls after the first read of the file. That leaves out 117 calls (6%; 84/89 episodes read in round 1). A deployed monitor would score every call, and the false alarms on those calls are unmeasured.
+- **Real minus signs** paper-wide, fixed at the source in generate_numbers.py.
+- **My visual check:** pp. 3–4, 9–11, 31–32 (the changed pages). All clean.
+
+**Runs and spend since the last LATEST:**
+| Run | What | Cost |
+|---|---|---|
+| E14 | on-policy rule flip, dispatch | $1.35 |
+| E15 | `runs/20261028-1039-e15-giving-in-scaleup/report.md`; 95 forbidden + 109 early + 99 late episodes; the peer was rate-limited upstream all night, and all episodes were rerun with the same seeds, with 0 failures | $1.80 |
+| E16 | `runs/20261028-0330-e16-self-report/`; follow-up only, not in the paper. Self-forecast AUROC 0.68 vs the probe's 0.98. "Not allowed" afterwards: forbidden 60%, clean permit 3%, permit+consequence 47% | $0.19 |
+| Pre-read count | from saved episodes | $0 |
+
+**Total spend: about $3.34** of the $25 approved.
+
+**Follow-up note:** `private/FOLLOWUP_IDEAS.md`. It adds K (self-report, E16 done) and L (always-on deployment: score every call).
+
+---
+
 ## LATEST (28 Oct, overnight): your notes applied, E14 run, reviews done (coordinator)
 
 **Start with:** `paper-arxiv/main.pdf` at commit `9a00990`.
@@ -446,6 +502,8 @@ both intervals include small decreases. To match: "so it **mostly** detects the 
 - "26%" in the abstract is Jev's share of leaking *calls* at the probe's flag rate. The body also reports 26% of leaking *episodes* for the per-episode threshold; §4.4 now says which is which.
 
 ## MUST-FIX abstract suggestions for Leo (28 Oct, overnight; abstract not edited)
+
+> **Superseded 28 Oct morning:** item 1 below is replaced by the counterfactual suggestion in the top LATEST section; E15 does not support "giving in".
 
 1. **Counterfactual sentence is now partly wrong (E14).** "In a counterfactual replay, allowing sharing leaves the probe's score unchanged: it reads the coming disclosure, not the violation." New episodes under a clean permission show that a freely permitted disclosure is mostly not flagged (28% of sharing calls cross the threshold, against 82% of forbidden leaks). Suggested: "Allowing sharing does not lower the probe's score once the agent has resisted, but freely permitted disclosures are mostly not flagged: the probe reads the agent giving in, not the rule."
 2. **"At the same flag rate".** Jev flags 4.8% of refusing calls against the probe's 5.5%. Suggested: "Flagging no more calls, a zero-shot decision-model monitor catches 26%."
