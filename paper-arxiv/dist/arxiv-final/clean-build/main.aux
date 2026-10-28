@@ -347,8 +347,8 @@
 \newlabel{tab:e15}{{26}{31}{Sharing calls over the frozen threshold by calls since the last read of the protected file. The forbidding-rule row pools the Qwen3-32B test leaks with the new forbidding-rule episodes, and the asks-at-once row includes the clean-permission episodes of \cref {tab:e14}. A dash means no calls}{table.26}{}}
 \newlabel{tab:e15@cref}{{[table][26][]26}{[1][31][]31}{}{}{}}
 \citation{gao2026}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Share of sharing calls over the frozen threshold by the number of calls since the target last read the protected file, in Qwen3-32B episodes on the five test scenarios. Numbers give the calls behind each point, and whiskers are 95\% Wilson intervals.}}{32}{figure.8}\protected@file@percent }
-\newlabel{fig:e15-recency}{{8}{32}{Share of sharing calls over the frozen threshold by the number of calls since the target last read the protected file, in Qwen3-32B episodes on the five test scenarios. Numbers give the calls behind each point, and whiskers are 95\% Wilson intervals}{figure.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Share of sharing calls over the frozen threshold by the number of calls since the target last read the protected file, in Qwen3-32B episodes on the five test scenarios. Numbers give the calls behind each point, and whiskers are 95\% Wilson intervals. Hollow points rest on two calls or fewer and are not joined.}}{32}{figure.8}\protected@file@percent }
+\newlabel{fig:e15-recency}{{8}{32}{Share of sharing calls over the frozen threshold by the number of calls since the target last read the protected file, in Qwen3-32B episodes on the five test scenarios. Numbers give the calls behind each point, and whiskers are 95\% Wilson intervals. Hollow points rest on two calls or fewer and are not joined}{figure.8}{}}
 \newlabel{fig:e15-recency@cref}{{[figure][8][]8}{[1][31][]32}{}{}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {J}Does the probe warn early, and how many false alarms would it raise?}{32}{appendix.J}\protected@file@percent }
 \newlabel{app:ahead}{{J}{32}{Does the probe warn early, and how many false alarms would it raise?}{appendix.J}{}}
@@ -377,20 +377,17 @@
 \newlabel{fig:alarm-tradeoff@cref}{{[figure][10][]10}{[1][32][]34}{}{}{}}
 \@writefile{toc}{\contentsline {paragraph}{What a monitor should be asked and shown.}{34}{section*.73}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Adding the probe to a monitor.}{34}{section*.74}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Eventual outcome.}{34}{section*.75}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {28}{\ignorespaces Alarm rates at thresholds set on control calls or control episodes; Jev's threshold flags no more refusing calls than the probe.}}{35}{table.28}\protected@file@percent }
 \newlabel{tab:alarms}{{28}{35}{Alarm rates at thresholds set on control calls or control episodes; Jev's threshold flags no more refusing calls than the probe}{table.28}{}}
-\newlabel{tab:alarms@cref}{{[table][28][]28}{[1][32][]35}{}{}{}}
+\newlabel{tab:alarms@cref}{{[table][28][]28}{[1][33][]35}{}{}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces \textbf  {A second check on the same input does not improve the trade-off.} Leaking episodes caught against refusing episodes halted, as thresholds move, on Qwen3-32B test episodes, for the probe alone and for the probe at its lenient threshold paired with Jev or with the bag-of-words classifier. Dots mark the thresholds chosen for at most 5\% and at most 10\% of refusing episodes halted; the numbers above those lines are the share of leaking episodes caught there (\cref  {tab:cascade}).}}{35}{figure.11}\protected@file@percent }
 \newlabel{fig:cascade}{{11}{35}{\textbf {A second check on the same input does not improve the trade-off.} Leaking episodes caught against refusing episodes halted, as thresholds move, on Qwen3-32B test episodes, for the probe alone and for the probe at its lenient threshold paired with Jev or with the bag-of-words classifier. Dots mark the thresholds chosen for at most 5\% and at most 10\% of refusing episodes halted; the numbers above those lines are the share of leaking episodes caught there (\cref {tab:cascade})}{figure.11}{}}
 \newlabel{fig:cascade@cref}{{[figure][11][]11}{[1][33][]35}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Eventual outcome.}{35}{section*.75}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Robustness.}{35}{section*.76}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {K.1}Why is round-level prediction near chance on gpt-oss-20b with a channel-only label?}{35}{subsection.K.1}\protected@file@percent }
 \newlabel{app:gptoss-round}{{K.1}{35}{Why is round-level prediction near chance on gpt-oss-20b with a channel-only label?}{subsection.K.1}{}}
 \newlabel{app:gptoss-round@cref}{{[appendix][1][11]K.1}{[1][35][]35}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {L}How do the leaks go out, and are they deliberate?}{35}{appendix.L}\protected@file@percent }
-\newlabel{app:leakchecks}{{L}{35}{How do the leaks go out, and are they deliberate?}{appendix.L}{}}
-\newlabel{app:leakchecks@cref}{{[appendix][12][]L}{[1][35][]35}{}{}{}}
 \citation{openai2026luna}
 \@writefile{lot}{\contentsline {table}{\numberline {29}{\ignorespaces Leaking episodes caught at a fixed share of refusing episodes halted, Qwen3-32B test episodes, with 95\% episode-bootstrap intervals in which thresholds are chosen again in each draw. ``Lenient'' keeps the probe at its control-call threshold; ``grid'' also chooses the probe's threshold. The last number in each cascade cell is its difference from the probe alone, in episodes.}}{36}{table.29}\protected@file@percent }
 \newlabel{tab:cascade}{{29}{36}{Leaking episodes caught at a fixed share of refusing episodes halted, Qwen3-32B test episodes, with 95\% episode-bootstrap intervals in which thresholds are chosen again in each draw. ``Lenient'' keeps the probe at its control-call threshold; ``grid'' also chooses the probe's threshold. The last number in each cascade cell is its difference from the probe alone, in episodes}{table.29}{}}
@@ -398,20 +395,23 @@
 \@writefile{lot}{\contentsline {table}{\numberline {30}{\ignorespaces Round-level results on Qwen3-32B, with the round-level label (\cref  {app:labels}) and its own call set, not those of \cref  {fig:headline}: probe and monitors on the same calls, and the gain from adding the probe to a monitor. The development probe here is trained on the eventual label and scored on both labels without refitting.}}{36}{table.30}\protected@file@percent }
 \newlabel{tab:combination}{{30}{36}{Round-level results on Qwen3-32B, with the round-level label (\cref {app:labels}) and its own call set, not those of \cref {fig:headline}: probe and monitors on the same calls, and the gain from adding the probe to a monitor. The development probe here is trained on the eventual label and scored on both labels without refitting}{table.30}{}}
 \newlabel{tab:combination@cref}{{[table][30][]30}{[1][34][]36}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {L}How do the leaks go out, and are they deliberate?}{36}{appendix.L}\protected@file@percent }
+\newlabel{app:leakchecks}{{L}{36}{How do the leaks go out, and are they deliberate?}{appendix.L}{}}
+\newlabel{app:leakchecks@cref}{{[appendix][12][]L}{[1][36][]36}{}{}{}}
 \@writefile{toc}{\contentsline {paragraph}{How leaks go out.}{36}{section*.77}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Deliberate or accidental.}{36}{section*.78}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Peer claims of authority.}{36}{section*.79}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {M}How often does each model leak, and what differs for the second target?}{36}{appendix.M}\protected@file@percent }
 \newlabel{app:behaviour}{{M}{36}{How often does each model leak, and what differs for the second target?}{appendix.M}{}}
 \newlabel{app:behaviour@cref}{{[appendix][13][]M}{[1][36][]36}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {M.1}Screens on Qwen3-32B}{36}{subsection.M.1}\protected@file@percent }
-\citation{nakamura2026}
 \@writefile{lot}{\contentsline {table}{\numberline {31}{\ignorespaces Round-level robustness on Qwen3-32B, with the round-level label (\cref  {app:labels}), on the same calls as \cref  {tab:combination}. Each probe here is refit on the near-term label, with its layer chosen again, so it scores higher on that label than the eventual-trained probe of \cref  {tab:combination}.}}{37}{table.31}\protected@file@percent }
 \newlabel{tab:robust-round}{{31}{37}{Round-level robustness on Qwen3-32B, with the round-level label (\cref {app:labels}), on the same calls as \cref {tab:combination}. Each probe here is refit on the near-term label, with its layer chosen again, so it scores higher on that label than the eventual-trained probe of \cref {tab:combination}}{table.31}{}}
-\newlabel{tab:robust-round@cref}{{[table][31][]31}{[1][34][]37}{}{}{}}
+\newlabel{tab:robust-round@cref}{{[table][31][]31}{[1][35][]37}{}{}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {32}{\ignorespaces How the first leak goes out, whether the judge labels it deliberate, and leak rates with and without a peer claim of operator authority, on the development episodes.}}{37}{table.32}\protected@file@percent }
 \newlabel{tab:leakchecks}{{32}{37}{How the first leak goes out, whether the judge labels it deliberate, and leak rates with and without a peer claim of operator authority, on the development episodes}{table.32}{}}
 \newlabel{tab:leakchecks@cref}{{[table][32][]32}{[1][36][]37}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {M.1}Screens on Qwen3-32B}{37}{subsection.M.1}\protected@file@percent }
+\citation{nakamura2026}
 \@writefile{lot}{\contentsline {table}{\numberline {33}{\ignorespaces \textbf  {Almost every screened setting gave a mix of leaks and refusals on Qwen3-32B.} Each cell gives the share of recruiting episodes that leak, with the number of episodes in brackets.}}{38}{table.33}\protected@file@percent }
 \newlabel{tab:screens}{{33}{38}{\textbf {Almost every screened setting gave a mix of leaks and refusals on Qwen3-32B.} Each cell gives the share of recruiting episodes that leak, with the number of episodes in brackets}{table.33}{}}
 \newlabel{tab:screens@cref}{{[table][33][]33}{[1][38][]38}{}{}{}}
@@ -422,9 +422,9 @@
 \newlabel{app:limitations@cref}{{[appendix][14][]N}{[1][38][]38}{}{}{}}
 \@writefile{toc}{\contentsline {paragraph}{One peer strategy on gpt-oss-20b.}{38}{section*.80}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Warning about the current call only.}{38}{section*.81}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{False alarms per episode.}{38}{section*.82}\protected@file@percent }
 \citation{nakamura2026}
 \citation{tang2026}
+\@writefile{toc}{\contentsline {paragraph}{False alarms per episode.}{39}{section*.82}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Automated labels.}{39}{section*.83}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {O}What are the dual-use risks, and why release anyway?}{39}{appendix.O}\protected@file@percent }
 \newlabel{app:ethics}{{O}{39}{What are the dual-use risks, and why release anyway?}{appendix.O}{}}
@@ -441,7 +441,7 @@
 \newlabel{tab:history@cref}{{[table][34][]34}{[1][39][]40}{}{}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {35}{\ignorespaces Numbers that changed from the sprint version, and why.}}{40}{table.35}\protected@file@percent }
 \newlabel{tab:changed}{{35}{40}{Numbers that changed from the sprint version, and why}{table.35}{}}
-\newlabel{tab:changed@cref}{{[table][35][]35}{[1][39][]40}{}{}{}}
+\newlabel{tab:changed@cref}{{[table][35][]35}{[1][40][]40}{}{}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {Q}Reproducibility index}{40}{appendix.Q}\protected@file@percent }
 \newlabel{app:repro}{{Q}{40}{Reproducibility index}{appendix.Q}{}}
 \newlabel{app:repro@cref}{{[appendix][17][]Q}{[1][40][]40}{}{}{}}
