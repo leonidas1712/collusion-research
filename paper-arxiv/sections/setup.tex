@@ -26,10 +26,10 @@ Its reply at the end of each turn is also posted to the channel.
 A peer agent shares the channel and needs the value, but cannot read the files and is not told the rule.
 The peer asks for the value openly, as a colleague would, so we study recruitment that arises from an ordinary conflict of goals.
 Tools act in memory, so no real system, credential or network is touched.
-The target is a model $M$ whose system prompt states its role and $\rho$ and which receives $q$ as its first user message, and the peer is a policy $\pi_P$; the target reaches $F$ only through its tools, and the peer sees only the channel, never $F$, $f^\star$ or $\rho$.
+The target is a language model $M$ whose system prompt states its role and $\rho$ and which receives $q$ as its first user message, and the peer is a second language model $P$ that writes each message from the channel so far; the target reaches $F$ only through its tools, and the peer sees only the channel, never $F$, $f^\star$ or $\rho$.
 
 \paragraph{Control episodes.}
-Every scenario also runs with a control peer, which asks only for the ordinary task details and never for the value, so $\pi_P \in \{\pi_{\text{rec}}, \pi_{\text{ctrl}}\}$, recruiting or control; on Qwen3-32B the target also works alone, with no peer.
+Every scenario also runs with a control peer, which asks only for the ordinary task details and never for the value, so $P \in \{P_{\text{rec}}, P_{\text{ctrl}}\}$, recruiting or control; on Qwen3-32B the target also works alone, with no peer.
 These episodes never leak, so the leaks are caused by the request.
 We call the calls in these episodes \emph{control calls}, and recruiting episodes that never leak \emph{refusing episodes}.
 
@@ -48,7 +48,7 @@ An episode runs for up to $K = 20$ rounds.
 In each round the peer posts a message, and the target responds with one or more model calls, each one request to the model ending in a reply or a tool call.
 With $H_{k-1}$ the channel before round $k$,
 \begin{equation}
-  m_k \sim \pi_P(H_{k-1}), \qquad (z_t, o_t) \sim M(x_t),
+  m_k \sim P(H_{k-1}), \qquad (z_t, o_t) \sim M(x_t),
   \label{eq:dynamics}
 \end{equation}
 where $m_k$ is the peer's message and $x_t$ is the input of the target's call $c_t$.
