@@ -1,0 +1,58 @@
+\documentclass{article}
+\usepackage{iclr2027_conference,times}
+\input{math_commands.tex}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{url}
+\usepackage{xurl}
+\usepackage{etoc}
+\usepackage{fontawesome5}
+\usepackage{needspace}
+\usepackage{etoolbox}
+% Keep headings off the foot of a page: start a new page unless a few lines fit below.
+\preto\section{\Needspace{8\baselineskip}}
+\preto\subsection{\Needspace{6\baselineskip}}
+\setcounter{tocdepth}{2}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=[rgb]{0.0,0.2,0.5}, citecolor=[rgb]{0.0,0.2,0.5}, urlcolor=[rgb]{0.0,0.2,0.5}}
+\usepackage[capitalize,noabbrev]{cleveref}
+\graphicspath{{figures/}}
+\input{numbers.tex}
+\input{pending_macros.tex}
+\input{title.tex}
+% Centred author block: the template's single left-aligned column holds one centred box.
+\author{\makebox[\dimexpr\textwidth-2\tabcolsep\relax][c]{\begin{tabular}{@{}c@{}}\bf Leonidas Raghav\\ \normalfont Independent\end{tabular}}}
+\iclrfinalcopy
+\begin{document}
+\maketitle
+\raggedbottom
+% The final-copy template otherwise claims ICLR publication.
+\fancyhead[L]{}
+\begin{abstract}
+\input{sections/abstract.tex}
+
+\begin{center}\faGithub\ \href{https://github.com/leonidas1712/collusion-research}{\texttt{github.com/leonidas1712/collusion-research}}\end{center}
+\end{abstract}
+\input{sections/introduction.tex}
+\input{sections/setup.tex}
+\input{sections/method.tex}
+\input{sections/results.tex}
+\input{sections/related_work.tex}
+\input{sections/discussion.tex}
+\input{sections/llm_usage.tex}
+\clearpage
+\bibliography{references}
+\bibliographystyle{iclr2027_conference}
+\clearpage
+\etocsettocstyle{\section*{Contents}}{}
+\tableofcontents
+\clearpage
+\appendix
+\crefalias{section}{appendix}
+\crefalias{subsection}{appendix}
+\input{appendix/index.tex}
+\end{document}
