@@ -53,7 +53,7 @@ These are checkable. An editor should be able to mark each one pass or fail.
 ### Sentences
 13. **Keep sentences under about 30 words.** Split anything longer.
 14. **At most one parenthesis per sentence.** Never nest them.
-15. **No chains of semicolons.** Use separate sentences.
+15. **No chains of semicolons, and no run-on definitions.** Use separate sentences. This matters most when introducing notation: give each object its own sentence, rather than packing several facts about several objects into one sentence joined by "and", "which" and ";". See §9, "Defining notation".
 16. **Use active voice with a concrete subject.** "The probe catches 85% of leaking calls", not "85% of leaking calls are caught".
 17. **Do not narrate the history of the analysis.** Describe what each analysis is, not when it was decided. Analysis history lives in one appendix section (§4).
 
@@ -312,6 +312,17 @@ What changed:
 > Before: Jev, asked the same question, scores lower on both models: 0.74 on Qwen3-32B and 0.27 on gpt-oss-20b (probe minus Jev +0.21 and +0.64, intervals exclude zero). Jev sees the same conversation and tool results, with protected values masked; for gpt-oss-20b it omits same-turn reasoning; Jev given that reasoning scores 0.40 (Appendix L.3). On gpt-oss-20b it flags nearly every pressured call, so it ranks leaking calls below the rest (Appendix L.3).
 
 > After: A text monitor given the same conversation scores lower on both models. On gpt-oss-20b it flags almost every call made under pressure, so it cannot separate the calls that leak from those that do not. Appendix C compares the two in full.
+
+**Defining notation (run-on sentence)**
+
+> Before: The target is a language model $M$ whose system prompt states its role and $\rho$ and which receives $q$ as its first user message, and the peer is a second language model $P$ that writes each message from the channel so far; the target reaches $F$ only through its tools, and the peer sees only the channel, never $F$, $f^\star$ or $\rho$.
+
+> After: The target is a language model $M$. Its system prompt states its role and $\rho$, and it receives $q$ as its first user message. It reaches $F$ only through its tools. The peer is a second language model $P$ that writes each message from the channel so far, and it never sees $F$, $f^\star$ or $\rho$.
+
+What changed:
+- One 60-word sentence became four short ones.
+- Each sentence is about one object: the target, its inputs, its access, the peer.
+- The semicolon and the "whose … and which … and …" chain are gone.
 
 ## 10. Final checklist
 
