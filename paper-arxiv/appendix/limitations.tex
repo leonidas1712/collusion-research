@@ -12,6 +12,8 @@ One call ahead the signal is much weaker, and on gpt-oss-20b it mostly reflects 
 \paragraph{False alarms per episode.}
 At a per-call threshold, most refusing Qwen3-32B episodes see at least one flag, which suits escalating single calls rather than halting the agent (\cref{sec:cost}).
 The stricter per-episode thresholds, for the probe alone and for the paired detectors, are chosen on the test episodes, so they show the trade-off rather than test a threshold fixed in advance.
+Calls before the first read of the protected file are not scored.
+The target reads the file in the first round in \qwenPreReadRoundOne{} of \qwenPreReadEpisodes{} Qwen3-32B test episodes, so there are \qwenPreReadCalls{} such calls against \qwenFreshCalls{} scored ones, but their false-alarm rate is unmeasured.
 
 \paragraph{Automated labels.}
 The leak label is an exact match on the tool log.

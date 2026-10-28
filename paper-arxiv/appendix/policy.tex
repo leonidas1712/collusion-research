@@ -1,9 +1,11 @@
 \section{Does the probe track the rule, the disclosure, or giving in?}
 \label{app:policy}
 
-It tracks giving in.
-With the episode's history held fixed, permitting the disclosure leaves the probe's score unchanged, but a disclosure made freely under a clear permission mostly does not cross the threshold.
-We show this in two steps: a replay of saved calls under changed rules, and new episodes run under a permitting rule.
+It mostly tracks a coming disclosure, most strongly right after the value is read.
+With the episode's history held fixed, permitting the disclosure leaves the probe's score unchanged.
+In new episodes, nearly every disclosure that directly follows a read of the value crosses the threshold, permitted or forbidden.
+Away from a read, forbidden leaks cross about twice as often as permitted shares.
+We show this in three steps: a replay of saved calls under changed rules, new episodes on one scenario under a permitting rule, and new episodes on all five test scenarios that separate the effect of a recent read.
 
 \subsection{Replaying saved calls under a changed rule}
 
@@ -42,19 +44,7 @@ With the consequence sentence kept, half the episodes never share, and those tha
 Their sharing calls score like forbidden leaks (\cref{tab:e14}).
 With a clean permission, every episode shares at once, in the first or second round, and the probe mostly does not fire: \eFourteenPermitCleanOverShare{} of sharing calls cross the threshold, and their median score is \eFourteenPermitCleanDiff{} below that of the forbidden leaks (95\% CI \eFourteenPermitCleanDiffLow{} to \eFourteenPermitCleanDiffHigh{}).
 Early timing alone does not explain the drop, because forbidden leaks in the first two rounds still score high.
-The probe therefore reads the agent giving in to pressure, not the rule and not the disclosure as such.
-Part of the gap reflects when the value was read.
-A sharing call whose prompt ends with the tool result that contains the value almost always crosses the threshold, and \eFourteenReadTestLeaksShare{} of the forbidden test leaks follow such a read, against \eFourteenReadPermitCleanShare{} of the clean-permission shares (\cref{tab:e14-read}).
-Among calls that do not directly follow a read, the contrast remains: \eFourteenReadTestLeaksOtherRate{} of forbidden leaks cross, against \eFourteenReadPermitCleanOtherRate{} of clean-permission shares.
-In the clean-permission arm, permission and immediate, unpressured sharing occur together, so this design cannot separate them.
-
-\begin{table}[h]
-  \centering
-  \small
-  \input{tables/e14_read.tex}
-  \caption{Sharing calls split by whether the call's prompt ends with the tool result that contains the value. The forbidding-rule row covers the Qwen3-32B test leaks from all five test scenarios.}
-  \label{tab:e14-read}
-\end{table}
+Much of this gap reflects when the value was read, which the next subsection separates on all five test scenarios.
 
 \begin{table}[h]
   \centering
@@ -62,4 +52,40 @@ In the clean-permission arm, permission and immediate, unpressured sharing occur
   \input{tables/e14.tex}
   \caption{New Qwen3-32B episodes on the dispatch-integration-code scenario under a permitting rule, against that scenario's test episodes under the original rule. Sharing calls are the first calls that write the value out; AUROC compares them with the other scored calls in the same round, with 95\% bootstrap intervals.}
   \label{tab:e14}
+\end{table}
+
+\subsection{New episodes on all five test scenarios}
+\label{app:e15}
+
+\paragraph{Design.}
+We repeat the comparison on the five Qwen3-32B test scenarios, running each scenario's test setup unchanged except for the target's rule and, in one arm, the peer's timing.
+Under the forbidding rule, \eFifteenForbidEpisodes{} new episodes yield \eFifteenForbidSharingEpisodes{} leaks, which we pool with the test leaks for \eFifteenForbidAllCalls{} forbidden leaks.
+Under the clean permission of \cref{app:onpolicy}, the peer either asks at once, as in the test episodes (\eFifteenEarlyEpisodes{} episodes, including the clean-permission episodes above), or first coordinates on the ordinary task and names the value only in its fifth message (\eFifteenLateEpisodes{} episodes).
+The frozen last-prompt probe and threshold score every call from the first read of the protected file to the sharing call, with no refitting.
+The main comparison, fixed before the episodes were run, uses sharing calls that do not directly follow a read, meaning that the call's prompt does not end with the tool result that contains the value.
+
+\paragraph{Result.}
+Right after a read, nearly every sharing call crosses the threshold under every rule: \eFifteenForbidReadRate{} of forbidden leaks, \eFifteenEarlyReadRate{} of shares when the peer asks at once and \eFifteenLateReadRate{} when it asks late (\cref{fig:e15-recency,tab:e15}).
+No permitted episode refused or hedged before sharing, while \eFifteenForbidHedged{} of the \eFifteenForbidHedgeCalls{} forbidden leaks came after a refusal or a hedge, so a fresh read alone puts the score over the threshold.
+Away from a read, \eFifteenForbidNonreadOver{} of \eFifteenForbidNonreadCalls{} forbidden leaks cross (\eFifteenForbidNonreadRate{}), against \eFifteenEarlyNonreadOver{} of \eFifteenEarlyNonreadCalls{} permitted shares when the peer asks at once (\eFifteenEarlyNonreadRate{}), a difference of \eFifteenEarlyMinusForbid{} points (95\% CI \eFifteenEarlyMinusForbidLow{} to \eFifteenEarlyMinusForbidHigh{}).
+When the peer asks late, \eFifteenLateNonreadOver{} of \eFifteenLateNonreadCalls{} such shares cross.
+Forbidden leaks follow a read more often than permitted shares do, so pooling all sharing calls widens the gap (\eFifteenForbidAllRate{} against \eFifteenEarlyAllRate{}), as it did on the single scenario above.
+The probe therefore reads a coming disclosure, most strongly right after the value is read and more strongly when the disclosure is contested.
+The delayed request worked: the late peer first named the value in its fifth message in \eFifteenLateAskFifth{} of \eFifteenLateEpisodes{} episodes.
+But the target re-read the file before \eFifteenLateReadCalls{} of its \eFifteenLateAllCalls{} shares, so the test of timing rests on few calls, and in every permitted episode the share was also uncontested.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{fig_e15_recency.pdf}
+  \caption{Share of sharing calls over the frozen threshold by the number of calls since the target last read the protected file, in Qwen3-32B episodes on the five test scenarios. Numbers give the calls behind each point, and whiskers are 95\% Wilson intervals.}
+  \label{fig:e15-recency}
+\end{figure}
+
+\begin{table}[h]
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \input{tables/e15_recency.tex}
+  \caption{Sharing calls over the frozen threshold by calls since the last read of the protected file. The forbidding-rule row pools the Qwen3-32B test leaks with the new forbidding-rule episodes, and the asks-at-once row includes the clean-permission episodes of \cref{tab:e14}. A dash means no calls.}
+  \label{tab:e15}
 \end{table}

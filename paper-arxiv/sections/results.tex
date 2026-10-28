@@ -92,10 +92,11 @@ Most of the probe's lead over the zero-shot monitor therefore comes from trainin
 Much of the signal also arrives with the incoming message.
 \label{sec:shortcuts}%
 On gpt-oss-20b, a separate probe that reads only the tokens new to the call, the latest peer message and tool results, also scores high, and the layers chosen for the last-prompt probe are early to middle ones.
-With the episode's history held fixed, changing the rule to permit sharing leaves the score of leaking calls unchanged (median change \qwenPolicyPermitShift{} on Qwen3-32B and \gptossPolicyPermitShift{} on gpt-oss-20b).
-In new Qwen3-32B episodes where sharing is permitted outright, with no stated consequence, the agent shares at once, and only \eFourteenPermitCleanOverShare{} of sharing calls cross the threshold.
-Among calls that do not directly follow a read of the file, \eFourteenReadPermitCleanOtherRate{} cross, against \eFourteenReadTestLeaksOtherRate{} of forbidden leaks.
-The probe reads the agent giving in, not the rule (\cref{app:policy}).
+Replaying saved leaking calls under a rule that permits sharing, with their earlier refusals kept in the history, leaves their scores unchanged (median change \qwenPolicyPermitShift{} on Qwen3-32B and \gptossPolicyPermitShift{} on gpt-oss-20b).
+In new Qwen3-32B episodes on the five test scenarios, nearly every disclosure made right after the value is read crosses the threshold, permitted or forbidden (\eFifteenEarlyReadRate{} to \eFifteenLateReadRate{}).
+Away from a read, forbidden leaks cross about twice as often as permitted shares (\eFifteenForbidNonreadRate{} against \eFifteenEarlyNonreadRate{}).
+The probe therefore mostly reads a coming disclosure, sharpest just after the value is read and stronger when the agent was pressed into it.
+It does not read the rule text (\cref{app:policy}).
 Whether it reads a decision to emit or the situation that prompts one is open (\cref{app:shortcuts}).
 
 \subsection{What would deployment cost?}

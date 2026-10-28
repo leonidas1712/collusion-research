@@ -2,8 +2,8 @@
 \label{sec:discussion}
 
 An overseer cannot tell early which episode will leak, but it can tell which call is about to.
-The probe is best read as a detector of giving in: it flags a call in which a pressured agent is about to disclose.
-It does not read the rule text, so the same contested disclosure is flagged even where it is allowed (\cref{app:policy}).
+The probe is best read as a detector of a coming disclosure: it fires most strongly when the value has just been read, and more strongly when the agent was pressed into it.
+It does not read the rule text, so a disclosure right after a read is flagged even where it is allowed (\cref{app:onpolicy}).
 This suggests a cascade, as in production classifier systems \citep{cunningham2026}, in which a cheap probe or trained text classifier runs on every call with two thresholds.
 A lenient per-call threshold escalates a call before it acts; it fires often, costs little per alarm, and catches most leaks.
 The escalation should go to a reviewer with different information, such as a human, a stronger model, or a check on the drafted reply before it executes, because a second check on the same input adds little (\cref{sec:cost}).
@@ -20,6 +20,8 @@ We test two models, six scenarios built from one task template, one peer and one
 Leaks are exact strings, which an output filter would catch; the probe matters most where no string filter can match, as with paraphrased or encoded leaks.
 Qwen3-32B ran with its reasoning switched off.
 On gpt-oss-20b, leaks are whole-block copies made soon after the peer's request, so they may reflect careless copying as much as giving in (\cref{app:limitations}).
+We score only calls made after the target first reads the protected file, where a leak is possible.
+A deployed monitor would run on every call, and the \qwenPreReadCalls{} Qwen3-32B test calls before that read (\qwenPreReadShare{} of calls) could add false alarms we have not measured.
 Settings with several peers, recruited agents that recruit others, or paraphrased leaks are untested.
 
 \paragraph{Few confirmed leaking calls.}
@@ -27,9 +29,8 @@ The gpt-oss-20b test covers one probe on one model, and its test episodes hold f
 
 \paragraph{What the probe reads is open.}
 The signal may reflect what has just arrived in the input (\cref{sec:shortcuts}), and our results are correlational.
-The probe tracks a contested disclosure rather than the rule: a disclosure the agent first resisted scores high even when permitted, and one made freely under a clear permission mostly does not.
-A fresh read of the file raises the score strongly, so part of that gap reflects when the value was read.
-In our test of the second case, permission and immediate, unpressured sharing also coincide (\cref{app:onpolicy}).
+A fresh read of the file drives most of the score: right after a read, permitted and forbidden disclosures cross the threshold alike, and only away from a read does a contested disclosure score higher (\cref{app:e15}).
+In our data every permitted disclosure is also uncontested, so we cannot separate permission from the absence of pressure.
 
 \paragraph{An untuned text monitor.}
 Our main text monitor is one decision model used zero-shot, with no prompt tuning, while the probe is trained.
